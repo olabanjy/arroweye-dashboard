@@ -90,7 +90,7 @@ const InvoicesTab = () => {
           <div className="max-w-[200px] w-full">
             <SelectInput
               options={[
-                { value: "currency", label: "Currency" },
+                { value: "", label: "Currency" },
                 { value: "usd", label: "$USD" },
                 { value: "ngn", label: "₦NGN" },
                 { value: "eth", label: "ΞETH" },

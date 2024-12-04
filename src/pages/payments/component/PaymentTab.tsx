@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Manage from "./Manage";
+import Insight from "./Insight";
+import InvoicesTab from "./InvoicesTab";
 
 const PaymentTab = () => {
   const [activeTab, setActiveTab] = useState("Manage");
@@ -30,12 +32,14 @@ const PaymentTab = () => {
       </div>
 
       <div>
-        {activeTab === "Manage" && <Manage />}
-        {activeTab === "Insights" && (
-          <div className="p-4 bg-gray-100 rounded shadow">
-            <h2 className="text-xl font-bold mb-2">Insights Tab Content</h2>
+        {activeTab === "Manage" && (
+          <div className="">
+            {" "}
+            <Manage />
+            <InvoicesTab />
           </div>
         )}
+        {activeTab === "Insights" && <Insight />}
       </div>
     </div>
   );
