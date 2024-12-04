@@ -1,10 +1,11 @@
 import { useState } from "react";
+import Manage from "./Manage";
 
-const DashboardTabs = () => {
+const PaymentTab = () => {
   const [activeTab, setActiveTab] = useState("Manage");
 
   return (
-    <div>
+    <div className=" p-[20px]">
       <div className="flex gap-[10px] items-center mb-4">
         <button
           className={`px-[16px] py-[4px] rounded-full text-[20px]  ${
@@ -29,11 +30,7 @@ const DashboardTabs = () => {
       </div>
 
       <div>
-        {activeTab === "Manage" && (
-          <div className="p-4 bg-gray-100 rounded shadow">
-            <h2 className="text-xl font-bold mb-2">Manage Tab Content</h2>
-          </div>
-        )}
+        {activeTab === "Manage" && <Manage />}
         {activeTab === "Insights" && (
           <div className="p-4 bg-gray-100 rounded shadow">
             <h2 className="text-xl font-bold mb-2">Insights Tab Content</h2>
@@ -44,4 +41,4 @@ const DashboardTabs = () => {
   );
 };
 
-export default DashboardTabs;
+export default PaymentTab;

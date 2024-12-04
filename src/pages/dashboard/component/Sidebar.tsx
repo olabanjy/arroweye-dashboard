@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FC } from "react";
 
 const Sidebar: FC = () => {
@@ -21,10 +22,11 @@ const Sidebar: FC = () => {
           <li className="flex items-center space-x-2 hover:text-[#17954c] p-2 rounded cursor-pointer">
             <span>Drops</span>
           </li>
-          <li className="flex items-center space-x-2 hover:text-[#17954c] p-2 rounded cursor-pointer">
-            <span>Payments</span>
-          </li>
-
+          <Link href="/payments">
+            <li className="flex items-center space-x-2 hover:text-[#17954c] p-2 rounded cursor-pointer">
+              <span>Payments</span>
+            </li>
+          </Link>
           <li className="flex items-center space-x-2 hover:text-[#17954c] p-2 rounded cursor-pointer">
             <span>Schedule</span>
           </li>
