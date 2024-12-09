@@ -9,6 +9,7 @@ import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { SelectInput } from "@/components/ui/selectinput";
 import { FaUserMinus } from "react-icons/fa";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
+import Insight from "./component/Insight";
 
 const users = [
   { initials: "JJ", fullName: "John Jerome", email: "john@example.com" },
@@ -116,6 +117,10 @@ const ProjectDetails = () => {
               onChange={(e) => setToggleNotifications(e.value)}
             />
           </div>
+        </div>
+
+        <div className=" ">
+          <Insight />
         </div>
       </div>
 
