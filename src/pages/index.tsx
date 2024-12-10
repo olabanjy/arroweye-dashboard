@@ -1,9 +1,9 @@
-import Dashboard from "./dashboard";
+import Payment from "./payments";
 
 export default function Home() {
   return (
     <div className="">
-      <Dashboard />
+      <Payment />
     </div>
   );
 }
