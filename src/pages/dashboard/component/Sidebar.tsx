@@ -32,15 +32,18 @@ const Sidebar: FC = () => {
               <span>Projects</span>
             </li>
           </Link>
-          <li
-            className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
-              isActive("/drops")
-                ? "bg-[#17954c] text-white"
-                : "hover:text-[#17954c]"
-            }`}
-          >
-            <span>Drops</span>
-          </li>
+          <Link href="/drops">
+            <li
+              className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
+                isActive("/drops")
+                  ? "bg-[#17954c] text-white"
+                  : "hover:text-[#17954c]"
+              }`}
+            >
+              <span>Drops</span>
+            </li>
+          </Link>
+
           <Link href="/payments">
             <li
               className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
