@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { FiInfo } from "react-icons/fi";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
-  validate?: "email" | "otp";
+  validate?: "email" | "otp" | "datetime";
   info?: string;
 }
 
@@ -14,6 +14,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     { label, type = "text", className, error, validate, info, ...props },
     ref
   ) => {
+    const [inputValue, setInputValue] = useState<string | undefined>("");
+
     const validateInput = (value: string) => {
       if (validate === "email") {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -22,6 +24,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       if (validate === "otp") {
         const otpRegex = /^\d{6}$/;
         return otpRegex.test(value);
+      }
+      if (validate === "datetime") {
+        const datetimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+        return datetimeRegex.test(value);
       }
       return true;
     };
@@ -36,11 +42,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         setValidationError(
           validate === "email"
             ? "Invalid email address"
-            : "OTP must be 6 digits"
+            : validate === "otp"
+            ? "OTP must be 6 digits"
+            : "Invalid datetime format"
         );
       } else {
         setValidationError(null);
       }
+    };
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = event.target;
+      setInputValue(value);
     };
 
     return (
@@ -69,11 +82,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className
           )}
           onBlur={handleBlur}
+          value={inputValue}
+          onChange={handleChange}
           {...props}
         />
-        {(error || validationError) && (
-          <p className="text-sm text-red-500">{error || validationError}</p>
-        )}
       </div>
     );
   }

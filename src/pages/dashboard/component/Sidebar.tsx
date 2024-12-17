@@ -55,15 +55,18 @@ const Sidebar: FC = () => {
               <span>Payments</span>
             </li>
           </Link>
-          <li
-            className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
-              isActive("/schedule")
-                ? "bg-[#17954c] text-white"
-                : "hover:text-[#17954c]"
-            }`}
-          >
-            <span>Schedule</span>
-          </li>
+          <Link href="/schedule">
+            <li
+              className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
+                isActive("/schedule")
+                  ? "bg-[#17954c] text-white"
+                  : "hover:text-[#17954c]"
+              }`}
+            >
+              <span>Schedule</span>
+            </li>
+          </Link>
+
           <li
             className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
               isActive("/resources")
