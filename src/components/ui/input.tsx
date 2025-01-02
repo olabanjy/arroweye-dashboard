@@ -1,6 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
-import { FiInfo } from "react-icons/fi";
+import { FiInfo, FiEye, FiEyeOff } from "react-icons/fi";
+
+const Tooltip = ({ info }: { info: string }) => (
+  <div className="relative group">
+    <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
+    <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-1 hidden w-48 p-2 text-xs text-white bg-black rounded-lg group-hover:block">
+      {info}
+    </div>
+  </div>
+);
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -9,14 +18,9 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   info?: string;
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  (
-    { label, type = "text", className, error, validate, info, ...props },
-    ref
-  ) => {
-    const [inputValue, setInputValue] = useState<string | undefined>("");
-
-    const validateInput = (value: string) => {
+const useValidation = (validate: InputProps["validate"]) => {
+  const validateInput = useCallback(
+    (value: string) => {
       if (validate === "email") {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(value);
@@ -30,62 +34,98 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         return datetimeRegex.test(value);
       }
       return true;
-    };
+    },
+    [validate]
+  );
 
-    const [validationError, setValidationError] = React.useState<string | null>(
-      null
-    );
+  const getValidationError = useCallback(() => {
+    if (validate === "email") return "Invalid email address";
+    if (validate === "otp") return "OTP must be 6 digits";
+    if (validate === "datetime") return "Invalid datetime format";
+    return null;
+  }, [validate]);
+
+  return { validateInput, getValidationError };
+};
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  (
+    { label, type = "text", className, error, validate, info, ...props },
+    ref
+  ) => {
+    const [inputValue, setInputValue] = useState<string>("");
+    const [validationError, setValidationError] = useState<string | null>(null);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+
+    const { validateInput, getValidationError } = useValidation(validate);
 
     const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
       const value = event.target.value;
       if (validate && value && !validateInput(value)) {
-        setValidationError(
-          validate === "email"
-            ? "Invalid email address"
-            : validate === "otp"
-            ? "OTP must be 6 digits"
-            : "Invalid datetime format"
-        );
+        setValidationError(getValidationError());
       } else {
         setValidationError(null);
       }
     };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = event.target;
-      setInputValue(value);
+      setInputValue(event.target.value);
     };
+
+    const togglePasswordVisibility = () => {
+      setShowPassword((prev) => !prev);
+    };
+
+    const inputType = type === "password" && showPassword ? "text" : type;
 
     return (
       <div className="flex flex-col space-y-2">
         <div className="flex items-center space-x-2">
           {label && (
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor={props.id}
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               {label}
             </label>
           )}
-          {info && (
-            <div className="relative group">
-              <FiInfo className="text-gray-400 hover:text-blue-500" />
-              <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-1 hidden w-48 p-2 text-xs text-white bg-black rounded-lg group-hover:block">
-                {info}
-              </div>
-            </div>
+          {info && <Tooltip info={info} />}
+        </div>
+        <div className="relative">
+          <input
+            type={inputType}
+            ref={ref}
+            className={cn(
+              "block w-full rounded-[8px] border border-black bg-white px-4 py-[8px] h-[50px] text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
+              (error || validationError) && "border-red-500 focus:ring-red-500",
+              className
+            )}
+            value={inputValue}
+            onBlur={handleBlur}
+            onChange={handleChange}
+            aria-invalid={!!(error || validationError)}
+            aria-describedby={props.id ? `${props.id}-error` : undefined}
+            {...props}
+          />
+          {type === "password" && (
+            <button
+              type="button"
+              className="absolute inset-y-0 right-3 flex items-center text-gray-500 dark:text-gray-400"
+              onClick={togglePasswordVisibility}
+              aria-label="Toggle password visibility"
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
           )}
         </div>
-        <input
-          type={type}
-          ref={ref}
-          className={cn(
-            "block w-full rounded-[8px] border border-black bg-white px-4 py-[10px] text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
-            (error || validationError) && "border-red-500 focus:ring-red-500",
-            className
-          )}
-          onBlur={handleBlur}
-          value={inputValue}
-          onChange={handleChange}
-          {...props}
-        />
+        {(error || validationError) && (
+          <p
+            id={props.id ? `${props.id}-error` : undefined}
+            className="text-sm text-red-500"
+          >
+            {error || validationError}
+          </p>
+        )}
       </div>
     );
   }

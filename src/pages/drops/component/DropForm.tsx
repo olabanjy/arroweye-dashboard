@@ -1,55 +1,97 @@
 import { Input } from "@/components/ui/input";
-import React from "react";
+import { Login } from "@/services/api";
+import React, { useState } from "react";
 import { IoCloudUploadOutline } from "react-icons/io5";
+import { toast } from "react-toastify";
 
 const DropForm = () => {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    folderName: "",
+    link: "",
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.folderName ||
+      !formData.link
+    ) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
+    Login(formData);
+  };
+
   return (
-    <div>
-      {" "}
-      <div className="">
-        <div className=" space-y-[20px]">
-          <p className=" font-[500] text-[18px]">Drop em!</p>
-          <p className="font-[400] text-[16px]">
-            Fill accurately with link details
-          </p>
-        </div>
-        <div className="">
-          <div className="">
-            <div className=" space-y-[20px]">
-              <Input
-                type="text"
-                placeholder="First Name"
-                className="w-full rounded-[8px] "
-              />
-              <Input
-                type="text"
-                placeholder="Last Name"
-                className="w-full rounded-[8px]"
-              />
-              <Input
-                type="text"
-                placeholder="Folder Name"
-                className="w-full rounded-[8px]"
-              />
-              <Input
-                type="text"
-                placeholder="Link"
-                className="w-full rounded-[8px]"
-              />
-              <Input
-                type="text"
-                placeholder=""
-                readOnly
-                className="w-full rounded-[8px]"
-              />
-              <button className="font-bold gap-[10px] px-4 py-2 text-white bg-[#e4055a] rounded-[8px] hover:bg-[#000000] flex items-center">
-                Unlock <IoCloudUploadOutline size={14} />
-              </button>
-            </div>
-          </div>
-        </div>
+    <form onSubmit={handleSubmit}>
+      <div className="space-y-[20px]">
+        <p className="font-[500] text-[18px]">Drop em!</p>
+        <p className="font-[400] text-[16px]">
+          Fill accurately with link details
+        </p>
       </div>
-    </div>
+      <div className="space-y-[20px] mt-4">
+        <Input
+          type="text"
+          name="firstName"
+          placeholder="First Name"
+          className="w-full rounded-[8px]"
+          value={formData.firstName}
+          onChange={handleInputChange}
+        />
+        <Input
+          type="text"
+          name="lastName"
+          placeholder="Last Name"
+          className="w-full rounded-[8px]"
+          value={formData.lastName}
+          onChange={handleInputChange}
+        />
+        <Input
+          type="text"
+          name="folderName"
+          placeholder="Folder Name"
+          className="w-full rounded-[8px]"
+          value={formData.folderName}
+          onChange={handleInputChange}
+        />
+        <Input
+          type="text"
+          name="link"
+          placeholder="Link"
+          className="w-full rounded-[8px]"
+          value={formData.link}
+          onChange={handleInputChange}
+        />
+        <Input
+          type="text"
+          placeholder=""
+          readOnly
+          className="w-full rounded-[8px]"
+          value="Read-Only Value"
+        />
+        <button
+          type="submit"
+          className="font-bold gap-[10px] px-4 py-2 text-white bg-[#e4055a] rounded-[8px] hover:bg-[#000000] flex items-center"
+        >
+          Unlock <IoCloudUploadOutline size={14} />
+        </button>
+      </div>
+    </form>
   );
 };
 

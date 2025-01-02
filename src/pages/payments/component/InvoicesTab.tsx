@@ -12,7 +12,7 @@ const InvoicesTab = () => {
 
   return (
     <div className=" p-[20px]">
-      <div className=" flex items-start gap-[40px] ">
+      <div className=" grid md:flex items-start gap-[20px] md:gap-[40px] ">
         <div className="flex gap-[10px] items-center mb-4">
           <button
             className={` pb-[10px]  text-[20px]  ${
@@ -37,7 +37,7 @@ const InvoicesTab = () => {
         </div>
 
         <div className="flex-grow ">
-          <div className="flex items-center justify-end gap-[10px]">
+          <div className="grid md:flex items-center md:justify-end gap-[10px]">
             {activeTab === "Invoice" && (
               <div className="flex-grow">
                 <Input
@@ -47,7 +47,7 @@ const InvoicesTab = () => {
                 />
               </div>
             )}
-            <div className="flex items-center gap-[5px]">
+            <div className="flex items-center justify-between gap-[5px]">
               {activeTab === "Invoice" && (
                 <div
                   className=" cursor-pointer p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
