@@ -105,7 +105,7 @@ const Schedule = () => {
 
   return (
     <DashboardLayout>
-      <div className="schedule-container">
+      <div className="schedule-container ">
         <div className="calendar-container">
           <FullCalendar
             plugins={[

@@ -23,7 +23,7 @@ const Table: React.FC<TableProps> = ({
     <div className={`overflow-x-auto ${className}`}>
       <table className="w-full table-auto border-collapse border border-grey-100">
         <thead>
-          <tr className="rounded-[16px] bg-grey-25 text-xs font-[500] text-grey-400">
+          <tr className="rounded-[16px] bg-grey-25 text-xs font-[500] text-grey-400 ">
             {headers.map((header, index) => (
               <th
                 key={index}
