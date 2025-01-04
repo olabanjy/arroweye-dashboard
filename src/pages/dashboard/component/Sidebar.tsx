@@ -32,7 +32,7 @@ const Sidebar: FC = () => {
       </button>
 
       <div
-        className={`fixed lg:relative top-0 left-0 z-50 w-64 h-screen bg-white border border-slate-100 text-[#000000] flex flex-col transform ${
+        className={`fixed lg:relative top-0 left-0 z-[99999999999] w-64 h-screen bg-white border border-slate-100 text-[#000000] flex flex-col transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 transition-transform duration-700`}
       >
@@ -152,7 +152,7 @@ const Sidebar: FC = () => {
 
       {(isOpen || isResourcesOpen) && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 lg:hidden transition-opacity duration-700"
+          className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-[999999998] transition-opacity duration-700"
           onClick={() => {
             setIsOpen(false);
             setIsResourcesOpen(false);
