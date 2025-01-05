@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import Table from "./Table";
 import { BsCurrencyDollar } from "react-icons/bs";
+import { getInvoice, getStoredInvoice } from "@/services/api";
+import { ContentItem } from "@/types/contents";
 
 const Invoice = () => {
   const headers = [
@@ -38,6 +40,22 @@ const Invoice = () => {
       ],
     },
   ];
+
+  const [content, setContent] = useState<ContentItem[] | null>(null);
+
+  useEffect(() => {
+    const content = getStoredInvoice();
+
+    if (content) {
+      setContent(content);
+    } else {
+      getInvoice().then((fetchedContent) => {
+        setContent(fetchedContent);
+      });
+    }
+  }, []);
+
+  console.log(content);
 
   return (
     <div className="rounded-[16px] border bg-grey-25 p-[16px]">

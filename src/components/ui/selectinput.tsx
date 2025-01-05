@@ -8,10 +8,11 @@ interface SelectInputProps
   options: { value: string; label: string }[];
   error?: string;
   info?: string;
+  labelText?: string;
 }
 
 const SelectInput = React.forwardRef<HTMLSelectElement, SelectInputProps>(
-  ({ label, options, className, error, info, ...props }, ref) => {
+  ({ label, options, className, error, info, labelText, ...props }, ref) => {
     return (
       <div className="flex flex-col space-y-2">
         <div className="flex items-center space-x-2">
@@ -39,7 +40,7 @@ const SelectInput = React.forwardRef<HTMLSelectElement, SelectInputProps>(
           {...props}
         >
           <option value="" disabled>
-            Select an option
+            {labelText || "Select an option"}
           </option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>

@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import Table from "./Table";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { SelectInput } from "@/components/ui/selectinput";
+import { getProjects, getStoredProjects } from "@/services/api";
+import { ContentItem } from "@/types/contents";
 
 interface ProjectsProps {
   filterVisible: boolean;
@@ -49,6 +51,21 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
       ],
     },
   ];
+
+  const [content, setContent] = useState<ContentItem[] | null>(null);
+
+  useEffect(() => {
+    const content = getStoredProjects();
+
+    if (content) {
+      setContent(content);
+    } else {
+      getProjects().then((fetchedContent) => {
+        setContent(fetchedContent);
+      });
+    }
+  }, []);
+  console.log(content);
 
   return (
     <div className="rounded-[16px] border bg-grey-25 p-[16px]">
