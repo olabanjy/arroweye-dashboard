@@ -1,5 +1,5 @@
-import type { AppProps } from "next/app";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
@@ -8,14 +8,18 @@ import Modal from "./component/Modal";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
-import { Login } from "@/services/api";
+import { LoginEP } from "@/services/api";
 import { MdLockOutline } from "react-icons/md";
+import type { AppProps } from "next/app";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isIdle, setIsIdle] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
+    if (router.pathname === "/login") return;
+
     let timeout: NodeJS.Timeout;
 
     const resetIdleTimer = () => {
@@ -40,7 +44,7 @@ export default function App({ Component, pageProps }: AppProps) {
       window.removeEventListener("keydown", resetIdleTimer);
       window.removeEventListener("click", resetIdleTimer);
     };
-  }, []);
+  }, [router.pathname]);
 
   useEffect(() => {
     if (isIdle) {
@@ -76,7 +80,7 @@ export default function App({ Component, pageProps }: AppProps) {
       return;
     }
 
-    Login(formData);
+    LoginEP(formData);
   };
 
   return (
@@ -85,10 +89,10 @@ export default function App({ Component, pageProps }: AppProps) {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        maxWidth=" max-w-[500px]"
+        maxWidth="max-w-[500px]"
       >
         <form onSubmit={handleSubmit}>
-          <div className=" flex items-center flex-col justify-center space-y-4 ">
+          <div className="flex items-center flex-col justify-center space-y-4">
             <div className="">
               <Image
                 src="/arroweyeLogo.svg"

@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { Login } from "@/services/api";
+import { LoginEP } from "@/services/api";
 import React, { useState } from "react";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
@@ -33,7 +33,7 @@ const DropForm = () => {
       return;
     }
 
-    Login(formData);
+    LoginEP(formData);
   };
 
   return (

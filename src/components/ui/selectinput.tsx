@@ -5,7 +5,7 @@ import { FiInfo } from "react-icons/fi";
 interface SelectInputProps
   extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
-  options: { value: string; label: string }[];
+  options: { value: string | number; label: string }[];
   error?: string;
   info?: string;
   labelText?: string;
@@ -39,9 +39,7 @@ const SelectInput = React.forwardRef<HTMLSelectElement, SelectInputProps>(
           )}
           {...props}
         >
-          <option value="" disabled>
-            {labelText || "Select an option"}
-          </option>
+          <option value="">{labelText || "Select an option"}</option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}

@@ -114,7 +114,40 @@ export const CreateBusiness = async (payload: unknown): Promise<void> => {
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || "Invalid credentials.");
+        console.log(error.response);
+
+        toast.error(error.response?.data?.message || error.response?.data[0]);
+      } else if (error.response?.status === 403) {
+        toast.error(error.response?.data?.message || "Access denied.");
+      } else {
+        toast.error(
+          error.response?.data?.message || "Request failed. Please try again."
+        );
+      }
+    } else {
+      toast.error("Request failed. Please try again.");
+      console.error("Unexpected Error:", error);
+    }
+  }
+};
+
+export const CreateService = async (payload: unknown): Promise<void> => {
+  try {
+    const { data: response } = await apiRequest<
+      ApiRequestResponse<ApiResponse>
+    >({
+      method: "POST",
+      url: `/api/v1/payments/service/`,
+      data: payload,
+      requireToken: false,
+    });
+
+    console.log(response);
+    toast.success("Service Created Successful!");
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400) {
+        toast.error(error.response?.data?.message || error.response?.data[0]);
       } else if (error.response?.status === 403) {
         toast.error(error.response?.data?.message || "Access denied.");
       } else {
@@ -145,7 +178,7 @@ export const AddStaff = async (payload: unknown): Promise<void> => {
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || "Invalid credentials.");
+        toast.error(error.response?.data?.message || error.response?.data[0]);
       } else if (error.response?.status === 403) {
         toast.error(error.response?.data?.message || "Access denied.");
       } else {
@@ -160,7 +193,7 @@ export const AddStaff = async (payload: unknown): Promise<void> => {
   }
 };
 
-export const Login = async (payload: unknown): Promise<void> => {
+export const LoginEP = async (payload: unknown): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
       ApiRequestResponse<ApiResponse>
@@ -176,7 +209,7 @@ export const Login = async (payload: unknown): Promise<void> => {
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || "Invalid credentials.");
+        toast.error(error.response?.data?.message || error.response?.data[0]);
       } else if (error.response?.status === 403) {
         toast.error(error.response?.data?.message || "Access denied.");
       } else {
@@ -207,7 +240,7 @@ export const Verify = async (payload: unknown): Promise<void> => {
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || "Invalid credentials.");
+        toast.error(error.response?.data?.message || error.response?.data[0]);
       } else if (error.response?.status === 403) {
         toast.error(error.response?.data?.message || "Access denied.");
       } else {
@@ -234,17 +267,17 @@ export const VerifyLogin = async (payload: unknown): Promise<void> => {
     });
 
     console.log(response);
+    ls.set("Profile", response, { encrypt: true });
     toast.success("Verification successful! Redirecting...");
+    window.location.href = "/projects";
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || "Invalid credentials.");
+        toast.error(error.response?.data?.message || error.response?.data[0]);
       } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
+        toast.error(error.response?.data?.message || error.response?.data[0]);
       } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
+        toast.error(error.response?.data?.message || error.response?.data[0]);
       }
     } else {
       toast.error("Request failed. Please try again.");

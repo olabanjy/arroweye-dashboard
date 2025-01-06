@@ -19,6 +19,7 @@ export interface Staff {
 
 export interface ContentItem {
   id: number;
+  name: string;
   title: string;
   type: string;
   fullname: string;
