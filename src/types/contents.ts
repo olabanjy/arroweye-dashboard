@@ -19,6 +19,7 @@ export interface Staff {
 
 export interface ContentItem {
   id: number;
+  currency: string;
   name: string;
   title: string;
   type: string;
@@ -28,6 +29,16 @@ export interface ContentItem {
   vendor: string;
   licenses: string;
   staff: Staff[];
+  project: {
+    title: string;
+    code: string;
+    vendor: string;
+    subvendor: string;
+  };
+  po_code: string;
+  createdAt: string;
+  total: number;
+  status: string;
 }
 
 export interface Content {

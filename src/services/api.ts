@@ -166,13 +166,14 @@ export const CreateInvoice = async (payload: unknown): Promise<void> => {
       ApiRequestResponse<ApiResponse>
     >({
       method: "POST",
-      url: `api/v1/payments/invoice/`,
+      url: `/api/v1/payments/invoice/create/`,
       data: payload,
       requireToken: false,
     });
 
     console.log(response);
     toast.success("Invoice Created Successful!");
+    window.location.reload();
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {

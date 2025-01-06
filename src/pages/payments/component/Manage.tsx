@@ -119,9 +119,9 @@ const Manage = () => {
   ];
 
   const currencyOptions = [
-    { value: "$", label: "$USD" },
-    { value: "₦", label: "₦NGN" },
-    { value: "Ξ", label: "ΞETH" },
+    { value: "Dollars", label: "$USD" },
+    { value: "Naira", label: "₦NGN" },
+    { value: "Ethereum", label: "ΞETH" },
   ];
 
   const customOptions = [
@@ -192,7 +192,7 @@ const Manage = () => {
     subvendor_id: "",
     po_code: "",
     currency: "",
-    cost: "",
+    // cost: "",
     services: [
       {
         service_id: 0,
@@ -283,7 +283,7 @@ const Manage = () => {
         subvendor_id: projectFormData.subvendor_id
           ? parseInt(projectFormData.subvendor_id.toString())
           : null,
-        cost: customCost,
+        // cost: customCost,
       };
 
       console.log("Updated Form Data with Cost:", updatedFormData);

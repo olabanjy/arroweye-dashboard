@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Table from "./Table";
 import { BsCurrencyDollar } from "react-icons/bs";
-import { getInvoice, getStoredInvoice } from "@/services/api";
+import { getInvoice } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 
 const Invoice = () => {
@@ -18,42 +18,47 @@ const Invoice = () => {
     "Action",
   ];
 
-  const rows = [
-    {
-      data: [
-        "Johnson EP",
-        "98897",
-        "099099",
-        "Cult Wife Inc",
-        "	Neville Records",
-        "21/06/2024",
-        "$36750.00",
-        "Unpaid",
+  const [content, setContent] = useState<ContentItem[] | null>(null);
+  const getCurrencySymbol = (currency: string) => {
+    switch (currency) {
+      case "Dollars":
+        return "$";
+      case "Naira":
+        return "₦";
+      case "Ethereum":
+        return "Ξ";
+      default:
+        return "";
+    }
+  };
 
-        <div key="action-buttons-1" className="flex justify-center gap-2">
+  useEffect(() => {
+    getInvoice().then((fetchedContent) => {
+      setContent(fetchedContent);
+    });
+  }, []);
+
+  const rows =
+    content?.map((item, index) => ({
+      data: [
+        item.project.title,
+        item.project.code,
+        item.po_code,
+        item.project.vendor,
+        item.project.subvendor,
+        item.createdAt,
+        `${getCurrencySymbol(item.currency)}${item.total}`,
+        item.status,
+        <div
+          key={`action-buttons-${index}`}
+          className="flex justify-center gap-2"
+        >
           <div className="p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full">
             <BsCurrencyDollar />
           </div>
         </div>,
       ],
-    },
-  ];
-
-  const [content, setContent] = useState<ContentItem[] | null>(null);
-
-  useEffect(() => {
-    const content = getStoredInvoice();
-
-    if (content) {
-      setContent(content);
-    } else {
-      getInvoice().then((fetchedContent) => {
-        setContent(fetchedContent);
-      });
-    }
-  }, []);
-
-  console.log(content);
+    })) || [];
 
   return (
     <div className="rounded-[16px] border bg-grey-25 p-[16px]">
