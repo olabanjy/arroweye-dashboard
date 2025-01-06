@@ -19,6 +19,9 @@ export interface Staff {
 
 export interface ContentItem {
   id: number;
+  subvendor: number;
+  code: number;
+  pin: number;
   currency: string;
   name: string;
   title: string;
@@ -34,6 +37,7 @@ export interface ContentItem {
     code: string;
     vendor: string;
     subvendor: string;
+    pin: number;
   };
   po_code: string;
   createdAt: string;

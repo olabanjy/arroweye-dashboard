@@ -3,7 +3,7 @@ import Image from "next/image";
 import Table from "./Table";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { SelectInput } from "@/components/ui/selectinput";
-import { getProjects, getStoredProjects } from "@/services/api";
+import { getProjects } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 
 interface ProjectsProps {
@@ -22,48 +22,13 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
     "Action",
   ];
 
-  const rows = [
-    {
-      data: [
-        "Arroweye",
-        "Johnson",
-        "John",
-        "21/06/2024",
-        "Cult Wife Inc",
-        "334343",
-        <button
-          key="delete-button"
-          className="p-[8px] text-red-600 hover:text-red-800"
-          onClick={() => alert("Delete action triggered!")}
-        >
-          Delete
-        </button>,
-        <div key="action-buttons-1" className="flex justify-center gap-2">
-          <button
-            className="p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
-            onClick={() => alert("Action triggered!")}
-          >
-            <BsCurrencyDollar />
-          </button>
-        </div>,
-      ],
-    },
-  ];
-
   const [content, setContent] = useState<ContentItem[] | null>(null);
 
   useEffect(() => {
-    const content = getStoredProjects();
-
-    if (content) {
-      setContent(content);
-    } else {
-      getProjects().then((fetchedContent) => {
-        setContent(fetchedContent);
-      });
-    }
+    getProjects().then((fetchedContent) => {
+      setContent(fetchedContent);
+    });
   }, []);
-  console.log(content);
 
   return (
     <div className="rounded-[16px] border bg-grey-25 p-[16px]">
@@ -95,7 +60,34 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
 
       <Table
         headers={headers}
-        rows={rows}
+        rows={content?.map((item, index) => ({
+          data: [
+            item?.title,
+            item?.vendor,
+            item?.subvendor,
+            item?.createdAt,
+            item?.code,
+            item?.pin,
+            <button
+              key={`manage-button-${index}`}
+              className="p-[8px] text-blue-600 hover:text-blue-800"
+              onClick={() => alert("Manage action triggered!")}
+            >
+              Manage
+            </button>,
+            <div
+              key={`action-buttons-${index}`}
+              className="flex justify-center gap-2"
+            >
+              <button
+                className="p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
+                onClick={() => alert("Action triggered!")}
+              >
+                <BsCurrencyDollar />
+              </button>
+            </div>,
+          ],
+        }))}
         emptyState={
           <div className="flex h-[50vh] flex-col items-center justify-center text-center">
             <Image
