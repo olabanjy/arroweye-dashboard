@@ -64,7 +64,7 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
             item?.title,
             item?.vendor,
             item?.subvendor,
-            item?.created.slice(0, 10),
+            item?.created?.slice(0, 10),
             item?.code,
             item?.pin,
             <button
