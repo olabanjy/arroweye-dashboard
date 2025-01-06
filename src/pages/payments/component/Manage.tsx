@@ -127,8 +127,8 @@ const Manage = () => {
   const customOptions = [
     { value: 9, label: "Add new service" },
     ...(content?.map((item) => ({
-      value: item.id,
-      label: item.name,
+      value: item.id ?? 0,
+      label: item.name ?? "",
     })) || []),
   ];
 

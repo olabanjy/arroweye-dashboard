@@ -18,6 +18,8 @@ export interface Staff {
 }
 
 export interface ContentItem {
+  start_dte: string;
+  end_dte: string;
   archived: boolean;
   id: number;
   subvendor: number;

@@ -13,84 +13,69 @@ import { DateClickArg } from "@fullcalendar/interaction";
 import { CreateEvent } from "@/services/api";
 
 interface FormErrors {
-  eventTitle?: string;
-  startDate?: string;
-  endDate?: string;
+  title?: string;
+  start_dte?: string;
+  end_dte?: string;
 }
 
 const Schedule = () => {
-  const [events, setEvents] = useState([
+  // const [content, setContent] = useState<ContentItem[]>([]);
+
+  // useEffect(() => {
+  //   getEvents()
+  //     .then((fetchedContent) => {
+  //       setContent(fetchedContent || []);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Error fetching events:", err);
+  //     });
+  // }, []);
+  const [content, setContent] = useState([
     {
+      id: "1",
       title: "Sample Event",
-      start: "2024-12-16T10:00:00",
-      end: "2024-12-16T12:00:00",
+      start_dte: "2025-01-10T10:00:00",
+      end_dte: "2025-01-10T12:00:00",
     },
     {
+      id: "2",
       title: "Another Event",
-      start: "2024-12-17T14:00:00",
-      end: "2024-12-17T16:00:00",
+      start_dte: "2025-01-15T14:00:00",
+      end_dte: "2025-01-15T16:00:00",
     },
   ]);
 
-  // const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  // Map content to FullCalendar's expected format
+  const events = content.map((item) => ({
+    id: item.id,
+    title: item.title,
+    start: item.start_dte,
+    end: item.end_dte,
+  }));
+
+  // const events = content.map((item) => ({
+  //   id: item.id ? item.id.toString() : "",
+  //   title: item.title,
+  //   start: item.start_dte,
+  //   end: item.end_dte,
+  // }));
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formData, setFormData] = useState({
-    eventTitle: "",
-    vendor: "",
+    title: "",
+    vendor_id: "",
     subvendor: "",
     location: "",
-    eventType: "",
-    startDate: "",
-    endDate: "",
+    start_dte: "",
+    end_dte: "",
     code: "",
   });
 
   const [formErrors, setFormErrors] = useState<FormErrors>({
-    eventTitle: "",
-    startDate: "",
-    endDate: "",
+    title: "",
+    start_dte: "",
+    end_dte: "",
   });
-
-  // const handleAddEvent = () => {
-  //   setFormErrors({
-  //     eventTitle: "",
-  //     startDate: "",
-  //     endDate: "",
-  //   });
-
-  //   const errors: FormErrors = {};
-
-  //   if (!formData.eventTitle) errors.eventTitle = "Event Title is required";
-  //   if (!formData.startDate) errors.startDate = "Start Date is required";
-  //   if (!formData.endDate) errors.endDate = "End Date is required";
-
-  //   if (Object.keys(errors).length > 0) {
-  //     setFormErrors(errors);
-  //     return;
-  //   }
-
-  //   const newEvent = {
-  //     title: formData.eventTitle,
-  //     start: formData.startDate,
-  //     end: formData.endDate,
-  //   };
-
-  //   setEvents((prevEvents) => [...prevEvents, newEvent]);
-
-  //   setIsModalVisible(false);
-  //   setSelectedDate(null);
-  //   setFormData({
-  //     eventTitle: "",
-  //     vendor: "",
-  //     subvendor: "",
-  //     location: "",
-  //     eventType: "",
-  //     startDate: "",
-  //     endDate: "",
-  //     code: "",
-  //   });
-  // };
 
   const handleDateClick = (info: DateClickArg) => {
     const selectedDate = info.dateStr;
@@ -106,7 +91,6 @@ const Schedule = () => {
 
   const handleCloseModal = () => {
     setIsModalVisible(false);
-    // setSelectedDate(null);
   };
 
   const handleFormChange = (
@@ -120,22 +104,22 @@ const Schedule = () => {
 
       const newErrors: { [key: string]: string } = { ...formErrors };
 
-      if (name === "eventTitle" && !value) {
-        newErrors.eventTitle = "Event Title is required.";
+      if (name === "title" && !value) {
+        newErrors.title = "Event Title is required.";
       } else {
-        newErrors.eventTitle = "";
+        newErrors.title = "";
       }
 
-      if (name === "startDate" && !value) {
-        newErrors.startDate = "Start Date is required.";
+      if (name === "start_dte" && !value) {
+        newErrors.start_dte = "Start Date is required.";
       } else {
-        newErrors.startDate = "";
+        newErrors.start_dte = "";
       }
 
-      if (name === "endDate" && !value) {
-        newErrors.endDate = "End Date is required.";
+      if (name === "end_dte" && !value) {
+        newErrors.end_dte = "End Date is required.";
       } else {
-        newErrors.endDate = "";
+        newErrors.end_dte = "";
       }
 
       setFormErrors(newErrors);
@@ -150,21 +134,21 @@ const Schedule = () => {
     console.log("Form submitted!");
 
     const newErrors: FormErrors = {
-      eventTitle: "",
-      startDate: "",
-      endDate: "",
+      title: "",
+      start_dte: "",
+      end_dte: "",
     };
 
-    if (!formData.eventTitle) {
-      newErrors.eventTitle = "Event Title is required.";
+    if (!formData.title) {
+      newErrors.title = "Event Title is required.";
     }
 
-    if (!formData.startDate) {
-      newErrors.startDate = "Start Date is required.";
+    if (!formData.start_dte) {
+      newErrors.start_dte = "Start Date is required.";
     }
 
-    if (!formData.endDate) {
-      newErrors.endDate = "End Date is required.";
+    if (!formData.end_dte) {
+      newErrors.end_dte = "End Date is required.";
     }
 
     setFormErrors(newErrors);
@@ -174,7 +158,7 @@ const Schedule = () => {
     if (!hasErrors) {
       const updatedFormData = {
         ...formData,
-        vendor: formData.vendor ? parseInt(formData.vendor) : null,
+        vendor_id: formData.vendor_id ? parseInt(formData.vendor_id) : null,
         subvendor: formData.subvendor ? parseInt(formData.subvendor) : null,
       };
 
@@ -184,20 +168,20 @@ const Schedule = () => {
         .then(() => {
           console.log("Form submitted successfully!");
           const newEvent = {
-            title: formData.eventTitle,
-            start: formData.startDate,
-            end: formData.endDate,
+            id: (content.length + 1).toString(),
+            title: formData.title,
+            start_dte: formData.start_dte,
+            end_dte: formData.end_dte,
           };
-          setEvents((prevEvents) => [...prevEvents, newEvent]);
+          setContent((prevEvents) => [...prevEvents, newEvent]);
 
           setFormData({
-            eventTitle: "",
-            vendor: "",
+            title: "",
+            vendor_id: "",
             subvendor: "",
             location: "",
-            eventType: "",
-            startDate: "",
-            endDate: "",
+            start_dte: "",
+            end_dte: "",
             code: "",
           });
           setIsModalVisible(false);
@@ -261,22 +245,23 @@ const Schedule = () => {
               <div className="max-w-[400px] w-full">
                 <Input
                   type="text"
-                  name="eventTitle"
-                  value={formData.eventTitle}
+                  name="title"
+                  value={formData.title}
                   onChange={handleFormChange}
                   placeholder="Event Title"
-                  error={formErrors.eventTitle}
+                  error={formErrors.title}
                 />
               </div>
               <div className="max-w-[400px] w-full">
                 <SelectInput
-                  name="vendor"
-                  value={formData.vendor}
+                  name="vendor_id"
+                  value={formData.vendor_id}
                   labelText="Vendor"
                   onChange={handleFormChange}
                   options={vendorOptions}
                 />
               </div>
+
               <div className="max-w-[400px] w-full">
                 <SelectInput
                   name="subvendor"
@@ -300,7 +285,6 @@ const Schedule = () => {
               <div className="max-w-[400px] w-full">
                 <SelectInput
                   name="eventType"
-                  value={formData.eventType}
                   onChange={handleFormChange}
                   labelText="Select Event Type"
                   options={[{ value: "Virtual", label: "Virtual" }]}
@@ -318,21 +302,21 @@ const Schedule = () => {
               <div className="max-w-[400px] w-full">
                 <Input
                   type="datetime-local"
-                  name="startDate"
-                  value={formData.startDate}
+                  name="start_dte"
+                  value={formData.start_dte}
                   onChange={handleFormChange}
                   placeholder="Start Date & Time"
-                  error={formErrors.startDate}
+                  error={formErrors.start_dte}
                 />
               </div>
               <div className="max-w-[400px] w-full">
                 <Input
                   type="datetime-local"
-                  name="endDate"
-                  value={formData.endDate}
+                  name="end_dte"
+                  value={formData.end_dte}
                   onChange={handleFormChange}
                   placeholder="End Date & Time"
-                  error={formErrors.endDate}
+                  error={formErrors.end_dte}
                 />
               </div>
             </div>

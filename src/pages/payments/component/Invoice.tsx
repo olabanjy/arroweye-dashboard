@@ -40,13 +40,13 @@ const Invoice = () => {
   const rows =
     content?.map((item, index) => ({
       data: [
-        item.project.title,
-        item.project.code,
-        item.po_code,
-        item.project.vendor,
-        item.project.subvendor,
-        item.created.slice(0, 10),
-        `${getCurrencySymbol(item.currency)}${item.total}`,
+        item?.project?.title,
+        item?.project?.code,
+        item?.po_code,
+        item?.project?.vendor,
+        item?.project?.subvendor,
+        item?.created?.slice(0, 10),
+        `${getCurrencySymbol(item?.currency ?? "")}${item.total}`,
         item.status,
         <div
           key={`action-buttons-${index}`}

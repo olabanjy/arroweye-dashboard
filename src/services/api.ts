@@ -198,7 +198,7 @@ export const CreateEvent = async (payload: unknown): Promise<void> => {
       ApiRequestResponse<ApiResponse>
     >({
       method: "POST",
-      url: `/api/v1/projects/event/`,
+      url: `/api/v1/projects/event/create/`,
       data: payload,
       requireToken: false,
     });
@@ -532,6 +532,38 @@ export const getService = async (): Promise<ContentItem[] | null> => {
 
 export const getStoredService = (): ContentItem[] | null => {
   const content = ls.get("Service", { decrypt: true });
+
+  return content as ContentItem[];
+};
+
+export const getEvents = async (): Promise<ContentItem[] | null> => {
+  try {
+    const response = await apiRequest({
+      method: "GET",
+      url: `/api/v1/projects/event/`,
+      data: null,
+      requireToken: false,
+    });
+
+    ls.set("Invoice", response, { encrypt: true });
+
+    return response as ContentItem[];
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          "Content Retrieval failed. Please try again."
+      );
+    } else {
+      toast.error("Content Retrieval failed. Please try again.");
+    }
+
+    return null;
+  }
+};
+
+export const getStoredEvent = (): ContentItem[] | null => {
+  const content = ls.get("Events", { decrypt: true });
 
   return content as ContentItem[];
 };
