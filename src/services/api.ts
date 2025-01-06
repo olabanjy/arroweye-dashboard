@@ -160,6 +160,36 @@ export const CreateService = async (payload: unknown): Promise<void> => {
   }
 };
 
+export const CreateInvoice = async (payload: unknown): Promise<void> => {
+  try {
+    const { data: response } = await apiRequest<
+      ApiRequestResponse<ApiResponse>
+    >({
+      method: "POST",
+      url: `api/v1/payments/invoice/`,
+      data: payload,
+      requireToken: false,
+    });
+
+    console.log(response);
+    toast.success("Invoice Created Successful!");
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400) {
+        toast.error(error.response?.data?.message || error.response?.data[0]);
+      } else if (error.response?.status === 403) {
+        toast.error(error.response?.data?.message || "Access denied.");
+      } else {
+        toast.error(
+          error.response?.data?.message || "Request failed. Please try again."
+        );
+      }
+    } else {
+      toast.error("Request failed. Please try again.");
+      console.error("Unexpected Error:", error);
+    }
+  }
+};
 export const AddStaff = async (payload: unknown): Promise<void> => {
   try {
     const { data: response } = await apiRequest<

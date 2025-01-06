@@ -4,7 +4,12 @@ import { SelectInput } from "@/components/ui/selectinput";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { HiMinusCircle } from "react-icons/hi";
 import { Dialog } from "primereact/dialog";
-import { CreateService, getService, getStoredService } from "@/services/api";
+import {
+  CreateInvoice,
+  CreateService,
+  getService,
+  getStoredService,
+} from "@/services/api";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { ContentItem } from "@/types/contents";
 
@@ -13,6 +18,7 @@ interface Item {
   item: string;
   cost: string;
   quantity: number;
+  service_id?: number;
 }
 
 type ServiceError = {
@@ -45,6 +51,7 @@ const Manage = () => {
       ...prevData,
       currency: event.target.value,
     }));
+    setSelectedService(event.target.value);
   };
   const handleVendorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setProjectFormData((prevData) => ({
@@ -61,40 +68,6 @@ const Manage = () => {
     }));
   };
 
-  const handleCustomOptionChange = (value: number) => {
-    if (value === 9) {
-      setIsAddNewService(true);
-    } else {
-      setProjectFormData((prevData) => {
-        const existingServiceIndex = prevData.services.findIndex(
-          (service) => service.service_id === value
-        );
-
-        let updatedServices;
-        if (existingServiceIndex !== -1) {
-          updatedServices = prevData.services.map((service, index) =>
-            index === existingServiceIndex
-              ? { ...service, quantity: 0 }
-              : service
-          );
-        } else {
-          updatedServices = [
-            ...prevData.services,
-            { service_id: value, quantity: 0 },
-          ];
-        }
-
-        return {
-          ...prevData,
-          services: updatedServices,
-        };
-      });
-
-      setSelectedService(value);
-      setIsAddNewService(false);
-    }
-  };
-
   const addItemField = () => {
     setItems([
       ...items,
@@ -108,7 +81,19 @@ const Manage = () => {
   };
 
   const removeItemField = (id: number) => {
-    setItems(items.filter((item) => item.id !== id));
+    const updatedItems = items.filter((item) => item.id !== id);
+    setItems(updatedItems);
+
+    setProjectFormData((prevData) => {
+      const updatedServices = prevData.services.filter(
+        (_, index) => index !== items.findIndex((item) => item.id === id)
+      );
+      console.log("Updated Services:", updatedServices);
+      return {
+        ...prevData,
+        services: updatedServices,
+      };
+    });
   };
 
   useEffect(() => {
@@ -233,6 +218,14 @@ const Manage = () => {
 
   const handleProjectSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const subtotal = items.reduce(
+      (sum, item) => sum + parseFloat(item.cost) * item.quantity,
+      0
+    );
+    const customCost = subtotal;
+    console.log("Subtotal: ", customCost);
+
     const newErrors: ProjectErrors = {
       project_title: "",
       vendor_id: null,
@@ -246,31 +239,23 @@ const Manage = () => {
       })),
     };
 
-    console.log("Vendor ID: ", projectFormData);
-
     if (!projectFormData.project_title) {
       newErrors.project_title = "Please enter a Project Title.";
     }
-
     if (!projectFormData.vendor_id) {
       newErrors.vendor_id = "Please select a Vendor.";
     }
-
     if (!projectFormData.po_code) {
       newErrors.po_code = "Please enter a PO Code.";
     }
-
-    if (!projectFormData.cost) {
-      newErrors.cost = "Please enter a Cost.";
+    if (customCost <= 0) {
+      newErrors.cost = "Please enter a valid Cost.";
     }
 
     projectFormData.services.forEach((service, index) => {
       if (!service.service_id) {
         newErrors.services[index].service_id = "Please select a Service.";
-      } else {
-        console.log(`Service ${index} - service_id: ${service.service_id}`);
       }
-
       if (service.quantity === null || service.quantity <= 0) {
         newErrors.services[index].quantity = "Please enter a valid quantity.";
       }
@@ -278,15 +263,32 @@ const Manage = () => {
 
     setProjectErrors(newErrors);
 
-    const hasErrors =
-      Object.values(newErrors).some((error) => error !== "") ||
-      newErrors.services.some(
-        (service: ServiceError) =>
-          service.service_id !== "" || service.quantity !== null
-      );
+    const hasErrors = Object.entries(newErrors).some(([key, value]) => {
+      if (key === "services") {
+        return (
+          value as { service_id: string | null; quantity: number | null }[]
+        ).some(
+          (service) => service.service_id !== null || service.quantity !== null
+        );
+      }
+      return value !== "" && value !== null;
+    });
 
     if (!hasErrors) {
-      CreateService(projectFormData)
+      const updatedFormData = {
+        ...projectFormData,
+        vendor_id: projectFormData.vendor_id
+          ? parseInt(projectFormData.vendor_id.toString())
+          : null,
+        subvendor_id: projectFormData.subvendor_id
+          ? parseInt(projectFormData.subvendor_id.toString())
+          : null,
+        cost: customCost,
+      };
+
+      console.log("Updated Form Data with Cost:", updatedFormData);
+
+      CreateInvoice(updatedFormData)
         .then(() => {
           console.log("Form submitted successfully!");
           hideDialog();
@@ -294,6 +296,8 @@ const Manage = () => {
         .catch((err) => {
           console.error("Error submitting form:", err);
         });
+    } else {
+      console.log("Form has errors. Not submitting.");
     }
   };
 
@@ -417,7 +421,7 @@ const Manage = () => {
           </div>
 
           <div className="mt-[20px]">
-            {items.map((item) => (
+            {items.map((item, index) => (
               <div className="flex items-center gap-[20px]" key={item.id}>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 items-center gap-[20px]">
                   <div className="max-w-[400px] w-full">
@@ -425,85 +429,105 @@ const Manage = () => {
                       name="service"
                       labelText="Select Service"
                       options={customOptions}
+                      value={item.service_id || ""}
                       onChange={(e) => {
-                        const selectedOption = customOptions.find(
-                          (option) => option.value === Number(e.target.value)
-                        );
-                        if (selectedOption) {
-                          handleCustomOptionChange(selectedOption.value);
+                        const selectedValue = Number(e.target.value);
+
+                        if (selectedValue === 9) {
+                          setIsAddNewService(true);
+                        } else {
+                          const updatedItems = items.map((i) =>
+                            i.id === item.id
+                              ? { ...i, service_id: selectedValue }
+                              : i
+                          );
+                          setItems(updatedItems);
+
+                          const updatedServices = [...projectFormData.services];
+                          updatedServices[index] = {
+                            ...updatedServices[index],
+                            service_id: selectedValue,
+                          };
+                          setProjectFormData((prevData) => ({
+                            ...prevData,
+                            services: updatedServices,
+                          }));
                         }
                       }}
                     />
-
-                    {projectErrors && (
+                    {projectErrors.services[index]?.service_id && (
                       <p className="text-red-500 text-xs">
-                        {projectErrors.services[0].service_id}
+                        {projectErrors.services[index].service_id}
                       </p>
                     )}
                   </div>
+
                   <div className="max-w-[400px] w-full">
                     <Input
                       type="number"
                       name="cost"
                       placeholder="Cost"
-                      value={item.cost}
+                      value={item.cost || ""}
                       onChange={(e) => {
                         const updatedCost = e.target.value;
 
-                        setItems(
-                          items.map((i) =>
-                            i.id === item.id ? { ...i, cost: updatedCost } : i
-                          )
+                        const updatedItems = items.map((i) =>
+                          i.id === item.id ? { ...i, cost: updatedCost } : i
                         );
+                        setItems(updatedItems);
 
+                        const updatedServices = [...projectFormData.services];
+                        updatedServices[index] = {
+                          ...updatedServices[index],
+                        };
                         setProjectFormData((prevData) => ({
                           ...prevData,
-                          cost: updatedCost,
+                          services: updatedServices,
                         }));
                       }}
                     />
-
                     {projectErrors.cost && (
                       <p className="text-red-500 text-xs">
                         {projectErrors.cost}
                       </p>
                     )}
                   </div>
+
                   <div className="max-w-[400px] w-full">
                     <Input
                       type="number"
                       name="quantity"
                       placeholder="Quantity"
-                      value={item.quantity}
+                      value={item.quantity || 0}
                       onChange={(e) => {
                         const updatedQuantity = Number(e.target.value);
 
-                        setItems(
-                          items.map((i) =>
-                            i.id === item.id
-                              ? { ...i, quantity: updatedQuantity }
-                              : i
-                          )
+                        const updatedItems = items.map((i) =>
+                          i.id === item.id
+                            ? { ...i, quantity: updatedQuantity }
+                            : i
                         );
+                        setItems(updatedItems);
 
+                        const updatedServices = [...projectFormData.services];
+                        updatedServices[index] = {
+                          ...updatedServices[index],
+                          quantity: updatedQuantity,
+                        };
                         setProjectFormData((prevData) => ({
                           ...prevData,
-                          services: prevData.services.map((service) =>
-                            service.service_id === item.id
-                              ? { ...service, quantity: updatedQuantity }
-                              : service
-                          ),
+                          services: updatedServices,
                         }));
                       }}
                     />
-
-                    {projectErrors.services[0].quantity && (
+                    {projectErrors.services[index]?.quantity && (
                       <p className="text-red-500 text-xs">
-                        {projectErrors.services[0].quantity}
+                        {projectErrors.services[index].quantity}
                       </p>
                     )}
                   </div>
                 </div>
+
                 <HiMinusCircle
                   className="text-[#000000]"
                   size={50}
