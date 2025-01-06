@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import Table from "./Table";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { SelectInput } from "@/components/ui/selectinput";
@@ -29,6 +28,8 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
       setContent(fetchedContent);
     });
   }, []);
+
+  const filteredContent = content?.filter((item) => item.archived === true);
 
   return (
     <div className="rounded-[16px] border bg-grey-25 p-[16px]">
@@ -60,12 +61,12 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
 
       <Table
         headers={headers}
-        rows={content?.map((item, index) => ({
+        rows={filteredContent?.map((item, index) => ({
           data: [
             item?.title,
             item?.vendor,
             item?.subvendor,
-            item?.createdAt,
+            item?.created.slice(0, 10),
             item?.code,
             item?.pin,
             <button
@@ -90,12 +91,6 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
         }))}
         emptyState={
           <div className="flex h-[50vh] flex-col items-center justify-center text-center">
-            <Image
-              src="/product/emptyState.svg"
-              width={100}
-              height={100}
-              alt="empty state"
-            />
             <div className="my-[32px]">
               <p className="text-[20px] font-[600] text-grey-400">No Data</p>
             </div>

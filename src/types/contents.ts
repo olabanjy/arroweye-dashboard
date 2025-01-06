@@ -18,6 +18,7 @@ export interface Staff {
 }
 
 export interface ContentItem {
+  archived: boolean;
   id: number;
   subvendor: number;
   code: number;
@@ -40,7 +41,7 @@ export interface ContentItem {
     pin: number;
   };
   po_code: string;
-  createdAt: string;
+  created: string;
   total: number;
   status: string;
 }

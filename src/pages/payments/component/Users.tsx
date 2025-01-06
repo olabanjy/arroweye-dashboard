@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import Table from "./Table";
 import { IoIosAddCircle, IoMdCheckmark } from "react-icons/io";
 import Modal from "@/pages/component/Modal";
@@ -65,12 +64,6 @@ const Users = () => {
           rows={rows}
           emptyState={
             <div className="flex h-[50vh] flex-col items-center justify-center text-center">
-              <Image
-                src="/product/emptyState.svg"
-                width={100}
-                height={100}
-                alt="empty state"
-              />
               <div className="my-[32px]">
                 <p className="text-[20px] font-[600] text-grey-400">No Data</p>
               </div>

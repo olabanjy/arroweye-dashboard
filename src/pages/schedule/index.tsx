@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { GoArrowUpRight } from "react-icons/go";
 import { DateClickArg } from "@fullcalendar/interaction";
+import { CreateEvent } from "@/services/api";
 
 interface FormErrors {
   eventTitle?: string;
@@ -31,8 +32,7 @@ const Schedule = () => {
     },
   ]);
 
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  console.log(selectedDate);
+  // const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formData, setFormData] = useState({
@@ -52,48 +52,52 @@ const Schedule = () => {
     endDate: "",
   });
 
-  const handleAddEvent = () => {
-    console.log(formData);
+  // const handleAddEvent = () => {
+  //   setFormErrors({
+  //     eventTitle: "",
+  //     startDate: "",
+  //     endDate: "",
+  //   });
 
-    const errors: FormErrors = {};
+  //   const errors: FormErrors = {};
 
-    if (!formData.eventTitle) errors.eventTitle = "Event Title is required";
-    if (!formData.startDate) errors.startDate = "Start Date is required";
-    if (!formData.endDate) errors.endDate = "End Date is required";
+  //   if (!formData.eventTitle) errors.eventTitle = "Event Title is required";
+  //   if (!formData.startDate) errors.startDate = "Start Date is required";
+  //   if (!formData.endDate) errors.endDate = "End Date is required";
 
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
+  //   if (Object.keys(errors).length > 0) {
+  //     setFormErrors(errors);
+  //     return;
+  //   }
 
-    const newEvent = {
-      title: formData.eventTitle,
-      start: formData.startDate,
-      end: formData.endDate,
-    };
+  //   const newEvent = {
+  //     title: formData.eventTitle,
+  //     start: formData.startDate,
+  //     end: formData.endDate,
+  //   };
 
-    setEvents([...events, newEvent]);
+  //   setEvents((prevEvents) => [...prevEvents, newEvent]);
 
-    setIsModalVisible(false);
-    setSelectedDate(null);
-    setFormData({
-      eventTitle: "",
-      vendor: "",
-      subvendor: "",
-      location: "",
-      eventType: "",
-      startDate: "",
-      endDate: "",
-      code: "",
-    });
-  };
+  //   setIsModalVisible(false);
+  //   setSelectedDate(null);
+  //   setFormData({
+  //     eventTitle: "",
+  //     vendor: "",
+  //     subvendor: "",
+  //     location: "",
+  //     eventType: "",
+  //     startDate: "",
+  //     endDate: "",
+  //     code: "",
+  //   });
+  // };
 
   const handleDateClick = (info: DateClickArg) => {
     const selectedDate = info.dateStr;
     const currentDate = new Date().toISOString().split("T")[0];
 
     if (selectedDate >= currentDate) {
-      setSelectedDate(selectedDate);
+      // setSelectedDate(selectedDate);
       setIsModalVisible(true);
     } else {
       alert(`You cannot select a past date: ${selectedDate}`);
@@ -102,56 +106,156 @@ const Schedule = () => {
 
   const handleCloseModal = () => {
     setIsModalVisible(false);
-    setSelectedDate(null);
+    // setSelectedDate(null);
   };
 
   const handleFormChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+
     setFormData((prevData) => {
       const updatedData = { ...prevData, [name]: value };
       console.log(updatedData);
+
+      const newErrors: { [key: string]: string } = { ...formErrors };
+
+      if (name === "eventTitle" && !value) {
+        newErrors.eventTitle = "Event Title is required.";
+      } else {
+        newErrors.eventTitle = "";
+      }
+
+      if (name === "startDate" && !value) {
+        newErrors.startDate = "Start Date is required.";
+      } else {
+        newErrors.startDate = "";
+      }
+
+      if (name === "endDate" && !value) {
+        newErrors.endDate = "End Date is required.";
+      } else {
+        newErrors.endDate = "";
+      }
+
+      setFormErrors(newErrors);
+
       return updatedData;
     });
   };
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    console.log("Form submitted!");
+
+    const newErrors: FormErrors = {
+      eventTitle: "",
+      startDate: "",
+      endDate: "",
+    };
+
+    if (!formData.eventTitle) {
+      newErrors.eventTitle = "Event Title is required.";
+    }
+
+    if (!formData.startDate) {
+      newErrors.startDate = "Start Date is required.";
+    }
+
+    if (!formData.endDate) {
+      newErrors.endDate = "End Date is required.";
+    }
+
+    setFormErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some((error) => error !== "");
+
+    if (!hasErrors) {
+      const updatedFormData = {
+        ...formData,
+        vendor: formData.vendor ? parseInt(formData.vendor) : null,
+        subvendor: formData.subvendor ? parseInt(formData.subvendor) : null,
+      };
+
+      console.log("Form data is valid:", updatedFormData);
+
+      CreateEvent(updatedFormData)
+        .then(() => {
+          console.log("Form submitted successfully!");
+          const newEvent = {
+            title: formData.eventTitle,
+            start: formData.startDate,
+            end: formData.endDate,
+          };
+          setEvents((prevEvents) => [...prevEvents, newEvent]);
+
+          setFormData({
+            eventTitle: "",
+            vendor: "",
+            subvendor: "",
+            location: "",
+            eventType: "",
+            startDate: "",
+            endDate: "",
+            code: "",
+          });
+          setIsModalVisible(false);
+        })
+        .catch((err) => {
+          console.error("Error submitting form:", err);
+        });
+    } else {
+      console.log("Form contains errors. Not submitting.");
+    }
+  };
+
+  const vendorOptions = [
+    { value: 1, label: "Ade" },
+    { value: 2, label: "VIVO" },
+  ];
+
+  const subVendorOptions = [
+    { value: 3, label: "SubAde" },
+    { value: 4, label: "tedXOAU" },
+  ];
+
   return (
     <DashboardLayout>
-      <form>
-        <div className="schedule-container ">
-          <div className="calendar-container">
-            <FullCalendar
-              plugins={[
-                dayGridPlugin,
-                timeGridPlugin,
-                listPlugin,
-                interactionPlugin,
-              ]}
-              initialView="dayGridMonth"
-              headerToolbar={{
-                left: "prev,next today",
-                center: "title",
-                right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
-              }}
-              events={events}
-              eventClick={(info) => {
-                alert(`Event: ${info.event.title}`);
-              }}
-              dateClick={handleDateClick}
-              editable={true}
-              droppable={true}
-            />
-          </div>
+      <div className="schedule-container">
+        <div className="calendar-container">
+          <FullCalendar
+            plugins={[
+              dayGridPlugin,
+              timeGridPlugin,
+              listPlugin,
+              interactionPlugin,
+            ]}
+            initialView="dayGridMonth"
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
+            }}
+            events={events}
+            eventClick={(info) => {
+              alert(`Event: ${info.event.title}`);
+            }}
+            dateClick={handleDateClick}
+            editable={true}
+            droppable={true}
+          />
         </div>
+      </div>
 
-        <Dialog
-          header="EVENT DETAILS"
-          visible={isModalVisible}
-          onHide={handleCloseModal}
-          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "50vw" }}
-        >
+      <Dialog
+        header="EVENT DETAILS"
+        visible={isModalVisible}
+        onHide={handleCloseModal}
+        breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+        style={{ width: "50vw" }}
+      >
+        <form onSubmit={handleFormSubmit}>
           <div className="space-y-4 text-[#000]">
             <div className="grid grid-cols-2 gap-[20px] items-center">
               <div className="max-w-[400px] w-full">
@@ -170,18 +274,19 @@ const Schedule = () => {
                   value={formData.vendor}
                   labelText="Vendor"
                   onChange={handleFormChange}
-                  options={[{ value: "Ade", label: "Ade" }]}
+                  options={vendorOptions}
                 />
               </div>
               <div className="max-w-[400px] w-full">
-                <Input
-                  type="text"
+                <SelectInput
                   name="subvendor"
                   value={formData.subvendor}
+                  labelText="SubVendor"
                   onChange={handleFormChange}
-                  placeholder="Subvendor"
+                  options={subVendorOptions}
                 />
               </div>
+
               <div className="max-w-[400px] w-full">
                 <Input
                   type="text"
@@ -234,12 +339,12 @@ const Schedule = () => {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-[20px]">
-                <p
-                  className=" cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
-                  onClick={handleAddEvent}
+                <button
+                  className="cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
+                  type="submit"
                 >
                   Schedule
-                </p>
+                </button>
                 <p className="px-[20px] py-[8px] bg-[#000] rounded-full text-[#fff] inline-flex">
                   Share
                 </p>
@@ -250,8 +355,8 @@ const Schedule = () => {
               </div>
             </div>
           </div>
-        </Dialog>
-      </form>
+        </form>
+      </Dialog>
     </DashboardLayout>
   );
 };
