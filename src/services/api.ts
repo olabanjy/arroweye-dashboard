@@ -12,11 +12,6 @@ interface ApiResponse {
   url: string;
 }
 
-// interface ContentResponse {
-//   results: ContentItem[];
-//   response: unknown;
-// }
-
 interface ApiRequestResponse<T> {
   data: T;
 }
