@@ -81,12 +81,17 @@ const Login = () => {
     }
 
     LoginEP(loginFormData)
-      .then(() => {
-        console.log("Form submitted successfully!");
-        setIsOtpSent(true);
+      .then((response) => {
+        if (!response?.errorResponse) {
+          setIsOtpSent(true);
+        } else {
+          console.log("Login failed:", response.message);
+          console.log("Error details:", response.errorResponse);
+        }
       })
       .catch((err) => {
-        console.error("Error submitting form:", err);
+        console.error("Error submitting form:", err.message || err);
+        console.log("Error response from catch block:", err.errorResponse);
       })
       .finally(() => {
         setIsLoginLoading(false);

@@ -15,10 +15,6 @@ interface Item {
   quantity: number;
 }
 
-// type Service = {
-//   service_id: string | null;
-//   quantity: number | null;
-// };
 type ServiceError = {
   service_id: string | null;
   quantity: string | null;
@@ -271,7 +267,10 @@ const Manage = () => {
     projectFormData.services.forEach((service, index) => {
       if (!service.service_id) {
         newErrors.services[index].service_id = "Please select a Service.";
+      } else {
+        console.log(`Service ${index} - service_id: ${service.service_id}`);
       }
+
       if (service.quantity === null || service.quantity <= 0) {
         newErrors.services[index].quantity = "Please enter a valid quantity.";
       }
@@ -281,9 +280,6 @@ const Manage = () => {
 
     const hasErrors =
       Object.values(newErrors).some((error) => error !== "") ||
-      // newErrors.services.some(
-      //   (service: any) => service.service_id !== "" || service.quantity !== ""
-      // );
       newErrors.services.some(
         (service: ServiceError) =>
           service.service_id !== "" || service.quantity !== null

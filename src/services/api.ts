@@ -10,11 +10,13 @@ if (typeof window !== "undefined" && window?.sessionStorage)
 interface ApiResponse {
   action: string;
   url: string;
+  status: number | string;
 }
 
 interface ApiRequestResponse<T> {
   data: T;
   message: string;
+  status: number | string;
 }
 
 export const getGenreContents = async (): Promise<ContentItem[] | null> => {
@@ -189,7 +191,9 @@ export const AddStaff = async (payload: unknown): Promise<void> => {
   }
 };
 
-export const LoginEP = async (payload: unknown): Promise<void> => {
+export const LoginEP = async (
+  payload: unknown
+): Promise<{ status: number; message: string; errorResponse?: unknown }> => {
   try {
     const response = await apiRequest<ApiRequestResponse<ApiResponse>>({
       method: "POST",
@@ -198,21 +202,37 @@ export const LoginEP = async (payload: unknown): Promise<void> => {
       requireToken: false,
     });
 
+    console.log(response);
     toast.success(response.message);
+
+    return { status: Number(response.status), message: response.message };
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
+      const errorResponse = error.response;
+
+      console.log("Error response:", errorResponse);
+
+      if (errorResponse?.status === 400) {
+        toast.error(errorResponse?.data?.message || errorResponse?.data[0]);
+      } else if (errorResponse?.status === 403) {
+        toast.error(errorResponse?.data?.message || "Access denied.");
       } else {
         toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
+          errorResponse?.data?.message || "Request failed. Please try again."
         );
       }
+
+      return {
+        status: errorResponse?.status || 500,
+        message:
+          errorResponse?.data?.message || "Request failed. Please try again.",
+        errorResponse,
+      };
     } else {
       toast.error("Request failed. Please try again.");
       console.error("Unexpected Error:", error);
+
+      return { status: 500, message: "Unexpected error occurred." };
     }
   }
 };
