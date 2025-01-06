@@ -1,9 +1,9 @@
-import Payment from "./payments";
+import LoginPage from "./login";
 
 export default function Home() {
   return (
     <div className="">
-      <Payment />
+      <LoginPage />
     </div>
   );
 }

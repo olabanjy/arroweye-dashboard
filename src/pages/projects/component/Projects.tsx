@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import Image from "next/image";
 import Table from "./Table";
 import { BsCurrencyDollar } from "react-icons/bs";
@@ -107,18 +105,8 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
               alt="empty state"
             />
             <div className="my-[32px]">
-              <p className="text-[20px] font-[600] text-grey-400">
-                You have not created any Products
-              </p>
-
-              <p className="text-[16px] font-[400] text-grey-400">
-                Start your journey by creating your first product.
-              </p>
+              <p className="text-[20px] font-[600] text-grey-400">No Data</p>
             </div>
-
-            <Link href="/products/add-product">
-              <Button label="Add Product" />
-            </Link>
           </div>
         }
       />

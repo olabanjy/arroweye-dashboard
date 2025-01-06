@@ -14,6 +14,7 @@ interface ApiResponse {
 
 interface ApiRequestResponse<T> {
   data: T;
+  message: string;
 }
 
 export const getGenreContents = async (): Promise<ContentItem[] | null> => {
@@ -190,17 +191,14 @@ export const AddStaff = async (payload: unknown): Promise<void> => {
 
 export const LoginEP = async (payload: unknown): Promise<void> => {
   try {
-    const { data: response } = await apiRequest<
-      ApiRequestResponse<ApiResponse>
-    >({
+    const response = await apiRequest<ApiRequestResponse<ApiResponse>>({
       method: "POST",
       url: `/login/`,
       data: payload,
       requireToken: false,
     });
 
-    console.log(response);
-    toast.success("Login successful! Redirecting...");
+    toast.success(response.message);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {

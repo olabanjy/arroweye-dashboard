@@ -1,3 +1,4 @@
+import { clearLS } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -20,6 +21,11 @@ const Sidebar: FC = () => {
     // } else {
     //   setIsOpen(true);
     // }
+  };
+
+  const logout = () => {
+    clearLS();
+    router.push("/login");
   };
 
   return (
@@ -123,6 +129,7 @@ const Sidebar: FC = () => {
                       ? "bg-[#17954c] text-white"
                       : "hover:text-[#17954c]"
                   }`}
+                  onClick={logout}
                 >
                   <span>Logout</span>
                 </li>

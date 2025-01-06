@@ -7,7 +7,9 @@ import "@/styles/globals.css";
 import Modal from "./component/Modal";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { LoginEP } from "@/services/api";
 import { MdLockOutline } from "react-icons/md";
 import type { AppProps } from "next/app";
@@ -18,7 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   useEffect(() => {
-    if (router.pathname === "/login") return;
+    if (router.pathname === "/login" || router.pathname === "/") return;
 
     let timeout: NodeJS.Timeout;
 
@@ -36,7 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
     timeout = setTimeout(() => {
       setIsIdle(true);
-    }, 2000);
+    }, 300000);
 
     return () => {
       clearTimeout(timeout);
@@ -86,6 +88,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Component {...pageProps} />
+      <ToastContainer />
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

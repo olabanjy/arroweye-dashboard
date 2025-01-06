@@ -6,6 +6,10 @@ import Nav from "./Nav";
 import { LoginEP, VerifyLogin } from "@/services/api";
 
 const Login = () => {
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
+  const [isOtpLoading, setIsOtpLoading] = useState(false);
+  const [isRecoverLoading, setIsRecoverLoading] = useState(false);
+
   const [loginFormData, setLoginFormData] = useState({
     email: "",
   });
@@ -57,6 +61,8 @@ const Login = () => {
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    setIsLoginLoading(true);
+
     const newLoginErrors: { email: string; otp?: string } = {
       email: "",
     };
@@ -70,6 +76,7 @@ const Login = () => {
 
     if (newLoginErrors.email !== "") {
       setLoginErrors(newLoginErrors);
+      setIsLoginLoading(false);
       return;
     }
 
@@ -80,11 +87,16 @@ const Login = () => {
       })
       .catch((err) => {
         console.error("Error submitting form:", err);
+      })
+      .finally(() => {
+        setIsLoginLoading(false);
       });
   };
 
   const handleOtpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    setIsOtpLoading(true);
 
     const newLoginErrors: { otp: string } = {
       otp: "",
@@ -107,14 +119,20 @@ const Login = () => {
         })
         .catch((err) => {
           console.error("Error verifying OTP:", err);
+        })
+        .finally(() => {
+          setIsOtpLoading(false);
         });
     } else {
       console.log("OTP validation failed, please correct the errors.");
+      setIsOtpLoading(false);
     }
   };
 
   const handleRecoverSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    setIsRecoverLoading(true);
 
     const newRecoverErrors = {
       email: "",
@@ -135,6 +153,8 @@ const Login = () => {
     if (!hasRecoverErrors) {
       console.log("Password recovery request sent!");
     }
+
+    setIsRecoverLoading(false);
   };
 
   return (
@@ -165,10 +185,12 @@ const Login = () => {
                     onChange={handleLoginInputChange}
                     error={loginErrors.email}
                   />
+
                   <Button
                     label="Send OTP"
+                    isLoading={isLoginLoading}
+                    disabled={isLoginLoading}
                     variant="primary"
-                    isLoading={false}
                     loadingText="Sending OTP..."
                     type="submit"
                     className="rounded-[8px] w-full font-bold"
@@ -188,9 +210,10 @@ const Login = () => {
                     error={otpErrors.otp}
                   />
                   <Button
-                    label="Login"
+                    label="Verify Otp"
+                    isLoading={isOtpLoading}
+                    disabled={isOtpLoading}
                     variant="primary"
-                    isLoading={false}
                     loadingText="Please wait..."
                     type="submit"
                     className="rounded-[8px] w-full font-bold"
@@ -217,7 +240,8 @@ const Login = () => {
                   <Button
                     label="Recover Password"
                     variant="primary"
-                    isLoading={false}
+                    isLoading={isRecoverLoading}
+                    disabled={isRecoverLoading}
                     loadingText="Please wait..."
                     type="submit"
                     className="rounded-[8px] w-full font-bold"
