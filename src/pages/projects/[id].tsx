@@ -44,8 +44,6 @@ const ProjectDetails = () => {
     setVisible(true);
   };
 
-  console.log(content);
-
   const hideDialog = () => {
     setVisible(false);
   };
@@ -122,6 +120,7 @@ const ProjectDetails = () => {
     const payload = {
       ...addUserFormData,
       business_id: 1,
+      role: content?.subvendor,
     };
 
     console.log("Form data with business_id added:", payload);

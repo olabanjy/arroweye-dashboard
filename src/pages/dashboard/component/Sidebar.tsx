@@ -128,11 +128,8 @@ const Sidebar: FC = () => {
                   </li>
                 </Link>
 
-                <Link href="#">
-                  <li
-                    className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer "
-                    onClick={toggleResourcesSidebar}
-                  >
+                <Link href="#" onClick={toggleResourcesSidebar}>
+                  <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer ">
                     <span className="flex items-center space-x-2">
                       <span className="bg-transparent w-2 h-2 rounded-full"></span>
                       <span>Resources</span>
@@ -171,7 +168,10 @@ const Sidebar: FC = () => {
 
         {isResourcesOpen && (
           <div>
-            <div className="p-4  flex gap-[8px] items-center text-[#03a835] text-[12px] font-semibold cursor-pointer">
+            <div
+              className="p-4  flex gap-[8px] items-center text-[#03a835] text-[12px] font-semibold cursor-pointer"
+              onClick={toggleResourcesSidebar}
+            >
               <p className="">MENU</p>
               <MdOutlineArrowRightAlt size={24} />
               <p className="">RESOURCES</p>
