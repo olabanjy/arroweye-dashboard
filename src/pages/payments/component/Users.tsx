@@ -35,7 +35,7 @@ const Users = () => {
             setIsModalOpen(true);
           }}
         >
-          {item?.staff[0].fullname?.[0] || " "}
+          {item?.staff?.[0]?.fullname?.[0] || " "}
         </div>
       </div>,
       item.type || " ",

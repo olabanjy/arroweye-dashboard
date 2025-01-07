@@ -65,7 +65,7 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
             item?.title,
             item?.vendor,
             item?.subvendor,
-            item?.created?.slice(0, 10),
+            item?.created?.slice(0, 10) || "2025-01-01",
             item?.code,
             item?.pin,
             <Link href={`/projects/${item.id}`} key={`manage-button-${index}`}>
