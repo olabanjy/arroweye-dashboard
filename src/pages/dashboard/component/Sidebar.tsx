@@ -30,12 +30,14 @@ const Sidebar: FC = () => {
 
   return (
     <div>
-      <button
-        className="lg:hidden p-4 text-[#17954c] focus:outline-none"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-      </button>
+      <div className=" absolute top-0 left-0">
+        <button
+          className="lg:hidden p-4 text-[#17954c] focus:outline-none"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
+      </div>
 
       <div
         className={`fixed lg:relative top-0 left-0 z-[99999999999] w-64 h-screen bg-white border border-slate-100 text-[#000000] flex flex-col transform ${

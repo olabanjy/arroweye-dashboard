@@ -7,7 +7,7 @@ const PaymentTab = () => {
   const [activeTab, setActiveTab] = useState("Manage");
 
   return (
-    <div className=" p-[20px]">
+    <div className=" lg:p-[20px]">
       <div className="flex gap-[10px] items-center mb-4">
         <button
           className={`px-[16px] py-[4px] rounded-full text-[20px]  ${

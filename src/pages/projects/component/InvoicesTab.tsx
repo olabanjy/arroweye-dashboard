@@ -15,9 +15,9 @@ const InvoicesTab: React.FC = () => {
   }, [activeTab]);
 
   return (
-    <div className="p-[20px]">
+    <div className="lg:p-[20px]">
       <div className=" grid md:flex items-start gap-[20px] md:gap-[40px]">
-        <div className="flex gap-[10px] items-center mb-4">
+        <div className="flex gap-[10px] items-center  lg:mb-4">
           <button
             className={`pb-[10px] text-[20px] ${
               activeTab === "Projects"
