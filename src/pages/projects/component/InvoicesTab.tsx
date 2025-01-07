@@ -16,7 +16,7 @@ const InvoicesTab: React.FC = () => {
 
   return (
     <div className="lg:p-[20px]">
-      <div className=" grid md:flex items-start gap-[20px] md:gap-[40px]">
+      <div className=" grid md:flex items-center gap-[20px] md:gap-[40px]">
         <div className="flex gap-[10px] items-center  lg:mb-4">
           <button
             className={`pb-[10px] text-[20px] ${
@@ -40,7 +40,7 @@ const InvoicesTab: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex-grow">
+        <div className="flex-grow lg:mb-4">
           <div className="flex items-center justify-end gap-[10px]">
             <div className="flex-grow">
               <Input

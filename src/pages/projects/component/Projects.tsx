@@ -4,6 +4,7 @@ import { BsCurrencyDollar } from "react-icons/bs";
 import { SelectInput } from "@/components/ui/selectinput";
 import { getProjects } from "@/services/api";
 import { ContentItem } from "@/types/contents";
+import Link from "next/link";
 
 interface ProjectsProps {
   filterVisible: boolean;
@@ -67,13 +68,11 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
             item?.created?.slice(0, 10),
             item?.code,
             item?.pin,
-            <button
-              key={`manage-button-${index}`}
-              className="p-[8px] text-blue-600 hover:text-blue-800"
-              onClick={() => alert("Manage action triggered!")}
-            >
-              Manage
-            </button>,
+            <Link href={`/projects/${item.id}`} key={`manage-button-${index}`}>
+              <p className="p-[8px] text-blue-600 hover:text-blue-800">
+                Manage
+              </p>
+            </Link>,
             <div
               key={`action-buttons-${index}`}
               className="flex justify-center gap-2"

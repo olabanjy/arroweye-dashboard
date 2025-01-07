@@ -17,7 +17,46 @@ export interface Staff {
   licenses: string;
 }
 
+export interface StaffItem {
+  staff: Staff[];
+  id: number | string;
+  type: string;
+  fullname: string;
+  role: string;
+}
+
 export interface ContentItem {
+  start_dte?: string;
+  end_dte?: string;
+  archived?: boolean;
+  id?: number | string;
+  subvendor?: number;
+  code?: number;
+  pin?: number;
+  currency?: string;
+  name?: string;
+  title?: string;
+  type?: string;
+  fullname?: string;
+  email?: string;
+  role?: string;
+  vendor?: string;
+  licenses?: string;
+  staff?: Staff[];
+  project?: {
+    title: string;
+    code: string;
+    vendor: string;
+    subvendor: string;
+    pin: number;
+  };
+  po_code?: string;
+  created?: string;
+  total?: number;
+  status?: string;
+}
+
+export interface EventsItem {
   start_dte: string;
   end_dte: string;
   archived: boolean;

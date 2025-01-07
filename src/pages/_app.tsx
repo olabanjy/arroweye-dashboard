@@ -50,7 +50,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (isIdle) {
-      setIsModalOpen(true);
+      setIsModalOpen(false);
     }
   }, [isIdle]);
 
@@ -86,7 +86,7 @@ export default function App({ Component, pageProps }: AppProps) {
   };
 
   return (
-    <>
+    <div className=" font-IBM">
       <Component {...pageProps} />
       <ToastContainer />
       <Modal
@@ -148,6 +148,6 @@ export default function App({ Component, pageProps }: AppProps) {
           </div>
         </form>
       </Modal>
-    </>
+    </div>
   );
 }

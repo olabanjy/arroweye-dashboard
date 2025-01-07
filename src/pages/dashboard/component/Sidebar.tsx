@@ -40,101 +40,130 @@ const Sidebar: FC = () => {
       </div>
 
       <div
-        className={`fixed lg:relative top-0 left-0 z-[99999999999] w-64 h-screen bg-white border border-slate-100 text-[#000000] flex flex-col transform ${
+        className={`fixed lg:relative top-0 left-0 z-[99999999999] w-64 h-screen overflow-auto bg-white border border-slate-100 text-[#000000] flex flex-col transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 transition-transform duration-700`}
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
       >
-        <div className="p-4 border-b">
+        <div className=" p-[50px] border-b flex items-center justify-center">
           <Image
             src="https://res.cloudinary.com/dih0krdcj/image/upload/v1710656700/Arroweye%20Pro/qkpawzztfn7c6osevfmm.svg"
             alt="Logo"
-            width={100}
-            height={100}
+            width={50}
+            height={50}
             priority
           />
         </div>
         {isOpen && !isResourcesOpen && (
           <div>
             <nav className="flex-1">
-              <ul className="space-y-4 p-4">
-                <Link href="/projects">
-                  <li
-                    className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
-                      isActive("/projects")
-                        ? "bg-[#17954c] text-white"
-                        : "hover:text-[#17954c]"
-                    }`}
-                  >
-                    <span>Projects</span>
-                  </li>
-                </Link>
-                <Link href="/drops">
-                  <li
-                    className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
-                      isActive("/drops")
-                        ? "bg-[#17954c] text-white"
-                        : "hover:text-[#17954c]"
-                    }`}
-                  >
-                    <span>Drops</span>
-                  </li>
-                </Link>
-                <Link href="/payments">
-                  <li
-                    className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
-                      isActive("/payments")
-                        ? "bg-[#17954c] text-white"
-                        : "hover:text-[#17954c]"
-                    }`}
-                  >
-                    <span>Payments</span>
-                  </li>
-                </Link>
-                <Link href="/schedule">
-                  <li
-                    className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
-                      isActive("/schedule")
-                        ? "bg-[#17954c] text-white"
-                        : "hover:text-[#17954c]"
-                    }`}
-                  >
-                    <span>Schedule</span>
-                  </li>
-                </Link>
-                <li
-                  className={`flex items-center justify-between space-x-2 p-2 rounded cursor-pointer ${
-                    isActive("/resources")
-                      ? "bg-[#17954c] text-white"
-                      : "hover:text-[#17954c]"
-                  }`}
-                  onClick={toggleResourcesSidebar}
-                >
-                  Resources
-                  <span>
-                    <HiOutlineDotsHorizontal size={24} />
+              <ul className="grid space-y-[20px] p-4">
+                <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer  text-[#03a835] text-[12px] font-semibold ">
+                  <span className="flex items-center space-x-2">
+                    <span className="bg-transparent w-2 h-2 rounded-full"></span>
+                    <span>MENU</span>
                   </span>
                 </li>
-                <Link href="/settings">
-                  <li
-                    className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
-                      isActive("/settings")
-                        ? "bg-[#17954c] text-white"
-                        : "hover:text-[#17954c]"
-                    }`}
-                  >
-                    <span>Settings</span>
+
+                <Link href="/projects">
+                  <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
+                    <span className="flex items-center space-x-2">
+                      <span
+                        className={`${
+                          isActive("/projects")
+                            ? "bg-[#17954c] w-3 h-3"
+                            : "bg-transparent w-2 h-2"
+                        } rounded-full`}
+                      ></span>
+                      <span>Projects</span>
+                    </span>
                   </li>
                 </Link>
-                <li
-                  className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
-                    isActive("/logout")
-                      ? "bg-[#17954c] text-white"
-                      : "hover:text-[#17954c]"
-                  }`}
-                  onClick={logout}
-                >
-                  <span>Logout</span>
-                </li>
+
+                <Link href="/drops">
+                  <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
+                    <span className="flex items-center space-x-2">
+                      <span
+                        className={`${
+                          isActive("/drops")
+                            ? "bg-[#17954c] w-3 h-3"
+                            : "bg-transparent w-2 h-2"
+                        } rounded-full`}
+                      ></span>
+                      <span>Drops</span>
+                    </span>
+                  </li>
+                </Link>
+
+                <Link href="/payments">
+                  <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
+                    <span className="flex items-center space-x-2">
+                      <span
+                        className={`${
+                          isActive("/payments")
+                            ? "bg-[#17954c] w-3 h-3"
+                            : "bg-transparent w-2 h-2"
+                        } rounded-full`}
+                      ></span>
+                      <span>Payments</span>
+                    </span>
+                  </li>
+                </Link>
+
+                <Link href="/schedule">
+                  <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
+                    <span className="flex items-center space-x-2">
+                      <span
+                        className={`${
+                          isActive("/schedule")
+                            ? "bg-[#17954c] w-3 h-3"
+                            : "bg-transparent w-2 h-2"
+                        } rounded-full`}
+                      ></span>
+                      <span>Schedule</span>
+                    </span>
+                  </li>
+                </Link>
+
+                <Link href="#">
+                  <li
+                    className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer "
+                    onClick={toggleResourcesSidebar}
+                  >
+                    <span className="flex items-center space-x-2">
+                      <span className="bg-transparent w-2 h-2 rounded-full"></span>
+                      <span>Resources</span>
+                    </span>
+                    <HiOutlineDotsHorizontal size={24} />
+                  </li>
+                </Link>
+
+                <Link href="/settings">
+                  <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
+                    <span className="flex items-center space-x-2">
+                      <span
+                        className={`${
+                          isActive("/settings")
+                            ? "bg-[#17954c] w-3 h-3"
+                            : "bg-transparent w-2 h-2"
+                        } rounded-full`}
+                      ></span>
+                      <span>Settings</span>
+                    </span>
+                  </li>
+                </Link>
+
+                <Link href="#" onClick={logout}>
+                  <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
+                    <div className="flex items-center space-x-2">
+                      <span className="bg-transparent w-2 h-2 rounded-full"></span>
+                      <span>Logout</span>
+                    </div>
+                  </li>
+                </Link>
               </ul>
             </nav>
           </div>
@@ -142,10 +171,7 @@ const Sidebar: FC = () => {
 
         {isResourcesOpen && (
           <div>
-            <div
-              className="p-4  flex gap-[8px] items-center text-[#03a835] text-[12px] font-semibold cursor-pointer"
-              onClick={toggleResourcesSidebar}
-            >
+            <div className="p-4  flex gap-[8px] items-center text-[#03a835] text-[12px] font-semibold cursor-pointer">
               <p className="">MENU</p>
               <MdOutlineArrowRightAlt size={24} />
               <p className="">RESOURCES</p>

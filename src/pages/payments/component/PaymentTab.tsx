@@ -12,7 +12,7 @@ const PaymentTab = () => {
         <button
           className={`px-[16px] py-[4px] rounded-full text-[20px]  ${
             activeTab === "Manage"
-              ? "bg-[#e6ff99] text-black font-[600]"
+              ? "bg-[#e6ff99] text-black font-[500]"
               : " font-[500]"
           }`}
           onClick={() => setActiveTab("Manage")}
@@ -22,7 +22,7 @@ const PaymentTab = () => {
         <button
           className={`px-[16px] py-[4px] rounded-full text-[20px]  ${
             activeTab === "Insights"
-              ? "bg-[#e6ff99] text-black font-[600]"
+              ? "bg-[#e6ff99] text-black font-[500]"
               : " font-[500]"
           }`}
           onClick={() => setActiveTab("Insights")}

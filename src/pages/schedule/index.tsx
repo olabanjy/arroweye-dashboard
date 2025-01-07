@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DashboardLayout from "../dashboard/layout";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { GoArrowUpRight } from "react-icons/go";
 import { DateClickArg } from "@fullcalendar/interaction";
-import { CreateEvent } from "@/services/api";
+import { CreateEvent, getEvents } from "@/services/api";
+import { ContentItem, EventsItem } from "@/types/contents";
 
 interface FormErrors {
   title?: string;
@@ -19,46 +20,26 @@ interface FormErrors {
 }
 
 const Schedule = () => {
-  // const [content, setContent] = useState<ContentItem[]>([]);
+  const [content, setContent] = useState<ContentItem[]>([]);
+  const [eventItem, setEventItem] = useState<EventsItem[]>([]);
 
-  // useEffect(() => {
-  //   getEvents()
-  //     .then((fetchedContent) => {
-  //       setContent(fetchedContent || []);
-  //     })
-  //     .catch((err) => {
-  //       console.error("Error fetching events:", err);
-  //     });
-  // }, []);
-  const [content, setContent] = useState([
-    {
-      id: "1",
-      title: "Sample Event",
-      start_dte: "2025-01-10T10:00:00",
-      end_dte: "2025-01-10T12:00:00",
-    },
-    {
-      id: "2",
-      title: "Another Event",
-      start_dte: "2025-01-15T14:00:00",
-      end_dte: "2025-01-15T16:00:00",
-    },
-  ]);
+  useEffect(() => {
+    getEvents()
+      .then((fetchedContent) => {
+        setEventItem(fetchedContent || []);
+      })
+      .catch((err) => {
+        console.error("Error fetching events:", err);
+      });
+  }, []);
 
-  // Map content to FullCalendar's expected format
-  const events = content.map((item) => ({
-    id: item.id,
+  const events = eventItem.map((item) => ({
+    id: item?.code?.toString(),
     title: item.title,
     start: item.start_dte,
     end: item.end_dte,
   }));
-
-  // const events = content.map((item) => ({
-  //   id: item.id ? item.id.toString() : "",
-  //   title: item.title,
-  //   start: item.start_dte,
-  //   end: item.end_dte,
-  // }));
+  console.log(eventItem);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formData, setFormData] = useState({
@@ -97,6 +78,10 @@ const Schedule = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+
+    if (name === "code" && value.length > 6) {
+      return;
+    }
 
     setFormData((prevData) => {
       const updatedData = { ...prevData, [name]: value };
@@ -167,7 +152,7 @@ const Schedule = () => {
       CreateEvent(updatedFormData)
         .then(() => {
           console.log("Form submitted successfully!");
-          const newEvent = {
+          const newEvent: ContentItem = {
             id: (content.length + 1).toString(),
             title: formData.title,
             start_dte: formData.start_dte,

@@ -2,7 +2,7 @@ import ls from "localstorage-slim";
 import axios from "axios";
 import { toast } from "react-toastify";
 import apiRequest from "@/Server/Api";
-import { ContentItem } from "@/types/contents";
+import { ContentItem, EventsItem, StaffItem } from "@/types/contents";
 
 if (typeof window !== "undefined" && window?.sessionStorage)
   ls.config.storage = sessionStorage;
@@ -201,7 +201,7 @@ export const CreateEvent = async (payload: unknown): Promise<void> => {
       ApiRequestResponse<ApiResponse>
     >({
       method: "POST",
-      url: `/api/v1/projects/event/create/`,
+      url: `/api/v1/projects/schedule/events/create/`,
       data: payload,
       requireToken: false,
     });
@@ -271,7 +271,6 @@ export const LoginEP = async (
 
     console.log(response);
     toast.success(response.message);
-
     return { status: Number(response.status), message: response.message };
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -366,7 +365,7 @@ export const VerifyLogin = async (payload: unknown): Promise<void> => {
   }
 };
 
-export const getBusiness = async (): Promise<ContentItem[] | null> => {
+export const getBusiness = async (): Promise<StaffItem[] | null> => {
   try {
     const response = await apiRequest({
       method: "GET",
@@ -377,7 +376,7 @@ export const getBusiness = async (): Promise<ContentItem[] | null> => {
 
     ls.set("Business", response, { encrypt: true });
 
-    return response as ContentItem[];
+    return response as StaffItem[];
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       toast.error(
@@ -392,10 +391,10 @@ export const getBusiness = async (): Promise<ContentItem[] | null> => {
   }
 };
 
-export const getStoredBusiness = (): ContentItem[] | null => {
+export const getStoredBusiness = (): StaffItem[] | null => {
   const content = ls.get("Business", { decrypt: true });
 
-  return content as ContentItem[];
+  return content as StaffItem[];
 };
 
 export const getProjects = async (): Promise<ContentItem[] | null> => {
@@ -540,18 +539,18 @@ export const getStoredService = (): ContentItem[] | null => {
   return content as ContentItem[];
 };
 
-export const getEvents = async (): Promise<ContentItem[] | null> => {
+export const getEvents = async (): Promise<EventsItem[] | null> => {
   try {
     const response = await apiRequest({
       method: "GET",
-      url: `/api/v1/projects/event/`,
+      url: `/api/v1/projects/schedule/events/`,
       data: null,
       requireToken: false,
     });
 
-    ls.set("Invoice", response, { encrypt: true });
+    ls.set("Events", response, { encrypt: true });
 
-    return response as ContentItem[];
+    return response as EventsItem[];
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       toast.error(

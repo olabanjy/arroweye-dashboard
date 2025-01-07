@@ -8,7 +8,6 @@ import { LoginEP, VerifyLogin } from "@/services/api";
 const Login = () => {
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [isOtpLoading, setIsOtpLoading] = useState(false);
-  const [isRecoverLoading, setIsRecoverLoading] = useState(false);
 
   const [loginFormData, setLoginFormData] = useState({
     email: "",
@@ -18,19 +17,11 @@ const Login = () => {
     otp: "",
   });
 
-  const [recoverFormData, setRecoverFormData] = useState({
-    email: "",
-  });
-
   const [loginErrors, setLoginErrors] = useState({
     email: "",
   });
   const [otpErrors, setOtpErrors] = useState({
     otp: "",
-  });
-
-  const [recoverErrors, setRecoverErrors] = useState({
-    email: "",
   });
 
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -43,13 +34,6 @@ const Login = () => {
     }));
   };
 
-  const handleRecoverInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setRecoverFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
   const handleOtpInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setOtpLoginFormData((prev) => ({
@@ -134,34 +118,6 @@ const Login = () => {
     }
   };
 
-  const handleRecoverSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    setIsRecoverLoading(true);
-
-    const newRecoverErrors = {
-      email: "",
-    };
-
-    if (
-      !recoverFormData.email ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recoverFormData.email)
-    ) {
-      newRecoverErrors.email = "Please enter a valid email address.";
-    }
-
-    setRecoverErrors(newRecoverErrors);
-
-    const hasRecoverErrors = Object.values(newRecoverErrors).some(
-      (error) => error !== ""
-    );
-    if (!hasRecoverErrors) {
-      console.log("Password recovery request sent!");
-    }
-
-    setIsRecoverLoading(false);
-  };
-
   return (
     <div className="bg-[#e0f6e6] h-screen">
       <Nav />
@@ -173,7 +129,6 @@ const Login = () => {
           >
             <TabsList>
               <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="recover">Recover Password</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
@@ -225,40 +180,6 @@ const Login = () => {
                   />
                 </form>
               )}
-            </TabsContent>
-
-            <TabsContent value="recover">
-              <form
-                className="mt-[20px] space-y-[30px]"
-                onSubmit={handleRecoverSubmit}
-              >
-                <Input
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  value={recoverFormData.email}
-                  onChange={handleRecoverInputChange}
-                  error={recoverErrors.email}
-                />
-
-                <div className="">
-                  <Button
-                    label="Recover Password"
-                    variant="primary"
-                    isLoading={isRecoverLoading}
-                    disabled={isRecoverLoading}
-                    loadingText="Please wait..."
-                    type="submit"
-                    className="rounded-[8px] w-full font-bold"
-                  />
-                </div>
-              </form>
-              <div className="mt-[20px]">
-                <p className="text-center">
-                  Password recovery will be processed within 24 hours. Please
-                  check your inbox for further instructions.
-                </p>
-              </div>
             </TabsContent>
           </Tabs>
         </div>

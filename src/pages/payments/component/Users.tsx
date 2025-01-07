@@ -4,12 +4,12 @@ import { IoIosAddCircle, IoMdCheckmark } from "react-icons/io";
 import Modal from "@/pages/component/Modal";
 import { LuUserMinus } from "react-icons/lu";
 import { getBusiness } from "@/services/api";
-import { ContentItem } from "@/types/contents";
+import { StaffItem } from "@/types/contents";
 
 const Users = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<ContentItem | null>(null);
-  const [content, setContent] = useState<ContentItem[] | null>(null);
+  const [selectedUser, setSelectedUser] = useState<StaffItem | null>(null);
+  const [content, setContent] = useState<StaffItem[] | null>(null);
 
   const headers = ["Name", "Vendor", "User", "Role", "Status"];
 
@@ -35,11 +35,11 @@ const Users = () => {
             setIsModalOpen(true);
           }}
         >
-          {item.staff[0]?.fullname?.[0] || " "}
+          {item?.staff[0].fullname?.[0] || " "}
         </div>
       </div>,
       item.type || " ",
-      item.staff[0]?.fullname || " ",
+      item?.staff[0]?.fullname || " ",
       item.staff[0]?.role || " ",
 
       <div key={`status-${item.id}`} className="flex justify-center gap-2">
