@@ -52,64 +52,112 @@ const Nav = () => {
                 <div className=" z-50 absolute top-full left-0 mt-[14px] w-[500px] bg-white shadow-lg border rounded-md">
                   <ul className=" grid grid-cols-2 gap-[20px] items-start p-[40px]">
                     <Link href="#">
-                      <li>
-                        <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
-                          AE Studio
-                        </p>
-                        <p className=" font-[400] text-[14px] text-slate-500">
-                          Create Reports
-                        </p>
-                      </li>
+                      <div className=" flex items-start gap-[10px]">
+                        <Image
+                          src="/assets/di.svg"
+                          alt="image"
+                          width={30}
+                          height={30}
+                        />
+                        <li>
+                          <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
+                            AE Studio
+                          </p>
+                          <p className=" font-[400] text-[14px] text-slate-500">
+                            Create Reports
+                          </p>
+                        </li>
+                      </div>
                     </Link>
                     <Link href="#">
-                      <li>
-                        <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
-                          Monitoring
-                        </p>
-                        <p className=" font-[400] text-[14px] text-slate-500">
-                          Budget Tracking
-                        </p>
-                      </li>
+                      <div className=" flex items-start gap-[10px]">
+                        <Image
+                          src="/assets/sm.svg"
+                          alt="image"
+                          width={30}
+                          height={30}
+                        />
+                        <li>
+                          <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
+                            Monitoring
+                          </p>
+                          <p className=" font-[400] text-[14px] text-slate-500">
+                            Budget Tracking
+                          </p>
+                        </li>
+                      </div>
                     </Link>
                     <Link href="#monitor">
-                      <li>
-                        <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
-                          Invoicing
-                        </p>
-                        <p className=" font-[400] text-[14px] text-slate-500">
-                          Online Invoices
-                        </p>
-                      </li>
+                      <div className=" flex items-start gap-[10px]">
+                        <Image
+                          src="/assets/boxes.svg"
+                          alt="image"
+                          width={30}
+                          height={30}
+                        />
+                        <li>
+                          <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
+                            Invoicing
+                          </p>
+                          <p className=" font-[400] text-[14px] text-slate-500">
+                            Online Invoices
+                          </p>
+                        </li>
+                      </div>
                     </Link>
                     <Link href="#">
-                      <li>
-                        <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
-                          AI Tools
-                        </p>
-                        <p className=" font-[400] text-[14px] text-slate-500">
-                          Free AI Tools
-                        </p>
-                      </li>
+                      <div className=" flex items-start gap-[10px]">
+                        <Image
+                          src="/assets/di.svg"
+                          alt="image"
+                          width={30}
+                          height={30}
+                        />
+                        <li>
+                          <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
+                            AI Tools
+                          </p>
+                          <p className=" font-[400] text-[14px] text-slate-500">
+                            Free AI Tools
+                          </p>
+                        </li>
+                      </div>
                     </Link>
                     <Link href="#collaborate">
-                      <li>
-                        <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
-                          Collaborate
-                        </p>
-                        <p className=" font-[400] text-[14px] text-slate-500">
-                          Add Team
-                        </p>
-                      </li>
+                      <div className=" flex items-start gap-[10px]">
+                        <Image
+                          src="/assets/sm.svg"
+                          alt="image"
+                          width={30}
+                          height={30}
+                        />
+                        <li>
+                          <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
+                            Collaborate
+                          </p>
+                          <p className=" font-[400] text-[14px] text-slate-500">
+                            Add Team
+                          </p>
+                        </li>
+                      </div>
                     </Link>
                     <Link href="#">
-                      <li>
-                        <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
-                          Insights
-                        </p>
-                        <p className=" font-[400] text-[14px] text-slate-500">
-                          Real-time data
-                        </p>
-                      </li>
+                      <div className=" flex items-start gap-[10px]">
+                        <Image
+                          src="/assets/boxes.svg"
+                          alt="image"
+                          width={30}
+                          height={30}
+                        />
+                        <li>
+                          <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
+                            Insights
+                          </p>
+                          <p className=" font-[400] text-[14px] text-slate-500">
+                            Real-time data
+                          </p>
+                        </li>
+                      </div>
                     </Link>
                   </ul>
                 </div>
@@ -220,56 +268,105 @@ const Nav = () => {
                 </div>
                 <div className="">
                   <ul className=" grid  gap-[20px] items-start px-[40px]">
-                    <li>
-                      <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
-                        AE Studio
-                      </p>
-                      <p className=" font-[400] text-[14px] text-slate-500">
-                        Create Reports
-                      </p>
-                    </li>
-                    <li>
-                      <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
-                        Monitoring
-                      </p>
-                      <p className=" font-[400] text-[14px] text-slate-500">
-                        Budget Tracking
-                      </p>
-                    </li>
-                    <Link href="#monitor">
+                    <div className=" flex items-start gap-[10px]">
+                      <Image
+                        src="/assets/di.svg"
+                        alt="image"
+                        width={30}
+                        height={30}
+                      />
+
                       <li>
                         <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
-                          Invoicing
+                          AE Studio
                         </p>
                         <p className=" font-[400] text-[14px] text-slate-500">
-                          Online Invoices
+                          Create Reports
                         </p>
                       </li>
+                    </div>
+                    <div className=" flex items-start gap-[10px]">
+                      <Image
+                        src="/assets/sm.svg"
+                        alt="image"
+                        width={30}
+                        height={30}
+                      />
+                      <li>
+                        <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
+                          Monitoring
+                        </p>
+                        <p className=" font-[400] text-[14px] text-slate-500">
+                          Budget Tracking
+                        </p>
+                      </li>
+                    </div>
+                    <Link href="#monitor">
+                      <div className=" flex items-start gap-[10px]">
+                        <Image
+                          src="/assets/boxes.svg"
+                          alt="image"
+                          width={30}
+                          height={30}
+                        />
+                        <li>
+                          <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
+                            Invoicing
+                          </p>
+                          <p className=" font-[400] text-[14px] text-slate-500">
+                            Online Invoices
+                          </p>
+                        </li>
+                      </div>
                     </Link>
-                    <li>
-                      <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
-                        AI Tools
-                      </p>
-                      <p className=" font-[400] text-[14px] text-slate-500">
-                        Free AI Tools
-                      </p>
-                    </li>
-                    <li>
-                      <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
-                        Collaborate
-                      </p>
-                      <p className=" font-[400] text-[14px] text-slate-500">
-                        Add Team
-                      </p>
-                    </li>
-                    <li>
-                      <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
-                        Insights
-                      </p>
-                      <p className=" font-[400] text-[14px] text-slate-500">
-                        Real-time data
-                      </p>
-                    </li>
+                    <div className=" flex items-start gap-[10px]">
+                      <Image
+                        src="/assets/di.svg"
+                        alt="image"
+                        width={30}
+                        height={30}
+                      />
+                      <li>
+                        <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
+                          AI Tools
+                        </p>
+                        <p className=" font-[400] text-[14px] text-slate-500">
+                          Free AI Tools
+                        </p>
+                      </li>
+                    </div>
+                    <div className=" flex items-start gap-[10px]">
+                      <Image
+                        src="/assets/sm.svg"
+                        alt="image"
+                        width={30}
+                        height={30}
+                      />
+                      <li>
+                        <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
+                          Collaborate
+                        </p>
+                        <p className=" font-[400] text-[14px] text-slate-500">
+                          Add Team
+                        </p>
+                      </li>
+                    </div>
+                    <div className=" flex items-start gap-[10px]">
+                      <Image
+                        src="/assets/boxes.svg"
+                        alt="image"
+                        width={30}
+                        height={30}
+                      />
+                      <li>
+                        <p className=" font-[600] text-[18px] block text-[#0c0d0c] hover:text-black">
+                          Insights
+                        </p>
+                        <p className=" font-[400] text-[14px] text-slate-500">
+                          Real-time data
+                        </p>
+                      </li>
+                    </div>
                   </ul>
                 </div>
               </div>
