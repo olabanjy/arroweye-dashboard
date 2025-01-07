@@ -4,12 +4,7 @@ import { SelectInput } from "@/components/ui/selectinput";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { HiMinusCircle } from "react-icons/hi";
 import { Dialog } from "primereact/dialog";
-import {
-  CreateInvoice,
-  CreateService,
-  getService,
-  getStoredService,
-} from "@/services/api";
+import { CreateInvoice, CreateService, getService } from "@/services/api";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { ContentItem } from "@/types/contents";
 
@@ -97,15 +92,9 @@ const Manage = () => {
   };
 
   useEffect(() => {
-    const storedContent = getStoredService();
-
-    if (storedContent) {
-      setContent(storedContent);
-    } else {
-      getService().then((fetchedContent) => {
-        setContent(fetchedContent);
-      });
-    }
+    getService().then((fetchedContent) => {
+      setContent(fetchedContent);
+    });
   }, []);
 
   const vendorOptions = [

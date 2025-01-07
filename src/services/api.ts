@@ -109,6 +109,7 @@ export const CreateBusiness = async (payload: unknown): Promise<void> => {
 
     console.log(response);
     toast.success("Creation successful!");
+    window.location.reload();
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
@@ -142,6 +143,7 @@ export const CreateService = async (payload: unknown): Promise<void> => {
 
     console.log(response);
     toast.success("Service Created Successful!");
+    window.location.reload();
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
@@ -173,6 +175,7 @@ export const CreateInvoice = async (payload: unknown): Promise<void> => {
 
     console.log(response);
     toast.success("Invoice Created Successful!");
+
     window.location.reload();
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -236,6 +239,7 @@ export const AddStaff = async (payload: unknown): Promise<void> => {
 
     console.log(response);
     toast.success("Adding Staff successful! Redirecting...");
+    window.location.reload();
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {

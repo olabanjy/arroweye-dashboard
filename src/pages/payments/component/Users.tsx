@@ -3,7 +3,7 @@ import Table from "./Table";
 import { IoIosAddCircle, IoMdCheckmark } from "react-icons/io";
 import Modal from "@/pages/component/Modal";
 import { LuUserMinus } from "react-icons/lu";
-import { getBusiness, getStoredBusiness } from "@/services/api";
+import { getBusiness } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 
 const Users = () => {
@@ -14,15 +14,9 @@ const Users = () => {
   const headers = ["Name", "Vendor", "User", "Role", "Status"];
 
   useEffect(() => {
-    const storedContent = getStoredBusiness();
-
-    if (storedContent) {
-      setContent(storedContent);
-    } else {
-      getBusiness().then((fetchedContent) => {
-        setContent(fetchedContent);
-      });
-    }
+    getBusiness().then((fetchedContent) => {
+      setContent(fetchedContent);
+    });
   }, []);
 
   useEffect(() => {
