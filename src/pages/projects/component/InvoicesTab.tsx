@@ -16,10 +16,10 @@ const InvoicesTab: React.FC = () => {
 
   return (
     <div className="lg:p-[20px]">
-      <div className=" grid md:flex items-center gap-[20px] md:gap-[40px]">
-        <div className="flex gap-[10px] items-center  lg:mb-4">
+      <div className="grid md:flex items-center gap-[20px] md:gap-[40px]">
+        <div className="flex gap-[10px] items-center lg:mb-4">
           <button
-            className={`pb-[10px] text-[20px] ${
+            className={`pb-[10px] text-[20px] transition-all duration-300 ${
               activeTab === "Projects"
                 ? "border-b border-[#17845a] text-[#17845a] font-[600]"
                 : "font-[500]"
@@ -29,7 +29,7 @@ const InvoicesTab: React.FC = () => {
             Projects
           </button>
           <button
-            className={`pb-[10px] text-[20px] ${
+            className={`pb-[10px] text-[20px] transition-all duration-300 ${
               activeTab === "Archive"
                 ? "border-b border-[#17845a] text-[#17845a] font-[600]"
                 : "font-[500]"
@@ -61,9 +61,21 @@ const InvoicesTab: React.FC = () => {
         </div>
       </div>
 
-      <div>
-        {activeTab === "Projects" && <Projects filterVisible={filter} />}
-        {activeTab === "Archive" && <Archive filterVisible={filter} />}
+      <div className="relative">
+        <div
+          className={`transition-opacity duration-500 ease-in-out ${
+            activeTab === "Projects" ? "opacity-100" : "opacity-0 absolute"
+          }`}
+        >
+          {activeTab === "Projects" && <Projects filterVisible={filter} />}
+        </div>
+        <div
+          className={`transition-opacity duration-500 ease-in-out ${
+            activeTab === "Archive" ? "opacity-100" : "opacity-0 absolute"
+          }`}
+        >
+          {activeTab === "Archive" && <Archive filterVisible={filter} />}
+        </div>
       </div>
     </div>
   );

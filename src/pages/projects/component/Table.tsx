@@ -11,6 +11,7 @@ interface TableProps {
   className?: string;
   onRowSelect?: (selectedRows: number[]) => void;
   emptyState?: React.ReactNode;
+  highlightFirstCell?: boolean;
 }
 
 const Table: React.FC<TableProps> = ({
@@ -18,14 +19,15 @@ const Table: React.FC<TableProps> = ({
   rows = [],
   className = "",
   emptyState = "No data available",
+  highlightFirstCell = false,
 }) => {
   return (
     <div className={`overflow-x-auto ${className}`}>
-      <table className="w-full table-auto  ">
+      <table className="w-full table-auto">
         <thead>
           <tr className="rounded-[16px] bg-[#31bc86] text-xs font-[500] text-[#ffffff]">
             {headers.map((header, index) => (
-              <th key={index} className=" px-4 py-[11px] text-left">
+              <th key={index} className="px-4 py-[11px] text-left">
                 {header}
               </th>
             ))}
@@ -51,7 +53,11 @@ const Table: React.FC<TableProps> = ({
                 {row.data.map((cell, cellIndex) => (
                   <td
                     key={cellIndex}
-                    className="border border-grey-100 px-4 py-[20px] text-start"
+                    className={`border border-grey-100 px-4 py-[20px] text-start ${
+                      highlightFirstCell && cellIndex === 0
+                        ? "bg-[#31bc86] text-[#ffffff] border-none"
+                        : ""
+                    }`}
                   >
                     {cell}
                   </td>

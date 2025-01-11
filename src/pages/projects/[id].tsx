@@ -240,219 +240,264 @@ const ProjectDetails = () => {
       </div>
 
       <form onSubmit={handleAddUserSubmit}>
-        <Dialog
-          header="Add Members"
-          visible={visible}
-          onHide={hideDialog}
-          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "50vw" }}
+        <div
+          className={`custom-dialog-overlay ${
+            visible
+              ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+              : "hidden"
+          }`}
         >
-          <div className="space-y-4">
-            <p className="text-4xl font-bold text-[#000]">Collaborate</p>
-            <div>
-              <Input
-                type="email"
-                placeholder="Add email"
-                name="email"
-                required
-                value={addUserFormData.email}
-                onChange={handleAddUserInputChange}
-                error={addUserErrors.email}
-              />
-            </div>
-            <div
-              className="flex items-center gap-[5px] cursor-pointer"
-              onClick={handleAddContactClick}
-            >
-              <IoMdAddCircleOutline size={20} />
-              <p>Add Contact</p>
-            </div>
-            <div className="flex gap-[10px] items-center">
-              <div className=" w-full">
-                <SelectInput
-                  name="role"
-                  value={addUserFormData.role}
+          <Dialog
+            header="Add Members"
+            visible={visible}
+            onHide={hideDialog}
+            breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+            style={{ width: "50vw" }}
+            className="custom-dialog-overlay"
+          >
+            <div className="space-y-4">
+              <p className="text-4xl font-bold text-[#000]">Collaborate</p>
+              <div>
+                <Input
+                  type="email"
+                  placeholder="Add email"
+                  name="email"
+                  required
+                  value={addUserFormData.email}
                   onChange={handleAddUserInputChange}
-                  labelText="Choose Role"
-                  options={[
-                    { value: "Manager", label: "Manager" },
-                    { value: "LeadAdmin", label: "LeadAdmin" },
-                    { value: "Supervisor", label: "Supervisor" },
-                    { value: "Agent", label: "Agent" },
-                    { value: "Vendor", label: "Vendor" },
-                    { value: "SubVendor", label: "SubVendor" },
-                  ]}
-                  className="h-full"
+                  error={addUserErrors.email}
                 />
               </div>
-              <div className=" w-full">
-                <div className="flex justify-end space-x-2">
-                  <button
-                    onClick={handleAddUserSubmit}
-                    disabled={isAddUserLoading}
-                    className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
-                  >
-                    <IoIosAdd className="text-white" />
-                    <span className="text-white">Add User</span>
-                  </button>
+              <div
+                className="flex items-center gap-[5px] cursor-pointer"
+                onClick={handleAddContactClick}
+              >
+                <IoMdAddCircleOutline size={20} />
+                <p>Add Contact</p>
+              </div>
+              <div className="flex gap-[10px] items-center">
+                <div className=" w-full">
+                  <SelectInput
+                    name="role"
+                    value={addUserFormData.role}
+                    onChange={handleAddUserInputChange}
+                    labelText="Choose Role"
+                    options={[
+                      { value: "Manager", label: "Manager" },
+                      { value: "LeadAdmin", label: "LeadAdmin" },
+                      { value: "Supervisor", label: "Supervisor" },
+                      { value: "Agent", label: "Agent" },
+                      { value: "Vendor", label: "Vendor" },
+                      { value: "SubVendor", label: "SubVendor" },
+                    ]}
+                    className="h-full"
+                  />
+                </div>
+                <div className=" w-full">
+                  <div className="flex justify-end space-x-2">
+                    <button
+                      onClick={handleAddUserSubmit}
+                      disabled={isAddUserLoading}
+                      className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
+                    >
+                      <IoIosAdd className="text-white" />
+                      <span className="text-white">Add User</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </Dialog>
+          </Dialog>
+        </div>
 
-        <Dialog
-          header="Enter Full Name"
-          visible={nameDialogVisible}
-          onHide={hideNameDialog}
-          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "50vw" }}
+        <div
+          className={`custom-dialog-overlay ${
+            nameDialogVisible
+              ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+              : "hidden"
+          }`}
         >
-          <div className="space-y-4">
-            <div>
-              <Input
-                type="text"
-                required
-                name="fullname"
-                label="Enter Full Name"
-                value={addUserFormData.fullname}
-                onChange={handleAddUserInputChange}
-                error={addUserErrors.fullname}
-              />
+          <Dialog
+            header="Enter Full Name"
+            visible={nameDialogVisible}
+            onHide={hideNameDialog}
+            breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+            style={{ width: "50vw" }}
+            className="custom-dialog-overlay"
+          >
+            <div className="space-y-4">
+              <div>
+                <Input
+                  type="text"
+                  required
+                  name="fullname"
+                  label="Enter Full Name"
+                  value={addUserFormData.fullname}
+                  onChange={handleAddUserInputChange}
+                  error={addUserErrors.fullname}
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button
+                  label="Cancel"
+                  icon="pi pi-times"
+                  onClick={hideNameDialog}
+                />
+                <Button
+                  label="Submit"
+                  icon="pi pi-check"
+                  onClick={hideNameDialog}
+                  disabled={!addUserFormData.fullname}
+                />
+              </div>
+              <div className="flex items-center space-x-4">
+                <InputSwitch
+                  id="phone"
+                  checked={broadcast}
+                  onChange={(e) => setBroadcast(e.value)}
+                />
+                <p>Broadcast</p>
+              </div>
             </div>
-            <div className="flex justify-end space-x-2">
-              <Button
-                label="Cancel"
-                icon="pi pi-times"
-                onClick={hideNameDialog}
-              />
-              <Button
-                label="Submit"
-                icon="pi pi-check"
-                onClick={hideNameDialog}
-                disabled={!addUserFormData.fullname}
-              />
-            </div>
-            <div className="flex items-center space-x-4">
-              <InputSwitch
-                id="phone"
-                checked={broadcast}
-                onChange={(e) => setBroadcast(e.value)}
-              />
-              <p>Broadcast</p>
-            </div>
-          </div>
-        </Dialog>
+          </Dialog>
+        </div>
       </form>
 
-      <Dialog
-        header=" Member Information"
-        visible={selectedUser !== null}
-        onHide={() => setSelectedUser(null)}
-        breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-        style={{ width: "50vw" }}
+      <div
+        className={`custom-dialog-overlay ${
+          selectedUser
+            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+            : "hidden"
+        }`}
       >
-        {selectedUser && (
-          <div className="space-y-4">
-            <p className="text-3xl font-bold">{selectedUser.fullName}</p>
-            <div className=" text-[14px]">
-              <p className="text-[14px]">Email: </p>
-              <p className=" font-bold"> {selectedUser.email}</p>
-            </div>
-            <div className=" text-[14px]">
-              <p className="text-[14px]">Role </p>
-              <p className=" font-bold">Agent</p>
-            </div>
-            <div className=" text-[14px]">
-              <p className="text-[14px]">Member since </p>
-              <p className=" font-bold">July 20, 2021</p>
-            </div>
-            <div className=" text-[14px]">
-              <p className="text-[14px]">Last addUser</p>
-              <p className=" font-bold">May 2, 2024</p>
-            </div>
+        <Dialog
+          header=" Member Information"
+          visible={selectedUser !== null}
+          onHide={() => setSelectedUser(null)}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "50vw" }}
+          className="custom-dialog-overlay"
+        >
+          {selectedUser && (
+            <div className="space-y-4">
+              <p className="text-3xl font-bold">{selectedUser.fullName}</p>
+              <div className=" text-[14px]">
+                <p className="text-[14px]">Email: </p>
+                <p className=" font-bold"> {selectedUser.email}</p>
+              </div>
+              <div className=" text-[14px]">
+                <p className="text-[14px]">Role </p>
+                <p className=" font-bold">Agent</p>
+              </div>
+              <div className=" text-[14px]">
+                <p className="text-[14px]">Member since </p>
+                <p className=" font-bold">July 20, 2021</p>
+              </div>
+              <div className=" text-[14px]">
+                <p className="text-[14px]">Last addUser</p>
+                <p className=" font-bold">May 2, 2024</p>
+              </div>
 
-            <div
-              className=" px-[16px] py-[8px] rounded bg-black text-white inline-block cursor-pointer"
-              onClick={() => setDeleteModal(true)}
-            >
-              <FaUserMinus />
+              <div
+                className=" px-[16px] py-[8px] rounded bg-black text-white inline-block cursor-pointer"
+                onClick={() => setDeleteModal(true)}
+              >
+                <FaUserMinus />
+              </div>
+              <div
+                className=" px-[16px] py-[8px] text-black inline-block cursor-pointer"
+                onClick={handleAdjustmentClick}
+              >
+                <HiAdjustmentsHorizontal />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button
+                  label="Close"
+                  icon="pi pi-times"
+                  onClick={() => setSelectedUser(null)}
+                />
+              </div>
             </div>
-            <div
-              className=" px-[16px] py-[8px] text-black inline-block cursor-pointer"
-              onClick={handleAdjustmentClick}
-            >
-              <HiAdjustmentsHorizontal />
+          )}
+        </Dialog>
+      </div>
+      <div
+        className={`custom-dialog-overlay ${
+          adjustmentModalVisible
+            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+            : "hidden"
+        }`}
+      >
+        <Dialog
+          visible={adjustmentModalVisible}
+          onHide={() => setAdjustmentModalVisible(false)}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "30vw" }}
+          className="custom-dialog-overlay"
+        >
+          <div className="space-y-4">
+            <p className="text-[16px] font-[400]">MANAGE ACCESS</p>
+            <div className=" w-full">
+              <SelectInput
+                name="role"
+                value={addUserFormData.role}
+                onChange={handleAddUserInputChange}
+                labelText="Choose Role"
+                options={[
+                  { value: "Manager", label: "Manager" },
+                  { value: "LeadAdmin", label: "LeadAdmin" },
+                  { value: "Supervisor", label: "Supervisor" },
+                  { value: "Agent", label: "Agent" },
+                  { value: "Vendor", label: "Vendor" },
+                  { value: "SubVendor", label: "SubVendor" },
+                ]}
+                className="h-full"
+              />
             </div>
             <div className="flex justify-end space-x-2">
               <Button
-                label="Close"
-                icon="pi pi-times"
-                onClick={() => setSelectedUser(null)}
+                label="Save"
+                onClick={() => setAdjustmentModalVisible(false)}
+                className=" px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
               />
             </div>
           </div>
-        )}
-      </Dialog>
-      <Dialog
-        visible={adjustmentModalVisible}
-        onHide={() => setAdjustmentModalVisible(false)}
-        breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-        style={{ width: "30vw" }}
+        </Dialog>
+      </div>
+      <div
+        className={`custom-dialog-overlay ${
+          deleteModal
+            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+            : "hidden"
+        }`}
       >
-        <div className="space-y-4">
-          <p className="text-[16px] font-[400]">MANAGE ACCESS</p>
-          <div className=" w-full">
-            <SelectInput
-              name="role"
-              value={addUserFormData.role}
-              onChange={handleAddUserInputChange}
-              labelText="Choose Role"
-              options={[
-                { value: "Manager", label: "Manager" },
-                { value: "LeadAdmin", label: "LeadAdmin" },
-                { value: "Supervisor", label: "Supervisor" },
-                { value: "Agent", label: "Agent" },
-                { value: "Vendor", label: "Vendor" },
-                { value: "SubVendor", label: "SubVendor" },
-              ]}
-              className="h-full"
-            />
-          </div>
-          <div className="flex justify-end space-x-2">
-            <Button
-              label="Save"
-              onClick={() => setAdjustmentModalVisible(false)}
-              className=" px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
-            />
-          </div>
-        </div>
-      </Dialog>
-      <Dialog
-        visible={deleteModal}
-        onHide={() => setDeleteModal(false)}
-        breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-        style={{ width: "30vw" }}
-      >
-        <div className="space-y-4">
-          <p className="text-[16px] font-[400]">
-            Are you sure you want to remove this profile from this project?
-          </p>
+        <Dialog
+          visible={deleteModal}
+          onHide={() => setDeleteModal(false)}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "30vw" }}
+          className="custom-dialog-overlay"
+        >
+          <div className="space-y-4">
+            <p className="text-[16px] font-[400]">
+              Are you sure you want to remove this profile from this project?
+            </p>
 
-          <div className="flex justify-end space-x-2">
-            <Button
-              label="OK"
-              onClick={() => setDeleteModal(false)}
-              className=" px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
-            />
-            <Button
-              label="Cancel"
-              onClick={() => setDeleteModal(false)}
-              className=" px-[16px] py-[8px] text-white rounded-[8px] bg-slate-500"
-            />
+            <div className="flex justify-end space-x-2">
+              <Button
+                label="OK"
+                onClick={() => setDeleteModal(false)}
+                className=" px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
+              />
+              <Button
+                label="Cancel"
+                onClick={() => setDeleteModal(false)}
+                className=" px-[16px] py-[8px] text-white rounded-[8px] bg-slate-500"
+              />
+            </div>
           </div>
-        </div>
-      </Dialog>
+        </Dialog>
+      </div>
     </DashboardLayout>
   );
 };

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { FiInfo } from "react-icons/fi";
+import { GoArrowDown } from "react-icons/go";
 
 interface SelectInputProps
   extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -9,12 +10,59 @@ interface SelectInputProps
   error?: string;
   info?: string;
   labelText?: string;
+  value?: string | number;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  name?: string;
 }
 
-const SelectInput = React.forwardRef<HTMLSelectElement, SelectInputProps>(
-  ({ label, options, className, error, info, labelText, ...props }, ref) => {
+const SelectInput = React.forwardRef<HTMLDivElement, SelectInputProps>(
+  (
+    {
+      label,
+      options,
+      className,
+      error,
+      info,
+      labelText,
+      value,
+      onChange,
+      name,
+    },
+    ref
+  ) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedValue, setSelectedValue] = useState<string | number>(
+      value || ""
+    );
+
+    useEffect(() => {
+      if (value !== undefined) {
+        setSelectedValue(value);
+      }
+    }, [value]);
+
+    const handleSelect = (newValue: string | number) => {
+      setSelectedValue(newValue);
+      setIsOpen(false);
+
+      if (onChange && name) {
+        const syntheticEvent = {
+          target: {
+            name: name,
+            value: newValue.toString(),
+          },
+        } as React.ChangeEvent<HTMLSelectElement>;
+
+        onChange(syntheticEvent);
+      }
+    };
+
+    const selectedLabel = options.find(
+      (opt) => opt.value === selectedValue
+    )?.label;
+
     return (
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-2" ref={ref}>
         <div className="flex items-center space-x-2">
           {label && (
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -23,29 +71,42 @@ const SelectInput = React.forwardRef<HTMLSelectElement, SelectInputProps>(
           )}
           {info && (
             <div className="relative group">
-              <FiInfo className="text-gray-400 hover:text-blue-500" />
-              <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-1 hidden w-48 p-2 text-xs text-white bg-black rounded-lg group-hover:block">
+              <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
+              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 hidden w-48 p-2 text-xs text-white bg-black rounded-lg group-hover:block">
                 {info}
               </div>
             </div>
           )}
         </div>
-        <select
-          ref={ref}
-          className={cn(
-            "block w-full rounded-[8px] border border-black bg-white px-4 py-[12px] text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
-            error && "border-red-500 focus:ring-red-500",
-            className
+
+        <div className="relative">
+          <div
+            onClick={() => setIsOpen(!isOpen)}
+            className={cn(
+              "block w-full rounded-[8px] border border-black bg-white px-4 py-[12px] pr-10 text-sm text-gray-900 shadow-sm cursor-pointer focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
+              error && "border-red-500 focus:ring-red-500",
+              className
+            )}
+          >
+            <span>{selectedLabel || labelText || "Select an option"}</span>
+            <GoArrowDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+          </div>
+
+          {isOpen && (
+            <div className="absolute left-0 w-full mt-1 bg-white shadow-lg rounded-[8px] z-10 dark:bg-gray-900">
+              {options.map((option) => (
+                <div
+                  key={option.value}
+                  onClick={() => handleSelect(option.value)}
+                  className="px-4 py-2 text-sm text-gray-900 cursor-pointer hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                >
+                  {option.label}
+                </div>
+              ))}
+            </div>
           )}
-          {...props}
-        >
-          <option value="">{labelText || "Select an option"}</option>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        </div>
+
         {error && <p className="text-sm text-red-500">{error}</p>}
       </div>
     );

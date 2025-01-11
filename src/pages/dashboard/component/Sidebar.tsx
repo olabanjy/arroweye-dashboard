@@ -40,7 +40,7 @@ const Sidebar: FC = () => {
       </div>
 
       <div
-        className={`fixed lg:relative top-0 left-0 z-[99999999999] w-64 h-screen overflow-auto bg-white border border-slate-100 text-[#000000] flex flex-col transform ${
+        className={`fixed lg:relative top-0 left-0 z-[9] w-64 h-screen overflow-auto bg-white border border-slate-100 text-[#000000] flex flex-col transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 transition-transform duration-700`}
         style={{
@@ -63,7 +63,7 @@ const Sidebar: FC = () => {
               <ul className="grid space-y-[20px] p-4">
                 <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer  text-[#03a835] text-[12px] font-semibold ">
                   <span className="flex items-center space-x-2">
-                    <span className="bg-transparent w-2 h-2 rounded-full"></span>
+                    <span className="bg-transparent w-1 h-1 rounded-full"></span>
                     <span>MENU</span>
                   </span>
                 </li>
@@ -74,8 +74,8 @@ const Sidebar: FC = () => {
                       <span
                         className={`${
                           isActive("/projects")
-                            ? "bg-[#17954c] w-3 h-3"
-                            : "bg-transparent w-2 h-2"
+                            ? "bg-[#17954c] w-1 h-1"
+                            : "bg-transparent w-1 h-1"
                         } rounded-full`}
                       ></span>
                       <span>Projects</span>
@@ -89,8 +89,8 @@ const Sidebar: FC = () => {
                       <span
                         className={`${
                           isActive("/drops")
-                            ? "bg-[#17954c] w-3 h-3"
-                            : "bg-transparent w-2 h-2"
+                            ? "bg-[#17954c] w-1 h-1"
+                            : "bg-transparent w-1 h-1"
                         } rounded-full`}
                       ></span>
                       <span>Drops</span>
@@ -104,8 +104,8 @@ const Sidebar: FC = () => {
                       <span
                         className={`${
                           isActive("/payments")
-                            ? "bg-[#17954c] w-3 h-3"
-                            : "bg-transparent w-2 h-2"
+                            ? "bg-[#17954c] w-1 h-1"
+                            : "bg-transparent w-1 h-1"
                         } rounded-full`}
                       ></span>
                       <span>Payments</span>
@@ -119,8 +119,8 @@ const Sidebar: FC = () => {
                       <span
                         className={`${
                           isActive("/schedule")
-                            ? "bg-[#17954c] w-3 h-3"
-                            : "bg-transparent w-2 h-2"
+                            ? "bg-[#17954c] w-1 h-1"
+                            : "bg-transparent w-1 h-1"
                         } rounded-full`}
                       ></span>
                       <span>Schedule</span>
@@ -131,7 +131,7 @@ const Sidebar: FC = () => {
                 <Link href="#" onClick={toggleResourcesSidebar}>
                   <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer ">
                     <span className="flex items-center space-x-2">
-                      <span className="bg-transparent w-2 h-2 rounded-full"></span>
+                      <span className="bg-transparent w-1 h-1 rounded-full"></span>
                       <span>Resources</span>
                     </span>
                     <HiOutlineDotsHorizontal size={24} />
@@ -144,8 +144,8 @@ const Sidebar: FC = () => {
                       <span
                         className={`${
                           isActive("/settings")
-                            ? "bg-[#17954c] w-3 h-3"
-                            : "bg-transparent w-2 h-2"
+                            ? "bg-[#17954c] w-1 h-1"
+                            : "bg-transparent w-1 h-1"
                         } rounded-full`}
                       ></span>
                       <span>Settings</span>
@@ -156,7 +156,7 @@ const Sidebar: FC = () => {
                 <Link href="#" onClick={logout}>
                   <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
                     <div className="flex items-center space-x-2">
-                      <span className="bg-transparent w-2 h-2 rounded-full"></span>
+                      <span className="bg-transparent w-1 h-1 rounded-full"></span>
                       <span>Logout</span>
                     </div>
                   </li>
@@ -187,7 +187,7 @@ const Sidebar: FC = () => {
 
       {(isOpen || isResourcesOpen) && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-[999999998] transition-opacity duration-700"
+          className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-[8] transition-opacity duration-700"
           onClick={() => {
             setIsOpen(false);
             setIsResourcesOpen(false);

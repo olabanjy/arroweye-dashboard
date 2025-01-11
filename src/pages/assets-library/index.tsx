@@ -177,39 +177,48 @@ const AssetsLibrary = () => {
           ))}
         </div>
       </div>
-      <Dialog
-        header=" Information"
-        visible={selectedUser !== null}
-        onHide={() => setSelectedUser(null)}
-        breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-        style={{ width: "30vw" }}
+      <div
+        className={`custom-dialog-overlay ${
+          selectedUser
+            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+            : "hidden"
+        }`}
       >
-        {selectedUser && (
-          <div className="space-y-4 text-[#000]">
-            <p className="text-3xl font-bold">{selectedUser.fullName}</p>
-            <div className=" text-[14px]">
-              <p className="text-[14px]">Email: </p>
-              <p className=" font-bold"> {selectedUser.email}</p>
+        <Dialog
+          header=" Information"
+          visible={selectedUser !== null}
+          onHide={() => setSelectedUser(null)}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "30vw" }}
+          className="custom-dialog-overlay"
+        >
+          {selectedUser && (
+            <div className="space-y-4 text-[#000]">
+              <p className="text-3xl font-bold">{selectedUser.fullName}</p>
+              <div className=" text-[14px]">
+                <p className="text-[14px]">Email: </p>
+                <p className=" font-bold"> {selectedUser.email}</p>
+              </div>
+              <div className=" text-[14px]">
+                <p className="text-[14px]">Role </p>
+                <p className=" font-bold">Agent</p>
+              </div>
+              <div className=" text-[14px]">
+                <p className="text-[14px]">Project </p>
+                <p className=" font-bold">Jolie </p>
+              </div>
+              <div className=" text-[14px]">
+                <p className="text-[14px]">Member since </p>
+                <p className=" font-bold">July 20, 2021</p>
+              </div>
+              <div className=" text-[14px]">
+                <p className="text-[14px]">Last login</p>
+                <p className=" font-bold">May 2, 2024</p>
+              </div>
             </div>
-            <div className=" text-[14px]">
-              <p className="text-[14px]">Role </p>
-              <p className=" font-bold">Agent</p>
-            </div>
-            <div className=" text-[14px]">
-              <p className="text-[14px]">Project </p>
-              <p className=" font-bold">Jolie </p>
-            </div>
-            <div className=" text-[14px]">
-              <p className="text-[14px]">Member since </p>
-              <p className=" font-bold">July 20, 2021</p>
-            </div>
-            <div className=" text-[14px]">
-              <p className="text-[14px]">Last login</p>
-              <p className=" font-bold">May 2, 2024</p>
-            </div>
-          </div>
-        )}
-      </Dialog>
+          )}
+        </Dialog>
+      </div>
     </DashboardLayout>
   );
 };

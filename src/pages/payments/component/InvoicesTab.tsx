@@ -8,6 +8,7 @@ import Users from "./Users";
 import { Dialog } from "primereact/dialog";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { CreateBusiness } from "@/services/api";
+import { DropDownInput } from "@/components/ui/dropdownInput";
 
 const InvoicesTab = () => {
   const [activeTab, setActiveTab] = useState("Invoice");
@@ -28,14 +29,29 @@ const InvoicesTab = () => {
     type: "",
   });
 
+  // const handleInputChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  // ) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    console.log("Input Change - name:", name, "value:", value);
+    setFormData((prev) => {
+      const newState = {
+        ...prev,
+        [name]: value,
+      };
+      console.log("New formData:", newState);
+      return newState;
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -64,6 +80,7 @@ const InvoicesTab = () => {
     setErrors(newErrors);
 
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
+    console.log("Form Data being submitted:", formData);
     if (!hasErrors) {
       CreateBusiness(formData)
         .then(() => {
@@ -99,9 +116,9 @@ const InvoicesTab = () => {
   return (
     <div className="lg:p-[20px]">
       <div className="grid md:flex items-center gap-[20px] md:gap-[40px] mb-[16px]">
-        <div className="flex gap-[10px] items-center ">
+        <div className="flex gap-[10px] items-center">
           <button
-            className={`pb-[10px] text-[20px] ${
+            className={`pb-[10px] text-[20px] transition-all duration-300 ${
               activeTab === "Invoice"
                 ? "border-b border-[#17845a] text-[#17845a] font-[600]"
                 : "font-[500]"
@@ -111,7 +128,7 @@ const InvoicesTab = () => {
             Invoices
           </button>
           <button
-            className={`pb-[10px] text-[20px] ${
+            className={`pb-[10px] text-[20px] transition-all duration-300 ${
               activeTab === "Users"
                 ? "border-b border-[#17845a] text-[#17845a] font-[600]"
                 : "font-[500]"
@@ -197,94 +214,117 @@ const InvoicesTab = () => {
         {activeTab === "Users" && <Users />}
       </div>
 
-      <Dialog
-        header="Add Members"
-        visible={visible}
-        onHide={hideDialog}
-        breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-        style={{ width: "50vw" }}
+      <div
+        className={`custom-dialog-overlay ${
+          visible ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50" : "hidden"
+        }`}
       >
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <p className="text-4xl font-bold text-[#000]">Collaborate</p>
-            <div>
-              <Input
-                type="email"
-                name="email"
-                placeholder="Add email"
-                value={formData.email}
-                onChange={handleInputChange}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-xs">{errors.email}</p>
-              )}
-            </div>
-            <div>
-              <Input
-                type="text"
-                name="organization_name"
-                placeholder="Business Name"
-                value={formData.organization_name}
-                onChange={handleInputChange}
-              />
-              {errors.organization_name && (
-                <p className="text-red-500 text-xs">
-                  {errors.organization_name}
-                </p>
-              )}
-            </div>
-            {formData.type && (
+        <Dialog
+          header="Add Members"
+          visible={visible}
+          onHide={hideDialog}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "50vw" }}
+        >
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              <p className="text-4xl font-bold text-[#000]">Collaborate</p>
+              <div>
+                <DropDownInput
+                  type="email"
+                  name="email"
+                  placeholder="Add email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange(e)}
+                  options={[
+                    {
+                      value: "1",
+                      label: "Option 1",
+                      email: "option1@example.com",
+                    },
+                    {
+                      value: "2",
+                      label: "Option 2",
+                      email: "option2@example.com",
+                    },
+                    {
+                      value: "3",
+                      label: "Option 3",
+                      email: "option3@example.com",
+                    },
+                  ]}
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs">{errors.email}</p>
+                )}
+              </div>
               <div>
                 <Input
                   type="text"
-                  name="fullname"
-                  placeholder="Full Name"
-                  value={formData.fullname}
+                  name="organization_name"
+                  placeholder="Business Name"
+                  value={formData.organization_name}
                   onChange={handleInputChange}
                 />
-                {errors.fullname && (
-                  <p className="text-red-500 text-xs">{errors.fullname}</p>
+                {errors.organization_name && (
+                  <p className="text-red-500 text-xs">
+                    {errors.organization_name}
+                  </p>
                 )}
               </div>
-            )}
-            <div className=" hidden">
-              <div className="flex items-center gap-[5px] cursor-pointer">
-                <IoMdAddCircleOutline size={20} />
-                <p>Add Contact</p>
+              {formData.type && (
+                <div>
+                  <Input
+                    type="text"
+                    name="fullname"
+                    placeholder="Full Name"
+                    value={formData.fullname}
+                    onChange={handleInputChange}
+                  />
+                  {errors.fullname && (
+                    <p className="text-red-500 text-xs">{errors.fullname}</p>
+                  )}
+                </div>
+              )}
+              <div className=" hidden">
+                <div className="flex items-center gap-[5px] cursor-pointer">
+                  <IoMdAddCircleOutline size={20} />
+                  <p>Add Contact</p>
+                </div>
               </div>
-            </div>
-            <div className="flex gap-[10px] items-center">
-              <div className="w-full">
-                <SelectInput
-                  labelText="Role"
-                  name="type"
-                  options={[
-                    { value: "Vendor", label: "Vendor" },
-                    { value: "SubVendor", label: "SubVendor" },
-                  ]}
-                  value={formData.type}
-                  onChange={handleInputChange}
-                  className="h-full"
-                />
-                {errors.type && (
-                  <p className="text-red-500 text-xs">{errors.type}</p>
-                )}
-              </div>
-              <div className="w-full">
-                <div className="flex justify-end space-x-2">
-                  <button
-                    type="submit"
-                    className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
-                  >
-                    <IoIosAdd className="text-white" />
-                    <span className="text-white">Add User</span>
-                  </button>
+              <div className="flex gap-[10px] items-center">
+                <div className="w-full">
+                  <SelectInput
+                    labelText="Role"
+                    name="type"
+                    options={[
+                      { value: "Vendor", label: "Vendor" },
+                      { value: "SubVendor", label: "SubVendor" },
+                    ]}
+                    value={formData.type}
+                    onChange={handleInputChange}
+                    className="h-full"
+                  />
+                  {errors.type && (
+                    <p className="text-red-500 text-xs">{errors.type}</p>
+                  )}
+                </div>
+                <div className="w-full">
+                  <div className="flex justify-end space-x-2">
+                    <button
+                      type="submit"
+                      className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
+                    >
+                      <IoIosAdd className="text-white" />
+                      <span className="text-white">Add User</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </form>
-      </Dialog>
+          </form>
+        </Dialog>
+      </div>
     </div>
   );
 };

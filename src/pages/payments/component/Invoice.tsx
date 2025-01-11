@@ -64,6 +64,7 @@ const Invoice = () => {
       <Table
         headers={headers}
         rows={rows}
+        highlightFirstCell={true}
         emptyState={
           <div className="flex h-[50vh] flex-col items-center justify-center text-center">
             <div className="my-[32px]">

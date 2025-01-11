@@ -217,115 +217,124 @@ const Schedule = () => {
         </div>
       </div>
 
-      <Dialog
-        header="EVENT DETAILS"
-        visible={isModalVisible}
-        onHide={handleCloseModal}
-        breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-        style={{ width: "50vw" }}
+      <div
+        className={`custom-dialog-overlay ${
+          isModalVisible
+            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+            : "hidden"
+        }`}
       >
-        <form onSubmit={handleFormSubmit}>
-          <div className="space-y-4 text-[#000]">
-            <div className="grid grid-cols-2 gap-[20px] items-center">
-              <div className="max-w-[400px] w-full">
-                <Input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleFormChange}
-                  placeholder="Event Title"
-                  error={formErrors.title}
-                />
-              </div>
-              <div className="max-w-[400px] w-full">
-                <SelectInput
-                  name="vendor_id"
-                  value={formData.vendor_id}
-                  labelText="Vendor"
-                  onChange={handleFormChange}
-                  options={vendorOptions}
-                />
+        <Dialog
+          header="EVENT DETAILS"
+          visible={isModalVisible}
+          onHide={handleCloseModal}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "50vw" }}
+          className="custom-dialog-overlay"
+        >
+          <form onSubmit={handleFormSubmit}>
+            <div className="space-y-4 text-[#000]">
+              <div className="grid grid-cols-2 gap-[20px] items-center">
+                <div className="max-w-[400px] w-full">
+                  <Input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleFormChange}
+                    placeholder="Event Title"
+                    error={formErrors.title}
+                  />
+                </div>
+                <div className="max-w-[400px] w-full">
+                  <SelectInput
+                    name="vendor_id"
+                    value={formData.vendor_id}
+                    labelText="Vendor"
+                    onChange={handleFormChange}
+                    options={vendorOptions}
+                  />
+                </div>
+
+                <div className="max-w-[400px] w-full">
+                  <SelectInput
+                    name="subvendor"
+                    value={formData.subvendor}
+                    labelText="SubVendor"
+                    onChange={handleFormChange}
+                    options={subVendorOptions}
+                  />
+                </div>
+
+                <div className="max-w-[400px] w-full">
+                  <Input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleFormChange}
+                    placeholder="Location (or Link for virtual meetings)"
+                  />
+                </div>
+
+                <div className="max-w-[400px] w-full">
+                  <SelectInput
+                    name="eventType"
+                    onChange={handleFormChange}
+                    labelText="Select Event Type"
+                    options={[{ value: "Virtual", label: "Virtual" }]}
+                  />
+                </div>
+                <div className="max-w-[400px] w-full">
+                  <Input
+                    type="text"
+                    name="code"
+                    value={formData.code}
+                    onChange={handleFormChange}
+                    placeholder="Enter Code"
+                  />
+                </div>
+                <div className="max-w-[400px] w-full">
+                  <Input
+                    type="datetime-local"
+                    name="start_dte"
+                    value={formData.start_dte}
+                    onChange={handleFormChange}
+                    placeholder="Start Date & Time"
+                    error={formErrors.start_dte}
+                  />
+                </div>
+                <div className="max-w-[400px] w-full">
+                  <Input
+                    type="datetime-local"
+                    name="end_dte"
+                    value={formData.end_dte}
+                    onChange={handleFormChange}
+                    placeholder="End Date & Time"
+                    error={formErrors.end_dte}
+                  />
+                </div>
               </div>
 
-              <div className="max-w-[400px] w-full">
-                <SelectInput
-                  name="subvendor"
-                  value={formData.subvendor}
-                  labelText="SubVendor"
-                  onChange={handleFormChange}
-                  options={subVendorOptions}
-                />
-              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-[20px]">
+                  <button
+                    className="cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
+                    type="submit"
+                  >
+                    Schedule
+                  </button>
+                  <p className="px-[20px] py-[8px] bg-[#000] rounded-full text-[#fff] inline-flex">
+                    Share
+                  </p>
+                </div>
 
-              <div className="max-w-[400px] w-full">
-                <Input
-                  type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleFormChange}
-                  placeholder="Location (or Link for virtual meetings)"
-                />
-              </div>
-
-              <div className="max-w-[400px] w-full">
-                <SelectInput
-                  name="eventType"
-                  onChange={handleFormChange}
-                  labelText="Select Event Type"
-                  options={[{ value: "Virtual", label: "Virtual" }]}
-                />
-              </div>
-              <div className="max-w-[400px] w-full">
-                <Input
-                  type="text"
-                  name="code"
-                  value={formData.code}
-                  onChange={handleFormChange}
-                  placeholder="Enter Code"
-                />
-              </div>
-              <div className="max-w-[400px] w-full">
-                <Input
-                  type="datetime-local"
-                  name="start_dte"
-                  value={formData.start_dte}
-                  onChange={handleFormChange}
-                  placeholder="Start Date & Time"
-                  error={formErrors.start_dte}
-                />
-              </div>
-              <div className="max-w-[400px] w-full">
-                <Input
-                  type="datetime-local"
-                  name="end_dte"
-                  value={formData.end_dte}
-                  onChange={handleFormChange}
-                  placeholder="End Date & Time"
-                  error={formErrors.end_dte}
-                />
+                <div className="bg-[#000] text-[#fff] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer">
+                  <GoArrowUpRight size={24} />
+                </div>
               </div>
             </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-[20px]">
-                <button
-                  className="cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
-                  type="submit"
-                >
-                  Schedule
-                </button>
-                <p className="px-[20px] py-[8px] bg-[#000] rounded-full text-[#fff] inline-flex">
-                  Share
-                </p>
-              </div>
-
-              <div className="bg-[#000] text-[#fff] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer">
-                <GoArrowUpRight size={24} />
-              </div>
-            </div>
-          </div>
-        </form>
-      </Dialog>
+          </form>
+        </Dialog>
+      </div>
     </DashboardLayout>
   );
 };

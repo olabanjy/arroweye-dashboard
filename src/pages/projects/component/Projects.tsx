@@ -59,6 +59,7 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
       )}
 
       <Table
+        highlightFirstCell={true}
         headers={headers}
         rows={content?.map((item, index) => ({
           data: [

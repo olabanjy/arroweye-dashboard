@@ -590,60 +590,69 @@ const Manage = () => {
         </div>
       </form>
 
-      <Dialog
-        header="Add Service"
-        visible={isAddNewService}
-        onHide={hideDialog}
-        breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-        style={{ width: "50vw" }}
+      <div
+        className={`custom-dialog-overlay ${
+          isAddNewService
+            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+            : "hidden"
+        }`}
       >
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <Input
-                type="text"
-                name="name"
-                placeholder="Name"
-                value={formData.name}
-                onChange={handleInputChange}
-              />
-              {errors.name && (
-                <p className="text-red-500 text-xs">{errors.name}</p>
-              )}
-            </div>
-            <div>
-              <Input
-                type="text"
-                name="cost"
-                placeholder="Cost"
-                value={formData.cost}
-                onChange={handleInputChange}
-              />
-              {errors.cost && (
-                <p className="text-red-500 text-xs">{errors.cost}</p>
-              )}
-            </div>
+        <Dialog
+          header="Add Service"
+          visible={isAddNewService}
+          onHide={hideDialog}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "50vw" }}
+          className="custom-dialog-overlay"
+        >
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              <div>
+                <Input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-xs">{errors.name}</p>
+                )}
+              </div>
+              <div>
+                <Input
+                  type="text"
+                  name="cost"
+                  placeholder="Cost"
+                  value={formData.cost}
+                  onChange={handleInputChange}
+                />
+                {errors.cost && (
+                  <p className="text-red-500 text-xs">{errors.cost}</p>
+                )}
+              </div>
 
-            <div className=" hidden">
-              <div className="flex items-center gap-[5px] cursor-pointer">
-                <IoMdAddCircleOutline size={20} />
-                <p>Add Contact</p>
+              <div className=" hidden">
+                <div className="flex items-center gap-[5px] cursor-pointer">
+                  <IoMdAddCircleOutline size={20} />
+                  <p>Add Contact</p>
+                </div>
+              </div>
+              <div className="w-full">
+                <div className="flex justify-end space-x-2">
+                  <button
+                    type="submit"
+                    className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
+                  >
+                    <IoIosAdd className="text-white" />
+                    <span className="text-white">Add Service</span>
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="w-full">
-              <div className="flex justify-end space-x-2">
-                <button
-                  type="submit"
-                  className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
-                >
-                  <IoIosAdd className="text-white" />
-                  <span className="text-white">Add Service</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </Dialog>
+          </form>
+        </Dialog>
+      </div>
     </div>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { FaRegCopy } from "react-icons/fa";
-import { LuSettings } from "react-icons/lu";
 import { Toast } from "primereact/toast";
 import { InputSwitch } from "primereact/inputswitch";
+import { MdTune } from "react-icons/md";
 
 const Setting = () => {
   const [email, setEmail] = useState("example@mail.com");
@@ -43,8 +43,9 @@ const Setting = () => {
     info?: string,
     extraElement?: React.ReactNode
   ) => (
-    <div className="max-w-[400px] w-full space-y-2 relative">
+    <div className="max-w-[400px] w-full space-y-2 relative flex items-center gap-[10px]">
       <Input
+        rounded={true}
         label={label}
         type={type}
         value={value}
@@ -71,14 +72,16 @@ const Setting = () => {
       <Toast ref={toast} />
 
       <div className="flex items-center gap-2">
-        <LuSettings size={24} className="text-[#858585]" />
-        <p className="font-bold text-2xl text-[#000]">Settings</p>
+        <MdTune size={24} className="text-[#858585]" />
+        <p className="font-bold text-[24px] lg:text-[30px] text-[#000]">
+          Settings
+        </p>
       </div>
 
       <div className="mt-10 border rounded-[16px] border-[#d8d8d8] h-screen  px-4 py-10 space-y-[20px]">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-end">
           {renderCopyInput(
-            "User details",
+            "USER DETAILS",
             email,
             false,
             "email",
@@ -94,7 +97,7 @@ const Setting = () => {
         </div>
         <div className=" flex items-center gap-[20px] ">
           {renderCopyInput(
-            "Notifications",
+            "NOTIFICATIONS",
             phone,
             false,
             "text",

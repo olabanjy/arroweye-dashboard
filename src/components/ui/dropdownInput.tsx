@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { FiInfo, FiEye, FiEyeOff } from "react-icons/fi";
 
@@ -16,7 +16,8 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   validate?: "email" | "otp" | "datetime";
   info?: string;
-  rounded?: boolean; // New rounded prop
+  options?: { value: string; label: string; email: string }[];
+  selectedValue?: string;
 }
 
 const useValidation = (validate: InputProps["validate"]) => {
@@ -49,7 +50,7 @@ const useValidation = (validate: InputProps["validate"]) => {
   return { validateInput, getValidationError };
 };
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
+const DropDownInput = React.forwardRef<HTMLInputElement, InputProps>(
   (
     {
       label,
@@ -58,14 +59,28 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       error,
       validate,
       info,
-      rounded,
+      options = [],
+      selectedValue,
       ...props
     },
     ref
   ) => {
-    const [inputValue, setInputValue] = useState<string>("");
+    const initialOption = options.find(
+      (option) => option.value === selectedValue
+    );
+    const [inputValue, setInputValue] = useState<string>(
+      initialOption?.email || ""
+    );
     const [validationError, setValidationError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [showDropdown, setShowDropdown] = useState<boolean>(false);
+
+    useEffect(() => {
+      const selected = options.find((option) => option.value === selectedValue);
+      if (selected) {
+        setInputValue(selected.email);
+      }
+    }, [selectedValue, options]);
 
     const { validateInput, getValidationError } = useValidation(validate);
 
@@ -76,25 +91,41 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       } else {
         setValidationError(null);
       }
+      setTimeout(() => setShowDropdown(false), 200);
     };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setInputValue(event.target.value);
+      setShowDropdown(true);
     };
 
     const togglePasswordVisibility = () => {
       setShowPassword((prev) => !prev);
     };
 
+    const handleOptionSelect = (value: string, email: string) => {
+      setInputValue(email);
+      setShowDropdown(false);
+      if (props.onChange) {
+        const event = {
+          target: {
+            value: email,
+            name: props.name,
+          },
+        } as React.ChangeEvent<HTMLInputElement>;
+        props.onChange(event);
+      }
+    };
+
     const inputType = type === "password" && showPassword ? "text" : type;
 
     return (
-      <div className="flex flex-col space-y-2 font-IBM">
+      <div className="flex flex-col space-y-2">
         <div className="flex items-center space-x-2">
           {label && (
             <label
               htmlFor={props.id}
-              className="text-[12px] font-[400] text-[#212529] leading-[18px]"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               {label}
             </label>
@@ -106,14 +137,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={inputType}
             ref={ref}
             className={cn(
-              "block w-full border border-black bg-white px-4 py-[8px] h-[50px] text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
-              rounded ? "rounded-full" : "rounded-[8px]",
+              "block w-full rounded-[8px] border border-black bg-white px-4 py-[8px] h-[50px] text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
               (error || validationError) && "border-red-500 focus:ring-red-500",
               className
             )}
             value={inputValue}
             onBlur={handleBlur}
             onChange={handleChange}
+            onFocus={() => setShowDropdown(true)}
             aria-invalid={!!(error || validationError)}
             aria-describedby={props.id ? `${props.id}-error` : undefined}
             {...props}
@@ -127,6 +158,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             >
               {showPassword ? <FiEyeOff /> : <FiEye />}
             </button>
+          )}
+          {showDropdown && options.length > 0 && (
+            <div className="absolute left-0 w-full mt-1 bg-white shadow-lg rounded-[8px] z-10 dark:bg-gray-900">
+              {options.map((option) => (
+                <div
+                  key={option.value}
+                  onClick={() => handleOptionSelect(option.value, option.email)}
+                  className="px-4 py-2 text-sm text-gray-900 cursor-pointer hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
+                >
+                  <p className="font-semibold">{option.label}</p>
+                  <p className="text-sm text-gray-500">{option.email}</p>
+                </div>
+              ))}
+            </div>
           )}
         </div>
         {(error || validationError) && (
@@ -142,6 +187,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
-Input.displayName = "Input";
+DropDownInput.displayName = "DropDownInput";
 
-export { Input };
+export { DropDownInput };
