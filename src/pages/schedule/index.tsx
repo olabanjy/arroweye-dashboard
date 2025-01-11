@@ -13,10 +13,12 @@ import { DateClickArg } from "@fullcalendar/interaction";
 import { CreateEvent, getEvents } from "@/services/api";
 import { ContentItem, EventsItem } from "@/types/contents";
 import { PiCalendarPlus } from "react-icons/pi";
+import { MdOutlineFilterAlt } from "react-icons/md";
 interface FormErrors {
   title?: string;
   start_dte?: string;
   end_dte?: string;
+  code?: string;
 }
 
 const Schedule = () => {
@@ -39,7 +41,6 @@ const Schedule = () => {
     start: item.start_dte,
     end: item.end_dte,
   }));
-  console.log(eventItem);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formData, setFormData] = useState({
@@ -74,9 +75,7 @@ const Schedule = () => {
     setIsModalVisible(false);
   };
 
-  const handleFormChange = (
-    value: React.ChangeEvent<HTMLInputElement> | string | number
-  ) => {
+  const handleFormChange = (value: React.ChangeEvent<HTMLInputElement>) => {
     if ((value as React.ChangeEvent<HTMLInputElement>).target) {
       const { name, value: inputValue } = (
         value as React.ChangeEvent<HTMLInputElement>
@@ -104,6 +103,16 @@ const Schedule = () => {
           newErrors.end_dte = "End Date is required.";
         } else {
           newErrors.end_dte = "";
+        }
+
+        if (
+          name === "code" &&
+          value &&
+          (value as unknown as string).length > 6
+        ) {
+          newErrors.code = "Code must be less than or equal to 6 characters.";
+        } else if (name === "code") {
+          newErrors.code = "";
         }
 
         setFormErrors(newErrors);
@@ -142,10 +151,27 @@ const Schedule = () => {
     }
   };
 
+  const handleFormChange2 = (value: {
+    name: string;
+    value: string | number;
+  }) => {
+    const { name, value: inputValue } = value;
+    console.log("Updating field:", name, "with value:", inputValue);
+
+    setFormData((prevState) => {
+      const updatedData = {
+        ...prevState,
+        [name]: inputValue,
+      };
+
+      console.log(updatedData);
+
+      return updatedData;
+    });
+  };
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log("Form submitted!");
 
     const newErrors: FormErrors = {
       title: "",
@@ -160,7 +186,11 @@ const Schedule = () => {
     if (!formData.start_dte) {
       newErrors.start_dte = "Start Date is required.";
     }
-
+    if (!formData.code || formData.code.length > 6) {
+      newErrors.code = "Code must be less than or equal to 6 characters.";
+    } else {
+      newErrors.code = "";
+    }
     if (!formData.end_dte) {
       newErrors.end_dte = "End Date is required.";
     }
@@ -168,6 +198,7 @@ const Schedule = () => {
     setFormErrors(newErrors);
 
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
+    console.log("Form submitted!", FormData);
 
     if (!hasErrors) {
       const updatedFormData = {
@@ -221,18 +252,34 @@ const Schedule = () => {
   return (
     <DashboardLayout>
       <div className="schedule-container space-y-[20px]">
-        <div className=" flex items-center justify-center gap-[5px]">
+        <div className=" flex items-center justify-center gap-[5px] mb-[30px]">
           <div
-            className="w-12 h-12 rounded-full bg-[#3700b3] inline-flex text-[#ffffff]  items-center justify-center"
+            className="w-12 h-12 rounded-full bg-[#5d00e4] inline-flex text-[#ffffff]  items-center justify-center cursor-pointer"
             onClick={() => setIsModalVisible(true)}
           >
             <PiCalendarPlus />
           </div>{" "}
           <div className="w-12 h-12 rounded-full bg-[#000000] inline-flex text-[#ffffff]  items-center justify-center">
-            <PiCalendarPlus />
+            <MdOutlineFilterAlt />
           </div>
         </div>
         <div className="calendar-container">
+          <style>
+            {`
+              .fc .fc-toolbar-title {
+                text-transform: uppercase !important;
+              }
+              .fc .fc-button {
+                text-transform: uppercase !important;
+              }
+              .fc .fc-toolbar-chunk {
+                text-transform: uppercase !important;
+              }
+              .fc .fc-today-button {
+                text-transform: uppercase !important;
+              }
+            `}
+          </style>
           <FullCalendar
             plugins={[
               dayGridPlugin,
@@ -289,8 +336,10 @@ const Schedule = () => {
                   <SelectInput
                     name="vendor_id"
                     value={formData.vendor_id}
-                    // labelText="Vendor"
-                    onChange={handleFormChange}
+                    onChange={(value) =>
+                      handleFormChange2({ name: "vendor_id", value })
+                    }
+                    // onChange={handleFormChange2}
                     options={vendorOptions}
                   />
                 </div>
@@ -300,7 +349,9 @@ const Schedule = () => {
                     name="subvendor"
                     value={formData.subvendor}
                     // labelText="SubVendor"
-                    onChange={handleFormChange}
+                    onChange={(value) =>
+                      handleFormChange2({ name: "subvendor", value })
+                    }
                     options={subVendorOptions}
                   />
                 </div>
@@ -318,7 +369,9 @@ const Schedule = () => {
                 <div className="max-w-[400px] w-full">
                   <SelectInput
                     name="eventType"
-                    onChange={handleFormChange}
+                    onChange={(value) =>
+                      handleFormChange2({ name: "eventType", value })
+                    }
                     // labelText="Select Event Type"
                     options={[{ value: "Virtual", label: "Virtual" }]}
                   />
@@ -330,6 +383,7 @@ const Schedule = () => {
                     value={formData.code}
                     onChange={handleFormChange}
                     placeholder="Enter Code"
+                    error={formErrors.code}
                   />
                 </div>
                 <div className="max-w-[400px] w-full">

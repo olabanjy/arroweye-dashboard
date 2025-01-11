@@ -60,11 +60,13 @@ const Manage = () => {
   };
 
   const handleVendorChange = (value: string | number) => {
+    console.log("Vendor Value:", value);
     setProjectFormData((prevData) => ({
       ...prevData,
       vendor_id: value,
     }));
   };
+
   const handleSubVendorChange = (value: string | number) => {
     setProjectFormData((prevData) => ({
       ...prevData,
@@ -187,7 +189,7 @@ const Manage = () => {
   const [projectFormData, setProjectFormData] = useState<ProjectFormData>({
     project_title: "",
     vendor_id: "",
-    subvendor_id: "", // subvendor_id is a string initially, but can accept string or number later
+    subvendor_id: "",
     po_code: "",
     currency: "",
     services: [
@@ -557,40 +559,40 @@ const Manage = () => {
                   {selectedService === "$"
                     ? `$${subtotal.toFixed(2)}`
                     : selectedService === "₦"
-                    ? `₦${subtotal.toFixed(2)}`
-                    : selectedService === "Ξ"
-                    ? `Ξ${subtotal.toFixed(2)}`
-                    : `₦${subtotal.toFixed(2)}`}{" "}
+                      ? `₦${subtotal.toFixed(2)}`
+                      : selectedService === "Ξ"
+                        ? `Ξ${subtotal.toFixed(2)}`
+                        : `₦${subtotal.toFixed(2)}`}{" "}
                 </p>
                 <p className="text-sm text-gray-700">
                   Service Charge (15%):{" "}
                   {selectedService === "$"
                     ? `$${serviceCharge.toFixed(2)}`
                     : selectedService === "₦"
-                    ? `₦${serviceCharge.toFixed(2)}`
-                    : selectedService === "Ξ"
-                    ? `Ξ${serviceCharge.toFixed(2)}`
-                    : `₦${serviceCharge.toFixed(2)}`}{" "}
+                      ? `₦${serviceCharge.toFixed(2)}`
+                      : selectedService === "Ξ"
+                        ? `Ξ${serviceCharge.toFixed(2)}`
+                        : `₦${serviceCharge.toFixed(2)}`}{" "}
                 </p>
                 <p className="text-sm text-gray-700">
                   Tax (7.5%):{" "}
                   {selectedService === "$"
                     ? `$${tax.toFixed(2)}`
                     : selectedService === "₦"
-                    ? `₦${tax.toFixed(2)}`
-                    : selectedService === "Ξ"
-                    ? `Ξ${tax.toFixed(2)}`
-                    : `₦${tax.toFixed(2)}`}{" "}
+                      ? `₦${tax.toFixed(2)}`
+                      : selectedService === "Ξ"
+                        ? `Ξ${tax.toFixed(2)}`
+                        : `₦${tax.toFixed(2)}`}{" "}
                 </p>
                 <p className="text-sm text-gray-700 font-bold">
                   Total:{" "}
                   {selectedService === "$"
                     ? `$${total.toFixed(2)}`
                     : selectedService === "₦"
-                    ? `₦${total.toFixed(2)}`
-                    : selectedService === "Ξ"
-                    ? `Ξ${total.toFixed(2)}`
-                    : `₦${total.toFixed(2)}`}{" "}
+                      ? `₦${total.toFixed(2)}`
+                      : selectedService === "Ξ"
+                        ? `Ξ${total.toFixed(2)}`
+                        : `₦${total.toFixed(2)}`}{" "}
                 </p>
               </div>
             )}

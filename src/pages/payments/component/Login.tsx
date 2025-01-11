@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Nav from "./Nav";
@@ -119,22 +118,17 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-[#e0f6e6] h-screen">
+    <div className="bg-[#e0f6e6] h-screen ">
       <Nav />
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-center">
-          <Tabs
-            defaultValue="login"
-            className="px-[10px] w-full max-w-[400px] md:px-0"
-          >
-            <TabsList>
-              <TabsTrigger value="login">Login</TabsTrigger>
-            </TabsList>
+          <div className=" w-full max-w-[600px]">
+            <p className=" text-[18px] font-[600]">Login</p>
 
-            <TabsContent value="login">
+            <div className="w-full">
               {!isOtpSent ? (
                 <form
-                  className="mt-[20px] space-y-[30px] w-full"
+                  className="mt-[20px] space-y-[30px] w-full max-w-[600px] mx-auto"
                   onSubmit={handleLoginSubmit}
                 >
                   <Input
@@ -144,6 +138,7 @@ const Login = () => {
                     value={loginFormData.email}
                     onChange={handleLoginInputChange}
                     error={loginErrors.email}
+                    className="w-full"
                   />
 
                   <Button
@@ -158,7 +153,7 @@ const Login = () => {
                 </form>
               ) : (
                 <form
-                  className="mt-[20px] space-y-[30px] w-full"
+                  className="mt-[20px] space-y-[30px] w-full max-w-[600px] mx-auto"
                   onSubmit={handleOtpSubmit}
                 >
                   <Input
@@ -168,6 +163,7 @@ const Login = () => {
                     value={otpFormData.otp}
                     onChange={handleOtpInputChange}
                     error={otpErrors.otp}
+                    className="w-full"
                   />
                   <Button
                     label="Verify Otp"
@@ -180,8 +176,9 @@ const Login = () => {
                   />
                 </form>
               )}
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
+          {/* </Tabs> */}
         </div>
       </div>
     </div>

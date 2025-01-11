@@ -172,7 +172,7 @@ const SelectInput: React.FC<DropdownInputProps> = ({
   )?.label;
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="flex flex-col space-y-2 font-IBM">
       {label && (
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
           {label}
@@ -205,7 +205,7 @@ const SelectInput: React.FC<DropdownInputProps> = ({
                 key={option.value}
                 onClick={() => handleSelect(option.value)}
                 className={cn(
-                  "px-[16px] py-2 text-sm text-gray-900 cursor-pointer hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700",
+                  "px-[16px] py-2 text-sm font-IBM text-gray-900 cursor-pointer hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700",
                   selectedValue === option.value &&
                     "bg-gray-100 dark:bg-gray-700"
                 )}
