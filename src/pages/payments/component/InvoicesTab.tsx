@@ -305,10 +305,9 @@ const InvoicesTab = () => {
                     onChange={(value) =>
                       handleInputChange({
                         target: { name: "type", value: String(value) },
-                      } as any)
+                      } as React.ChangeEvent<HTMLInputElement>)
                     }
                     // onChange={handleInputChange}
-                    className="h-full"
                   />
                   {errors.type && (
                     <p className="text-red-500 text-xs">{errors.type}</p>

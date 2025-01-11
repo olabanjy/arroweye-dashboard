@@ -27,6 +27,13 @@ interface User {
   email: string;
 }
 
+// interface AddUserFormData = {
+//   email: string;
+//   business_id: string;
+//   role: string | number; // Allow role to be either a string or number
+//   fullname: string;
+// };
+
 const ProjectDetails = () => {
   const [content, setContent] = useState<ContentItem | null>(null);
 
@@ -54,7 +61,12 @@ const ProjectDetails = () => {
 
   const [isAddUserLoading, setIsAddUserLoading] = useState(false);
 
-  const [addUserFormData, setAddUserFormData] = useState({
+  const [addUserFormData, setAddUserFormData] = useState<{
+    email: string;
+    business_id: string;
+    role: string | number;
+    fullname: string;
+  }>({
     email: "",
     business_id: "",
     role: "",
@@ -67,10 +79,22 @@ const ProjectDetails = () => {
     fullname: "",
   });
 
-  const handleAddUserInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleAddUserInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    setAddUserFormData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        [name]: value,
+      };
+      console.log("Updated form data:", updatedData);
+      return updatedData;
+    });
+  };
+
+  const handleAddUserInputChange2 = (value: string | number) => {
+    const name = "role";
+
     setAddUserFormData((prevData) => {
       const updatedData = {
         ...prevData,
@@ -280,8 +304,8 @@ const ProjectDetails = () => {
                   <SelectInput
                     name="role"
                     value={addUserFormData.role}
-                    onChange={handleAddUserInputChange}
-                    labelText="Choose Role"
+                    onChange={handleAddUserInputChange2}
+                    // labelText="Choose Role"
                     options={[
                       { value: "Manager", label: "Manager" },
                       { value: "LeadAdmin", label: "LeadAdmin" },
@@ -290,7 +314,6 @@ const ProjectDetails = () => {
                       { value: "Vendor", label: "Vendor" },
                       { value: "SubVendor", label: "SubVendor" },
                     ]}
-                    className="h-full"
                   />
                 </div>
                 <div className=" w-full">
@@ -441,8 +464,8 @@ const ProjectDetails = () => {
               <SelectInput
                 name="role"
                 value={addUserFormData.role}
-                onChange={handleAddUserInputChange}
-                labelText="Choose Role"
+                onChange={handleAddUserInputChange2}
+                // labelText="Choose Role"
                 options={[
                   { value: "Manager", label: "Manager" },
                   { value: "LeadAdmin", label: "LeadAdmin" },
@@ -451,7 +474,6 @@ const ProjectDetails = () => {
                   { value: "Vendor", label: "Vendor" },
                   { value: "SubVendor", label: "SubVendor" },
                 ]}
-                className="h-full"
               />
             </div>
             <div className="flex justify-end space-x-2">

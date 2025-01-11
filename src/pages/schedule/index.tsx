@@ -75,42 +75,71 @@ const Schedule = () => {
   };
 
   const handleFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    value: React.ChangeEvent<HTMLInputElement> | string | number
   ) => {
-    const { name, value } = e.target;
+    if ((value as React.ChangeEvent<HTMLInputElement>).target) {
+      const { name, value: inputValue } = (
+        value as React.ChangeEvent<HTMLInputElement>
+      ).target;
 
-    if (name === "code" && value.length > 6) {
-      return;
+      setFormData((prevData) => {
+        const updatedData = { ...prevData, [name]: inputValue };
+        console.log(updatedData);
+
+        const newErrors: { [key: string]: string } = { ...formErrors };
+
+        if (name === "title" && !inputValue) {
+          newErrors.title = "Event Title is required.";
+        } else {
+          newErrors.title = "";
+        }
+
+        if (name === "start_dte" && !inputValue) {
+          newErrors.start_dte = "Start Date is required.";
+        } else {
+          newErrors.start_dte = "";
+        }
+
+        if (name === "end_dte" && !inputValue) {
+          newErrors.end_dte = "End Date is required.";
+        } else {
+          newErrors.end_dte = "";
+        }
+
+        setFormErrors(newErrors);
+
+        return updatedData;
+      });
+    } else {
+      setFormData((prevData) => {
+        const updatedData = { ...prevData, subvendor: value.toString() };
+        console.log(updatedData);
+
+        const newErrors: { [key: string]: string } = { ...formErrors };
+
+        if (!formData.title) {
+          newErrors.title = "Event Title is required.";
+        } else {
+          newErrors.title = "";
+        }
+
+        if (!formData.start_dte) {
+          newErrors.start_dte = "Start Date is required.";
+        } else {
+          newErrors.start_dte = "";
+        }
+
+        if (!formData.end_dte) {
+          newErrors.end_dte = "End Date is required.";
+        } else {
+          newErrors.end_dte = "";
+        }
+
+        setFormErrors(newErrors);
+
+        return updatedData;
+      });
     }
-
-    setFormData((prevData) => {
-      const updatedData = { ...prevData, [name]: value };
-      console.log(updatedData);
-
-      const newErrors: { [key: string]: string } = { ...formErrors };
-
-      if (name === "title" && !value) {
-        newErrors.title = "Event Title is required.";
-      } else {
-        newErrors.title = "";
-      }
-
-      if (name === "start_dte" && !value) {
-        newErrors.start_dte = "Start Date is required.";
-      } else {
-        newErrors.start_dte = "";
-      }
-
-      if (name === "end_dte" && !value) {
-        newErrors.end_dte = "End Date is required.";
-      } else {
-        newErrors.end_dte = "";
-      }
-
-      setFormErrors(newErrors);
-
-      return updatedData;
-    });
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -260,7 +289,7 @@ const Schedule = () => {
                   <SelectInput
                     name="vendor_id"
                     value={formData.vendor_id}
-                    labelText="Vendor"
+                    // labelText="Vendor"
                     onChange={handleFormChange}
                     options={vendorOptions}
                   />
@@ -270,7 +299,7 @@ const Schedule = () => {
                   <SelectInput
                     name="subvendor"
                     value={formData.subvendor}
-                    labelText="SubVendor"
+                    // labelText="SubVendor"
                     onChange={handleFormChange}
                     options={subVendorOptions}
                   />
@@ -290,7 +319,7 @@ const Schedule = () => {
                   <SelectInput
                     name="eventType"
                     onChange={handleFormChange}
-                    labelText="Select Event Type"
+                    // labelText="Select Event Type"
                     options={[{ value: "Virtual", label: "Virtual" }]}
                   />
                 </div>

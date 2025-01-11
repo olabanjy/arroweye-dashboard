@@ -6,8 +6,8 @@ import { BsFillPlusCircleFill } from "react-icons/bs";
 const Manage = () => {
   const [selectedCurrency, setSelectedCurrency] = useState("");
 
-  const handleCurrencyChange = (value: string) => {
-    setSelectedCurrency(value);
+  const handleCurrencyChange = (value: string | number) => {
+    setSelectedCurrency(value.toString());
     console.log(selectedCurrency);
   };
 
@@ -32,7 +32,7 @@ const Manage = () => {
                   { value: "vendor", label: "Vendor" },
                   { value: "vivo", label: "VIVO" },
                 ]}
-                onChange={(e) => handleCurrencyChange(e.target.value)}
+                onChange={(value) => handleCurrencyChange(value)}
               />
             </div>
           </div>
@@ -45,7 +45,7 @@ const Manage = () => {
                   { value: "tedxoau", label: "tedXOAU" },
                 ]}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
-                onChange={(e) => handleCurrencyChange(e.target.value)}
+                onChange={(value) => handleCurrencyChange(value)}
               />
             </div>
             <BsFillPlusCircleFill size={50} />
