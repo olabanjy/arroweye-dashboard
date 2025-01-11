@@ -24,12 +24,21 @@ type ServiceError = {
 type ProjectErrors = {
   project_title: string;
   vendor_id: string | null;
-  subvendor_id: string | null;
+  subvendor_id: string | number | null;
   po_code: string;
   currency: string;
   cost: string;
   services: ServiceError[];
 };
+
+interface ProjectFormData {
+  project_title: string;
+  vendor_id: string | number;
+  subvendor_id: string | number;
+  po_code: string;
+  currency: string | number;
+  services: { service_id: number; quantity: number }[];
+}
 
 const Manage = () => {
   const [selectedService, setSelectedService] = useState<number | string>();
@@ -39,27 +48,27 @@ const Manage = () => {
 
   const [items, setItems] = useState<Item[]>([]);
 
-  const handleCurrencyChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setProjectFormData((prevData) => ({
-      ...prevData,
-      currency: event.target.value,
+  const handleCurrencyChange = (value: string | number) => {
+    console.log(value);
+
+    setProjectFormData((prevState) => ({
+      ...prevState,
+      currency: value,
     }));
-    setSelectedService(event.target.value);
+
+    setSelectedService(value);
   };
-  const handleVendorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+
+  const handleVendorChange = (value: string | number) => {
     setProjectFormData((prevData) => ({
       ...prevData,
-      vendor_id: event.target.value,
+      vendor_id: value,
     }));
   };
-  const handleSubVendorChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleSubVendorChange = (value: string | number) => {
     setProjectFormData((prevData) => ({
       ...prevData,
-      subvendor_id: event.target.value,
+      subvendor_id: value,
     }));
   };
 
@@ -175,13 +184,12 @@ const Manage = () => {
     }
   };
 
-  const [projectFormData, setProjectFormData] = useState({
+  const [projectFormData, setProjectFormData] = useState<ProjectFormData>({
     project_title: "",
     vendor_id: "",
-    subvendor_id: "",
+    subvendor_id: "", // subvendor_id is a string initially, but can accept string or number later
     po_code: "",
     currency: "",
-    // cost: "",
     services: [
       {
         service_id: 0,
@@ -360,7 +368,7 @@ const Manage = () => {
                 <SelectInput
                   label="Currency"
                   name="currency"
-                  labelText="Select Currency"
+                  // labelText="Select Currency"
                   options={currencyOptions}
                   info="Select the currency for the project."
                   value={projectFormData.currency}
@@ -378,7 +386,7 @@ const Manage = () => {
             <div className="flex items-end gap-[20px]">
               <div className="max-w-[400px] w-full">
                 <SelectInput
-                  labelText="Select Vendor"
+                  label="Select Vendor"
                   name="vendor"
                   options={vendorOptions}
                   onChange={handleVendorChange}
@@ -395,7 +403,7 @@ const Manage = () => {
               <div className="max-w-[400px] w-full">
                 <SelectInput
                   name="subVendor"
-                  labelText="Select SubVendor"
+                  // labelText="Select SubVendor"
                   options={subVendorOptions}
                   onChange={handleSubVendorChange}
                   value={projectFormData.subvendor_id}
@@ -416,11 +424,11 @@ const Manage = () => {
                   <div className="max-w-[400px] w-full">
                     <SelectInput
                       name="service"
-                      labelText="Select Service"
+                      label="Select Service"
                       options={customOptions}
                       value={item.service_id || ""}
-                      onChange={(e) => {
-                        const selectedValue = Number(e.target.value);
+                      onChange={(value: string | number) => {
+                        const selectedValue = Number(value);
 
                         if (selectedValue === 9) {
                           setIsAddNewService(true);

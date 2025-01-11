@@ -17,23 +17,21 @@ const InsightCard: FC<InsightCardProps> = ({
   percentageChange,
   percentageColor = "#11cc48",
   selectOptions,
-  maxWidth = "400px",
 }) => {
   return (
     <div
       className={`border p-[20px] rounded-[8px] space-y-[20px] w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500 `}
-      style={{ maxWidth }}
     >
       <div className="flex items-center gap-[5px] text-[#7a8081]">
-        <p className="text-[14px]">{title}</p>
+        <p className="text-[12px] font-[400] tracking-[.1rem]">{title}</p>
         <FiInfo className="text-gray-400 hover:text-blue-500" />
       </div>
 
-      <p className="text-2xl lg:text-4xl font-bold">{value}</p>
+      <p className="text-2xl lg:text-[56px] font-[600]">{value}</p>
 
       {percentageChange && (
         <p
-          className="text-[14px] lg:text-[16px] font-bold"
+          className="text-[14px] lg:text-[16px] font-[500]"
           style={{ color: percentageColor }}
         >
           {percentageChange}
@@ -43,7 +41,7 @@ const InsightCard: FC<InsightCardProps> = ({
       <div className="grid grid-cols-3 gap-[10px]">
         {selectOptions?.map((options, index) => (
           <div key={index} className="max-w-[100px] w-full">
-            <SelectInput options={options} />
+            <SelectInput options={options} rounded={true} />
           </div>
         ))}
       </div>

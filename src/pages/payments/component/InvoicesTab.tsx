@@ -295,14 +295,19 @@ const InvoicesTab = () => {
               <div className="flex gap-[10px] items-center">
                 <div className="w-full">
                   <SelectInput
-                    labelText="Role"
+                    label="Role"
                     name="type"
                     options={[
                       { value: "Vendor", label: "Vendor" },
                       { value: "SubVendor", label: "SubVendor" },
                     ]}
                     value={formData.type}
-                    onChange={handleInputChange}
+                    onChange={(value) =>
+                      handleInputChange({
+                        target: { name: "type", value: String(value) },
+                      } as any)
+                    }
+                    // onChange={handleInputChange}
                     className="h-full"
                   />
                   {errors.type && (

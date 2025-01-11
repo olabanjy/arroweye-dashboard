@@ -10,20 +10,20 @@ const ProjectTab = () => {
     <div className=" lg:p-[20px]">
       <div className="flex gap-[10px] items-center mb-4">
         <button
-          className={`px-[16px] py-[4px] rounded-full text-[20px]  ${
+          className={`px-[16px] py-[4px] rounded-full text-[18px]  ${
             activeTab === "Manage"
-              ? "bg-[#e6ff99] text-black font-[600]"
-              : " font-[500]"
+              ? "bg-[#e6ff99] text-black font-[500]"
+              : " font-[400]"
           }`}
           onClick={() => setActiveTab("Manage")}
         >
           Manage
         </button>
         <button
-          className={`px-[16px] py-[4px] rounded-full text-[20px]  ${
+          className={`px-[16px] py-[4px] rounded-full text-[18px]  ${
             activeTab === "Insights"
-              ? "bg-[#e6ff99] text-black font-[600]"
-              : " font-[500]"
+              ? "bg-[#e6ff99] text-black font-[500]"
+              : " font-[400]"
           }`}
           onClick={() => setActiveTab("Insights")}
         >

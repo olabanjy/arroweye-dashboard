@@ -16,7 +16,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   validate?: "email" | "otp" | "datetime";
   info?: string;
-  rounded?: boolean; // New rounded prop
+  rounded?: boolean; 
 }
 
 const useValidation = (validate: InputProps["validate"]) => {

@@ -16,45 +16,47 @@ const InvoicesTab: React.FC = () => {
 
   return (
     <div className="lg:p-[20px]">
-      <div className="grid md:flex items-center gap-[20px] md:gap-[40px]">
-        <div className="flex gap-[10px] items-center lg:mb-4">
-          <button
-            className={`pb-[10px] text-[20px] transition-all duration-300 ${
-              activeTab === "Projects"
-                ? "border-b border-[#17845a] text-[#17845a] font-[600]"
-                : "font-[500]"
-            }`}
-            onClick={() => setActiveTab("Projects")}
-          >
-            Projects
-          </button>
-          <button
-            className={`pb-[10px] text-[20px] transition-all duration-300 ${
-              activeTab === "Archive"
-                ? "border-b border-[#17845a] text-[#17845a] font-[600]"
-                : "font-[500]"
-            }`}
-            onClick={() => setActiveTab("Archive")}
-          >
-            Archive
-          </button>
-        </div>
+      <div className=" ">
+        <div className="grid md:flex items-center gap-[20px] md:gap-[40px]">
+          <div className="flex gap-[20px] items-center lg:mb-4 ">
+            <button
+              className={`pb-[10px] text-[18px] transition-all duration-300 ${
+                activeTab === "Projects"
+                  ? "border-b border-[#17845a] text-[#17845a] font-[400]"
+                  : "font-[400]"
+              }`}
+              onClick={() => setActiveTab("Projects")}
+            >
+              Projects
+            </button>
+            <button
+              className={`pb-[10px] text-[18px] transition-all duration-300 ${
+                activeTab === "Archive"
+                  ? "border-b border-[#17845a] text-[#17845a] font-[400]"
+                  : "font-[400]"
+              }`}
+              onClick={() => setActiveTab("Archive")}
+            >
+              Archive
+            </button>
+          </div>
 
-        <div className="flex-grow lg:mb-4">
-          <div className="flex items-center justify-end gap-[10px]">
-            <div className="flex-grow">
-              <Input
-                type="text"
-                placeholder="Search by title, subvendor and date..."
-                className="w-full rounded-full"
-              />
-            </div>
-            <div className="flex items-center gap-[5px]">
-              <div
-                className="cursor-pointer p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
-                onClick={() => setFilter(!filter)}
-              >
-                <IoFilter />
+          <div className="flex-grow lg:mb-4 pb-[10px]">
+            <div className="flex items-center justify-end gap-[10px]">
+              <div className="flex-grow font-IBM">
+                <Input
+                  type="text"
+                  placeholder="Search by title, subvendor and date..."
+                  className="w-full rounded-full font-IBM placeholder:font-IBM"
+                />
+              </div>
+              <div className="flex items-center gap-[5px]">
+                <div
+                  className="cursor-pointer p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
+                  onClick={() => setFilter(!filter)}
+                >
+                  <IoFilter />
+                </div>
               </div>
             </div>
           </div>

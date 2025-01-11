@@ -37,6 +37,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
         <div className="flex items-end gap-[10px] my-[10px]">
           <div className="max-w-[200px] w-full rounded-full">
             <SelectInput
+              rounded={true}
               options={[
                 { value: "", label: "Investment" },
                 { value: "htl", label: "High to Low" },
@@ -46,6 +47,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
           </div>
           <div className="max-w-[200px] w-full rounded-full">
             <SelectInput
+              rounded={true}
               options={[
                 { value: "", label: "Revenue" },
                 { value: "htl", label: "High to Low" },
@@ -53,7 +55,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
               ]}
             />
           </div>
-          <p className="cursor-pointer rounded-[4px] px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline">
+          <p className="cursor-pointer rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
             Clear Filters
           </p>
         </div>

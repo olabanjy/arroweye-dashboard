@@ -5,12 +5,13 @@ const Insight = () => {
   return (
     <div>
       <div className=" mt-[20px] relative">
-        <div className=" grid md:grid-cols-2 place-items-center gap-[20px]">
+        <div className=" grid md:grid-cols-2 gap-[20px] ">
           <InsightCard
             title="Total Invoices"
             value={100}
             percentageChange="5%"
             percentageColor="#11cc48"
+            maxWidth=" w-full"
             selectOptions={[
               [
                 { value: "", label: "Lifetime" },

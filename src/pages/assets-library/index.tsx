@@ -58,7 +58,7 @@ const AssetsLibrary = () => {
             <Input
               type="text"
               placeholder="Search by title, subvendor and date..."
-              className="w-full rounded-full"
+              className="w-full rounded-full font-IBM placeholder:font-IBM"
             />
           </div>
           <div className="flex items-center gap-[5px]">
@@ -76,6 +76,7 @@ const AssetsLibrary = () => {
           <div className="flex items-center gap-[10px] mb-[20px]">
             <div className="max-w-[200px] w-full rounded-full">
               <SelectInput
+                rounded={true}
                 options={[
                   { value: "", label: "Year" },
                   { value: "2024", label: "2024" },
@@ -85,6 +86,7 @@ const AssetsLibrary = () => {
             </div>
             <div className="max-w-[200px] w-full rounded-full">
               <SelectInput
+                rounded={true}
                 options={[
                   { value: "", label: "Month" },
                   { value: "january", label: "January" },
@@ -94,6 +96,7 @@ const AssetsLibrary = () => {
             </div>
             <div className="max-w-[200px] w-full">
               <SelectInput
+                rounded={true}
                 options={[
                   { value: "", label: "Vendor" },
                   { value: "naville", label: "NAVILLE" },
@@ -102,6 +105,7 @@ const AssetsLibrary = () => {
             </div>
             <div className="max-w-[200px] w-full">
               <SelectInput
+                rounded={true}
                 options={[
                   { value: "", label: "Sub-Vendor" },
                   { value: "naville", label: "NAVILLE" },
@@ -110,6 +114,7 @@ const AssetsLibrary = () => {
             </div>
             <div className="max-w-[200px] w-full">
               <SelectInput
+                rounded={true}
                 options={[
                   { value: "", label: "Platform" },
                   { value: "naville", label: "NAVILLE" },
@@ -118,7 +123,7 @@ const AssetsLibrary = () => {
             </div>
           </div>
 
-          <p className="cursor-pointer rounded-[4px] px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline">
+          <p className="cursor-pointer rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
             Clear Filters
           </p>
         </div>
