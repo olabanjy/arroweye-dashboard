@@ -12,7 +12,7 @@ import { GoArrowUpRight } from "react-icons/go";
 import { DateClickArg } from "@fullcalendar/interaction";
 import { CreateEvent, getEvents } from "@/services/api";
 import { ContentItem, EventsItem } from "@/types/contents";
-
+import { PiCalendarPlus } from "react-icons/pi";
 interface FormErrors {
   title?: string;
   start_dte?: string;
@@ -191,7 +191,18 @@ const Schedule = () => {
 
   return (
     <DashboardLayout>
-      <div className="schedule-container">
+      <div className="schedule-container space-y-[20px]">
+        <div className=" flex items-center justify-center gap-[5px]">
+          <div
+            className="w-12 h-12 rounded-full bg-[#3700b3] inline-flex text-[#ffffff]  items-center justify-center"
+            onClick={() => setIsModalVisible(true)}
+          >
+            <PiCalendarPlus />
+          </div>{" "}
+          <div className="w-12 h-12 rounded-full bg-[#000000] inline-flex text-[#ffffff]  items-center justify-center">
+            <PiCalendarPlus />
+          </div>
+        </div>
         <div className="calendar-container">
           <FullCalendar
             plugins={[
