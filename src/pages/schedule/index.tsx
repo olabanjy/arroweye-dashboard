@@ -43,6 +43,7 @@ const Schedule = () => {
   }));
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [filter, setisFilter] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     vendor_id: "",
@@ -259,7 +260,10 @@ const Schedule = () => {
           >
             <PiCalendarPlus />
           </div>{" "}
-          <div className="w-12 h-12 rounded-full bg-[#000000] inline-flex text-[#ffffff]  items-center justify-center">
+          <div
+            className="w-12 h-12 cursor-pointer rounded-full bg-[#000000] inline-flex text-[#ffffff]  items-center justify-center"
+            onClick={() => setisFilter(true)}
+          >
             <MdOutlineFilterAlt />
           </div>
         </div>
@@ -424,6 +428,60 @@ const Schedule = () => {
                 <div className="bg-[#000] text-[#fff] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer">
                   <GoArrowUpRight size={24} />
                 </div>
+              </div>
+            </div>
+          </form>
+        </Dialog>
+      </div>
+
+      <div
+        className={`custom-dialog-overlay ${
+          filter ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50" : "hidden"
+        }`}
+      >
+        <Dialog
+          header="SELECT CALENDAR"
+          visible={filter}
+          onHide={() => setisFilter(false)}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "30vw" }}
+          className="custom-dialog-overlay"
+        >
+          <form>
+            <div className="space-y-4 text-[#000]">
+              <div className="grid gap-[20px] items-center">
+                <div className="max-w-[400px] w-full">
+                  <SelectInput
+                    name="vendor_id"
+                    value={formData.vendor_id}
+                    onChange={(value) =>
+                      handleFormChange2({ name: "vendor_id", value })
+                    }
+                    // onChange={handleFormChange2}
+                    options={vendorOptions}
+                  />
+                </div>
+
+                <div className="max-w-[400px] w-full">
+                  <SelectInput
+                    name="subvendor"
+                    value={formData.subvendor}
+                    // labelText="SubVendor"
+                    onChange={(value) =>
+                      handleFormChange2({ name: "subvendor", value })
+                    }
+                    options={subVendorOptions}
+                  />
+                </div>
+              </div>
+
+              <div className="text-center flex items-center justify-center">
+                <button
+                  className="cursor-pointer w-full text-center px-[20px] py-[8px] bg-[#000000] hover:bg-orange-600 rounded-[4px] text-[#fff] flex items-center justify-center"
+                  type="submit"
+                >
+                  Generate
+                </button>
               </div>
             </div>
           </form>
