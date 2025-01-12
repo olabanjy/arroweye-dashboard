@@ -17,7 +17,7 @@ const Manage = () => {
         <div className="grid md:grid-cols-2 items-center gap-[20px]">
           <div className="max-w-[400px] w-full">
             <Input
-              label="Project Title"
+              label="PROJECT TITLE"
               type="number"
               placeholder=""
               info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."

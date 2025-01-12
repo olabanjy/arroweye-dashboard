@@ -15,6 +15,7 @@ export default {
       },
       fontFamily: {
         IBM: ['"IBM Plex Sans"', "sans-serif"],
+        Poppins: ["Poppins", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

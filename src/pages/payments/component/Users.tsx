@@ -25,28 +25,48 @@ const Users = () => {
     }
   }, [selectedUser]);
 
-  const rows = content?.map((item) => ({
-    data: [
-      <div key={`action-buttons-${item.id}`} className="flex justify-center">
-        <div
-          className="cursor-pointer w-[48px] h-[48px] flex items-center justify-center p-[16px] hover:bg-green-500 hover:text-white border border-green-500 text-green-500 rounded-full"
-          onClick={() => {
-            setSelectedUser(item);
-            setIsModalOpen(true);
-          }}
-        >
-          {item?.staff?.[0]?.fullname?.[0] || " "}
-        </div>
-      </div>,
-      item.type || " ",
-      item?.staff[0]?.fullname || " ",
-      item.staff[0]?.role || " ",
+  const colorPalette = [
+    "bg-blue-500",
+    "bg-red-500",
+    "bg-yellow-500",
+    "bg-green-500",
+    "bg-purple-500",
+  ];
 
-      <div key={`status-${item.id}`} className="flex justify-center gap-2">
-        <div className="p-[16px] hover:bg-green-500 hover:text-white border border-green-500 text-green-500 rounded-full">
-          <IoMdCheckmark size={20} />
-        </div>
-      </div>,
+  const rows = content?.map((item, index) => ({
+    data: [
+      {
+        content: (
+          <div
+            key={`action-buttons-${item.id}`}
+            className="flex justify-center"
+          >
+            <div
+              className={` font-Poppins font-[600]  text-[12px] cursor-pointer w-[48px] h-[48px] flex items-center justify-center p-[16px] text-white border-[#ffffff] rounded-full ${
+                colorPalette[index % colorPalette.length]
+              }`}
+              onClick={() => {
+                setSelectedUser(item);
+                setIsModalOpen(true);
+              }}
+            >
+              {item?.staff?.[0]?.fullname?.slice(0, 2).toUpperCase() || "-"}
+            </div>
+          </div>
+        ),
+      },
+      { content: item.type || " " },
+      { content: item?.staff[0]?.fullname || "-" },
+      { content: item.staff[0]?.role || " " },
+      {
+        content: (
+          <div key={`status-${item.id}`} className="flex justify-center gap-2">
+            <div className="p-[16px] hover:bg-green-500 hover:text-white border border-green-500 text-green-500 rounded-full">
+              <IoMdCheckmark size={20} />
+            </div>
+          </div>
+        ),
+      },
     ],
   }));
 

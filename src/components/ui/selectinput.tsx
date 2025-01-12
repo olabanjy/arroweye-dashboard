@@ -123,6 +123,8 @@
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { HiMiniChevronUpDown } from "react-icons/hi2";
+import { FiInfo } from "react-icons/fi";
+import { GoArrowDown } from "react-icons/go";
 
 interface DropdownInputProps {
   label?: string;
@@ -132,7 +134,7 @@ interface DropdownInputProps {
   value?: string | number;
   onChange?: (value: string | number) => void;
   name?: string;
-  icon?: React.ReactNode;
+  icon?: boolean;
   placeholder?: string;
   rounded?: boolean;
 }
@@ -173,11 +175,21 @@ const SelectInput: React.FC<DropdownInputProps> = ({
 
   return (
     <div className="flex flex-col space-y-2 font-IBM">
-      {label && (
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          {label}
-        </label>
-      )}
+      <div className="flex items-center space-x-2">
+        {label && (
+          <label className="tracking-[.1rem] text-[12px] font-[400] text-[#212529] leading-[18px]">
+            {label}
+          </label>
+        )}
+        {info && (
+          <div className="relative group">
+            <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
+            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 hidden w-48 p-2 text-xs text-white bg-black rounded-lg group-hover:block">
+              {info}
+            </div>
+          </div>
+        )}
+      </div>
 
       <div className="relative">
         <div
@@ -193,8 +205,11 @@ const SelectInput: React.FC<DropdownInputProps> = ({
           </div>
 
           <div className="absolute inset-y-0 right-3 flex items-center space-x-2 pointer-events-none">
-            {icon}
-            <HiMiniChevronUpDown className="text-gray-400 dark:text-gray-500" />
+            {icon === true ? (
+              <GoArrowDown />
+            ) : (
+              <HiMiniChevronUpDown className="text-gray-400 dark:text-gray-500" />
+            )}
           </div>
         </div>
 
@@ -218,10 +233,6 @@ const SelectInput: React.FC<DropdownInputProps> = ({
       </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
-
-      {info && (
-        <div className="text-xs text-gray-500 dark:text-gray-400">{info}</div>
-      )}
     </div>
   );
 };

@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
-import { BsFillPlusCircleFill } from "react-icons/bs";
 import { HiMinusCircle } from "react-icons/hi";
 import { Dialog } from "primereact/dialog";
 import { CreateInvoice, CreateService, getService } from "@/services/api";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { ContentItem } from "@/types/contents";
-
 interface Item {
   id: number;
   item: string;
@@ -333,10 +331,10 @@ const Manage = () => {
     <div className="my-[20px]">
       <form onSubmit={handleProjectSubmit}>
         <div className="space-y-[20px]">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 items-center gap-[20px]">
-            <div className="max-w-[400px] w-full">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 items-center gap-[20px]">
+            <div className="max-w-[350px] w-full">
               <Input
-                label="Project Title"
+                label="PROJECT TITLE"
                 type="text"
                 name="project_title"
                 placeholder=""
@@ -351,7 +349,7 @@ const Manage = () => {
               )}
             </div>
 
-            <div className="max-w-[400px] w-full">
+            <div className="max-w-[350px] w-full">
               <Input
                 label="P.O CODE"
                 type="number"
@@ -365,10 +363,11 @@ const Manage = () => {
                 <p className="text-red-500 text-xs">{projectErrors.po_code}</p>
               )}
             </div>
-            <div className="flex items-end gap-[20px]">
-              <div className="max-w-[400px] w-full">
+            <div className="flex items-end gap-[20px] col-span-2">
+              <div className="max-w-[350px] w-full">
                 <SelectInput
-                  label="Currency"
+                  icon={true}
+                  label="CURRENCY"
                   name="currency"
                   // labelText="Select Currency"
                   options={currencyOptions}
@@ -382,13 +381,20 @@ const Manage = () => {
                   </p>
                 )}
               </div>
-              <BsFillPlusCircleFill size={50} onClick={addItemField} />
+
+              <div
+                className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-black cursor-pointer"
+                onClick={addItemField}
+              >
+                <p className="text-white text-xl">+</p>
+              </div>
             </div>
 
-            <div className="flex items-end gap-[20px]">
-              <div className="max-w-[400px] w-full">
+            <div className="flex items-end gap-[20px] ">
+              <div className="max-w-[350px] w-full">
                 <SelectInput
-                  label="Select Vendor"
+                  icon={true}
+                  label="SELECT VENDOR"
                   name="vendor"
                   options={vendorOptions}
                   onChange={handleVendorChange}
@@ -402,10 +408,11 @@ const Manage = () => {
               </div>
             </div>
             <div className="flex items-end gap-[20px]">
-              <div className="max-w-[400px] w-full">
+              <div className="max-w-[350px] w-full">
                 <SelectInput
+                  icon={true}
                   name="subVendor"
-                  // labelText="Select SubVendor"
+                  label="SELECT SUBVENDOR"
                   options={subVendorOptions}
                   onChange={handleSubVendorChange}
                   value={projectFormData.subvendor_id}
@@ -423,8 +430,9 @@ const Manage = () => {
             {items.map((item, index) => (
               <div className="flex items-center gap-[20px]" key={item.id}>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 items-center gap-[20px]">
-                  <div className="max-w-[400px] w-full">
+                  <div className="max-w-[350px] w-full">
                     <SelectInput
+                      icon={true}
                       name="service"
                       label="Select Service"
                       options={customOptions}
@@ -461,7 +469,7 @@ const Manage = () => {
                     )}
                   </div>
 
-                  <div className="max-w-[400px] w-full">
+                  <div className="max-w-[350px] w-full">
                     <Input
                       type="number"
                       name="cost"
@@ -492,7 +500,7 @@ const Manage = () => {
                     )}
                   </div>
 
-                  <div className="max-w-[400px] w-full">
+                  <div className="max-w-[350px] w-full">
                     <Input
                       type="number"
                       name="quantity"
@@ -556,41 +564,41 @@ const Manage = () => {
               <div>
                 <p className="text-sm text-gray-700">
                   Subtotal:{" "}
-                  {selectedService === "$"
+                  {selectedService === "Dollars"
                     ? `$${subtotal.toFixed(2)}`
-                    : selectedService === "₦"
+                    : selectedService === "Naira"
                       ? `₦${subtotal.toFixed(2)}`
-                      : selectedService === "Ξ"
+                      : selectedService === "Ethereum"
                         ? `Ξ${subtotal.toFixed(2)}`
                         : `₦${subtotal.toFixed(2)}`}{" "}
                 </p>
                 <p className="text-sm text-gray-700">
                   Service Charge (15%):{" "}
-                  {selectedService === "$"
+                  {selectedService === "Dollars"
                     ? `$${serviceCharge.toFixed(2)}`
-                    : selectedService === "₦"
+                    : selectedService === "Naira"
                       ? `₦${serviceCharge.toFixed(2)}`
-                      : selectedService === "Ξ"
+                      : selectedService === "Ethereum"
                         ? `Ξ${serviceCharge.toFixed(2)}`
                         : `₦${serviceCharge.toFixed(2)}`}{" "}
                 </p>
                 <p className="text-sm text-gray-700">
                   Tax (7.5%):{" "}
-                  {selectedService === "$"
+                  {selectedService === "Dollars"
                     ? `$${tax.toFixed(2)}`
-                    : selectedService === "₦"
+                    : selectedService === "Naira"
                       ? `₦${tax.toFixed(2)}`
-                      : selectedService === "Ξ"
+                      : selectedService === "Ethereum"
                         ? `Ξ${tax.toFixed(2)}`
                         : `₦${tax.toFixed(2)}`}{" "}
                 </p>
                 <p className="text-sm text-gray-700 font-bold">
                   Total:{" "}
-                  {selectedService === "$"
+                  {selectedService === "Dollars"
                     ? `$${total.toFixed(2)}`
-                    : selectedService === "₦"
+                    : selectedService === "Naira"
                       ? `₦${total.toFixed(2)}`
-                      : selectedService === "Ξ"
+                      : selectedService === "Ethereum"
                         ? `Ξ${total.toFixed(2)}`
                         : `₦${total.toFixed(2)}`}{" "}
                 </p>

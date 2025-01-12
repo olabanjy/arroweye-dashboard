@@ -1,15 +1,19 @@
 import React from "react";
 
+interface TableCell {
+  content: React.ReactNode;
+  className?: string;
+}
+
 interface TableRow {
   image?: React.ReactNode;
-  data: React.ReactNode[];
+  data: TableCell[];
 }
 
 interface TableProps {
   headers?: React.ReactNode[];
   rows?: TableRow[];
   className?: string;
-  onRowSelect?: (selectedRows: number[]) => void;
   emptyState?: React.ReactNode;
   highlightFirstCell?: boolean;
 }
@@ -25,9 +29,9 @@ const Table: React.FC<TableProps> = ({
     <div className={`overflow-x-auto ${className}`}>
       <table className="w-full table-auto">
         <thead>
-          <tr className="rounded-[16px] bg-[#31bc86] text-xs font-[500] text-[#ffffff]">
+          <tr className="rounded-[16px] bg-[#31bc86] text-[16px] font-[700] text-[#ffffff] text-center">
             {headers.map((header, index) => (
-              <th key={index} className="px-4 py-[11px] text-left">
+              <th key={index} className="px-4 py-[11px] text-center">
                 {header}
               </th>
             ))}
@@ -48,18 +52,18 @@ const Table: React.FC<TableProps> = ({
             rows.map((row, rowIndex) => (
               <tr
                 key={rowIndex}
-                className="hover:bg-grey-50 bg-white text-xs font-[500] text-grey-900"
+                className="hover:bg-[#d9f1e7] bg-white text-[16px] font-[400] text-grey-900 text-center"
               >
                 {row.data.map((cell, cellIndex) => (
                   <td
                     key={cellIndex}
-                    className={`border border-grey-100 px-4 py-[20px] text-start ${
-                      highlightFirstCell && cellIndex === 0
-                        ? "bg-[#31bc86] border-none text-[#ffffff]"
+                    className={`border border-grey-100 px-4 py-[4px] text-center ${
+                      cellIndex === 0 && highlightFirstCell
+                        ? "bg-[#2ea879] border-none text-[#ffffff]"
                         : ""
-                    }`}
+                    } ${cell.className || "bg-[#f5f5f5] border-none"}`}
                   >
-                    {cell}
+                    {cell.content}
                   </td>
                 ))}
               </tr>

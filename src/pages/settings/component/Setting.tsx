@@ -43,33 +43,77 @@ const Setting = () => {
     info?: string,
     extraElement?: React.ReactNode
   ) => (
-    <div className="max-w-[400px] w-full space-y-2 relative flex items-center gap-[10px]">
-      <Input
-        rounded={true}
-        label={label}
-        type={type}
-        value={value}
-        onChange={onChange}
-        readOnly={!editable}
-        placeholder=""
-        info={info}
-      />
-      <div className="absolute top-0 right-[-60px] flex items-center">
-        {extraElement}
+    <div className="relative w-full">
+      <div className="flex items-end gap-2 w-full">
+        <div className="flex-1 w-full">
+          <Input
+            rounded={true}
+            label={label}
+            type={type}
+            value={value}
+            onChange={onChange}
+            readOnly={!editable}
+            placeholder=""
+            info={info}
+            className=" text-center w-full"
+          />
+        </div>
+        <div className="flex-shrink-0">
+          <button
+            className="flex items-center justify-center w-12 h-12 rounded-full border border-[#646668] cursor-pointer hover:bg-black hover:text-white bg-[#f4faff]"
+            onClick={() => handleCopy(value)}
+            aria-label={`Copy ${label}`}
+          >
+            <FaRegCopy />
+          </button>
+        </div>
       </div>
-      <button
-        className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-400 cursor-pointer hover:bg-gray-100"
-        onClick={() => handleCopy(value)}
-        aria-label={`Copy ${label}`}
-      >
-        <FaRegCopy />
-      </button>
+      {extraElement && (
+        <div className="absolute right-[-60px] top-0 h-full flex items-center">
+          {extraElement}
+        </div>
+      )}
     </div>
   );
 
   return (
     <div>
-      <Toast ref={toast} />
+      <Toast ref={toast} className=" font-IBM" />
+      <style>
+        {`
+          .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider,
+          .p-inputswitch.p-inputswitch-checked:not(.p-disabled) .p-inputswitch-slider,
+          .p-inputswitch.p-inputswitch-checked.p-focus .p-inputswitch-slider {
+            background: #2196f3 !important;
+            border-color: #2196f3 !important;
+          }
+
+          .p-inputswitch .p-inputswitch-slider {
+            background: #cccccc !important;
+            transition: background-color 0.2s;
+          }
+
+          .p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover .p-inputswitch-slider {
+            background: #1976d2 !important;
+          }
+
+          .p-inputswitch:not(.p-disabled):hover .p-inputswitch-slider {
+            background: #999999 !important;
+          }
+
+          .p-inputswitch.p-focus .p-inputswitch-slider {
+            box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #2196f3 !important;
+          }
+         
+          .p-inputswitch .p-inputswitch-slider:before {
+            background: #ffffff !important;
+          }
+
+          .p-inputswitch .p-inputswitch-slider.p-inputswitch-checked {
+            background-color: #2196f3 !important;
+          }
+        `}
+      </style>
 
       <div className="flex items-center gap-2">
         <MdTune size={24} className="text-[#858585]" />
@@ -77,9 +121,8 @@ const Setting = () => {
           Settings
         </p>
       </div>
-
-      <div className="mt-10 border rounded-[16px] border-[#d8d8d8] h-screen  px-4 py-10 space-y-[20px]">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-end">
+      <div className="mt-10 border rounded-[16px] border-[#d8d8d8] min-h-screen px-4 py-10 space-y-[20px]">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-end ">
           {renderCopyInput(
             "USER DETAILS",
             email,
@@ -94,8 +137,6 @@ const Setting = () => {
           {renderCopyInput("", password, false, "password", (e) =>
             setPassword(e.target.value)
           )}
-        </div>
-        <div className=" flex items-center gap-[20px] ">
           {renderCopyInput(
             "NOTIFICATIONS",
             phone,
@@ -104,11 +145,15 @@ const Setting = () => {
             (e) => setPhone(e.target.value),
             "The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
           )}
-          <InputSwitch
-            id="phone"
-            checked={toggleNotifications}
-            onChange={(e) => setToggleNotifications(e.value)}
-          />
+          <div className=" flex gap-[10px] items-end flex-1">
+            <div className=" mb-[4px]">
+              <InputSwitch
+                id="phone"
+                checked={toggleNotifications}
+                onChange={(e) => setToggleNotifications(e.value)}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
