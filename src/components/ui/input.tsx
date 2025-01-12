@@ -16,7 +16,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   validate?: "email" | "otp" | "datetime";
   info?: string;
-  rounded?: boolean; 
+  rounded?: boolean;
 }
 
 const useValidation = (validate: InputProps["validate"]) => {
@@ -89,7 +89,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputType = type === "password" && showPassword ? "text" : type;
 
     return (
-      <div className="flex flex-col space-y-2 font-IBM">
+      <div className="flex flex-col space-y-2 font-IBM ">
         <div className="flex items-center space-x-2">
           {label && (
             <label
@@ -106,7 +106,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={inputType}
             ref={ref}
             className={cn(
-              "block w-full border border-black bg-white px-4 py-[8px] h-[50px] text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
+              "block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
               rounded ? "rounded-full" : "rounded-[8px]",
               (error || validationError) && "border-red-500 focus:ring-red-500",
               className

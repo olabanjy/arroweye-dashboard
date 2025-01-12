@@ -120,7 +120,7 @@ const DropDownInput = React.forwardRef<HTMLInputElement, InputProps>(
     const inputType = type === "password" && showPassword ? "text" : type;
 
     return (
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-2 font-IBM">
         <div className="flex items-center space-x-2">
           {label && (
             <label

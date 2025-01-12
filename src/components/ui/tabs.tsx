@@ -41,7 +41,7 @@ const TabsContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      "mt-2 absolute w-full transform transition-all duration-300 ease-in-out",
+      "mt-2 absolute transform transition-all duration-300 ease-in-out ",
       "opacity-0 translate-x-4 invisible",
       "data-[state=active]:opacity-100 data-[state=active]:translate-x-0 data-[state=active]:visible",
       "ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2",
