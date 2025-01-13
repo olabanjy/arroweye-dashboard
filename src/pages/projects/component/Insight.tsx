@@ -5,7 +5,7 @@ const Insight = () => {
   return (
     <div>
       <div className="mt-[20px] relative ">
-        <div className="grid grid-cols-2 gap-[20px] relative">
+        <div className="grid lg:grid-cols-2 gap-[20px] relative">
           <div className="w-full">
             <InsightCard
               title="TOTAL INVESTMENT "
