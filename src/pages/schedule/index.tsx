@@ -13,7 +13,7 @@ import { DateClickArg } from "@fullcalendar/interaction";
 import { CreateEvent, getEvents } from "@/services/api";
 import { ContentItem, EventsItem } from "@/types/contents";
 import { PiCalendarPlus } from "react-icons/pi";
-import { MdOutlineFilterAlt } from "react-icons/md";
+import { IoFilter } from "react-icons/io5";
 interface FormErrors {
   title?: string;
   start_dte?: string;
@@ -264,7 +264,7 @@ const Schedule = () => {
             className="w-12 h-12 cursor-pointer rounded-full bg-[#000000] inline-flex text-[#ffffff]  items-center justify-center"
             onClick={() => setisFilter(true)}
           >
-            <MdOutlineFilterAlt />
+            <IoFilter />
           </div>
         </div>
         <div className="calendar-container">
@@ -272,6 +272,8 @@ const Schedule = () => {
             {`
               .fc .fc-toolbar-title {
                 text-transform: uppercase !important;
+                font-size:18px;
+                font-weight:bold;
               }
               .fc .fc-button {
                 text-transform: uppercase !important;

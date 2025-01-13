@@ -53,7 +53,7 @@ const Table: React.FC<TableProps> = ({
                 {row.data.map((cell, cellIndex) => (
                   <td
                     key={cellIndex}
-                    className={`border border-grey-100  px-4 py-[20px] text-start  ${
+                    className={`border border-grey-100  px-4 py-[4px] text-start  ${
                       highlightFirstCell && cellIndex === 0
                         ? "bg-[#2ea879] text-[#ffffff] border-none"
                         : " bg-[#f5f5f5] text-[#212529]"

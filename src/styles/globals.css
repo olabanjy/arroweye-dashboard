@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -31,4 +32,29 @@
 
 .fc-toolbar-chunk button {
   text-transform: uppercase;
+}
+
+.p-toast {
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+/* Custom styles for InputSwitch in CheckInput */
+.checkinput-switch.p-inputswitch.p-inputswitch-checked {
+  background-color: #4caf50 !important; /* Custom ON state color */
+}
+
+.checkinput-switch.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+  background-color: #ffffff !important; /* Thumb color when ON */
+}
+
+.checkinput-switch.p-inputswitch {
+  background-color: #cccccc !important; /* OFF state background color */
+}
+
+.checkinput-switch.p-inputswitch .p-inputswitch-slider {
+  background-color: #ffffff !important; /* Thumb color when OFF */
+}
+
+.checkinput-switch.p-inputswitch:hover {
+  background-color: #bbbbbb !important; /* Optional hover effect */
 }

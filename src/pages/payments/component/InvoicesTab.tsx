@@ -116,7 +116,7 @@ const InvoicesTab = () => {
   return (
     <div className="lg:p-[20px]">
       <div className="grid md:flex items-center gap-[20px] md:gap-[40px] mb-[16px]">
-        <div className="flex gap-[10px] items-center">
+        <div className="flex gap-[20px] items-center">
           <button
             className={`pb-[10px] text-[20px] transition-all duration-300 ${
               activeTab === "Invoice"
@@ -174,9 +174,10 @@ const InvoicesTab = () => {
       </div>
 
       {filter && (
-        <div className="flex items-end gap-[10px] my-[10px]">
+        <div className="flex items-end gap-[10px] my-[20px]">
           <div className="max-w-[200px] w-full rounded-full">
             <SelectInput
+              rounded={true}
               options={[
                 { value: "", label: "Amount" },
                 { value: "htl", label: "High to Low" },
@@ -184,8 +185,9 @@ const InvoicesTab = () => {
               ]}
             />
           </div>
-          <div className="max-w-[200px] w-full rounded-full">
+          <div className="max-w-[150px] w-full rounded-full">
             <SelectInput
+              rounded={true}
               options={[
                 { value: "", label: "Status" },
                 { value: "paid", label: "Paid" },
@@ -193,8 +195,9 @@ const InvoicesTab = () => {
               ]}
             />
           </div>
-          <div className="max-w-[200px] w-full">
+          <div className="max-w-[150px] w-full">
             <SelectInput
+              rounded={true}
               options={[
                 { value: "", label: "Currency" },
                 { value: "usd", label: "$USD" },
@@ -203,8 +206,8 @@ const InvoicesTab = () => {
               ]}
             />
           </div>
-          <p className="cursor-pointer rounded-[4px] px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline">
-            Save
+          <p className="cursor-pointer rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
+            Clear Filters
           </p>
         </div>
       )}
