@@ -331,8 +331,8 @@ const Manage = () => {
     <div className="my-[20px]">
       <form onSubmit={handleProjectSubmit}>
         <div className="space-y-[20px]">
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 items-center gap-[20px]">
-            <div className="max-w-[350px] w-full">
+          <div className="grid md:grid-cols-2  lg:grid-cols-4 items-center gap-[20px]">
+            <div className="md:max-w-[350px] w-full">
               <Input
                 label="PROJECT TITLE"
                 type="text"
@@ -349,7 +349,7 @@ const Manage = () => {
               )}
             </div>
 
-            <div className="max-w-[350px] w-full">
+            <div className="md:max-w-[350px] w-full">
               <Input
                 label="P.O CODE"
                 type="number"
@@ -363,7 +363,7 @@ const Manage = () => {
                 <p className="text-red-500 text-xs">{projectErrors.po_code}</p>
               )}
             </div>
-            <div className="flex items-end gap-[20px] col-span-2">
+            <div className="flex items-end gap-[20px] md:col-span-2">
               <div className="max-w-[350px] w-full">
                 <SelectInput
                   icon={true}
@@ -391,7 +391,7 @@ const Manage = () => {
             </div>
 
             <div className="flex items-end gap-[20px] ">
-              <div className="max-w-[350px] w-full">
+              <div className="md:max-w-[350px] w-full">
                 <SelectInput
                   icon={true}
                   label="SELECT VENDOR"
