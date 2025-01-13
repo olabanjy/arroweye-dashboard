@@ -228,13 +228,14 @@ const Login = () => {
                   onSubmit={handleOtpSubmit}
                 >
                   <Input
+                    rounded={true}
                     type="text"
                     name="otp"
                     placeholder="Enter OTP"
                     value={otpFormData.otp}
                     onChange={handleOtpInputChange}
                     error={otpErrors.otp}
-                    className="w-full"
+                    className="w-full text-center font-medium text-[#323131]"
                   />
                   <Button
                     label="Verify OTP"
@@ -243,7 +244,7 @@ const Login = () => {
                     variant="primary"
                     loadingText="Please wait..."
                     type="submit"
-                    className="rounded-[8px] w-full font-bold"
+                    className="rounded-full bg-[#000000] font-bold text-[10px] lg:text-[21px]  w-full"
                   />
                 </form>
               )}
