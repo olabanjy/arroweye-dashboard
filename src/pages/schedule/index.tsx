@@ -327,7 +327,7 @@ const Schedule = () => {
         >
           <form onSubmit={handleFormSubmit}>
             <div className="space-y-4 text-[#000]">
-              <div className="grid grid-cols-2 gap-[20px] items-center">
+              <div className="grid md:grid-cols-2 gap-[20px] items-center">
                 <div className="max-w-[400px] w-full">
                   <Input
                     type="text"
