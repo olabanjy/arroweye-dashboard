@@ -132,7 +132,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {(error || validationError) && (
           <p
             id={props.id ? `${props.id}-error` : undefined}
-            className="text-sm text-red-500"
+            className="font-IBM text-sm text-red-500"
           >
             {error || validationError}
           </p>

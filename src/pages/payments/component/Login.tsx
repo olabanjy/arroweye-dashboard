@@ -62,7 +62,7 @@ const Login = () => {
 
     const timer = setTimeout(() => {
       setIsBlurred(false);
-    }, 5000);
+    }, 7000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -123,6 +123,13 @@ const Login = () => {
             className: " bg-white border border-[#e0e0e0] !text-[#000000]",
           });
         } else {
+          toast.current?.show({
+            severity: "error",
+            summary: "Login Failed",
+            detail: response.message,
+            life: 3000,
+            className: " bg-white border border-[#e0e0e0] !text-[#000000]",
+          });
           console.log("Login failed:", response.message);
           console.log("Error details:", response.errorResponse);
         }
@@ -180,7 +187,6 @@ const Login = () => {
           src={randomBgImage}
           alt="background"
           loading="lazy"
-          //  className="absolute top-0 left-0 w-full h-full object-cover"
           className={`absolute top-0 left-0 w-full h-full object-cover transition-all duration-500 ${
             isBlurred ? "blur-md" : "blur-none"
           }`}

@@ -270,7 +270,7 @@ export const LoginEP = async (
     });
 
     console.log(response);
-    // toast.success(response.message);
+    toast.success(response.message);
     return { status: Number(response.status), message: response.message };
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -279,7 +279,7 @@ export const LoginEP = async (
       console.log("Error response:", errorResponse);
 
       if (errorResponse?.status === 400) {
-        toast.error(errorResponse?.data?.message || errorResponse?.data[0]);
+        // toast.error(errorResponse?.data?.message || errorResponse?.data[0]);
       } else if (errorResponse?.status === 403) {
         toast.error(errorResponse?.data?.message || "Access denied.");
       } else {
