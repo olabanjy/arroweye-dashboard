@@ -124,7 +124,7 @@ const Invoice = () => {
                 {item.status === "Unpaid" ? (
                   <div
                     onClick={() => item.id && toggleStatus(item.id)}
-                    className="p-[12px] hover:bg-orange-500 border border-[#2ea879] bg-[#ffffff] text-[#2ea879] rounded-full cursor-pointer"
+                    className="p-[12px]  border border-[#2ea879] bg-[#ffffff] text-[#2ea879] rounded-full cursor-pointer"
                   >
                     <BsCurrencyDollar size={16} />
                   </div>
