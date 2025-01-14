@@ -175,7 +175,7 @@ const InvoicesTab = () => {
 
       {filter && (
         <div className="flex items-end gap-[10px] my-[20px]">
-          <div className="max-w-[200px] w-full rounded-full">
+          <div className="max-w-[100px] w-full rounded-full">
             <SelectInput
               rounded={true}
               options={[
@@ -185,7 +185,7 @@ const InvoicesTab = () => {
               ]}
             />
           </div>
-          <div className="max-w-[150px] w-full rounded-full">
+          <div className="max-w-[100px] w-full rounded-full">
             <SelectInput
               rounded={true}
               options={[
@@ -195,7 +195,7 @@ const InvoicesTab = () => {
               ]}
             />
           </div>
-          <div className="max-w-[150px] w-full">
+          <div className="max-w-[100px] w-full">
             <SelectInput
               rounded={true}
               options={[
@@ -236,7 +236,7 @@ const InvoicesTab = () => {
             className="scrollbar-hide scrollbar-hide::-webkit-scrollbar"
           >
             <div className="space-y-4 relative z-10">
-              <p className="text-[30px] font-[600] text-[#212529] font-IBM">
+              <p className="text-[30px] font-[600] text-[#212529] font-IBM hidden">
                 Collaborate
               </p>
               <div>
@@ -247,23 +247,23 @@ const InvoicesTab = () => {
                   value={formData.email}
                   onChange={(e) => handleInputChange(e)}
                   className=" text-[17px]"
-                  options={[
-                    {
-                      value: "1",
-                      label: "Option 1",
-                      email: "option1@example.com",
-                    },
-                    {
-                      value: "2",
-                      label: "Option 2",
-                      email: "option2@example.com",
-                    },
-                    {
-                      value: "3",
-                      label: "Option 3",
-                      email: "option3@example.com",
-                    },
-                  ]}
+                  // options={[
+                  //   {
+                  //     value: "1",
+                  //     label: "Option 1",
+                  //     email: "option1@example.com",
+                  //   },
+                  //   {
+                  //     value: "2",
+                  //     label: "Option 2",
+                  //     email: "option2@example.com",
+                  //   },
+                  //   {
+                  //     value: "3",
+                  //     label: "Option 3",
+                  //     email: "option3@example.com",
+                  //   },
+                  // ]}
                 />
                 {errors.email && (
                   <p className="text-red-500 text-xs">{errors.email}</p>
@@ -312,7 +312,7 @@ const InvoicesTab = () => {
                     name="type"
                     options={[
                       { value: "Vendor", label: "Vendor" },
-                      { value: "SubVendor", label: "SubVendor" },
+                      { value: "Subvendor", label: "Subvendor" },
                     ]}
                     value={formData.type}
                     onChange={(value) =>

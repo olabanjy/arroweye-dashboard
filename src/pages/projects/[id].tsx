@@ -312,7 +312,7 @@ const ProjectDetails = () => {
                       { value: "Supervisor", label: "Supervisor" },
                       { value: "Agent", label: "Agent" },
                       { value: "Vendor", label: "Vendor" },
-                      { value: "SubVendor", label: "SubVendor" },
+                      { value: "Subvendor", label: "Subvendor" },
                     ]}
                   />
                 </div>
@@ -472,7 +472,7 @@ const ProjectDetails = () => {
                   { value: "Supervisor", label: "Supervisor" },
                   { value: "Agent", label: "Agent" },
                   { value: "Vendor", label: "Vendor" },
-                  { value: "SubVendor", label: "SubVendor" },
+                  { value: "Subvendor", label: "Subvendor" },
                 ]}
               />
             </div>

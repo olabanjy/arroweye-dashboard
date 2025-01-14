@@ -354,7 +354,7 @@ const Schedule = () => {
                   <SelectInput
                     name="subvendor"
                     value={formData.subvendor}
-                    // labelText="SubVendor"
+                    // labelText="Subvendor"
                     onChange={(value) =>
                       handleFormChange2({ name: "subvendor", value })
                     }
@@ -468,7 +468,7 @@ const Schedule = () => {
                   <SelectInput
                     name="subvendor"
                     value={formData.subvendor}
-                    // labelText="SubVendor"
+                    // labelText="Subvendor"
                     onChange={(value) =>
                       handleFormChange2({ name: "subvendor", value })
                     }

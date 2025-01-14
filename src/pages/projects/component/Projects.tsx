@@ -42,7 +42,7 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
     <>
       {filterVisible && (
         <div className="flex items-end gap-[10px] my-[20px]">
-          <div className="max-w-[150px] w-full">
+          <div className="max-w-[100px] w-full">
             <SelectInput
               rounded={true}
               options={[
@@ -52,7 +52,7 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
               ]}
             />
           </div>
-          <div className="max-w-[150px] w-full">
+          <div className="max-w-[100px] w-full">
             <SelectInput
               rounded={true}
               options={[
