@@ -188,7 +188,7 @@ const Login = () => {
           alt="background"
           loading="lazy"
           className={`absolute top-0 left-0 w-full h-full object-cover transition-all duration-500 ${
-            isBlurred ? "blur-md" : "blur-none"
+            isBlurred ? "blur-[10px]" : "blur-none"
           }`}
         />
       )}
