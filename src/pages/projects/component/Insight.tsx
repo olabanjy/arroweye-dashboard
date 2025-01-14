@@ -2,6 +2,7 @@ import React from "react";
 import InsightCard from "./InsightCard";
 
 const Insight = () => {
+  //
   return (
     <div>
       <div className="mt-[20px] relative ">
