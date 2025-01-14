@@ -47,7 +47,7 @@ const InvoicesTab: React.FC = () => {
                 <Input
                   type="text"
                   placeholder="Search by title, subvendor and date..."
-                  className="w-full rounded-full font-IBM placeholder:font-IBM"
+                  className="w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
                 />
               </div>
               <div className="flex items-center gap-[5px]">

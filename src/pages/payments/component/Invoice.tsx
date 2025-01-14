@@ -7,15 +7,42 @@ import Link from "next/link";
 
 const Invoice = () => {
   const headers = [
-    "Project",
-    "Code",
-    "P.O Code",
-    "Vendor",
-    "Subvendor",
-    "Date",
-    "Total",
-    "Status",
-    "Action",
+    <div key="project-header" className=" text-start">
+      {" "}
+      Project
+    </div>,
+    <div key="project-Code" className=" text-start">
+      {" "}
+      Code
+    </div>,
+    <div key="project-PoCode" className=" text-start">
+      {" "}
+      P.O Code
+    </div>,
+    <div key="project-Vendor" className=" text-start">
+      {" "}
+      Vendor
+    </div>,
+    <div key="project-Subvendor" className=" text-start">
+      {" "}
+      Subvendor
+    </div>,
+    <div key="project-date" className=" text-start">
+      {" "}
+      Date
+    </div>,
+    <div key="project-Total" className=" text-start">
+      {" "}
+      Total
+    </div>,
+    <div key="project-Status" className=" text-start">
+      {" "}
+      Status
+    </div>,
+    <div key="project-Action" className=" text-start">
+      {" "}
+      Action
+    </div>,
   ];
 
   const [content, setContent] = useState<ContentItem[] | null>(null);
@@ -61,7 +88,7 @@ const Invoice = () => {
         data: [
           {
             content: (
-              <div key={`manage-button-${index}`}>
+              <div key={`manage-button-${index}`} className=" text-start">
                 <Link href={`/projects/${item.id}`}>
                   {item?.project?.title}
                 </Link>
@@ -116,7 +143,7 @@ const Invoice = () => {
       })) || [];
 
   return (
-    <div className="rounded-[16px] border bg-grey-25 p-[16px]">
+    <div className="">
       <Table
         headers={headers}
         rows={rows}

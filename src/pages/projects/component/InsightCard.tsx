@@ -38,7 +38,7 @@ const InsightCard: FC<InsightCardProps> = ({
         </p>
       )}
 
-      <div className="grid grid-cols-3 gap-[10px]">
+      <div className=" grid md:flex items-center gap-[10px]">
         {selectOptions?.map((options, index) => (
           <div key={index} className="max-w-[100px] w-full">
             <SelectInput options={options} rounded={true} />

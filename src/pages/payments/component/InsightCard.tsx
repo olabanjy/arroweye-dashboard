@@ -40,7 +40,7 @@ const InsightCard: FC<InsightCardProps> = ({
         </p>
       )}
 
-      <div className="grid grid-cols-3 gap-[10px] w-full">
+      <div className=" grid md:flex items-center gap-[10px] w-full">
         {selectOptions?.map((options, index) => (
           <div key={index} className="w-full">
             <SelectInput options={options} />

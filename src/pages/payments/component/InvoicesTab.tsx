@@ -118,20 +118,20 @@ const InvoicesTab = () => {
       <div className="grid md:flex items-center gap-[20px] md:gap-[40px] mb-[16px]">
         <div className="flex gap-[20px] items-center">
           <button
-            className={`pb-[10px] text-[20px] transition-all duration-300 ${
+            className={`pb-[10px] text-[18px] transition-all duration-300 ${
               activeTab === "Invoice"
-                ? "border-b border-[#17845a] text-[#17845a] font-[600]"
-                : "font-[500]"
+                ? "border-b border-[#17845a] text-[#17845a] font-[400]"
+                : "font-[400]"
             }`}
             onClick={() => setActiveTab("Invoice")}
           >
             Invoices
           </button>
           <button
-            className={`pb-[10px] text-[20px] transition-all duration-300 ${
+            className={`pb-[10px] text-[18px] transition-all duration-300 ${
               activeTab === "Users"
-                ? "border-b border-[#17845a] text-[#17845a] font-[600]"
-                : "font-[500]"
+                ? "border-b border-[#17845a] text-[#17845a] font-[400]"
+                : "font-[400]"
             }`}
             onClick={() => setActiveTab("Users")}
           >
@@ -206,7 +206,7 @@ const InvoicesTab = () => {
               ]}
             />
           </div>
-          <p className="cursor-pointer rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
+          <p className="cursor-pointer text-[14px] rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
             Clear Filters
           </p>
         </div>
@@ -295,7 +295,7 @@ const InvoicesTab = () => {
                   <p>Add Contact</p>
                 </div>
               </div>
-              <div className="flex gap-[10px] items-center">
+              <div className="flex gap-[10px] items-end">
                 <div className="w-full">
                   <SelectInput
                     label="Role"
@@ -316,7 +316,7 @@ const InvoicesTab = () => {
                     <p className="text-red-500 text-xs">{errors.type}</p>
                   )}
                 </div>
-                <div className="w-full">
+                <div className="w-full ">
                   <div className="flex justify-end space-x-2">
                     <button
                       type="submit"

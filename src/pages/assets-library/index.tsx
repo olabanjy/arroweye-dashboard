@@ -58,7 +58,7 @@ const AssetsLibrary = () => {
             <Input
               type="text"
               placeholder="Search by title, subvendor and date..."
-              className="w-full rounded-full font-IBM placeholder:font-IBM"
+              className="w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
             />
           </div>
           <div className="flex items-center gap-[5px]">
@@ -123,7 +123,7 @@ const AssetsLibrary = () => {
             </div>
           </div>
 
-          <p className="cursor-pointer rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
+          <p className="cursor-pointer text-[14px] rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
             Clear Filters
           </p>
         </div>

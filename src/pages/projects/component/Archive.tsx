@@ -55,7 +55,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
               ]}
             />
           </div>
-          <p className="cursor-pointer rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
+          <p className="cursor-pointer text-[14px] rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
             Clear Filters
           </p>
         </div>

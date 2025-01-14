@@ -72,7 +72,7 @@ const Users = () => {
 
   return (
     <>
-      <div className="rounded-[16px] border bg-grey-25 p-[16px]">
+      <div className="">
         <Table
           headers={headers}
           rows={rows}
