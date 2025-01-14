@@ -330,7 +330,7 @@ const InvoicesTab = () => {
                   <div className="flex justify-end space-x-2">
                     <button
                       type="submit"
-                      className="h-[50px] text-[17px] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-orange-500 w-full py-[12px] px-[12px]  rounded-[8px] flex items-center justify-center space-x-2"
+                      className=" font-IBM h-[50px] text-[17px] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-orange-500 w-full py-[12px] px-[12px]  rounded-[8px] flex items-center justify-center space-x-2"
                     >
                       <IoIosAdd className="text-white" />
                       <span className="text-white">Add User</span>

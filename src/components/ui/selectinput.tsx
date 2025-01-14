@@ -98,7 +98,7 @@ const SelectInput: React.FC<DropdownInputProps> = ({
                 key={option.value}
                 onClick={() => handleSelect(option.value)}
                 className={cn(
-                  "px-[16px] py-2 text-sm font-IBM text-gray-900 cursor-pointer hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700",
+                  "px-[16px] py-2 text-[17px] font-IBM text-gray-900 cursor-pointer hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700",
                   selectedValue === option.value &&
                     "bg-gray-100 dark:bg-gray-700"
                 )}
