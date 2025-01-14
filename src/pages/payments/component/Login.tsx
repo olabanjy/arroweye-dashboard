@@ -62,7 +62,7 @@ const Login = () => {
 
     const timer = setTimeout(() => {
       setIsBlurred(false);
-    }, 7000);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, []);
