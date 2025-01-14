@@ -153,14 +153,15 @@ const Sidebar: FC = () => {
                   </li>
                 </Link>
 
-                <Link href="#" onClick={logout}>
-                  <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
-                    <div className="flex items-center space-x-2">
-                      <span className="bg-transparent w-1 h-1 rounded-full"></span>
-                      <span>Logout</span>
-                    </div>
-                  </li>
-                </Link>
+                <li
+                  className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer"
+                  onClick={logout}
+                >
+                  <div className="flex items-center space-x-2">
+                    <span className="bg-transparent w-1 h-1 rounded-full"></span>
+                    <span>Logout</span>
+                  </div>
+                </li>
               </ul>
             </nav>
           </div>

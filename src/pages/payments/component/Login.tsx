@@ -245,7 +245,7 @@ const Login = () => {
                       isLoading={isLoginLoading}
                       disabled={isLoginLoading}
                       variant="primary"
-                      loadingText="Sending OTP..."
+                      loadingText="Sending..."
                       type="submit"
                       className="rounded-full bg-[#000000] font-bold text-[14px]"
                     />
