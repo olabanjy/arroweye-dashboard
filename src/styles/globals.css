@@ -38,23 +38,91 @@
   font-family: "IBM Plex Sans", sans-serif;
 }
 
-/* Custom styles for InputSwitch in CheckInput */
 .checkinput-switch.p-inputswitch.p-inputswitch-checked {
-  background-color: #4caf50 !important; /* Custom ON state color */
+  background-color: #4caf50 !important;
 }
 
 .checkinput-switch.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
-  background-color: #ffffff !important; /* Thumb color when ON */
+  background-color: #ffffff !important;
 }
 
 .checkinput-switch.p-inputswitch {
-  background-color: #cccccc !important; /* OFF state background color */
+  background-color: #cccccc !important;
 }
 
 .checkinput-switch.p-inputswitch .p-inputswitch-slider {
-  background-color: #ffffff !important; /* Thumb color when OFF */
+  background-color: #ffffff !important;
 }
 
 .checkinput-switch.p-inputswitch:hover {
-  background-color: #bbbbbb !important; /* Optional hover effect */
+  background-color: #bbbbbb !important;
+}
+
+.p-inputswitch.p-highlight .p-inputswitch-slider {
+  background: #1373e6;
+}
+
+#preloader {
+  background: #fff;
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 1200;
+  overflow: hidden;
+}
+
+img.animate__animated.animate__slideInUp {
+  animation-delay: 6.5s;
+}
+
+#preloader h1 {
+  cursor: default;
+  color: white;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  -webkit-font-smoothing: antialiased;
+  margin: 0 auto;
+  width: 400px;
+  left: 0px;
+  right: 0px;
+  margin-top: 50vh;
+  margin-bottom: 0px;
+  text-align: center;
+  animation-name: loader_line;
+  animation-duration: 7s;
+  animation-fill-mode: forwards;
+  background-color: rgba(255, 255, 255, 0.5);
+  background-image: -webkit-linear-gradient(
+    left,
+    #ffffff 0,
+    #ffffff 50%,
+    transparent 50%
+  );
+  background-position: 100% 0;
+  background-size: 200% 200%;
+  color: transparent;
+  -webkit-background-clip: text;
+}
+#preloader_line {
+  display: block;
+  height: 1px;
+  width: 250px;
+  margin: 0 auto;
+  animation-name: loader_line;
+  animation-duration: 7s;
+  background: linear-gradient(to left, #ccc 50%, #000000 50%) 0 0/200% 100%
+    #ffffff;
+}
+
+/* preloader_line animation */
+@keyframes loader_line {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0% 0;
+  }
 }

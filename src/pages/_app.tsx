@@ -17,7 +17,16 @@ import type { AppProps } from "next/app";
 export default function App({ Component, pageProps }: AppProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isIdle, setIsIdle] = useState(false);
+  const [showPreloader, setShowPreloader] = useState(true);
   const router = useRouter();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowPreloader(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (router.pathname === "/login" || router.pathname === "/") return;
@@ -87,6 +96,12 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <div className=" font-IBM">
+      {showPreloader && (
+        <div id="preloader">
+          <h1 className="pine-bold text-lg"></h1>
+          <div id="preloader_line"></div>
+        </div>
+      )}
       <Component {...pageProps} />
       <ToastContainer />
       <Modal

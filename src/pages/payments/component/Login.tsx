@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoginEP, VerifyLogin } from "@/services/api";
-import Logo from "@assets/arrowLogo.svg";
 import Bg1 from "@assets/image (1).webp";
 import Bg2 from "@assets/image (2).webp";
 import Bg3 from "@assets/image (3).webp";
@@ -10,22 +9,33 @@ import Bg4 from "@assets/image (4).webp";
 import Bg5 from "@assets/image (5).webp";
 import Bg6 from "@assets/image (6).webp";
 import Bg7 from "@assets/image (7).webp";
-import Bg8 from "@assets/image (8).webp";
 import Bg9 from "@assets/image (9).webp";
-import Bg10 from "@assets/image (10).webp";
-import Bg11 from "@assets/image (11).webp";
-import Bg12 from "@assets/image (12).webp";
 import Bg13 from "@assets/image (13).webp";
 import Bg14 from "@assets/image (14).webp";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { IoMdInformationCircle } from "react-icons/io";
 import { InputSwitch } from "primereact/inputswitch";
 import { IoReload } from "react-icons/io5";
+import { Toast } from "primereact/toast";
 
 const Login = () => {
+  const toast = useRef<Toast>(null);
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [isOtpLoading, setIsOtpLoading] = useState(false);
   const [toggleNotifications, setToggleNotifications] = useState(false);
+
+  const [randomBgImage, setRandomBgImage] = useState<StaticImageData | string>(
+    ""
+  );
+  const [isBlurred, setIsBlurred] = useState(true);
+
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("storedEmail");
+    if (storedEmail) {
+      setLoginFormData((prevData) => ({ ...prevData, email: storedEmail }));
+      setToggleNotifications(true);
+    }
+  }, []);
 
   const [loginFormData, setLoginFormData] = useState({
     email: "",
@@ -44,26 +54,18 @@ const Login = () => {
 
   const [isOtpSent, setIsOtpSent] = useState(false);
 
-  const bgImages = [
-    Bg1,
-    Bg2,
-    Bg3,
-    Bg4,
-    Bg5,
-    Bg6,
-    Bg7,
-    Bg8,
-    Bg9,
-    Bg10,
-    Bg11,
-    Bg12,
-    Bg13,
-    Bg14,
-  ];
+  const bgImages = [Bg1, Bg2, Bg3, Bg4, Bg5, Bg6, Bg7, Bg9, Bg13, Bg14];
 
-  const randomBgImage = bgImages[Math.floor(Math.random() * bgImages.length)];
+  useEffect(() => {
+    const selectedImage = bgImages[Math.floor(Math.random() * bgImages.length)];
+    setRandomBgImage(selectedImage);
 
-  useEffect(() => {}, []);
+    const timer = setTimeout(() => {
+      setIsBlurred(false);
+    }, 7000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLoginInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -83,6 +85,12 @@ const Login = () => {
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (toggleNotifications) {
+      localStorage.setItem("storedEmail", loginFormData.email);
+    } else {
+      localStorage.removeItem("storedEmail");
+    }
 
     setIsLoginLoading(true);
 
@@ -107,6 +115,13 @@ const Login = () => {
       .then((response) => {
         if (!response?.errorResponse) {
           setIsOtpSent(true);
+          toast.current?.show({
+            severity: "success",
+            summary: "Success",
+            detail: response.message,
+            life: 3000,
+            className: " bg-white border border-[#e0e0e0] !text-[#000000]",
+          });
         } else {
           console.log("Login failed:", response.message);
           console.log("Error details:", response.errorResponse);
@@ -159,29 +174,41 @@ const Login = () => {
 
   return (
     <div className="h-screen flex items-center justify-center relative">
-      <Image
-        src={randomBgImage}
-        alt="background"
-        className="absolute top-0 left-0 w-full h-full object-cover"
-      />
-
+      <Toast ref={toast} className=" font-IBM" />;
+      {randomBgImage && (
+        <Image
+          src={randomBgImage}
+          alt="background"
+          loading="lazy"
+          //  className="absolute top-0 left-0 w-full h-full object-cover"
+          className={`absolute top-0 left-0 w-full h-full object-cover transition-all duration-500 ${
+            isBlurred ? "blur-md" : "blur-none"
+          }`}
+        />
+      )}
+      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-20"></div>
       <div className="relative z-10 max-w-6xl w-full px-4 font-IBM">
         <div className=" grid place-items-center lg:flex items-center lg:justify-between h-full gap-[20px]">
-          <Image src={Logo} alt="Logo" />
-          <div className="w-full max-w-[700px] bg-white  rounded-[10px] pb-[56px]">
+          <Image
+            src="https://res.cloudinary.com/dih0krdcj/image/upload/v1736795669/Pine%20and%20Ginger/ae-black_syuh1o.svg"
+            alt="Logo"
+            width={250}
+            height={87}
+          />
+          <div className="w-full max-w-[400px] bg-white  rounded-[10px] pb-[56px]">
             <div className=" bg-[#1473E6] px-[27px] py-[23px] rounded-t-[10px] text-[#FFFFFF]">
               <div className=" flex items-center gap-[14px]">
                 <IoMdInformationCircle size={24} />{" "}
-                <p className="text-[18px] font-[600]">
+                <p className="text-[16px] font-[600]">
                   Please verify your credentials{" "}
                 </p>
               </div>
             </div>
 
-            <div className="w-full mt-[87px] max-w-[640px] mx-auto px-[27px]">
+            <div className="w-full mx-auto px-[27px]">
               {!isOtpSent ? (
                 <form
-                  className="mt-[20px] space-y-[30px] w-full"
+                  className=" mt-[20px] space-y-[30px] w-full"
                   onSubmit={handleLoginSubmit}
                 >
                   <Input
@@ -192,7 +219,7 @@ const Login = () => {
                     value={loginFormData.email}
                     onChange={handleLoginInputChange}
                     error={loginErrors.email}
-                    className="w-full text-center font-medium text-[#323131]"
+                    className="w-full text-center font-medium text-[#323131] text-[15px]"
                   />
                   <div className=" flex items-center justify-between">
                     <div className=" flex  items-center gap-[12px]">
@@ -200,31 +227,27 @@ const Login = () => {
                         id="phone"
                         checked={toggleNotifications}
                         onChange={(e) => setToggleNotifications(e.value)}
+                        className="custom-switch"
                       />
-                      <p className="  text-[14px] lg:text-[22px] text-[#605C5C]">
+
+                      <p className="  text-[14px] text-[#605C5C]">
                         Store Credentials
                       </p>
                     </div>
                     <Button
-                      label="SEND OTP"
+                      label="Send OTP"
                       isLoading={isLoginLoading}
                       disabled={isLoginLoading}
                       variant="primary"
                       loadingText="Sending OTP..."
                       type="submit"
-                      className="rounded-full bg-[#000000] font-bold text-[10px] lg:text-[21px]"
+                      className="rounded-full bg-[#000000] font-bold text-[14px]"
                     />
-                  </div>
-                  <div className=" flex items-center gap-[4px] text-[#1473E6]">
-                    <IoReload size={18} />
-                    <p className=" font-medium text-[#1473E6] text-[14px] lg:text-[22px]">
-                      Resend OTP
-                    </p>
                   </div>
                 </form>
               ) : (
                 <form
-                  className="mt-[20px] space-y-[30px] w-full"
+                  className="mt-[20px] space-y-[20px] w-full"
                   onSubmit={handleOtpSubmit}
                 >
                   <Input
@@ -237,15 +260,27 @@ const Login = () => {
                     error={otpErrors.otp}
                     className="w-full text-center font-medium text-[#323131]"
                   />
-                  <Button
-                    label="Verify OTP"
-                    isLoading={isOtpLoading}
-                    disabled={isOtpLoading}
-                    variant="primary"
-                    loadingText="Please wait..."
-                    type="submit"
-                    className="rounded-full bg-[#000000] font-bold text-[10px] lg:text-[21px]  w-full"
-                  />
+
+                  <div className=" flex items-center justify-between">
+                    <div
+                      className=" flex items-center cursor-pointer gap-[4px] text-[#1473E6]"
+                      onClick={() => setIsOtpSent(false)}
+                    >
+                      <IoReload size={18} />
+                      <p className=" font-medium text-[#1473E6] text-[14px] ">
+                        Resend OTP
+                      </p>
+                    </div>
+                    <Button
+                      label="Verify OTP"
+                      isLoading={isOtpLoading}
+                      disabled={isOtpLoading}
+                      variant="primary"
+                      loadingText="Please wait..."
+                      type="submit"
+                      className="rounded-full  bg-[#000000] font-bold text-[14px]  "
+                    />
+                  </div>
                 </form>
               )}
             </div>

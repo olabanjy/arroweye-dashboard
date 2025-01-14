@@ -51,7 +51,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={isLoading}
       >
         {isLoading ? (
-          <span className="animate-spin">...</span>
+          <span className="animate-spin hidden">...</span>
         ) : (
           label || "Button"
         )}

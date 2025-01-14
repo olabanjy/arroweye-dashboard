@@ -106,7 +106,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={inputType}
             ref={ref}
             className={cn(
-              "block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
+              "block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-sm text-gray-900 shadow-sm  dark:border-gray-700 dark:bg-gray-900 dark:text-white ",
               rounded ? "rounded-full" : "rounded-[8px]",
               (error || validationError) && "border-red-500 focus:ring-red-500",
               className
