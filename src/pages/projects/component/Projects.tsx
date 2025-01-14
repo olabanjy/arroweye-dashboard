@@ -81,7 +81,7 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
               item?.created?.slice(0, 10) || "January, 2025",
               item?.code,
               <div
-                className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500] w-[150px] whitespace-nowrap"
+                className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500] w-[150px] md:w-full whitespace-nowrap"
                 key={"code"}
                 onClick={() => handleCopyPin(String(item?.pin ?? ""))}
               >
