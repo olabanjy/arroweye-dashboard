@@ -26,6 +26,9 @@ const Sidebar: FC = () => {
   const logout = () => {
     clearLS();
     router.push("/login");
+    router.events.on("routeChangeComplete", () => {
+      window.location.reload();
+    });
   };
 
   return (

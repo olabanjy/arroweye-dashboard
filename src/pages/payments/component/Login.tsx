@@ -27,7 +27,6 @@ const Login = () => {
   const [randomBgImage, setRandomBgImage] = useState<StaticImageData | string>(
     ""
   );
-  const [isBlurred, setIsBlurred] = useState(true);
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("storedEmail");
@@ -55,6 +54,7 @@ const Login = () => {
   const [isOtpSent, setIsOtpSent] = useState(false);
 
   const bgImages = [Bg1, Bg2, Bg3, Bg4, Bg5, Bg6, Bg7, Bg9, Bg13, Bg14];
+  const [isBlurred, setIsBlurred] = useState(true);
 
   useEffect(() => {
     const selectedImage = bgImages[Math.floor(Math.random() * bgImages.length)];
@@ -120,6 +120,7 @@ const Login = () => {
             summary: "Success",
             detail: response.message,
             life: 3000,
+
             className: " bg-white border border-[#e0e0e0] !text-[#000000]",
           });
         } else {
