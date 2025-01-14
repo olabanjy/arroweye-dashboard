@@ -54,61 +54,66 @@ const Invoice = () => {
   };
 
   const rows =
-    content?.map((item, index) => ({
-      data: [
-        {
-          content: (
-            <div key={`manage-button-${index}`}>
-              <Link href={`/projects/${item.id}`}>{item?.project?.title}</Link>
-            </div>
-          ),
-          className: "bg-[#2ea879] text-white text-center ",
-        },
-        { content: item?.project?.code },
-        { content: item?.po_code },
-        { content: item?.project?.vendor },
-        { content: item?.project?.subvendor },
-        { content: item?.created?.slice(0, 10) },
-        {
-          content: `${getCurrencySymbol(item?.currency ?? "")}${item.total}`,
-        },
-        {
-          content: (
-            <div
-              onClick={() => item.id && toggleStatus(item.id)}
-              className={`cursor-pointer text-center ${item.status !== "Unpaid" && "text-[#000000]"}`}
-            >
-              {item.status}
-            </div>
-          ),
-          className: ` text-white text-center border-none ${item.status === "Unpaid" ? "bg-[#ff0000]" : " bg-[#90ee90] text-[#000000]"}`,
-        },
-        {
-          content: (
-            <div
-              key={`action-buttons-${index}`}
-              className="flex justify-center gap-2"
-            >
-              {item.status === "Unpaid" ? (
-                <div
-                  onClick={() => item.id && toggleStatus(item.id)}
-                  className="p-[12px] hover:bg-orange-500 border border-[#2ea879] bg-[#ffffff] text-[#2ea879] rounded-full cursor-pointer"
-                >
-                  <BsCurrencyDollar size={16} />
-                </div>
-              ) : (
-                <div
-                  onClick={() => item.id && toggleStatus(item.id)}
-                  className="p-[16px]  text-[#000000]  cursor-pointer"
-                >
-                  <BsTrash size={16} />
-                </div>
-              )}
-            </div>
-          ),
-        },
-      ],
-    })) || [];
+    content
+      ?.slice()
+      .reverse()
+      .map((item, index) => ({
+        data: [
+          {
+            content: (
+              <div key={`manage-button-${index}`}>
+                <Link href={`/projects/${item.id}`}>
+                  {item?.project?.title}
+                </Link>
+              </div>
+            ),
+            className: "bg-[#2ea879] text-white text-center ",
+          },
+          { content: item?.project?.code },
+          { content: item?.po_code },
+          { content: item?.project?.vendor },
+          { content: item?.project?.subvendor },
+          { content: item?.created?.slice(0, 10) },
+          {
+            content: `${getCurrencySymbol(item?.currency ?? "")}${item.total}`,
+          },
+          {
+            content: (
+              <div
+                onClick={() => item.id && toggleStatus(item.id)}
+                className={`cursor-pointer text-center ${item.status !== "Unpaid" && "text-[#000000]"}`}
+              >
+                {item.status}
+              </div>
+            ),
+            className: ` text-white text-center border-none ${item.status === "Unpaid" ? "bg-[#ff0000]" : " bg-[#90ee90] text-[#000000]"}`,
+          },
+          {
+            content: (
+              <div
+                key={`action-buttons-${index}`}
+                className="flex justify-center gap-2"
+              >
+                {item.status === "Unpaid" ? (
+                  <div
+                    onClick={() => item.id && toggleStatus(item.id)}
+                    className="p-[12px] hover:bg-orange-500 border border-[#2ea879] bg-[#ffffff] text-[#2ea879] rounded-full cursor-pointer"
+                  >
+                    <BsCurrencyDollar size={16} />
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => item.id && toggleStatus(item.id)}
+                    className="p-[16px] text-[#000000] cursor-pointer"
+                  >
+                    <BsTrash size={16} />
+                  </div>
+                )}
+              </div>
+            ),
+          },
+        ],
+      })) || [];
 
   return (
     <div className="rounded-[16px] border bg-grey-25 p-[16px]">

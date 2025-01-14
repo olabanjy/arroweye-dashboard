@@ -39,7 +39,7 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
   };
 
   return (
-    <div className="rounded-[16px] border bg-grey-25 p-[16px]">
+    <>
       {filterVisible && (
         <div className="flex items-end gap-[10px] my-[20px]">
           <div className="max-w-[150px] w-full">
@@ -67,53 +67,59 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
           </p>
         </div>
       )}
-
-      <Table
-        highlightFirstCell={true}
-        headers={headers}
-        rows={content?.map((item, index) => ({
-          data: [
-            <div key={`manage-button-${index}`}>
-              <Link href={`/projects/${item.id}`}>{item?.title}</Link>
-            </div>,
-            item?.vendor,
-            item?.subvendor,
-            item?.created?.slice(0, 10) || "January, 2025",
-            item?.code,
-            <div
-              className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500]"
-              key={"code"}
-              onClick={() => handleCopyPin(String(item?.pin ?? ""))}
-            >
-              {copiedPin === String(item?.pin) ? "Copied!" : "Copy PIN"}
-            </div>,
-            <Link href={`/projects/${item.id}`} key={`manage-button-${index}`}>
-              <button className=" text-[#000000] ">
-                <MdOutlineModeEditOutline size={20} />
-              </button>
-            </Link>,
-            <div
-              key={`action-buttons-${index}`}
-              className="flex justify-center gap-2"
-            >
-              <button
-                className=" text-[#000000] "
-                onClick={() => alert("Action triggered!")}
+      <div className=" mt-[20px]">
+        <Table
+          highlightFirstCell={true}
+          headers={headers}
+          rows={content?.map((item, index) => ({
+            data: [
+              <div key={`manage-button-${index}`}>
+                <Link href={`/projects/${item.id}`}>{item?.title}</Link>
+              </div>,
+              item?.vendor,
+              item?.subvendor,
+              item?.created?.slice(0, 10) || "January, 2025",
+              item?.code,
+              <div
+                className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500] w-[150px] whitespace-nowrap"
+                key={"code"}
+                onClick={() => handleCopyPin(String(item?.pin ?? ""))}
               >
-                <BsTrash size={20} />
-              </button>
-            </div>,
-          ],
-        }))}
-        emptyState={
-          <div className="flex h-[50vh] flex-col items-center justify-center text-center">
-            <div className="my-[32px]">
-              <p className="text-[20px] font-[600] text-grey-400">No Data</p>
+                {copiedPin === String(item?.pin) ? "Copied!" : "Copy PIN"}
+              </div>,
+              <Link
+                href={`/projects/${item.id}`}
+                key={`manage-button-${index}`}
+              >
+                <div className="flex justify-center ">
+                  <button className=" text-[#000000]  ">
+                    <MdOutlineModeEditOutline size={20} />
+                  </button>
+                </div>
+              </Link>,
+              <div
+                key={`action-buttons-${index}`}
+                className="flex justify-center gap-2"
+              >
+                <button
+                  className=" text-[#000000] "
+                  onClick={() => alert("Action triggered!")}
+                >
+                  <BsTrash size={20} />
+                </button>
+              </div>,
+            ],
+          }))}
+          emptyState={
+            <div className="flex h-[50vh] flex-col items-center justify-center text-center">
+              <div className="my-[32px]">
+                <p className="text-[20px] font-[600] text-grey-400">No Data</p>
+              </div>
             </div>
-          </div>
-        }
-      />
-    </div>
+          }
+        />
+      </div>
+    </>
   );
 };
 

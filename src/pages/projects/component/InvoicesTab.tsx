@@ -15,12 +15,12 @@ const InvoicesTab: React.FC = () => {
   }, [activeTab]);
 
   return (
-    <div className="lg:p-[20px]">
+    <div className="lg:p-[20px] ">
       <div className=" ">
         <div className="grid md:flex items-center gap-[20px] md:gap-[40px]">
-          <div className="flex gap-[20px] items-center lg:mb-4 ">
+          <div className="flex gap-[20px] items-center  ">
             <button
-              className={`pb-[10px] text-[18px] transition-all duration-300 ${
+              className={` text-[18px] transition-all duration-300 ${
                 activeTab === "Projects"
                   ? "border-b border-[#17845a] text-[#17845a] font-[400]"
                   : "font-[400]"
@@ -30,7 +30,7 @@ const InvoicesTab: React.FC = () => {
               Projects
             </button>
             <button
-              className={`pb-[10px] text-[18px] transition-all duration-300 ${
+              className={` text-[18px] transition-all duration-300 ${
                 activeTab === "Archive"
                   ? "border-b border-[#17845a] text-[#17845a] font-[400]"
                   : "font-[400]"
@@ -41,7 +41,7 @@ const InvoicesTab: React.FC = () => {
             </button>
           </div>
 
-          <div className="flex-grow lg:mb-4 pb-[10px]">
+          <div className="flex-grow ">
             <div className="flex items-center justify-end gap-[10px]">
               <div className="flex-grow font-IBM">
                 <Input

@@ -32,7 +32,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
   const filteredContent = content?.filter((item) => item.archived === true);
 
   return (
-    <div className="rounded-[16px] border bg-grey-25 p-[16px]">
+    <div className="">
       {filterVisible && (
         <div className="flex items-end gap-[10px] my-[10px]">
           <div className="max-w-[200px] w-full rounded-full">
@@ -61,44 +61,46 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
         </div>
       )}
 
-      <Table
-        headers={headers}
-        rows={filteredContent?.map((item, index) => ({
-          data: [
-            item?.title,
-            item?.vendor,
-            item?.subvendor,
-            item?.created?.slice(0, 10),
-            item?.code,
-            item?.pin,
-            <button
-              key={`manage-button-${index}`}
-              className="p-[8px] text-blue-600 hover:text-blue-800"
-              onClick={() => alert("Manage action triggered!")}
-            >
-              Manage
-            </button>,
-            <div
-              key={`action-buttons-${index}`}
-              className="flex justify-center gap-2"
-            >
+      <div className="  mt-[20px]">
+        <Table
+          headers={headers}
+          rows={filteredContent?.map((item, index) => ({
+            data: [
+              item?.title,
+              item?.vendor,
+              item?.subvendor,
+              item?.created?.slice(0, 10),
+              item?.code,
+              item?.pin,
               <button
-                className="p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
-                onClick={() => alert("Action triggered!")}
+                key={`manage-button-${index}`}
+                className="p-[8px] text-blue-600 hover:text-blue-800 "
+                onClick={() => alert("Manage action triggered!")}
               >
-                <BsCurrencyDollar />
-              </button>
-            </div>,
-          ],
-        }))}
-        emptyState={
-          <div className="flex h-[50vh] flex-col items-center justify-center text-center">
-            <div className="my-[32px]">
-              <p className="text-[20px] font-[600] text-grey-400">No Data</p>
+                Manage
+              </button>,
+              <div
+                key={`action-buttons-${index}`}
+                className="flex justify-center gap-2"
+              >
+                <button
+                  className="p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
+                  onClick={() => alert("Action triggered!")}
+                >
+                  <BsCurrencyDollar />
+                </button>
+              </div>,
+            ],
+          }))}
+          emptyState={
+            <div className="flex h-[50vh] flex-col items-center justify-center text-center">
+              <div className="my-[32px]">
+                <p className="text-[20px] font-[600] text-grey-400">No Data</p>
+              </div>
             </div>
-          </div>
-        }
-      />
+          }
+        />
+      </div>
     </div>
   );
 };
