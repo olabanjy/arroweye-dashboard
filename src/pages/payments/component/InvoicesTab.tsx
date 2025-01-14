@@ -114,7 +114,7 @@ const InvoicesTab = () => {
   };
 
   return (
-    <div className="lg:p-[20px]">
+    <div className="lg:p-[20px] font-IBM">
       <div className="grid md:flex items-center gap-[20px] md:gap-[40px] mb-[16px]">
         <div className="flex gap-[20px] items-center">
           <button
@@ -218,27 +218,35 @@ const InvoicesTab = () => {
       </div>
 
       <div
-        className={`custom-dialog-overlay ${
+        className={`custom-dialog-overlay  ${
           visible ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50" : "hidden"
         }`}
       >
         <Dialog
-          header="Add Members"
+          header=" +  ADD MEMBERS"
+          headerClassName=" "
           visible={visible}
           onHide={hideDialog}
           breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "50vw" }}
+          style={{ width: "40vw" }}
+          className="!overflow-y-auto"
         >
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-4">
-              <p className="text-4xl font-bold text-[#000]">Collaborate</p>
+          <form
+            onSubmit={handleSubmit}
+            className="scrollbar-hide scrollbar-hide::-webkit-scrollbar"
+          >
+            <div className="space-y-4 relative z-10">
+              <p className="text-[30px] font-[600] text-[#212529] font-IBM">
+                Collaborate
+              </p>
               <div>
                 <DropDownInput
                   type="email"
                   name="email"
-                  placeholder="Add email"
+                  placeholder="add e-mail"
                   value={formData.email}
                   onChange={(e) => handleInputChange(e)}
+                  className=" text-[17px]"
                   options={[
                     {
                       value: "1",
@@ -268,6 +276,7 @@ const InvoicesTab = () => {
                   placeholder="Business Name"
                   value={formData.organization_name}
                   onChange={handleInputChange}
+                  className=" text-[17px]"
                 />
                 {errors.organization_name && (
                   <p className="text-red-500 text-xs">
@@ -283,6 +292,7 @@ const InvoicesTab = () => {
                     placeholder="Full Name"
                     value={formData.fullname}
                     onChange={handleInputChange}
+                    className=" font-IBM text-[17px]"
                   />
                   {errors.fullname && (
                     <p className="text-red-500 text-xs">{errors.fullname}</p>
@@ -298,7 +308,7 @@ const InvoicesTab = () => {
               <div className="flex gap-[10px] items-end">
                 <div className="w-full">
                   <SelectInput
-                    label="Role"
+                    icon={true}
                     name="type"
                     options={[
                       { value: "Vendor", label: "Vendor" },
@@ -320,7 +330,7 @@ const InvoicesTab = () => {
                   <div className="flex justify-end space-x-2">
                     <button
                       type="submit"
-                      className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
+                      className="h-[50px] text-[17px] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-orange-500 w-full py-[12px] px-[12px]  rounded-[8px] flex items-center justify-center space-x-2"
                     >
                       <IoIosAdd className="text-white" />
                       <span className="text-white">Add User</span>

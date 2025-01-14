@@ -137,7 +137,7 @@ const DropDownInput = React.forwardRef<HTMLInputElement, InputProps>(
             type={inputType}
             ref={ref}
             className={cn(
-              "block w-full rounded-[8px] border border-black bg-white px-4 py-[8px] h-[50px] text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
+              "block w-full rounded-[8px] border border-black bg-white px-4 py-[8px] h-[50px]  text-gray-900 shadow-sm  dark:text-white  text-[17px] font-[400]",
               (error || validationError) && "border-red-500 focus:ring-red-500",
               className
             )}
@@ -160,15 +160,19 @@ const DropDownInput = React.forwardRef<HTMLInputElement, InputProps>(
             </button>
           )}
           {showDropdown && options.length > 0 && (
-            <div className="absolute left-0 w-full mt-1 bg-white shadow-lg rounded-[8px] z-10 dark:bg-gray-900">
+            <div className="absolute left-0 w-full mt-[20px] bg-white shadow-lg rounded-[8px] z-10 dark:bg-gray-900 max-h-[130px] overflow-y-auto scrollbar-hide scrollbar-hide::-webkit-scrollbar">
               {options.map((option) => (
                 <div
                   key={option.value}
                   onClick={() => handleOptionSelect(option.value, option.email)}
-                  className="px-4 py-2 text-sm text-gray-900 cursor-pointer hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
+                  className="grid gap-[6px] px-4 py-2 text-sm text-gray-900 cursor-pointer hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
                 >
-                  <p className="font-semibold">{option.label}</p>
-                  <p className="text-sm text-gray-500">{option.email}</p>
+                  <p className="font-[600] text-[16px] font-IBM text-[#212529]">
+                    {option.label}
+                  </p>
+                  <p className="text-[14px] font-[400] text-[#212529] font-IBM">
+                    {option.email}
+                  </p>
                 </div>
               ))}
             </div>

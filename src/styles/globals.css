@@ -4,6 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.p-dialog .p-dialog-header .p-dialog-title {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: "IBM Plex Sans" !important;
+  color: #212529 !important;
+  text-shadow: none !important;
+}
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
@@ -117,7 +125,6 @@ img.animate__animated.animate__slideInUp {
     #ffffff;
 }
 
-/* preloader_line animation */
 @keyframes loader_line {
   from {
     background-position: 100% 0;
@@ -125,4 +132,13 @@ img.animate__animated.animate__slideInUp {
   to {
     background-position: 0% 0;
   }
+}
+
+.p-dialog-content::-webkit-scrollbar {
+  display: none;
+}
+
+.p-dialog-content {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
