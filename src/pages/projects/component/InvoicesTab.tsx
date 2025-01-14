@@ -20,7 +20,7 @@ const InvoicesTab: React.FC = () => {
         <div className="grid md:flex items-center gap-[20px] md:gap-[40px]">
           <div className="flex gap-[20px] items-center  ">
             <button
-              className={` text-[18px] transition-all duration-300 ${
+              className={`pb-[10px] text-[18px] transition-all duration-300 ${
                 activeTab === "Projects"
                   ? "border-b border-[#17845a] text-[#17845a] font-[400]"
                   : "font-[400]"
@@ -30,7 +30,7 @@ const InvoicesTab: React.FC = () => {
               Projects
             </button>
             <button
-              className={` text-[18px] transition-all duration-300 ${
+              className={`pb-[10px] text-[18px] transition-all duration-300 ${
                 activeTab === "Archive"
                   ? "border-b border-[#17845a] text-[#17845a] font-[400]"
                   : "font-[400]"

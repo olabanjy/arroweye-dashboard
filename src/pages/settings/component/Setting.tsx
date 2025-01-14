@@ -151,6 +151,7 @@ const Setting = () => {
                 id="phone"
                 checked={toggleNotifications}
                 onChange={(e) => setToggleNotifications(e.value)}
+                className="custom-switch"
               />
             </div>
           </div>

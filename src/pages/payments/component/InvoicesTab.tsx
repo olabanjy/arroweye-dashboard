@@ -223,7 +223,7 @@ const InvoicesTab = () => {
         }`}
       >
         <Dialog
-          header=" +  ADD MEMBERS"
+          header=" +  ADD USERS"
           headerClassName=" "
           visible={visible}
           onHide={hideDialog}

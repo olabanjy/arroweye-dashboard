@@ -27,14 +27,14 @@ const selectOptions = [
 
 const InsightChart = () => {
   return (
-    <div className="mt-[20px] relative px-[20px]">
-      <div className="grid md:grid-cols-2 place-items-center gap-[20px]">
+    <div className="mt-[20px] relative lg:px-[20px]">
+      <div className="grid md:grid-cols-2 place-items-center gap-[20px] ">
         <PieChart
           title="AIRPLAY"
           value="1M"
           selectOptions={selectOptions}
           chartData={chartData}
-          maxWidth="600px"
+          maxWidth="500px"
         />
         <PieChart
           title="AIRPLAY"

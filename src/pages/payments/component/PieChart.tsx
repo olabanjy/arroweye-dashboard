@@ -34,7 +34,7 @@ const PieChart: FC<InsightChartProps> = ({
   return (
     <div
       className={`border p-[20px] rounded-[8px] space-y-[20px] w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500`}
-      style={{ maxWidth }}
+      style={{ maxWidth, width: "100%" }}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
@@ -43,8 +43,8 @@ const PieChart: FC<InsightChartProps> = ({
         </div>
         <div className="">
           {selectOptions?.map((options, index) => (
-            <div key={index} className="max-w-[100px] w-full">
-              <SelectInput options={options} />
+            <div key={index} className="max-w-[180px] w-full">
+              <SelectInput rounded={true} options={options} />
             </div>
           ))}
         </div>

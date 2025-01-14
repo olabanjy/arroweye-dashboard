@@ -9,10 +9,12 @@ import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { SelectInput } from "@/components/ui/selectinput";
 import { FaUserMinus } from "react-icons/fa";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
-import Insight from "./component/Insight";
 import { AddStaff, getSingleProject } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
+import ProjectSingleInsight from "./component/ProjectSingleInsight";
+import Schedule from "../schedule/component/Schedule";
+import InsightChart from "./component/InsightChart";
 
 const users = [
   { initials: "JJ", fullName: "John Jerome", email: "john@example.com" },
@@ -30,7 +32,7 @@ interface User {
 // interface AddUserFormData = {
 //   email: string;
 //   business_id: string;
-//   role: string | number; // Allow role to be either a string or number
+//   role: string | number;
 //   fullname: string;
 // };
 
@@ -254,12 +256,13 @@ const ProjectDetails = () => {
               id="phone"
               checked={toggleNotifications}
               onChange={(e) => setToggleNotifications(e.value)}
+              className="custom-switch"
             />
           </div>
         </div>
 
         <div className=" ">
-          <Insight />
+          <ProjectSingleInsight />
         </div>
       </div>
 
@@ -378,6 +381,7 @@ const ProjectDetails = () => {
                   id="phone"
                   checked={broadcast}
                   onChange={(e) => setBroadcast(e.value)}
+                  className="custom-switch"
                 />
                 <p>Broadcast</p>
               </div>
@@ -385,6 +389,12 @@ const ProjectDetails = () => {
           </Dialog>
         </div>
       </form>
+
+      <InsightChart />
+
+      <div className=" mt-[50px]">
+        <Schedule />
+      </div>
 
       <div
         className={`custom-dialog-overlay ${
