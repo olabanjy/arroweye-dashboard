@@ -213,45 +213,60 @@ const ProjectDetails = () => {
     });
   }, [id]);
 
+  const predefinedColors = [
+    "bg-blue-500",
+    "bg-green-500",
+    "bg-yellow-500",
+    "bg-purple-500",
+    "bg-pink-500",
+    "bg-teal-500",
+    "bg-orange-500",
+    "bg-red-500",
+    "bg-indigo-500",
+    "bg-gray-500",
+  ];
+
   return (
     <DashboardLayout>
       <div className="space-y-[20px]">
-        <div className="text-[#919393] flex items-center gap-[20px]">
-          <p className="text-[#5e5e5e]">Khaid</p>
-          <p className="p-[4px] border border-[#d5d9db] bg-[#f7fcff] rounded">
-            Neville Records
+        <div className="text-[#919393] flex items-center gap-[10px]">
+          <p className="text-[#5e5e5e] tracking-[.1rem]">KHAID</p>
+          <p className="p-[4px] border border-[#d5d9db] bg-[#f7fcff] rounded tracking-[.1rem]">
+            NEVILLE RECORDS
           </p>
         </div>
         <div className=" grid md:flex items-end md:justify-between">
           <div>
             <p className="font-extrabold text-5xl text-[#000000]">Jolie</p>
-            <div className="mt-[20px] flex items-center gap-[10px]">
+            <div className="mt-[20px] flex items-center gap-[10px] relative">
               {users.map((user, index) => (
                 <div key={index} className="relative group">
                   <p
-                    className="bg-red-500 text-white rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer"
+                    className={`${predefinedColors[index % predefinedColors.length]} tracking-[.1rem] text-[12px] font-[700] font-Poppins text-white rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer`}
                     onClick={() => handleUserClick(user)}
                   >
                     {user.initials}
                   </p>
-                  <div className="absolute bottom-[-30px] left-0 bg-black text-white text-xs p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+
+                  <div className="absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 bg-black text-white text-xs font-Poppins px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 text-nowrap">
                     {user.fullName}
                   </div>
                 </div>
               ))}
+
               <div className="relative group">
                 <p
                   className="bg-[#ffdead] text-[#000000] rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer"
                   onClick={showDialog}
                 >
-                  <HiOutlineUserAdd size={30} />
+                  <HiOutlineUserAdd size={24} />
                 </p>
               </div>
             </div>
           </div>
 
           <div className="flex items-center space-x-4">
-            <p>Edit Mode</p>
+            <p className=" font-IBM font-[400] text-[16px]">Edit mode</p>
             <InputSwitch
               id="phone"
               checked={toggleNotifications}

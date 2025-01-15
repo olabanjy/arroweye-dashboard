@@ -28,10 +28,10 @@ const ProjectDetailsPublic = () => {
   return (
     <DashboardLayout>
       <div className="space-y-[20px]">
-        <div className="text-[#919393] flex items-center gap-[20px]">
-          <p className="text-[#5e5e5e]">Khaid</p>
+        <div className="text-[#919393] flex items-center gap-[10px]">
+          <p className="text-[#5e5e5e]">KHAID</p>
           <p className="p-[4px] border border-[#d5d9db] bg-[#f7fcff] rounded">
-            Neville Records
+            NEVILLE RECORDS
           </p>
         </div>
         <div className="flex items-end justify-between">

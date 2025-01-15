@@ -182,7 +182,7 @@ const Login = () => {
 
   return (
     <div className="h-screen flex items-center justify-center relative">
-      <Toast ref={toast} className=" font-IBM" />;
+      <Toast ref={toast} className=" font-IBM" />
       {randomBgImage && (
         <Image
           src={randomBgImage}

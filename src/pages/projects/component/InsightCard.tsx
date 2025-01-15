@@ -9,7 +9,17 @@ interface InsightCardProps {
   percentageColor?: string;
   selectOptions?: Array<{ value: string; label: string }[]>;
   maxWidth?: string;
+  info?: string;
 }
+
+const Tooltip = ({ info }: { info: string }) => (
+  <div className="relative group">
+    <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
+    <div className=" font-[300] absolute left-full top-1/2 transform -translate-y-1/2 ml-2 hidden w-[230px] p-2 text-xs text-white bg-black bg-opacity-90 rounded-lg group-hover:block z-10 shadow-lg">
+      {info}
+    </div>
+  </div>
+);
 
 const InsightCard: FC<InsightCardProps> = ({
   title,
@@ -17,14 +27,15 @@ const InsightCard: FC<InsightCardProps> = ({
   percentageChange,
   percentageColor = "#11cc48",
   selectOptions,
+  info,
 }) => {
   return (
     <div
-      className={`border p-[20px] rounded-[8px] space-y-[20px] w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500 `}
+      className={`relative border h-[220px] px-[20px] py-[34px] rounded-[8px] space-y-[40px] w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500`}
     >
       <div className="flex items-center gap-[5px] text-[#7a8081]">
         <p className="text-[12px] font-[400] tracking-[.1rem]">{title}</p>
-        <FiInfo className="text-gray-400 hover:text-blue-500" />
+        {info && <Tooltip info={info} />}
       </div>
 
       <p className="text-2xl lg:text-[56px] font-[600]">{value}</p>
@@ -38,7 +49,7 @@ const InsightCard: FC<InsightCardProps> = ({
         </p>
       )}
 
-      <div className=" grid md:flex items-center gap-[10px] w-full max-w-[80px]">
+      <div className="grid md:flex items-center gap-[10px] w-full max-w-[80px]">
         {selectOptions?.map((options, index) => (
           <div key={index} className="max-w-[80px] w-full">
             <SelectInput options={options} rounded={true} />

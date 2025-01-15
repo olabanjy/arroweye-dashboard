@@ -5,12 +5,12 @@ import { Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
-  Tooltip,
+  Tooltip as ChartTooltip,
   Legend,
   ChartData,
 } from "chart.js";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, ChartTooltip, Legend);
 
 interface InsightChartProps {
   title: string;
@@ -19,7 +19,17 @@ interface InsightChartProps {
   selectOptions: Array<{ value: string; label: string }[]>;
   chartData?: ChartData<"doughnut", number[], string>;
   maxWidth?: string;
+  info?: string;
 }
+
+const Tooltip = ({ info }: { info: string }) => (
+  <div className="relative group">
+    <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
+    <div className="absolute font-[300] left-full top-1/2 transform -translate-y-1/2 ml-2 hidden w-[230px] p-2 text-xs text-white bg-black bg-opacity-90 rounded-lg group-hover:block z-10 shadow-lg font-IBM">
+      {info}
+    </div>
+  </div>
+);
 
 const DoughnutChart: FC<InsightChartProps> = ({
   title,
@@ -27,6 +37,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
   selectOptions,
   chartData,
   maxWidth = "400px",
+  info,
 }) => {
   const defaultChartData: ChartData<"doughnut", number[], string> =
     chartData || {
@@ -70,7 +81,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
           <p className="!text-[12px] font-[400]">{title}</p>
-          <FiInfo className="text-gray-400 hover:text-blue-500" />
+          {info && <Tooltip info={info} />}
         </div>
         <div className="">
           {selectOptions?.map((options, index) => (

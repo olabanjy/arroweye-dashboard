@@ -19,14 +19,24 @@ interface InsightChartProps {
   selectOptions: Array<{ value: string; label: string }[]>;
   chartData?: ChartData<"pie", number[], string>;
   maxWidth?: string;
+  info?: string;
 }
+
+const TooltipComponent = ({ info }: { info: string }) => (
+  <div className="relative group">
+    <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
+    <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 hidden w-52 p-2 text-xs font-[400] text-white bg-black rounded-lg group-hover:block z-10 shadow-lg font-IBM">
+      {info}
+    </div>
+  </div>
+);
 
 const PieChart: FC<InsightChartProps> = ({
   title,
   value,
   selectOptions,
   chartData,
-  // maxWidth = "400px",
+  info,
 }) => {
   const defaultChartData: ChartData<"pie", number[], string> = chartData || {
     labels: ["Radio", "Cable", "Tv", "Dj"],
@@ -48,6 +58,7 @@ const PieChart: FC<InsightChartProps> = ({
     { value: "week4", label: "Week 4" },
     { value: "week5", label: "Week 5" },
   ];
+
   const months = [
     { value: "jan", label: "January" },
     { value: "feb", label: "February" },
@@ -64,13 +75,13 @@ const PieChart: FC<InsightChartProps> = ({
   ];
 
   return (
-    <div className={` space-y-[20px]`}>
+    <div className="space-y-[20px]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
           <p className="!text-[12px] font-[400]">{title}</p>
-          <FiInfo className="text-gray-400 hover:text-blue-500" />
+          {info && <TooltipComponent info={info} />}
         </div>
-        <div className="">
+        <div>
           {selectOptions?.map((options, index) => (
             <div key={index} className="max-w-[180px] w-full">
               <SelectInput
@@ -84,7 +95,7 @@ const PieChart: FC<InsightChartProps> = ({
       </div>
 
       <p className="text-2xl lg:text-[56px] font-[600] font-IBM">{value}</p>
-      <div className="">
+      <div>
         <p className="text-[12px] font-[400] text-[#000000]">Top Channels</p>
 
         {defaultChartData && (
@@ -102,7 +113,21 @@ const PieChart: FC<InsightChartProps> = ({
                       font: { size: 12 },
                     },
                   },
-                  tooltip: { enabled: true },
+                  tooltip: {
+                    enabled: true,
+                    callbacks: {
+                      label: function (tooltipItem) {
+                        const dataset =
+                          defaultChartData.datasets[tooltipItem.datasetIndex];
+                        const currentValue =
+                          dataset.data[tooltipItem.dataIndex];
+                        const label = defaultChartData.labels
+                          ? defaultChartData.labels[tooltipItem.dataIndex]
+                          : "";
+                        return `${label}: ${currentValue}`;
+                      },
+                    },
+                  },
                 },
               }}
             />
@@ -110,10 +135,10 @@ const PieChart: FC<InsightChartProps> = ({
         )}
       </div>
 
-      <div className=" flex items-center justify-between">
-        <div className="">
+      <div className="flex items-center justify-between">
+        <div>
           {selectOptions?.map((options, index) => (
-            <div key={index} className=" max-w-[110px] w-full">
+            <div key={index} className="max-w-[110px] w-full">
               <SelectInput
                 rounded={true}
                 options={weeksOptions}
@@ -122,9 +147,9 @@ const PieChart: FC<InsightChartProps> = ({
             </div>
           ))}
         </div>
-        <div className="">
+        <div>
           {selectOptions?.map((options, index) => (
-            <div key={index} className=" max-w-[110px] w-full">
+            <div key={index} className="max-w-[110px] w-full">
               <SelectInput
                 rounded={true}
                 options={months}

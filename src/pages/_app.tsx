@@ -15,6 +15,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { LoginEP } from "@/services/api";
 import { MdLockOutline } from "react-icons/md";
 import type { AppProps } from "next/app";
+import ScrollToTopButton from "./component/ScrollToTopButton";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -97,15 +98,17 @@ export default function App({ Component, pageProps }: AppProps) {
   };
 
   return (
-    <div className=" font-IBM">
+    <div className=" font-IBM relative">
       {showPreloader && (
         <div id="preloader">
           <h1 className="pine-bold text-lg"></h1>
           <div id="preloader_line"></div>
         </div>
       )}
+      <ScrollToTopButton />
       <Component {...pageProps} />
       <ToastContainer />
+
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

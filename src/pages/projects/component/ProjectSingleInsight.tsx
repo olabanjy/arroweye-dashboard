@@ -11,6 +11,7 @@ const ProjectSingleInsight = () => {
             value="$100"
             percentageChange="5%"
             percentageColor="#11cc48"
+            info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
           />
         </div>
         <div className=" w-full">
@@ -19,6 +20,7 @@ const ProjectSingleInsight = () => {
             value="$100M+ "
             percentageChange="-3%"
             percentageColor="#ff4d4f"
+            info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
           />
         </div>
 
@@ -28,6 +30,7 @@ const ProjectSingleInsight = () => {
             value="1000"
             percentageChange="-3%"
             percentageColor="#ff4d4f"
+            info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
           />
         </div>
       </div>

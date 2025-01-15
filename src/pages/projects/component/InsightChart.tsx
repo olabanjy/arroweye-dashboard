@@ -64,6 +64,7 @@ const InsightChart = () => {
               value="1M"
               selectOptions={selectOptions}
               chartData={chartDataForDoughnut}
+              info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
             />
           </div>
 
@@ -74,6 +75,7 @@ const InsightChart = () => {
               selectOptions={selectOptions}
               chartData={chartData}
               maxWidth="500px"
+              info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
             />
           </div>
 
@@ -94,6 +96,7 @@ const InsightChart = () => {
               value="1M"
               selectOptions={selectOptions}
               chartData={chartDataForDoughnut}
+              info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
             />
           </div>
 
@@ -104,6 +107,7 @@ const InsightChart = () => {
               selectOptions={selectOptions}
               chartData={chartData}
               maxWidth="500px"
+              info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
             />
           </div>
 
@@ -125,6 +129,7 @@ const InsightChart = () => {
               value="1M"
               selectOptions={selectOptions}
               chartData={chartDataForDoughnut}
+              info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
             />
           </div>
 
@@ -135,6 +140,7 @@ const InsightChart = () => {
               selectOptions={selectOptions}
               chartData={chartData}
               maxWidth="500px"
+              info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
             />
           </div>
 
@@ -170,7 +176,7 @@ const InsightChart = () => {
         </div>
       </div>
 
-      <div className="fixed bottom-[50px] inset-x-0 flex justify-center">
+      <div className="fixed bottom-[50px] inset-x-0 flex justify-center z-30">
         <div className="bg-white border border-gray-300 rounded p-[8px] inline-flex items-center gap-[10px] shadow-md">
           <button className="rounded p-[8px] bg-black text-white hover:bg-gray-800">
             Export
