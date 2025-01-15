@@ -222,7 +222,7 @@ const ProjectDetails = () => {
             Neville Records
           </p>
         </div>
-        <div className="flex items-end justify-between">
+        <div className=" grid md:flex items-end md:justify-between">
           <div>
             <p className="font-extrabold text-5xl text-[#000000]">Jolie</p>
             <div className="mt-[20px] flex items-center gap-[10px]">
@@ -392,7 +392,7 @@ const ProjectDetails = () => {
 
       <InsightChart />
 
-      <div className=" mt-[50px]">
+      <div className=" mt-[50px] ">
         <Schedule />
       </div>
 

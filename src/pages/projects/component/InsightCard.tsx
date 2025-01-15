@@ -7,7 +7,7 @@ interface InsightCardProps {
   value: number | string;
   percentageChange?: string;
   percentageColor?: string;
-  selectOptions: Array<{ value: string; label: string }[]>;
+  selectOptions?: Array<{ value: string; label: string }[]>;
   maxWidth?: string;
 }
 
@@ -38,9 +38,9 @@ const InsightCard: FC<InsightCardProps> = ({
         </p>
       )}
 
-      <div className=" grid md:flex items-center gap-[10px] w-full max-w-[100px]">
+      <div className=" grid md:flex items-center gap-[10px] w-full max-w-[80px]">
         {selectOptions?.map((options, index) => (
-          <div key={index} className="max-w-[100px] w-full">
+          <div key={index} className="max-w-[80px] w-full">
             <SelectInput options={options} rounded={true} />
           </div>
         ))}

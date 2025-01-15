@@ -65,7 +65,7 @@ const Login = () => {
     }, 7000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [bgImages]);
 
   const handleLoginInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

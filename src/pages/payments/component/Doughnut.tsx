@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { FiInfo } from "react-icons/fi";
 import { SelectInput } from "@/components/ui/selectinput";
-import { Pie } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -17,29 +17,30 @@ interface InsightChartProps {
   value: number | string;
   percentageChange?: string;
   selectOptions: Array<{ value: string; label: string }[]>;
-  chartData?: ChartData<"pie", number[], string>;
+  chartData?: ChartData<"doughnut", number[], string>;
   maxWidth?: string;
 }
 
-const PieChart: FC<InsightChartProps> = ({
+const DoughnutChart: FC<InsightChartProps> = ({
   title,
   value,
   selectOptions,
   chartData,
-  // maxWidth = "400px",
+  maxWidth = "400px",
 }) => {
-  const defaultChartData: ChartData<"pie", number[], string> = chartData || {
-    labels: ["Radio", "Cable", "Tv", "Dj"],
-    datasets: [
-      {
-        label: "AIRPLAY",
-        data: [300, 50, 100, 22],
-        backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
-        borderColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
-        borderWidth: 12,
-      },
-    ],
-  };
+  const defaultChartData: ChartData<"doughnut", number[], string> =
+    chartData || {
+      labels: ["Radio", "Cable", "Tv", "Dj"],
+      datasets: [
+        {
+          label: "AIRPLAY",
+          data: [300, 50, 100, 22],
+          backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
+          borderColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
+          borderWidth: 12,
+        },
+      ],
+    };
 
   const weeksOptions = [
     { value: "week1", label: "Week 1" },
@@ -48,6 +49,7 @@ const PieChart: FC<InsightChartProps> = ({
     { value: "week4", label: "Week 4" },
     { value: "week5", label: "Week 5" },
   ];
+
   const months = [
     { value: "jan", label: "January" },
     { value: "feb", label: "February" },
@@ -64,7 +66,7 @@ const PieChart: FC<InsightChartProps> = ({
   ];
 
   return (
-    <div className={` space-y-[20px]`}>
+    <div className={`space-y-[20px]`} style={{ maxWidth, width: "100%" }}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
           <p className="!text-[12px] font-[400]">{title}</p>
@@ -89,7 +91,7 @@ const PieChart: FC<InsightChartProps> = ({
 
         {defaultChartData && (
           <div className="w-full h-[300px]">
-            <Pie
+            <Doughnut
               data={defaultChartData}
               options={{
                 responsive: true,
@@ -110,10 +112,10 @@ const PieChart: FC<InsightChartProps> = ({
         )}
       </div>
 
-      <div className=" flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <div className="">
           {selectOptions?.map((options, index) => (
-            <div key={index} className=" max-w-[110px] w-full">
+            <div key={index} className="max-w-[110px] w-full">
               <SelectInput
                 rounded={true}
                 options={weeksOptions}
@@ -124,7 +126,7 @@ const PieChart: FC<InsightChartProps> = ({
         </div>
         <div className="">
           {selectOptions?.map((options, index) => (
-            <div key={index} className=" max-w-[110px] w-full">
+            <div key={index} className="max-w-[110px] w-full">
               <SelectInput
                 rounded={true}
                 options={months}
@@ -138,4 +140,4 @@ const PieChart: FC<InsightChartProps> = ({
   );
 };
 
-export default PieChart;
+export default DoughnutChart;

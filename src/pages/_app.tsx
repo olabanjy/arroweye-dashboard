@@ -9,6 +9,8 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 import { LoginEP } from "@/services/api";
 import { MdLockOutline } from "react-icons/md";
