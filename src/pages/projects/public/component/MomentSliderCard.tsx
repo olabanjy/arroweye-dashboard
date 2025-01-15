@@ -60,13 +60,13 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
                 height={300}
               />
               <div
-                className="absolute left-1 top-1/2 transform -translate-y-1/2 cursor-pointer z-10 bg-opacity-50 bg-black rounded-full p-3"
+                className="absolute left-[15px] top-1/2 transform -translate-y-1/2 cursor-pointer z-10 bg-opacity-50 bg-black rounded-full p-3"
                 onClick={() => sliderRef.current?.slickPrev()}
               >
                 <HiMiniArrowLeft className="text-white text-[14px]" />
               </div>
               <div
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 cursor-pointer z-10 bg-opacity-50 bg-black rounded-full p-3"
+                className="absolute right-[15px] top-1/2 transform -translate-y-1/2 cursor-pointer z-10 bg-opacity-50 bg-black rounded-full p-3"
                 onClick={() => sliderRef.current?.slickNext()}
               >
                 <HiMiniArrowRight className="text-white text-[14px]" />
@@ -79,25 +79,25 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
       <div className="space-y-[5px] flex flex-col items-center justify-center">
         <div className="flex items-center gap-2 w-full">
           {watchButtonText && (
-            <p className="p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[14px] font-[500] flex-grow rounded bg-black text-white text-center">
+            <p className="p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[16px] font-[500] flex-grow rounded bg-black text-white text-center">
               {watchButtonText}
             </p>
           )}
 
           {downloadIcon && watchButtonText && (
-            <div className="bg-black hover:bg-orange-500 font-IBM text-[14px] font-medium text-white p-[11px] rounded inline-flex">
-              <MdOutlineFileDownload className="text-[14px]" />
+            <div className="bg-black hover:bg-orange-500 font-IBM text-[16px] font-medium text-white p-[11px] rounded inline-flex">
+              <MdOutlineFileDownload className="text-[16px]" />
             </div>
           )}
         </div>
 
         {assetsButton && (
-          <p className="p-2 cursor-pointer text-[14px] font-[500] font-IBM w-full rounded text-center hover:bg-orange-500 bg-black text-white">
+          <p className="p-2 cursor-pointer text-[16px] font-[500] font-IBM w-full rounded text-center hover:bg-orange-500 bg-black text-white">
             {assetsButton}
           </p>
         )}
 
-        <div className="p-2 font-IBM text-[14px] font-[500] w-full rounded text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center">
+        <div className="p-2 font-IBM text-[16px] font-[500] w-full rounded text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center">
           <p>{downloadButtonText}</p>
           <sup className="font-bold p-2 rounded-full bg-white text-black mt-1">
             CSV
@@ -106,7 +106,7 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
 
         {radioButtonText && (
           <p
-            className={`p-2 cursor-pointer text-[14px] font-[500] font-IBM w-full rounded text-center ${
+            className={`p-2 cursor-pointer text-[16px] font-[500] font-IBM w-full rounded text-center ${
               outline
                 ? "border border-black text-black hover:bg-black hover:text-white"
                 : "hover:bg-orange-500 bg-black text-white"
@@ -120,7 +120,7 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
           <p className="text-[12px] font-[400] text-center">{subText}</p>
         )}
         {additionalContent && (
-          <div className="p-2 font-IBM text-[14px] text-center text-gray-700">
+          <div className="p-2 font-IBM text-[16px] text-center text-gray-700">
             {additionalContent}
           </div>
         )}

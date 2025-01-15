@@ -276,18 +276,18 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
           <style>
             {`
             .fc .fc-toolbar-title {
-              text-transform: uppercase !important;
+              text-transform: capitalize !important;
               font-size:18px;
               font-weight:bold;
             }
             .fc .fc-button {
-              text-transform: uppercase !important;
+              text-transform: capitalize !important;
             }
             .fc .fc-toolbar-chunk {
-              text-transform: uppercase !important;
+              text-transform: capitalize !important;
             }
             .fc .fc-today-button {
-              text-transform: uppercase !important;
+              text-transform: capitalize !important;
             }
           `}
           </style>

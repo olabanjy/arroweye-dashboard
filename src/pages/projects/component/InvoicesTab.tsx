@@ -47,16 +47,14 @@ const InvoicesTab: React.FC = () => {
                 <Input
                   type="text"
                   placeholder="Search by title, subvendor and date..."
-                  className="w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
+                  className=" w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
                 />
               </div>
-              <div className="flex items-center gap-[5px]">
-                <div
-                  className="cursor-pointer p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
-                  onClick={() => setFilter(!filter)}
-                >
-                  <IoFilter />
-                </div>
+              <div
+                className="cursor-pointer p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
+                onClick={() => setFilter(!filter)}
+              >
+                <IoFilter />
               </div>
             </div>
           </div>

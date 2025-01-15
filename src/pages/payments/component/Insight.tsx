@@ -108,11 +108,17 @@ const Insight = () => {
           />
         </div>
 
-        <div className="fixed bottom-[20px] inset-x-0 flex justify-center">
-          <div className="bg-white border border-gray-300 rounded p-[8px] inline-flex items-center gap-[10px]">
-            <p className="rounded p-[8px] bg-black text-white">Export</p>
-            <p className="rounded p-[8px] bg-[#007bff] text-white">Send</p>
-            <p className="rounded border p-[8px] text-black bg-white">Share</p>
+        <div className="absolute bottom-[30px] left-0 right-0 flex justify-center z-30 w-full">
+          <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px]">
+            <p className="rounded p-[8px] bg-black text-white !w-[70px] text-center">
+              Export
+            </p>
+            <p className="rounded p-[8px] bg-[#007bff] text-white w-[70px] text-center">
+              Send
+            </p>
+            <p className="rounded border p-[8px] text-black bg-white w-[70px] text-center">
+              Share
+            </p>
           </div>
         </div>
       </div>
