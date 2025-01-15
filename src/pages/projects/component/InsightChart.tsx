@@ -12,8 +12,8 @@ const chartDataForDoughnut: ChartData<"doughnut", number[], string> = {
       label: "Airplay",
       data: [300, 50, 100, 22, 10],
       backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
-      borderColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
       borderWidth: 2,
+      borderColor: "rgba(255, 255, 255, 1)",
     },
   ],
 };
@@ -25,8 +25,8 @@ const chartData: ChartData<"pie", number[], string> = {
       label: "AUDIENCE",
       data: [300, 50, 100],
       backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8"],
-      borderColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8"],
       borderWidth: 2,
+      borderColor: "rgba(255, 255, 255, 1)",
     },
   ],
 };
@@ -155,7 +155,7 @@ const InsightChart = () => {
             MomentsTitle="Moments"
             assetsButton="Download Assets"
             additionalContent={
-              <div>
+              <div className="hidden">
                 <p className=" text-start font-[400] text-[8px] font-IBM">
                   TOP TERRITORIES
                 </p>

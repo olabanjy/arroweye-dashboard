@@ -45,8 +45,8 @@ const PieChart: FC<InsightChartProps> = ({
         label: "AIRPLAY",
         data: [300, 50, 100, 22],
         backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
-        borderColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
-        borderWidth: 12,
+        borderWidth: 2,
+        borderColor: "rgba(255, 255, 255, 1)",
       },
     ],
   };
@@ -96,12 +96,12 @@ const PieChart: FC<InsightChartProps> = ({
 
       <p className="text-2xl lg:text-[56px] font-[600] font-IBM">{value}</p>
       <div>
-        <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000]">
+        <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-IBM">
           TOP CHANNELS
         </p>
 
         {defaultChartData && (
-          <div className="w-full h-[300px]">
+          <div className="w-full h-[300px] font-IBM">
             <Pie
               data={defaultChartData}
               options={{

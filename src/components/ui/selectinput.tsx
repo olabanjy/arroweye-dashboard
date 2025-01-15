@@ -76,11 +76,11 @@ const SelectInput: React.FC<DropdownInputProps> = ({
             "relative block w-full border border-gray-300 bg-white pl-4 pr-10  text-gray-900 shadow-sm cursor-pointer focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
             rounded
               ? "rounded-full py-[5px] text-[14px] "
-              : "rounded-[8px] text-[17px] py-[12px]",
+              : "rounded-[8px] text-[14px] py-[12px]",
             error && "border-red-500 focus:ring-red-500"
           )}
         >
-          <div className="flex items-center text-[17px] font-IBM">
+          <div className="flex items-center text-[14px] font-IBM">
             <span>{selectedLabel || placeholder}</span>
           </div>
 
@@ -100,7 +100,7 @@ const SelectInput: React.FC<DropdownInputProps> = ({
                 key={option.value}
                 onClick={() => handleSelect(option.value)}
                 className={cn(
-                  "px-[16px] py-2 text-[17px] font-IBM text-gray-900 cursor-pointer hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700",
+                  "px-[16px] py-2 text-[14px] font-IBM text-gray-900 cursor-pointer hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700",
                   selectedValue === option.value &&
                     "bg-gray-100 dark:bg-gray-700"
                 )}

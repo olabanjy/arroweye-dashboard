@@ -27,8 +27,8 @@ const MomentCard: React.FC<MomentCardProps> = ({
   assetsButton,
 }) => {
   return (
-    <div className="w-full max-h-[600px] space-y-[10px]">
-      <p className="text-[#000] text-[12px] font-[400] font-IBM uppercase">
+    <div className="w-full max-h-[600px] space-y-[20px]">
+      <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-IBM uppercase">
         {MomentsTitle}
       </p>
 

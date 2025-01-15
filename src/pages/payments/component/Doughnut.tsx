@@ -47,8 +47,8 @@ const DoughnutChart: FC<InsightChartProps> = ({
           label: "AIRPLAY",
           data: [300, 50, 100, 22],
           backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
-          borderColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
-          borderWidth: 12,
+          borderWidth: 2,
+          borderColor: "rgba(255, 255, 255, 1)",
         },
       ],
     };
@@ -77,7 +77,10 @@ const DoughnutChart: FC<InsightChartProps> = ({
   ];
 
   return (
-    <div className={`space-y-[20px]`} style={{ maxWidth, width: "100%" }}>
+    <div
+      className={`space-y-[20px] font-IBM`}
+      style={{ maxWidth, width: "100%" }}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
           <p className="!text-[12px] font-[400] tracking-[.1rem]">{title}</p>
@@ -98,12 +101,12 @@ const DoughnutChart: FC<InsightChartProps> = ({
 
       <p className="text-2xl lg:text-[56px] font-[600] font-IBM">{value}</p>
       <div className="">
-        <p className="!text-[12px] font-[400] tracking-[.1rem]text-[#000000]  ">
+        <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000]">
           TOP CHANNELS
         </p>
 
         {defaultChartData && (
-          <div className="w-full h-[300px]">
+          <div className="w-full h-[300px] font-IBM">
             <Doughnut
               data={defaultChartData}
               options={{
