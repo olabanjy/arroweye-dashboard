@@ -80,7 +80,7 @@ const SelectInput: React.FC<DropdownInputProps> = ({
             error && "border-red-500 focus:ring-red-500"
           )}
         >
-          <div className="flex items-center">
+          <div className="flex items-center text-[17px] font-IBM">
             <span>{selectedLabel || placeholder}</span>
           </div>
 

@@ -39,7 +39,7 @@ const PieChart: FC<InsightChartProps> = ({
   info,
 }) => {
   const defaultChartData: ChartData<"pie", number[], string> = chartData || {
-    labels: ["Radio", "Cable", "Tv", "Dj"],
+    labels: ["Radio", "Cable", "TV", "DJ"],
     datasets: [
       {
         label: "AIRPLAY",
@@ -78,7 +78,7 @@ const PieChart: FC<InsightChartProps> = ({
     <div className="space-y-[20px]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
-          <p className="!text-[12px] font-[400]">{title}</p>
+          <p className="!text-[12px] font-[400] tracking-[.1rem]">{title}</p>
           {info && <TooltipComponent info={info} />}
         </div>
         <div>
@@ -96,7 +96,9 @@ const PieChart: FC<InsightChartProps> = ({
 
       <p className="text-2xl lg:text-[56px] font-[600] font-IBM">{value}</p>
       <div>
-        <p className="text-[12px] font-[400] text-[#000000]">Top Channels</p>
+        <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000]">
+          TOP CHANNELS
+        </p>
 
         {defaultChartData && (
           <div className="w-full h-[300px]">

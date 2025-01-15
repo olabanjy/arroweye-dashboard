@@ -29,7 +29,7 @@ const ProjectDetailsPublic = () => {
     <DashboardLayout>
       <div className="space-y-[20px]">
         <div className="text-[#919393] flex items-center gap-[10px]">
-          <p className="text-[#5e5e5e]">KHAID</p>
+          <p className="text-[#5e5e5e] text-[0.875rem]">KHAID</p>
           <p className="p-[4px] border border-[#d5d9db] bg-[#f7fcff] rounded">
             NEVILLE RECORDS
           </p>
@@ -41,12 +41,12 @@ const ProjectDetailsPublic = () => {
               {users.map((user, index) => (
                 <div key={index} className="relative group">
                   <p
-                    className="bg-red-500 text-white rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer"
+                    className=" font-IBM bg-red-500 text-white rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer"
                     onClick={() => handleUserClick(user)}
                   >
                     {user.initials}
                   </p>
-                  <div className="absolute bottom-[-30px] left-0 bg-black text-white text-xs p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute bottom-[-30px] left-0 bg-black text-white text-xs p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity font-IBM">
                     {user.fullName}
                   </div>
                 </div>

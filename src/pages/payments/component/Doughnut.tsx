@@ -41,7 +41,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
 }) => {
   const defaultChartData: ChartData<"doughnut", number[], string> =
     chartData || {
-      labels: ["Radio", "Cable", "Tv", "Dj"],
+      labels: ["Radio", "Cable", "TV", "DJ"],
       datasets: [
         {
           label: "AIRPLAY",
@@ -80,7 +80,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
     <div className={`space-y-[20px]`} style={{ maxWidth, width: "100%" }}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
-          <p className="!text-[12px] font-[400]">{title}</p>
+          <p className="!text-[12px] font-[400] tracking-[.1rem]">{title}</p>
           {info && <Tooltip info={info} />}
         </div>
         <div className="">
@@ -98,7 +98,9 @@ const DoughnutChart: FC<InsightChartProps> = ({
 
       <p className="text-2xl lg:text-[56px] font-[600] font-IBM">{value}</p>
       <div className="">
-        <p className="text-[12px] font-[400] text-[#000000]">Top Channels</p>
+        <p className="!text-[12px] font-[400] tracking-[.1rem]text-[#000000]  ">
+          TOP CHANNELS
+        </p>
 
         {defaultChartData && (
           <div className="w-full h-[300px]">

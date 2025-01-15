@@ -6,7 +6,7 @@ import MomentCard from "../public/component/MomentCard";
 import MomentSliderCard from "../public/component/MomentSliderCard";
 
 const chartDataForDoughnut: ChartData<"doughnut", number[], string> = {
-  labels: ["Radio", "Cable", "Tv", "Dj"],
+  labels: ["Radio", "Cable", "TV", "DJ"],
   datasets: [
     {
       label: "Airplay",
@@ -35,7 +35,7 @@ const selectOptions = [
   [
     { value: "local", label: "Local TV" },
     { value: "radio", label: "Radio" },
-    { value: "dj", label: "Dj" },
+    { value: "dj", label: "DJ" },
     { value: "cable", label: "Cable" },
   ],
 ];

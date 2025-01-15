@@ -6,15 +6,20 @@ import "react-toastify/dist/ReactToastify.css";
 
 interface LayoutProps {
   children: ReactNode;
+  withBorder?: boolean;
 }
 
-const DashboardLayout: FC<LayoutProps> = ({ children }) => {
+const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow">
         <TopNav />
-        <main className="flex-1 border border-gray-100 p-4 mx-[20px] rounded-[8px] mt-[20px]">
+        <main
+          className={`flex-1 ${
+            withBorder ? "border border-gray-100" : ""
+          } p-4 mx-[20px] border-none rounded-[8px] mt-[20px]`}
+        >
           {children}
         </main>
         <ToastContainer />
