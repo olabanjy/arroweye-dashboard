@@ -20,7 +20,11 @@ interface FormErrors {
   code?: string;
 }
 
-const Schedule = () => {
+interface ScheduleProps {
+  filterIcon?: boolean;
+}
+
+const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
   const [content, setContent] = useState<ContentItem[]>([]);
   const [eventItem, setEventItem] = useState<EventsItem[]>([]);
 
@@ -252,20 +256,22 @@ const Schedule = () => {
   return (
     <div>
       <div className="schedule-container space-y-[20px]">
-        <div className=" flex items-center justify-center gap-[5px] mb-[30px]">
-          <div
-            className="w-12 h-12 rounded-full bg-[#5d00e4] inline-flex text-[#ffffff]  items-center justify-center cursor-pointer"
-            onClick={() => setIsModalVisible(true)}
-          >
-            <PiCalendarPlus />
-          </div>{" "}
-          <div
-            className="w-12 h-12 cursor-pointer rounded-full bg-[#000000] inline-flex text-[#ffffff]  items-center justify-center"
-            onClick={() => setisFilter(true)}
-          >
-            <IoFilter />
+        {filterIcon && (
+          <div className=" flex items-center justify-center gap-[5px] mb-[30px]">
+            <div
+              className="w-12 h-12 rounded-full bg-[#5d00e4] inline-flex text-[#ffffff]  items-center justify-center cursor-pointer"
+              onClick={() => setIsModalVisible(true)}
+            >
+              <PiCalendarPlus />
+            </div>{" "}
+            <div
+              className="w-12 h-12 cursor-pointer rounded-full bg-[#000000] inline-flex text-[#ffffff]  items-center justify-center"
+              onClick={() => setisFilter(true)}
+            >
+              <IoFilter />
+            </div>
           </div>
-        </div>
+        )}
         <div className="calendar-container">
           <style>
             {`
