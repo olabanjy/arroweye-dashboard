@@ -11,21 +11,21 @@ const Invoice = () => {
       {" "}
       Campaign
     </div>,
-    <div key="project-Code" className=" text-start">
-      {" "}
-      Code
-    </div>,
+    // <div key="project-Code" className=" text-start">
+    //   {" "}
+    //   Code
+    // </div>,
     <div key="project-PoCode" className=" text-start">
       {" "}
       P.O Code
     </div>,
-    <div key="project-Vendor" className=" text-start">
+    <div key="project-Label" className=" text-start">
       {" "}
-      Vendor
+      Label
     </div>,
-    <div key="project-Subvendor" className=" text-start">
+    <div key="project-Artist" className=" text-start">
       {" "}
-      Subvendor
+      Artist
     </div>,
     <div key="project-date" className=" text-start">
       {" "}
@@ -35,11 +35,11 @@ const Invoice = () => {
       {" "}
       Total
     </div>,
-    <div key="project-Status" className=" text-start">
+    <div key="project-Status" className=" text-center">
       {" "}
       Status
     </div>,
-    <div key="project-Action" className=" text-start">
+    <div key="project-Action" className=" text-center">
       {" "}
       Action
     </div>,
@@ -96,13 +96,25 @@ const Invoice = () => {
             ),
             className: "bg-[#2ea879] text-white text-center ",
           },
-          { content: item?.project?.code },
-          { content: item?.po_code },
-          { content: item?.project?.vendor },
-          { content: item?.project?.subvendor },
-          { content: item?.created?.slice(0, 10) },
+          // { content: item?.project?.code },
+          { content: <div className=" text-start">{item?.po_code} </div> },
           {
-            content: `${getCurrencySymbol(item?.currency ?? "")}${item.total}`,
+            content: <div className=" text-start">{item?.project?.vendor}</div>,
+          },
+          {
+            content: (
+              <div className=" text-start">{item?.project?.subvendor}</div>
+            ),
+          },
+          {
+            content: (
+              <div className=" text-start">{item?.created?.slice(0, 10)}</div>
+            ),
+          },
+          {
+            content: (
+              <div className=" text-start">{`${getCurrencySymbol(item?.currency ?? "")}${item.total}`}</div>
+            ),
           },
           {
             content: (

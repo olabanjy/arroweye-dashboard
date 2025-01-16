@@ -114,7 +114,7 @@ const InvoicesTab = () => {
   };
 
   return (
-    <div className="lg:p-[20px] font-IBM">
+    <div className=" font-IBM">
       <div className="grid md:flex items-center gap-[20px] md:gap-[40px] mb-[16px]">
         <div className="flex gap-[20px] items-center">
           <button

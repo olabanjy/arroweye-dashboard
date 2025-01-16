@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
-import { HiMinusCircle } from "react-icons/hi";
 import { Dialog } from "primereact/dialog";
 import { CreateInvoice, CreateService, getService } from "@/services/api";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
@@ -79,7 +78,7 @@ const Manage = () => {
         id: Date.now(),
         item: "",
         cost: "",
-        quantity: 0,
+        quantity: 1,
       },
     ]);
   };
@@ -331,7 +330,7 @@ const Manage = () => {
     <div className="my-[20px]">
       <form onSubmit={handleProjectSubmit}>
         <div className="space-y-[20px]">
-          <div className="grid md:grid-cols-2  lg:grid-cols-4 items-center gap-[20px]">
+          <div className="grid md:grid-cols-2  lg:grid-cols-4 items-center gap-[20px] ">
             <div className="md:max-w-[350px] w-full">
               <Input
                 label="PROJECT TITLE"
@@ -363,8 +362,8 @@ const Manage = () => {
                 <p className="text-red-500 text-xs">{projectErrors.po_code}</p>
               )}
             </div>
-            <div className="flex items-end gap-[20px] md:col-span-2">
-              <div className="max-w-[350px] w-full">
+            <div className="flex items-end gap-[20px] md:col-span-2 ">
+              <div className="max-w-[350px] w-full ">
                 <SelectInput
                   icon={true}
                   label="CURRENCY"
@@ -383,10 +382,10 @@ const Manage = () => {
               </div>
 
               <div
-                className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-black cursor-pointer"
+                className="w-[40px] h-[40px] mb-[5px] flex items-center justify-center rounded-full bg-black cursor-pointer "
                 onClick={addItemField}
               >
-                <p className="text-white text-xl">+</p>
+                <p className="text-white text-xl ">+</p>
               </div>
             </div>
 
@@ -428,45 +427,49 @@ const Manage = () => {
 
           <div className="mt-[20px]">
             {items.map((item, index) => (
-              <div className="flex items-center gap-[20px]" key={item.id}>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 items-center gap-[20px]">
-                  <div className="max-w-[350px] w-full">
-                    <SelectInput
-                      icon={true}
-                      name="service"
-                      label="Select Service"
-                      options={customOptions}
-                      value={item.service_id || ""}
-                      onChange={(value: string | number) => {
-                        const selectedValue = Number(value);
+              <div className="flex items-end gap-[20px] " key={item.id}>
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 items-center gap-[20px]">
+                  <div className=" flex items-center col-span-2  w-full">
+                    <div className="   w-full ">
+                      <SelectInput
+                        icon={true}
+                        name="service"
+                        label="SELECT SERVICE"
+                        options={customOptions}
+                        value={item.service_id || ""}
+                        onChange={(value: string | number) => {
+                          const selectedValue = Number(value);
 
-                        if (selectedValue === 9) {
-                          setIsAddNewService(true);
-                        } else {
-                          const updatedItems = items.map((i) =>
-                            i.id === item.id
-                              ? { ...i, service_id: selectedValue }
-                              : i
-                          );
-                          setItems(updatedItems);
+                          if (selectedValue === 9) {
+                            setIsAddNewService(true);
+                          } else {
+                            const updatedItems = items.map((i) =>
+                              i.id === item.id
+                                ? { ...i, service_id: selectedValue }
+                                : i
+                            );
+                            setItems(updatedItems);
 
-                          const updatedServices = [...projectFormData.services];
-                          updatedServices[index] = {
-                            ...updatedServices[index],
-                            service_id: selectedValue,
-                          };
-                          setProjectFormData((prevData) => ({
-                            ...prevData,
-                            services: updatedServices,
-                          }));
-                        }
-                      }}
-                    />
-                    {projectErrors.services[index]?.service_id && (
-                      <p className="text-red-500 text-xs">
-                        {projectErrors.services[index].service_id}
-                      </p>
-                    )}
+                            const updatedServices = [
+                              ...projectFormData.services,
+                            ];
+                            updatedServices[index] = {
+                              ...updatedServices[index],
+                              service_id: selectedValue,
+                            };
+                            setProjectFormData((prevData) => ({
+                              ...prevData,
+                              services: updatedServices,
+                            }));
+                          }
+                        }}
+                      />
+                      {projectErrors.services[index]?.service_id && (
+                        <p className="text-red-500 text-xs">
+                          {projectErrors.services[index].service_id}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   <div className="max-w-[350px] w-full">
@@ -474,6 +477,7 @@ const Manage = () => {
                       type="number"
                       name="cost"
                       placeholder="Cost"
+                      label="ENTER COST"
                       value={item.cost || ""}
                       onChange={(e) => {
                         const updatedCost = e.target.value;
@@ -504,8 +508,9 @@ const Manage = () => {
                     <Input
                       type="number"
                       name="quantity"
+                      label="ENTER QUANTITY"
                       placeholder="Quantity"
-                      value={item.quantity || 0}
+                      value={item.quantity || 1}
                       onChange={(e) => {
                         const updatedQuantity = Number(e.target.value);
 
@@ -535,11 +540,12 @@ const Manage = () => {
                   </div>
                 </div>
 
-                <HiMinusCircle
-                  className="text-[#000000]"
-                  size={50}
+                <div
+                  className="w-[40px] h-[40px]  mb-[5px] flex items-center justify-center rounded-full bg-black cursor-pointer"
                   onClick={() => removeItemField(item.id)}
-                />
+                >
+                  <p className="text-white text-xl">-</p>
+                </div>
               </div>
             ))}
           </div>
