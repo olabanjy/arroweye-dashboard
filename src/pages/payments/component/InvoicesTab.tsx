@@ -146,7 +146,7 @@ const InvoicesTab = () => {
                 <Input
                   type="text"
                   placeholder="Search by project, vendor and sub vendors..."
-                  className="w-full rounded-full"
+                  className="w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
                 />
               </div>
             )}
