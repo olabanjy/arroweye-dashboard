@@ -12,7 +12,8 @@ const Insight = () => {
               value="$100"
               percentageChange="5%"
               percentageColor="#11cc48"
-              height="300px"
+              // height="300px"
+              extraClass="h-[400px] lg:h-[300px]"
               selectOptions={[
                 [
                   { value: "", label: "Lifetime" },
@@ -40,7 +41,9 @@ const Insight = () => {
             value="$100M+ "
             percentageChange="-3%"
             percentageColor="#ff4d4f"
-            height="300px"
+            // height="300px"
+
+            extraClass="h-[400px] lg:h-[300px]"
             selectOptions={[
               [
                 { value: "", label: "Lifetime" },
@@ -62,11 +65,12 @@ const Insight = () => {
           />
 
           <InsightCard
-            title=" TOTAL PROJECTS "
+            title=" TOTAL CAMPAIGNS "
             value="1000"
             percentageChange="-3%"
             percentageColor="#ff4d4f"
-            height="300px"
+            // height="300px"
+            extraClass="h-[400px] lg:h-[300px]"
             selectOptions={[
               [
                 { value: "", label: "Lifetime" },
@@ -87,11 +91,13 @@ const Insight = () => {
             ]}
           />
           <InsightCard
-            title=" TOTAL SUBVENDORS "
+            title=" TOTAL ARTISTS "
             value="100 "
             percentageChange="-3%"
             percentageColor="#ff4d4f"
-            height="300px"
+            // height="300px"
+
+            extraClass="h-[400px] lg:h-[300px]"
             selectOptions={[
               [
                 { value: "", label: "Lifetime" },

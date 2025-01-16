@@ -11,6 +11,7 @@ interface InsightCardProps {
   maxWidth?: string;
   height?: string;
   info?: string;
+  extraClass?: string;
 }
 
 const Tooltip = ({ info }: { info: string }) => (
@@ -29,12 +30,13 @@ const InsightCard: FC<InsightCardProps> = ({
   percentageColor = "#11cc48",
   selectOptions,
   info,
-  height = "220px",
+  // height = "220px",
+  extraClass = "",
 }) => {
   return (
     <div
-      className={`relative border px-[20px] py-[34px] rounded-[8px] space-y-[40px] w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500`}
-      style={{ height: height }}
+      className={`relative border px-[20px] py-[34px] rounded-[8px] space-y-[40px] w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500 ${extraClass}`}
+      // style={{ height }}
     >
       <div className="flex items-center gap-[5px] text-[#7a8081]">
         <p className="text-[12px] font-[400] tracking-[.1rem]">{title}</p>
@@ -54,7 +56,7 @@ const InsightCard: FC<InsightCardProps> = ({
 
       <div className="grid md:flex items-center gap-[10px]">
         {selectOptions?.map((options, index) => (
-          <div key={index} className="max-w-[125px] w-full">
+          <div key={index} className="sm:max-w-[125px] w-full">
             <SelectInput options={options} rounded={true} />
           </div>
         ))}

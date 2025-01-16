@@ -10,15 +10,14 @@ interface ProjectsProps {
 }
 
 const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
-  const headers: string[] = [
-    "Title",
-    "Vendor",
-    "Subvendor",
-    "Date",
-    "Code",
-    "Pin",
-    "Manage",
-    "Action",
+  const headers: { content: string; align: "left" | "center" | "right" }[] = [
+    { content: "Title", align: "left" },
+    { content: "Vendor", align: "left" },
+    { content: "Subvendor", align: "left" },
+    { content: "Start Date", align: "left" },
+    { content: "Pin", align: "center" },
+    { content: "Manage", align: "center" },
+    { content: "Action", align: "center" },
   ];
 
   const [content, setContent] = useState<ContentItem[] | null>(null);

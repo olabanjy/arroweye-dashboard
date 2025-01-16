@@ -9,7 +9,7 @@ const Invoice = () => {
   const headers = [
     <div key="project-header" className=" text-start">
       {" "}
-      Project
+      Campaign
     </div>,
     <div key="project-Code" className=" text-start">
       {" "}

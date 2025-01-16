@@ -81,7 +81,7 @@ const Sidebar: FC = () => {
                             : "bg-transparent w-1 h-1"
                         } rounded-full`}
                       ></span>
-                      <span>Projects</span>
+                      <span>Campaigns</span>
                     </span>
                   </li>
                 </Link>

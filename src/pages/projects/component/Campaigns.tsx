@@ -11,16 +11,25 @@ interface ProjectsProps {
   filterVisible: boolean;
 }
 
-const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
-  const headers: string[] = [
-    "Title",
-    "Vendor",
-    "Subvendor",
-    "Date",
-    "Code",
-    "Pin",
-    "Manage",
-    "Action",
+const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
+  // const headers: string[] = [
+  //   "Campaigns",
+  //   "Label",
+  //   "Artist",
+  //   "Start Date",
+  //   // "Code",
+  //   "Pin",
+  //   "Manage",
+  //   "Action",
+  // ];
+  const headers: { content: string; align: "left" | "center" | "right" }[] = [
+    { content: "Campaigns", align: "left" },
+    { content: "Label", align: "left" },
+    { content: "Artist", align: "left" },
+    { content: "Start Date", align: "left" },
+    { content: "Pin", align: "center" },
+    { content: "Manage", align: "center" },
+    { content: "Action", align: "center" },
   ];
 
   const [copiedPin, setCopiedPin] = useState<string | null>(null);
@@ -78,8 +87,8 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
               </div>,
               item?.vendor,
               item?.subvendor,
-              item?.created?.slice(0, 10) || "January, 2025",
-              item?.code,
+              item?.created?.slice(0, 10) || "2025-01-13",
+              // item?.code,
               <div
                 className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500] w-[150px] md:w-full whitespace-nowrap"
                 key={"code"}
@@ -123,4 +132,4 @@ const Projects: React.FC<ProjectsProps> = ({ filterVisible }) => {
   );
 };
 
-export default Projects;
+export default Campaigns;

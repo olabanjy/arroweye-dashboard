@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { IoFilter } from "react-icons/io5";
-import Projects from "./Projects";
+import Campaigns from "./Campaigns";
 import Archive from "./Archive";
 
 const InvoicesTab: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"Projects" | "Archive">(
-    "Projects"
+  const [activeTab, setActiveTab] = useState<"Campaigns" | "Archive">(
+    "Campaigns"
   );
   const [filter, setFilter] = useState<boolean>(false);
 
@@ -21,13 +21,13 @@ const InvoicesTab: React.FC = () => {
           <div className="flex gap-[20px] items-center  ">
             <button
               className={`pb-[10px] text-[18px] transition-all duration-300 ${
-                activeTab === "Projects"
+                activeTab === "Campaigns"
                   ? "border-b border-[#17845a] text-[#17845a] font-[400]"
                   : "font-[400]"
               }`}
-              onClick={() => setActiveTab("Projects")}
+              onClick={() => setActiveTab("Campaigns")}
             >
-              Projects
+              Campaigns
             </button>
             <button
               className={`pb-[10px] text-[18px] transition-all duration-300 ${
@@ -64,10 +64,10 @@ const InvoicesTab: React.FC = () => {
       <div className="relative">
         <div
           className={`transition-opacity duration-500 ease-in-out ${
-            activeTab === "Projects" ? "opacity-100" : "opacity-0 absolute"
+            activeTab === "Campaigns" ? "opacity-100" : "opacity-0 absolute"
           }`}
         >
-          {activeTab === "Projects" && <Projects filterVisible={filter} />}
+          {activeTab === "Campaigns" && <Campaigns filterVisible={filter} />}
         </div>
         <div
           className={`transition-opacity duration-500 ease-in-out ${
