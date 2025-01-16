@@ -17,7 +17,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
     { content: "Label", align: "left" },
     { content: "Artist", align: "left" },
     { content: "Start Date", align: "left" },
-    { content: "Pin", align: "center" },
+    { content: "PIN", align: "center" },
     { content: "Manage", align: "center" },
     { content: "Action", align: "center" },
   ];
@@ -41,7 +41,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
     <>
       {filterVisible && (
         <div className="flex items-end gap-[10px] my-[20px]">
-          <div className="max-w-[125px] w-full">
+          <div className="max-w-[150px] w-full">
             <SelectInput
               rounded={true}
               options={[
@@ -51,7 +51,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
               ]}
             />
           </div>
-          <div className="max-w-[120px] w-full">
+          <div className="max-w-[150px] w-full">
             <SelectInput
               rounded={true}
               options={[
