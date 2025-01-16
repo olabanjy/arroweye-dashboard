@@ -12,16 +12,6 @@ interface ProjectsProps {
 }
 
 const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
-  // const headers: string[] = [
-  //   "Campaigns",
-  //   "Label",
-  //   "Artist",
-  //   "Start Date",
-  //   // "Code",
-  //   "Pin",
-  //   "Manage",
-  //   "Action",
-  // ];
   const headers: { content: string; align: "left" | "center" | "right" }[] = [
     { content: "Campaigns", align: "left" },
     { content: "Label", align: "left" },
@@ -83,7 +73,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
           rows={content?.map((item, index) => ({
             data: [
               <div key={`manage-button-${index}`}>
-                <Link href={`/projects/${item.id}`}>{item?.title}</Link>
+                <Link href={`/campaigns/${item.id}`}>{item?.title}</Link>
               </div>,
               item?.vendor,
               item?.subvendor,
@@ -97,7 +87,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
                 {copiedPin === String(item?.pin) ? "Copied!" : "Copy PIN"}
               </div>,
               <Link
-                href={`/projects/${item.id}`}
+                href={`/campaigns/${item.id}`}
                 key={`manage-button-${index}`}
               >
                 <div className="flex justify-center ">

@@ -18,7 +18,7 @@ const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
         <main
           className={`flex-1 ${
             withBorder ? "border border-gray-100" : ""
-          } p-4 mx-[20px] border-none rounded-[8px] mt-[20px]`}
+          }  mx-[20px] border-none rounded-[8px] mt-[20px]`}
         >
           {children}
         </main>

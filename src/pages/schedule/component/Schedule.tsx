@@ -255,7 +255,7 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
 
   return (
     <div>
-      <div className="schedule-container space-y-[20px]">
+      <div className="schedule-container space-y-[20px] mb-[100px]">
         {filterIcon && (
           <div className=" flex items-center justify-center gap-[5px] mb-[30px]">
             <div

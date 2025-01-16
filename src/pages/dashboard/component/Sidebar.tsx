@@ -71,17 +71,21 @@ const Sidebar: FC = () => {
                   </span>
                 </li>
 
-                <Link href="/projects">
+                <Link href="/campaigns">
                   <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
                     <span className="flex items-center space-x-2">
                       <span
                         className={`${
-                          isActive("/projects")
+                          isActive("/campaigns")
                             ? "bg-[#17954c] w-1 h-1"
                             : "bg-transparent w-1 h-1"
                         } rounded-full`}
                       ></span>
-                      <span>Campaigns</span>
+                      <span
+                        className={`${isActive("/campaigns") ? " font-[500]" : " font-[400]"}`}
+                      >
+                        Campaigns
+                      </span>
                     </span>
                   </li>
                 </Link>
@@ -96,7 +100,11 @@ const Sidebar: FC = () => {
                             : "bg-transparent w-1 h-1"
                         } rounded-full`}
                       ></span>
-                      <span>Drops</span>
+                      <span
+                        className={`${isActive("/drops") ? " font-[500]" : " font-[400]"}`}
+                      >
+                        Drops
+                      </span>
                     </span>
                   </li>
                 </Link>
@@ -111,7 +119,11 @@ const Sidebar: FC = () => {
                             : "bg-transparent w-1 h-1"
                         } rounded-full`}
                       ></span>
-                      <span>Payments</span>
+                      <span
+                        className={`${isActive("/payments") ? " font-[500]" : " font-[400]"}`}
+                      >
+                        Payments
+                      </span>
                     </span>
                   </li>
                 </Link>
@@ -126,7 +138,11 @@ const Sidebar: FC = () => {
                             : "bg-transparent w-1 h-1"
                         } rounded-full`}
                       ></span>
-                      <span>Schedule</span>
+                      <span
+                        className={`${isActive("/schedule") ? " font-[500]" : " font-[400]"}`}
+                      >
+                        Schedule
+                      </span>
                     </span>
                   </li>
                 </Link>
@@ -151,7 +167,11 @@ const Sidebar: FC = () => {
                             : "bg-transparent w-1 h-1"
                         } rounded-full`}
                       ></span>
-                      <span>Settings</span>
+                      <span
+                        className={`${isActive("/settings") ? " font-[500]" : " font-[400]"}`}
+                      >
+                        Settings
+                      </span>
                     </span>
                   </li>
                 </Link>
