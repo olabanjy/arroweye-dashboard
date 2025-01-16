@@ -1,10 +1,15 @@
 import { FC, useState } from "react";
 import { FaRegBell } from "react-icons/fa";
+import { IoIosClose } from "react-icons/io";
+import CampaignNotifications from "./campaigns/CampaignNotifications";
+import MileStonesNotification from "./milestones/MileStonesNotification";
+import SecurityNotification from "./security/SecurityNotification";
+import AssetsNotification from "./assets/AssetsNotification";
 
 const TopNav: FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeMainTab, setActiveMainTab] = useState("updates");
-  const [activeInnerTab, setActiveInnerTab] = useState("tab1");
+  const [activeInnerTab, setActiveInnerTab] = useState("campaign");
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -12,7 +17,7 @@ const TopNav: FC = () => {
 
   const handleMainTabClick = (tab: string) => {
     setActiveMainTab(tab);
-    setActiveInnerTab("tab1"); // Reset inner tab when switching main tabs
+    setActiveInnerTab(tab === "updates" ? "campaign" : "assets");
   };
 
   const handleInnerTabClick = (tab: string) => {
@@ -30,133 +35,132 @@ const TopNav: FC = () => {
 
           {isSidebarOpen && (
             <>
-              <div className="absolute top-[35px] right-0 w-[300px] h-screen bg-white shadow-lg z-50 border border-gray-200 rounded-[8px] overflow-y-auto font-IBM">
-                <div className="flex items-center text-[#000000] justify-between mb-4 bg-[#f4faff] p-4 border">
-                  <div className="flex items-center gap-[10px] text-[16px] font-[600]">
-                    <p
-                      className={`cursor-pointer ${
-                        activeMainTab === "updates"
-                          ? "text-blue-500 border-b-2 border-blue-500"
-                          : "text-gray-700"
-                      }`}
-                      onClick={() => handleMainTabClick("updates")}
+              <div className="absolute top-[35px] right-0 w-[350px] h-screen bg-white shadow-lg z-50 border border-gray-200 rounded-[8px] overflow-y-auto font-IBM">
+                <div className="sticky top-0 bg-[#f4faff] z-50">
+                  <div className="flex items-center text-[#000000] justify-between mb-4 p-4 border">
+                    <div className="flex items-center gap-[10px] text-[16px] font-[600]">
+                      <p
+                        className={`cursor-pointer ${
+                          activeMainTab === "updates"
+                            ? "text-[#000000]"
+                            : "text-[#767676]"
+                        }`}
+                        onClick={() => handleMainTabClick("updates")}
+                      >
+                        Updates
+                      </p>
+                      <p
+                        className={`cursor-pointer ${
+                          activeMainTab === "drops"
+                            ? "text-[#000000]"
+                            : "text-[#767676]"
+                        }`}
+                        onClick={() => handleMainTabClick("drops")}
+                      >
+                        Drops
+                      </p>
+                    </div>
+                    <button
+                      className="text-[#0e3531] text-[16px] w-8 h-8 flex items-center justify-center rounded-[8px] border bg-white"
+                      onClick={toggleSidebar}
                     >
-                      Updates
-                    </p>
-                    <p
-                      className={`cursor-pointer ${
-                        activeMainTab === "drops"
-                          ? "text-blue-500 border-b-2 border-blue-500"
-                          : "text-gray-700"
-                      }`}
-                      onClick={() => handleMainTabClick("drops")}
-                    >
-                      Drops
-                    </p>
+                      <IoIosClose />
+                    </button>
                   </div>
-                  <button
-                    className="text-gray-500 hover:text-gray-700"
-                    onClick={toggleSidebar}
-                  >
-                    Close
-                  </button>
+
+                  <div className="flex justify-between py-4 px-4 border-b bg-white">
+                    {activeMainTab === "updates" && (
+                      <>
+                        <button
+                          className={`font-[600] text-[16px] ${
+                            activeInnerTab === "campaign"
+                              ? "text-[#0875d3]"
+                              : "text-[#767676]"
+                          }`}
+                          onClick={() => handleInnerTabClick("campaign")}
+                        >
+                          Campaign
+                        </button>
+                        <button
+                          className={`font-[600] text-[16px] ${
+                            activeInnerTab === "milestones"
+                              ? "text-[#ff5700]"
+                              : "text-[#767676]"
+                          }`}
+                          onClick={() => handleInnerTabClick("milestones")}
+                        >
+                          Milestones
+                        </button>
+                        <button
+                          className={`font-[600] text-[16px] ${
+                            activeInnerTab === "security"
+                              ? "text-[#ff5700]"
+                              : "text-[#767676]"
+                          }`}
+                          onClick={() => handleInnerTabClick("security")}
+                        >
+                          Security
+                        </button>
+                      </>
+                    )}
+
+                    {activeMainTab === "drops" && (
+                      <>
+                        <button
+                          className={`text-[16px] font-[600] ${
+                            activeInnerTab === "assets"
+                              ? "text-[#01a733]"
+                              : "text-[#000000]"
+                          }`}
+                          onClick={() => handleInnerTabClick("assets")}
+                        >
+                          Assets
+                        </button>
+                        <button
+                          className={`text-[16px] font-[600] ${
+                            activeInnerTab === "payment"
+                              ? "text-[#c304f1]"
+                              : "text-[#000000]"
+                          }`}
+                          onClick={() => handleInnerTabClick("payment")}
+                        >
+                          Payments
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
 
-                <div className="px-4">
-                  {activeMainTab === "updates" && (
-                    <div className="flex justify-between mb-4">
-                      <button
-                        className={`py-2 px-4 text-sm font-semibold rounded-lg ${
-                          activeInnerTab === "tab1"
-                            ? "bg-blue-500 text-white"
-                            : "bg-gray-200 text-gray-700"
-                        }`}
-                        onClick={() => handleInnerTabClick("tab1")}
-                      >
-                        Updates 1
-                      </button>
-                      <button
-                        className={`py-2 px-4 text-sm font-semibold rounded-lg ${
-                          activeInnerTab === "tab2"
-                            ? "bg-blue-500 text-white"
-                            : "bg-gray-200 text-gray-700"
-                        }`}
-                        onClick={() => handleInnerTabClick("tab2")}
-                      >
-                        Updates 2
-                      </button>
-                      <button
-                        className={`py-2 px-4 text-sm font-semibold rounded-lg ${
-                          activeInnerTab === "tab3"
-                            ? "bg-blue-500 text-white"
-                            : "bg-gray-200 text-gray-700"
-                        }`}
-                        onClick={() => handleInnerTabClick("tab3")}
-                      >
-                        Updates 3
-                      </button>
+                <div className="text-sm text-gray-600 px-4 py-4">
+                  {activeMainTab === "updates" &&
+                    activeInnerTab === "campaign" && (
+                      <div>
+                        <CampaignNotifications />
+                      </div>
+                    )}
+                  {activeMainTab === "updates" &&
+                    activeInnerTab === "milestones" && (
+                      <div>
+                        <MileStonesNotification />
+                      </div>
+                    )}
+                  {activeMainTab === "updates" &&
+                    activeInnerTab === "security" && (
+                      <div>
+                        <SecurityNotification />
+                      </div>
+                    )}
+                  {activeMainTab === "drops" && activeInnerTab === "assets" && (
+                    <div>
+                      <AssetsNotification />
                     </div>
                   )}
-
-                  {activeMainTab === "drops" && (
-                    <div className="flex justify-between mb-4">
-                      <button
-                        className={`py-2 px-4 text-sm font-semibold rounded-lg ${
-                          activeInnerTab === "tab1"
-                            ? "bg-blue-500 text-white"
-                            : "bg-gray-200 text-gray-700"
-                        }`}
-                        onClick={() => handleInnerTabClick("tab1")}
-                      >
-                        Drops 1
-                      </button>
-                      <button
-                        className={`py-2 px-4 text-sm font-semibold rounded-lg ${
-                          activeInnerTab === "tab2"
-                            ? "bg-blue-500 text-white"
-                            : "bg-gray-200 text-gray-700"
-                        }`}
-                        onClick={() => handleInnerTabClick("tab2")}
-                      >
-                        Drops 2
-                      </button>
-                      <button
-                        className={`py-2 px-4 text-sm font-semibold rounded-lg ${
-                          activeInnerTab === "tab3"
-                            ? "bg-blue-500 text-white"
-                            : "bg-gray-200 text-gray-700"
-                        }`}
-                        onClick={() => handleInnerTabClick("tab3")}
-                      >
-                        Drops 3
-                      </button>
-                    </div>
-                  )}
-
-                  <div className="text-sm text-gray-600">
-                    {activeMainTab === "updates" &&
-                      activeInnerTab === "tab1" && (
-                        <p>Updates - Content for Updates 1</p>
-                      )}
-                    {activeMainTab === "updates" &&
-                      activeInnerTab === "tab2" && (
-                        <p>Updates - Content for Updates 2</p>
-                      )}
-                    {activeMainTab === "updates" &&
-                      activeInnerTab === "tab3" && (
-                        <p>Updates - Content for Updates 3</p>
-                      )}
-
-                    {activeMainTab === "drops" && activeInnerTab === "tab1" && (
-                      <p>Drops - Content for Drops 1</p>
+                  {activeMainTab === "drops" &&
+                    activeInnerTab === "payment" && (
+                      <div>
+                        <AssetsNotification />
+                      </div>
                     )}
-                    {activeMainTab === "drops" && activeInnerTab === "tab2" && (
-                      <p>Drops - Content for Drops 2</p>
-                    )}
-                    {activeMainTab === "drops" && activeInnerTab === "tab3" && (
-                      <p>Drops - Content for Drops 3</p>
-                    )}
-                  </div>
                 </div>
               </div>
             </>

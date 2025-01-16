@@ -565,10 +565,10 @@ const Manage = () => {
             </div>
           </div>
 
-          <div className="mt-[20px]">
+          <div className="mt-[20px] ">
             {selectedService && (
               <div>
-                <p className="text-sm text-gray-700">
+                <p className="text-[16px] text-gray-700">
                   Subtotal:{" "}
                   {selectedService === "Dollars"
                     ? `$${subtotal.toFixed(2)}`
@@ -578,7 +578,7 @@ const Manage = () => {
                         ? `Ξ${subtotal.toFixed(2)}`
                         : `₦${subtotal.toFixed(2)}`}{" "}
                 </p>
-                <p className="text-sm text-gray-700">
+                <p className="text-[16px] text-gray-700">
                   Service Charge (15%):{" "}
                   {selectedService === "Dollars"
                     ? `$${serviceCharge.toFixed(2)}`
@@ -588,7 +588,7 @@ const Manage = () => {
                         ? `Ξ${serviceCharge.toFixed(2)}`
                         : `₦${serviceCharge.toFixed(2)}`}{" "}
                 </p>
-                <p className="text-sm text-gray-700">
+                <p className="text-[16px] text-gray-700">
                   Tax (7.5%):{" "}
                   {selectedService === "Dollars"
                     ? `$${tax.toFixed(2)}`
@@ -598,7 +598,7 @@ const Manage = () => {
                         ? `Ξ${tax.toFixed(2)}`
                         : `₦${tax.toFixed(2)}`}{" "}
                 </p>
-                <p className="text-sm text-gray-700 font-bold">
+                <p className="text-[16px] text-gray-700 font-bold ">
                   Total:{" "}
                   {selectedService === "Dollars"
                     ? `$${total.toFixed(2)}`

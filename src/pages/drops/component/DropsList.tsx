@@ -17,7 +17,7 @@ const DropsList = () => {
               <IoCopy />
             </div>
             <div className="space-y-[10px]">
-              <p className="uppercase text-[8px] text-[#999999]">2 days ago</p>
+              <p className="uppercase text-[8px] text-[#999999]">2 DAYS AGO</p>
               <p>
                 <span className="font-[600]">Run This Town (Motion edits)</span>{" "}
                 has been uploaded for{" "}
@@ -40,7 +40,7 @@ const DropsList = () => {
               <IoCopy />
             </div>
             <div className="space-y-[10px]">
-              <p className="uppercase text-[8px] text-[#999999]">2 days ago</p>
+              <p className="uppercase text-[8px] text-[#999999]">2 DAYS AGO</p>
               <p>
                 <span className="font-[600]">Run This Town (Motion edits)</span>{" "}
                 has been uploaded for{" "}
@@ -63,7 +63,7 @@ const DropsList = () => {
               <IoCopy />
             </div>
             <div className="space-y-[10px]">
-              <p className="uppercase text-[8px] text-[#999999]">2 days ago</p>
+              <p className="uppercase text-[8px] text-[#999999]">2 DAYS AGO</p>
               <p>
                 <span className="font-[600]">Run This Town (Motion edits)</span>{" "}
                 has been uploaded for{" "}
@@ -86,7 +86,7 @@ const DropsList = () => {
               <IoCopy />
             </div>
             <div className="space-y-[10px]">
-              <p className="uppercase text-[8px] text-[#999999]">2 days ago</p>
+              <p className="uppercase text-[8px] text-[#999999]">2 DAYS AGO</p>
               <p>
                 <span className="font-[600]">Run This Town (Motion edits)</span>{" "}
                 has been uploaded for{" "}
@@ -109,7 +109,7 @@ const DropsList = () => {
               <IoCopy />
             </div>
             <div className="space-y-[10px]">
-              <p className="uppercase text-[8px] text-[#999999]">2 days ago</p>
+              <p className="uppercase text-[8px] text-[#999999]">2 DAYS AGO</p>
               <p>
                 <span className="font-[600]">Run This Town (Motion edits)</span>{" "}
                 has been uploaded for{" "}

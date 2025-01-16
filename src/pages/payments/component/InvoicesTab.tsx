@@ -114,7 +114,7 @@ const InvoicesTab = () => {
   };
 
   return (
-    <div className=" font-IBM">
+    <div className=" font-IBM mt-[50px]">
       <div className="grid md:flex items-center gap-[20px] md:gap-[40px] mb-[16px]">
         <div className="flex gap-[20px] items-center">
           <button
@@ -175,7 +175,7 @@ const InvoicesTab = () => {
 
       {filter && (
         <div className="flex items-end gap-[10px] my-[20px]">
-          <div className="max-w-[100px] w-full rounded-full">
+          <div className="max-w-[150px] w-full rounded-full">
             <SelectInput
               rounded={true}
               options={[
@@ -191,7 +191,7 @@ const InvoicesTab = () => {
               options={[
                 { value: "", label: "Status" },
                 { value: "paid", label: "Paid" },
-                { value: "unpaid", label: "UnPaid" },
+                { value: "unpaid", label: "Unpaid" },
               ]}
             />
           </div>
