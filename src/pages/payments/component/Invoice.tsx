@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Table from "./Table";
-import { BsCurrencyDollar, BsTrash } from "react-icons/bs";
+import { BsTrash } from "react-icons/bs";
+import { TbCurrencyDollar } from "react-icons/tb";
 import { getInvoice } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 import Link from "next/link";
@@ -138,7 +139,7 @@ const Invoice = () => {
                     onClick={() => item.id && toggleStatus(item.id)}
                     className="p-[12px]  border border-[#2ea879] bg-[#ffffff] text-[#2ea879] rounded-full cursor-pointer"
                   >
-                    <BsCurrencyDollar size={16} />
+                    <TbCurrencyDollar size={16} />
                   </div>
                 ) : (
                   <div

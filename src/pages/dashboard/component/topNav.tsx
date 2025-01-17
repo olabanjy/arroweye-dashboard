@@ -26,24 +26,27 @@ const TopNav: FC = () => {
 
   return (
     <div className="relative">
-      <div className="h-[20px] text-white flex items-center justify-between px-[10px] lg:px-[40px] pt-[50px] relative">
-        <div className="text-lg font-semibold">Dashboard</div>
+      <div className="h-[10px]  text-white flex items-center justify-between px-[10px] lg:px-[40px] pt-[50px] relative">
+        <div className="text-lg font-semibold opacity-0">Dashboard</div>
         <div className="relative">
-          <div className="text-black cursor-pointer" onClick={toggleSidebar}>
+          <div
+            className="text-black cursor-pointer mb-[40px] md:mb-0"
+            onClick={toggleSidebar}
+          >
             <FaRegBell size={27} />
           </div>
 
           {isSidebarOpen && (
             <>
               <div className="absolute top-[35px] right-0 w-[350px] h-screen bg-white shadow-lg z-50 border border-gray-200 rounded-[8px] overflow-y-auto font-IBM">
-                <div className="sticky top-0 bg-[#f4faff] z-50">
-                  <div className="flex items-center text-[#000000] justify-between mb-4 p-4 border">
-                    <div className="flex items-center gap-[10px] text-[16px] font-[600]">
+                <div className="sticky top-0  z-50">
+                  <div className="flex items-center text-[#000000] justify-between  p-4 border-b bg-[#f4faff]">
+                    <div className="flex items-center gap-[20px] text-[16px] ">
                       <p
                         className={`cursor-pointer ${
                           activeMainTab === "updates"
-                            ? "text-[#000000]"
-                            : "text-[#767676]"
+                            ? "text-[#000000] font-[500]"
+                            : "text-[#767676] font-[400]"
                         }`}
                         onClick={() => handleMainTabClick("updates")}
                       >
@@ -52,8 +55,8 @@ const TopNav: FC = () => {
                       <p
                         className={`cursor-pointer ${
                           activeMainTab === "drops"
-                            ? "text-[#000000]"
-                            : "text-[#767676]"
+                            ? "text-[#000000]  font-[500]"
+                            : "text-[#767676]  font-[400]"
                         }`}
                         onClick={() => handleMainTabClick("drops")}
                       >
@@ -72,30 +75,30 @@ const TopNav: FC = () => {
                     {activeMainTab === "updates" && (
                       <>
                         <button
-                          className={`font-[600] text-[16px] ${
+                          className={` text-[16px] ${
                             activeInnerTab === "campaign"
-                              ? "text-[#0875d3]"
-                              : "text-[#767676]"
+                              ? "text-[#0875d3] font-[500]"
+                              : "text-[#000000] font-[400]"
                           }`}
                           onClick={() => handleInnerTabClick("campaign")}
                         >
                           Campaign
                         </button>
                         <button
-                          className={`font-[600] text-[16px] ${
+                          className={` text-[16px] ${
                             activeInnerTab === "milestones"
-                              ? "text-[#ff5700]"
-                              : "text-[#767676]"
+                              ? "text-[#ff5700] font-[500]"
+                              : "text-[#000000] font-[400]"
                           }`}
                           onClick={() => handleInnerTabClick("milestones")}
                         >
                           Milestones
                         </button>
                         <button
-                          className={`font-[600] text-[16px] ${
+                          className={` text-[16px] ${
                             activeInnerTab === "security"
-                              ? "text-[#ff5700]"
-                              : "text-[#767676]"
+                              ? "text-[#767676] font-[500]"
+                              : "text-[#000000] font-[400]"
                           }`}
                           onClick={() => handleInnerTabClick("security")}
                         >
@@ -107,20 +110,20 @@ const TopNav: FC = () => {
                     {activeMainTab === "drops" && (
                       <>
                         <button
-                          className={`text-[16px] font-[600] ${
+                          className={`text-[16px]  ${
                             activeInnerTab === "assets"
-                              ? "text-[#01a733]"
-                              : "text-[#000000]"
+                              ? "text-[#01a733] font-[500]"
+                              : "text-[#000000] font-[400]"
                           }`}
                           onClick={() => handleInnerTabClick("assets")}
                         >
                           Assets
                         </button>
                         <button
-                          className={`text-[16px] font-[600] ${
+                          className={`text-[16px]  ${
                             activeInnerTab === "payment"
-                              ? "text-[#c304f1]"
-                              : "text-[#000000]"
+                              ? "text-[#c304f1] font-[500]"
+                              : "text-[#000000] font-[400]"
                           }`}
                           onClick={() => handleInnerTabClick("payment")}
                         >

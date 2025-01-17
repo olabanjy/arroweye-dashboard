@@ -239,7 +239,7 @@ const ProjectDetails = () => {
           <div className=" grid gap-[20px] md:flex items-end md:justify-between">
             <div>
               <p className="font-extrabold text-5xl text-[#000000]">Jolie</p>
-              <div className="mt-[20px] flex items-center gap-[10px] relative">
+              <div className="mt-[20px] flex items-center gap-[5px] relative">
                 {users.map((user, index) => (
                   <div key={index} className="relative group">
                     <p

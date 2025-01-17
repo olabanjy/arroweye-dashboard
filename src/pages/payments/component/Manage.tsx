@@ -419,16 +419,16 @@ const Manage = () => {
             </div>
           </div>
 
-          <div className="mt-[20px]">
+          <div className="mt-[20px] space-y-[20px]">
             {items.map((item, index) => (
-              <div className="flex items-end gap-[20px] " key={item.id}>
+              <div className="flex items-end gap-[20px]" key={item.id}>
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 items-center gap-[20px]">
                   <div className=" flex items-center col-span-2  w-full">
                     <div className="   w-full ">
                       <SelectInput
                         icon={true}
                         name="service"
-                        label="SELECT SERVICE"
+                        label="SERVICE"
                         options={customOptions}
                         value={item.service_id || ""}
                         onChange={(value: string | number) => {
@@ -471,7 +471,7 @@ const Manage = () => {
                       type="number"
                       name="cost"
                       placeholder="Cost"
-                      label="ENTER COST"
+                      label=" COST"
                       value={item.cost || ""}
                       onChange={(e) => {
                         const updatedCost = e.target.value;
@@ -502,7 +502,7 @@ const Manage = () => {
                     <Input
                       type="number"
                       name="quantity"
-                      label="ENTER QUANTITY"
+                      label="QUANTITY"
                       placeholder="Quantity"
                       value={item.quantity || 1}
                       onChange={(e) => {

@@ -72,7 +72,7 @@ const CampaignNotifications = () => {
           onShare={handleShare}
         />
         <AdsNotificationCard
-          timeAgo="ADs by VIVO"
+          timeAgo="ADS BY VIVO"
           message=" An ad about this item by this brand for $100 "
           onDownload={handleDownload}
           onShare={handleShare}

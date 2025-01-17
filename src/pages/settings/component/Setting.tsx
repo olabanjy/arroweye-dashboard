@@ -1,9 +1,8 @@
 import React, { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
-import { FaRegCopy } from "react-icons/fa";
 import { Toast } from "primereact/toast";
 import { InputSwitch } from "primereact/inputswitch";
-import { MdTune } from "react-icons/md";
+import { LuCopy } from "react-icons/lu";
 
 const Setting = () => {
   const [email, setEmail] = useState("example@mail.com");
@@ -55,7 +54,7 @@ const Setting = () => {
             readOnly={!editable}
             placeholder=""
             info={info}
-            className=" text-center w-full"
+            className=" text-[16px] text-center w-full"
           />
         </div>
         <div className="flex-shrink-0">
@@ -64,7 +63,7 @@ const Setting = () => {
             onClick={() => handleCopy(value)}
             aria-label={`Copy ${label}`}
           >
-            <FaRegCopy />
+            <LuCopy />
           </button>
         </div>
       </div>
@@ -115,13 +114,7 @@ const Setting = () => {
         `}
       </style>
 
-      <div className="flex items-center gap-2">
-        <MdTune size={24} className="text-[#858585]" />
-        <p className="font-bold text-[24px] lg:text-[30px] text-[#000]">
-          Settings
-        </p>
-      </div>
-      <div className="mt-10 border rounded-[16px] border-[#d8d8d8] min-h-screen px-4 py-10 space-y-[20px]">
+      <div className="mt-10  min-h-screen px-4 py-10 space-y-[20px]">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-end ">
           {renderCopyInput(
             "USER DETAILS",

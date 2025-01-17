@@ -92,7 +92,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
               <SelectInput
                 rounded={true}
                 options={options}
-                placeholder="Channels"
+                placeholder="Country"
               />
             </div>
           ))}

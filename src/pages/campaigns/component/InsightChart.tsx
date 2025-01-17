@@ -33,10 +33,10 @@ const chartData: ChartData<"pie", number[], string> = {
 
 const selectOptions = [
   [
-    { value: "local", label: "Local TV" },
-    { value: "radio", label: "Radio" },
-    { value: "dj", label: "DJ" },
-    { value: "cable", label: "Cable" },
+    { value: "nigeria", label: "Nigeria" },
+    { value: "ghana", label: "Ghana" },
+    { value: "kenya", label: "Kenya" },
+    { value: "ivoryCoast", label: "Ivory Coast" },
   ],
 ];
 
@@ -58,7 +58,7 @@ const InsightChart = () => {
     <div className=" ">
       <div className="mt-[20px] mb-[200px]">
         <div className=" grid lg:grid-cols-3 gap-[10px]">
-          <div className="border p-[20px] w-[300px] rounded-[8px] space-y-[20px] sm:w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+          <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] sm:w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
             <div className="  border-b pb-[20px] ">
               <DoughnutChart
                 title="AIRPLAY"

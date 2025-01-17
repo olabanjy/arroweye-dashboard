@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { IoFilter, IoSettingsOutline } from "react-icons/io5";
+import { IoFilter } from "react-icons/io5";
 import { MdOutlineGroupAdd } from "react-icons/md";
 import Invoice from "./Invoice";
 import { SelectInput } from "@/components/ui/selectinput";
@@ -9,6 +9,7 @@ import { Dialog } from "primereact/dialog";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { CreateBusiness } from "@/services/api";
 import { DropDownInput } from "@/components/ui/dropdownInput";
+import { TbBuildingBank } from "react-icons/tb";
 
 const InvoicesTab = () => {
   const [activeTab, setActiveTab] = useState("Invoice");
@@ -145,7 +146,7 @@ const InvoicesTab = () => {
               <div className="flex-grow">
                 <Input
                   type="text"
-                  placeholder="Search by project, vendor and sub vendors..."
+                  placeholder="Search by title, label and artist..."
                   className="w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
                 />
               </div>
@@ -165,8 +166,8 @@ const InvoicesTab = () => {
               >
                 <MdOutlineGroupAdd />
               </div>
-              <div className="p-[16px] hover:bg-orange-500 border border-[#000000] text-[#000000] rounded-full">
-                <IoSettingsOutline />
+              <div className="p-[16px] hover:bg-[#000000] hover:text-white border border-[#000000] text-[#000000] rounded-full">
+                <TbBuildingBank />
               </div>
             </div>
           </div>
@@ -235,7 +236,7 @@ const InvoicesTab = () => {
             onSubmit={handleSubmit}
             className="scrollbar-hide scrollbar-hide::-webkit-scrollbar"
           >
-            <div className="space-y-4 relative z-10">
+            <div className=" grid gap-[10px] relative z-10">
               <p className="text-[30px] font-[600] text-[#212529] font-IBM hidden">
                 Collaborate
               </p>
@@ -243,7 +244,7 @@ const InvoicesTab = () => {
                 <DropDownInput
                   type="email"
                   name="email"
-                  placeholder="add e-mail"
+                  placeholder="E-mail"
                   value={formData.email}
                   onChange={(e) => handleInputChange(e)}
                   className=" text-[17px]"

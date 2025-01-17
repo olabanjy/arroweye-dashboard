@@ -43,7 +43,7 @@ const SecurityNotification = () => {
         />
 
         <MusicAdsNotificationCard
-          timeAgo="ADs by VIVO"
+          timeAgo="ADS BY VIVO"
           message=" Out now! Listen to HEIS by Afrobeats superstar Rema "
           onDownload={handleDownload}
           onShare={handleShare}
