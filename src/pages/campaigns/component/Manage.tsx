@@ -28,10 +28,7 @@ const Manage = () => {
             <div className="max-w-[400px] w-full">
               <SelectInput
                 label="VENDOR"
-                options={[
-                  { value: "vendor", label: "Vendor" },
-                  { value: "vivo", label: "VIVO" },
-                ]}
+                options={[{ value: "vivo", label: "VIVO" }]}
                 onChange={(value) => handleCurrencyChange(value)}
               />
             </div>
@@ -40,10 +37,7 @@ const Manage = () => {
             <div className="max-w-[400px] w-full">
               <SelectInput
                 label="SUBVENDOR"
-                options={[
-                  { value: "subvendor", label: "Subvendor" },
-                  { value: "tedxoau", label: "tedXOAU" },
-                ]}
+                options={[{ value: "tedxoau", label: "tedXOAU" }]}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
                 onChange={(value) => handleCurrencyChange(value)}
               />

@@ -105,15 +105,9 @@ const Manage = () => {
     });
   }, []);
 
-  const vendorOptions = [
-    { value: 1, label: "Vendor" },
-    { value: 2, label: "VIVO" },
-  ];
+  const vendorOptions = [{ value: 2, label: "VIVO" }];
 
-  const subVendorOptions = [
-    { value: 3, label: "Subvendor" },
-    { value: 4, label: "tedXOAU" },
-  ];
+  const subVendorOptions = [{ value: 4, label: "tedXOAU" }];
 
   const currencyOptions = [
     { value: "Dollars", label: "$USD" },

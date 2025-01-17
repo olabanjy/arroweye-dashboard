@@ -348,7 +348,7 @@ export const VerifyLogin = async (payload: unknown): Promise<void> => {
     console.log(response);
     ls.set("Profile", response, { encrypt: true });
     toast.success("Verification successful! Redirecting...");
-    window.location.href = "/projects";
+    window.location.href = "/campaigns";
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
