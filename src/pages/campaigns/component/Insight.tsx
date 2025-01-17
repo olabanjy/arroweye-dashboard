@@ -5,7 +5,7 @@ const Insight = () => {
   return (
     <div>
       <div className="mt-[20px] relative ">
-        <div className="grid lg:grid-cols-2 gap-[20px] relative">
+        <div className="grid lg:grid-cols-2 gap-[20px] relative mb-[200px]">
           <div className="w-full">
             <InsightCard
               title="TOTAL INVESTMENT "
@@ -26,11 +26,6 @@ const Insight = () => {
                   { value: "january", label: "January" },
                   { value: "february", label: "February" },
                   { value: "march", label: "March" },
-                ],
-                [
-                  { value: "", label: "Status" },
-                  { value: "pending", label: "Pending" },
-                  { value: "paid", label: "Paid" },
                 ],
               ]}
             />
@@ -56,11 +51,6 @@ const Insight = () => {
                 { value: "february", label: "February" },
                 { value: "march", label: "March" },
               ],
-              [
-                { value: "", label: "Status" },
-                { value: "pending", label: "Pending" },
-                { value: "paid", label: "Paid" },
-              ],
             ]}
           />
 
@@ -85,8 +75,8 @@ const Insight = () => {
               ],
               [
                 { value: "", label: "Status" },
-                { value: "pending", label: "Pending" },
-                { value: "paid", label: "Paid" },
+                { value: "ongoing", label: "Ongoing" },
+                { value: "completed", label: "Completed" },
               ],
             ]}
           />
@@ -110,16 +100,11 @@ const Insight = () => {
                 { value: "february", label: "February" },
                 { value: "march", label: "March" },
               ],
-              [
-                { value: "", label: "Status" },
-                { value: "pending", label: "Pending" },
-                { value: "paid", label: "Paid" },
-              ],
             ]}
           />
         </div>
 
-        <div className="absolute bottom-[30px] left-0 right-0 flex justify-center z-30 w-full">
+        <div className="fixed bottom-[30px] lg:left-32 right-0 flex justify-center z-30 w-full">
           <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px]">
             <p className="rounded p-[8px] bg-black text-white !w-[70px] text-center">
               Export

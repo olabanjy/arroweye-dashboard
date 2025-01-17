@@ -40,7 +40,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
   return (
     <>
       {filterVisible && (
-        <div className="flex items-end gap-[10px] my-[20px]">
+        <div className=" grid grid-cols-2 text-center md:flex items-end gap-[10px] my-[20px]">
           <div className="max-w-[150px] w-full">
             <SelectInput
               rounded={true}
@@ -70,45 +70,48 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
         <Table
           highlightFirstCell={true}
           headers={headers}
-          rows={content?.map((item, index) => ({
-            data: [
-              <div key={`manage-button-${index}`}>
-                <Link href={`/campaigns/${item.id}`}>{item?.title}</Link>
-              </div>,
-              item?.vendor,
-              item?.subvendor,
-              item?.created?.slice(0, 10) || "2025-01-13",
-              // item?.code,
-              <div
-                className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500] w-[150px] md:w-full whitespace-nowrap"
-                key={"code"}
-                onClick={() => handleCopyPin(String(item?.pin ?? ""))}
-              >
-                {copiedPin === String(item?.pin) ? "Copied!" : "Copy PIN"}
-              </div>,
-              <Link
-                href={`/campaigns/${item.id}`}
-                key={`manage-button-${index}`}
-              >
-                <div className="flex justify-center ">
-                  <button className=" text-[#000000]  ">
-                    <MdOutlineModeEditOutline size={20} />
-                  </button>
-                </div>
-              </Link>,
-              <div
-                key={`action-buttons-${index}`}
-                className="flex justify-center gap-2"
-              >
-                <button
-                  className=" text-[#000000] "
-                  onClick={() => alert("Action triggered!")}
+          rows={content
+            ?.slice()
+            .reverse()
+            .map((item, index) => ({
+              data: [
+                <div key={`manage-button-${index}`}>
+                  <Link href={`/campaigns/${item.id}`}>{item?.title}</Link>
+                </div>,
+                item?.vendor,
+                item?.subvendor,
+                item?.created?.slice(0, 10) || "2025-01-13",
+                // item?.code,
+                <div
+                  className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500] w-[150px] md:w-full whitespace-nowrap"
+                  key={"code"}
+                  onClick={() => handleCopyPin(String(item?.pin ?? ""))}
                 >
-                  <BsTrash size={20} />
-                </button>
-              </div>,
-            ],
-          }))}
+                  {copiedPin === String(item?.pin) ? "Copied!" : "Copy PIN"}
+                </div>,
+                <Link
+                  href={`/campaigns/${item.id}`}
+                  key={`manage-button-${index}`}
+                >
+                  <div className="flex justify-center ">
+                    <button className=" text-[#000000]  ">
+                      <MdOutlineModeEditOutline size={20} />
+                    </button>
+                  </div>
+                </Link>,
+                <div
+                  key={`action-buttons-${index}`}
+                  className="flex justify-center gap-2"
+                >
+                  <button
+                    className=" text-[#000000] "
+                    onClick={() => alert("Action triggered!")}
+                  >
+                    <BsTrash size={20} />
+                  </button>
+                </div>,
+              ],
+            }))}
           emptyState={
             <div className="flex h-[50vh] flex-col items-center justify-center text-center">
               <div className="my-[32px]">

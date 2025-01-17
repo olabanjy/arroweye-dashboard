@@ -26,7 +26,7 @@ const TopNav: FC = () => {
 
   return (
     <div className="relative">
-      <div className="h-[20px] text-white flex items-center justify-between px-[40px] pt-[50px] relative">
+      <div className="h-[20px] text-white flex items-center justify-between px-[10px] lg:px-[40px] pt-[50px] relative">
         <div className="text-lg font-semibold">Dashboard</div>
         <div className="relative">
           <div className="text-black cursor-pointer" onClick={toggleSidebar}>

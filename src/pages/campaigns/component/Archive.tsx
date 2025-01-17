@@ -33,7 +33,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
   return (
     <div className="">
       {filterVisible && (
-        <div className="flex items-end gap-[10px] my-[10px]">
+        <div className=" grid grid-cols-2 text-center md:flex items-end gap-[10px] my-[10px]">
           <div className="max-w-[100px] w-full rounded-full">
             <SelectInput
               rounded={true}

@@ -5,7 +5,7 @@ const Insight = () => {
   return (
     <div className="relative">
       <div className="">
-        <div className=" mt-[20px] ">
+        <div className=" mt-[20px] mb-[200px]">
           <div className=" grid lg:grid-cols-2 gap-[20px] relative ">
             <div className=" w-full">
               <InsightCard
@@ -110,7 +110,7 @@ const Insight = () => {
             />
           </div>
         </div>
-        <div className="absolute bottom-[0px] left-0 right-0 flex justify-center z-30 w-full">
+        <div className="fixed bottom-[30px] lg:left-32 right-0 flex justify-center z-30 w-full">
           <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px]">
             <p className="rounded p-[8px] bg-black text-white !w-[70px] text-center">
               Export

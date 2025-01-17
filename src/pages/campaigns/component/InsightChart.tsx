@@ -56,7 +56,7 @@ const countryFlags = [
 const InsightChart = () => {
   return (
     <div className=" ">
-      <div className="mt-[20px] ">
+      <div className="mt-[20px] mb-[200px]">
         <div className=" grid lg:grid-cols-3 gap-[10px]">
           <div className="border p-[20px] w-[300px] rounded-[8px] space-y-[20px] sm:w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
             <div className="  border-b pb-[20px] ">
@@ -177,7 +177,7 @@ const InsightChart = () => {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-[30px] left-0 right-0 flex justify-center z-30 w-full">
+      <div className="fixed bottom-[30px] lg:left-32 right-0 flex justify-center z-30 w-full">
         <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px]">
           <p className="rounded p-[8px] bg-black text-white !w-[70px] text-center">
             Export

@@ -12,7 +12,9 @@ interface LayoutProps {
 const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar />
+      <div className=" z-50">
+        <Sidebar />
+      </div>
       <div className="flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow">
         <TopNav />
         <main

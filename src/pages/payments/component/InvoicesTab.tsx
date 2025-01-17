@@ -174,7 +174,7 @@ const InvoicesTab = () => {
       </div>
 
       {filter && (
-        <div className="flex items-end gap-[10px] my-[20px]">
+        <div className=" grid grid-cols-2 text-center md:flex items-end gap-[10px] my-[20px]">
           <div className="max-w-[150px] w-full rounded-full">
             <SelectInput
               rounded={true}
