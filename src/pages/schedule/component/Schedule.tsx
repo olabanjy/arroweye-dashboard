@@ -291,27 +291,52 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
             }
           `}
           </style>
-          <FullCalendar
-            plugins={[
-              dayGridPlugin,
-              timeGridPlugin,
-              listPlugin,
-              interactionPlugin,
-            ]}
-            initialView="dayGridMonth"
-            headerToolbar={{
-              left: "prev,next today",
-              center: "title",
-              right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
-            }}
-            events={events}
-            eventClick={(info) => {
-              alert(`Event: ${info.event.title}`);
-            }}
-            dateClick={handleDateClick}
-            editable={true}
-            droppable={true}
-          />
+          <div className=" md:hidden ">
+            <FullCalendar
+              plugins={[
+                dayGridPlugin,
+                timeGridPlugin,
+                listPlugin,
+                interactionPlugin,
+              ]}
+              initialView="dayGridMonth"
+              headerToolbar={{
+                left: "prev,next today",
+                center: "title",
+                right: "listWeek",
+              }}
+              events={events}
+              eventClick={(info) => {
+                alert(`Event: ${info.event.title}`);
+              }}
+              dateClick={handleDateClick}
+              editable={true}
+              droppable={true}
+            />
+          </div>
+          <div className="hidden md:block ">
+            <FullCalendar
+              plugins={[
+                dayGridPlugin,
+                timeGridPlugin,
+                listPlugin,
+                interactionPlugin,
+              ]}
+              initialView="dayGridMonth"
+              headerToolbar={{
+                left: "prev,next today",
+                center: "title",
+                right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
+              }}
+              events={events}
+              eventClick={(info) => {
+                alert(`Event: ${info.event.title}`);
+              }}
+              dateClick={handleDateClick}
+              editable={true}
+              droppable={true}
+            />
+          </div>
         </div>
       </div>
 
