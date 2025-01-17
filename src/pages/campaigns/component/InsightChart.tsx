@@ -57,9 +57,9 @@ const InsightChart = () => {
   return (
     <div className=" ">
       <div className="mt-[20px] mb-[200px]">
-        <div className=" grid lg:grid-cols-3 gap-[10px]">
-          <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] sm:w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
-            <div className="  border-b pb-[20px] ">
+        <div className=" grid grid-cols-1 lg:grid-cols-3 gap-[10px] w-full">
+          <div className="border p-[20px] w-full rounded-[8px] space-y-[20px]  hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+            <div className="  border-b pb-[20px]">
               <DoughnutChart
                 title="AIRPLAY"
                 value="1M"
@@ -75,7 +75,7 @@ const InsightChart = () => {
                 value="300K"
                 selectOptions={selectOptions}
                 chartData={chartData}
-                maxWidth="500px"
+                // maxWidth="500px"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
             </div>
@@ -90,7 +90,7 @@ const InsightChart = () => {
               subText="Radio monitor report is populating... "
             />
           </div>
-          <div className="border p-[20px] w-[300px] sm:w-full rounded-[8px] space-y-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+          <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
             <div className="  border-b pb-[20px] ">
               <DoughnutChart
                 title="AIRPLAY"
@@ -107,7 +107,7 @@ const InsightChart = () => {
                 value="300K"
                 selectOptions={selectOptions}
                 chartData={chartData}
-                maxWidth="500px"
+                // maxWidth="500px"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
             </div>
@@ -123,7 +123,7 @@ const InsightChart = () => {
               outline={true}
             />
           </div>
-          <div className="border p-[20px]  w-[300px] sm:w-full rounded-[8px] space-y-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+          <div className="border p-[20px]  rounded-[8px] space-y-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
             <div className="  border-b pb-[20px] ">
               <DoughnutChart
                 title="AIRPLAY"
@@ -140,7 +140,7 @@ const InsightChart = () => {
                 value="300K"
                 selectOptions={selectOptions}
                 chartData={chartData}
-                maxWidth="500px"
+                // maxWidth="500px"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
             </div>

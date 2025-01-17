@@ -38,12 +38,12 @@ const LineChart: FC<InsightChartProps> = ({
   value,
   selectOptions,
   chartData,
-  maxWidth = "400px",
+  // maxWidth = "400px",
 }) => {
   return (
     <div
       className={`border p-[20px] rounded-[8px] space-y-[20px] w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500`}
-      style={{ maxWidth }}
+      // style={{ maxWidth }}
     >
       <div className="flex items-center gap-[5px] text-[#7a8081]">
         <p className="text-[14px]">{title}</p>

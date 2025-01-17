@@ -5,7 +5,7 @@ import { FiInfo, FiEye, FiEyeOff } from "react-icons/fi";
 const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute font-[300] left-1/2 transform -translate-x-1/2 bottom-full mb-1 hidden w-48 p-2 text-xs text-white bg-black rounded-lg group-hover:block z-10 shadow-lg">
+    <div className="absolute font-[300] left-1/2 transform -translate-x-1/2 bottom-full mb-1 hidden w-[250px] p-[15px] text-xs text-white bg-black rounded-lg group-hover:block z-10 shadow-lg">
       {info}
     </div>
   </div>
@@ -106,7 +106,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={inputType}
             ref={ref}
             className={cn(
-              "block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-sm text-gray-900 shadow-sm  dark:border-gray-700 dark:bg-gray-900 dark:text-white ",
+              "block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm  dark:border-gray-700 dark:bg-gray-900 dark:text-white ",
               rounded ? "rounded-full" : "rounded-[8px]",
               (error || validationError) && "border-red-500 focus:ring-red-500",
               className

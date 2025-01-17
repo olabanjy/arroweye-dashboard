@@ -18,7 +18,7 @@ interface InsightChartProps {
   percentageChange?: string;
   selectOptions: Array<{ value: string; label: string }[]>;
   chartData?: ChartData<"doughnut", number[], string>;
-  maxWidth?: string;
+  // maxWidth?: string;
   info?: string;
 }
 
@@ -36,7 +36,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
   value,
   selectOptions,
   chartData,
-  maxWidth = "400px",
+  // maxWidth = "400px",
   info,
 }) => {
   const defaultChartData: ChartData<"doughnut", number[], string> =
@@ -78,8 +78,8 @@ const DoughnutChart: FC<InsightChartProps> = ({
 
   return (
     <div
-      className={`space-y-[20px] font-IBM`}
-      style={{ maxWidth, width: "100%" }}
+      className={`space-y-[20px] font-IBM w-full`}
+      // style={{ maxWidth, width: "100%" }}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">

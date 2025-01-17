@@ -9,7 +9,7 @@ const Insight = () => {
           <div className=" grid lg:grid-cols-2 gap-[20px] relative ">
             <div className=" w-full">
               <InsightCard
-                title="Total Invoices"
+                title="TOTAL INVOICES"
                 value={100}
                 percentageChange="5%"
                 percentageColor="#11cc48"
@@ -36,7 +36,7 @@ const Insight = () => {
               />
             </div>
             <InsightCard
-              title="Total Revenue"
+              title="TOTAL REVENUE"
               value="$500,000"
               percentageChange="-3%"
               percentageColor="#ff4d4f"
@@ -61,7 +61,7 @@ const Insight = () => {
             />
 
             <InsightCard
-              title="Total Licences"
+              title="TOTAL LICENCES"
               value="500"
               percentageChange="-3%"
               percentageColor="#ff4d4f"
@@ -77,15 +77,10 @@ const Insight = () => {
                   { value: "february", label: "February" },
                   { value: "march", label: "March" },
                 ],
-                [
-                  { value: "", label: "Status" },
-                  { value: "pending", label: "Pending" },
-                  { value: "paid", label: "Paid" },
-                ],
               ]}
             />
             <InsightCard
-              title="Total Revenue Licences"
+              title="TOTAL PAID LICENCES"
               value="$500,000"
               percentageChange="-3%"
               percentageColor="#ff4d4f"
@@ -100,11 +95,6 @@ const Insight = () => {
                   { value: "january", label: "January" },
                   { value: "february", label: "February" },
                   { value: "march", label: "March" },
-                ],
-                [
-                  { value: "", label: "Status" },
-                  { value: "pending", label: "Pending" },
-                  { value: "paid", label: "Paid" },
                 ],
               ]}
             />

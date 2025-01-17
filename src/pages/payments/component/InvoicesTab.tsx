@@ -151,7 +151,7 @@ const InvoicesTab = () => {
                 />
               </div>
             )}
-            <div className="flex items-center justify-between gap-[5px]">
+            <div className="flex items-center lg:justify-between gap-[5px]">
               {activeTab === "Invoice" && (
                 <div
                   className="cursor-pointer p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
@@ -175,7 +175,7 @@ const InvoicesTab = () => {
       </div>
 
       {filter && (
-        <div className=" grid grid-cols-2 text-center md:flex items-end gap-[10px] my-[20px]">
+        <div className="text-center flex flex-wrap items-end gap-[5px] md:gap-[10px] my-4">
           <div className="max-w-[150px] w-full rounded-full">
             <SelectInput
               rounded={true}
@@ -207,7 +207,7 @@ const InvoicesTab = () => {
               ]}
             />
           </div>
-          <p className="cursor-pointer text-[14px] rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
+          <p className=" max-w-[100px] w-full cursor-pointer text-[14px] rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
             Clear Filters
           </p>
         </div>

@@ -277,7 +277,7 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
             {`
             .fc .fc-toolbar-title {
               text-transform: capitalize !important;
-              font-size:18px;
+              font-size:16px;
               font-weight:bold;
             }
             .fc .fc-button {
@@ -291,7 +291,7 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
             }
           `}
           </style>
-          <div className=" md:hidden ">
+          <div className=" sm:hidden ">
             <FullCalendar
               plugins={[
                 dayGridPlugin,
@@ -303,7 +303,7 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
               headerToolbar={{
                 left: "prev,next today",
                 center: "title",
-                right: "listWeek",
+                right: "",
               }}
               events={events}
               eventClick={(info) => {
@@ -314,7 +314,7 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
               droppable={true}
             />
           </div>
-          <div className="hidden md:block ">
+          <div className="hidden sm:block ">
             <FullCalendar
               plugins={[
                 dayGridPlugin,

@@ -18,7 +18,7 @@ interface InsightChartProps {
   percentageChange?: string;
   selectOptions: Array<{ value: string; label: string }[]>;
   chartData?: ChartData<"pie", number[], string>;
-  maxWidth?: string;
+  // maxWidth?: string;
   info?: string;
 }
 

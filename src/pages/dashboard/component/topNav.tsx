@@ -64,10 +64,10 @@ const TopNav: FC = () => {
                       </p>
                     </div>
                     <button
-                      className="text-[#0e3531] text-[16px] w-8 h-8 flex items-center justify-center rounded-[8px] border bg-white"
+                      className="text-[#0e3531] text-[16px] w-8 h-8 flex items-center justify-center rounded-full border bg-white"
                       onClick={toggleSidebar}
                     >
-                      <IoIosClose />
+                      <IoIosClose size={27} />
                     </button>
                   </div>
 

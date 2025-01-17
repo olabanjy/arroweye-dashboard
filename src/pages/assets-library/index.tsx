@@ -57,7 +57,7 @@ const AssetsLibrary = () => {
           <div className="flex-grow">
             <Input
               type="text"
-              placeholder="Search by title, artist..."
+              placeholder="Search by title, label and artist..."
               className="w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
             />
           </div>
