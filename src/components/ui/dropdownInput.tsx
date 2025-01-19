@@ -137,7 +137,7 @@ const DropDownInput = React.forwardRef<HTMLInputElement, InputProps>(
             type={inputType}
             ref={ref}
             className={cn(
-              "block w-full rounded-[8px] border border-black bg-white px-4 py-[8px] h-[50px]  text-gray-900 shadow-sm  dark:text-white  text-[17px] font-[400]",
+              "block w-full rounded-[8px] border border-black bg-white px-4 py-[8px] h-[50px]  text-gray-900 shadow-sm  dark:text-white  text-[14px] font-[400]",
               (error || validationError) && "border-red-500 focus:ring-red-500",
               className
             )}

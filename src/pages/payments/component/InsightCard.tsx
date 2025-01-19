@@ -25,7 +25,7 @@ const InsightCard: FC<InsightCardProps> = ({
       // style={{ maxWidth }}
     >
       <div className="flex items-center gap-[5px] text-[#7a8081]">
-        <p className="text-[14px]">{title}</p>
+        <p className="text-[14px] tracking-[.1rem]">{title}</p>
         <FiInfo className="text-gray-400 hover:text-blue-500" />
       </div>
 

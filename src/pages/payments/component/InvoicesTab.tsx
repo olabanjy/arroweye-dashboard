@@ -207,7 +207,7 @@ const InvoicesTab = () => {
               ]}
             />
           </div>
-          <p className=" max-w-[100px] w-full cursor-pointer text-[14px] rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
+          <p className=" max-w-[120px] w-full cursor-pointer text-[14px] rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
             Clear Filters
           </p>
         </div>
@@ -306,7 +306,7 @@ const InvoicesTab = () => {
                   <p>Add Contact</p>
                 </div>
               </div>
-              <div className="flex gap-[10px] items-end">
+              <div className="flex flex-wrap gap-[10px] items-end">
                 <div className="w-full">
                   <SelectInput
                     icon={true}

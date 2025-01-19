@@ -340,7 +340,7 @@ const ProjectDetails = () => {
                       <button
                         onClick={handleAddUserSubmit}
                         disabled={isAddUserLoading}
-                        className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
+                        className=" text-[14px] bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
                       >
                         <IoIosAdd className="text-white" />
                         <span className="text-white">Add User</span>
@@ -408,7 +408,7 @@ const ProjectDetails = () => {
 
         <InsightChart />
 
-        <div className=" mt-[50px] ">
+        <div className=" mt-[20px] lg:mt-[50px] ">
           <Schedule filterIcon={false} />
         </div>
 
