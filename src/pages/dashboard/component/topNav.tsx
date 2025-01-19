@@ -5,6 +5,7 @@ import CampaignNotifications from "./campaigns/CampaignNotifications";
 import MileStonesNotification from "./milestones/MileStonesNotification";
 import SecurityNotification from "./security/SecurityNotification";
 import AssetsNotification from "./assets/AssetsNotification";
+import PaymentsNotification from "./payments/PaymentsNotification";
 
 const TopNav: FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -161,7 +162,7 @@ const TopNav: FC = () => {
                   {activeMainTab === "drops" &&
                     activeInnerTab === "payment" && (
                       <div>
-                        <AssetsNotification />
+                        <PaymentsNotification />
                       </div>
                     )}
                 </div>
