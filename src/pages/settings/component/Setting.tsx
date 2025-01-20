@@ -6,8 +6,8 @@ import { LuCopy } from "react-icons/lu";
 
 const Setting = () => {
   const [email, setEmail] = useState("example@mail.com");
-  const [textCode, setTextCode] = useState("DEFAULT_CODE_123");
-  const [password, setPassword] = useState("password123");
+  const [vendorName, setVendorName] = useState("David Jones");
+  const [labelName, setLabelName] = useState("Mavins");
   const [phone, setPhone] = useState("+234 4567 898");
   const [toggleNotifications, setToggleNotifications] = useState(false);
   const toast = useRef<Toast>(null);
@@ -118,25 +118,26 @@ const Setting = () => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-end ">
           {renderCopyInput(
             "USER DETAILS",
-            email,
+            vendorName,
             false,
-            "email",
-            (e) => setEmail(e.target.value),
-            "The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+            "text",
+            (e) => setVendorName(e.target.value),
+            "User Details"
           )}
-          {renderCopyInput("", textCode, false, "text", (e) =>
-            setTextCode(e.target.value)
+          {renderCopyInput("", email, false, "email", (e) =>
+            setEmail(e.target.value)
           )}
-          {renderCopyInput("", password, false, "password", (e) =>
-            setPassword(e.target.value)
+          {renderCopyInput("", labelName, false, "text", (e) =>
+            setLabelName(e.target.value)
           )}
+
           {renderCopyInput(
             "NOTIFICATIONS",
             phone,
             false,
             "text",
             (e) => setPhone(e.target.value),
-            "The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+            "Notification"
           )}
           <div className=" flex gap-[10px] items-end flex-1">
             <div className=" mb-[4px]">
