@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { FiInfo, FiEye, FiEyeOff } from "react-icons/fi";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
@@ -17,6 +19,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   validate?: "email" | "otp" | "datetime";
   info?: string;
   rounded?: boolean;
+  placeholder?: string;
 }
 
 const useValidation = (validate: InputProps["validate"]) => {
@@ -59,6 +62,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       validate,
       info,
       rounded,
+      placeholder,
       ...props
     },
     ref
@@ -66,6 +70,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const [inputValue, setInputValue] = useState<string>("");
     const [validationError, setValidationError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     const { validateInput, getValidationError } = useValidation(validate);
 
@@ -89,7 +94,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputType = type === "password" && showPassword ? "text" : type;
 
     return (
-      <div className="flex flex-col space-y-2 font-IBM ">
+      <div className="flex flex-col space-y-2 font-IBM">
         <div className="flex items-center space-x-2">
           {label && (
             <label
@@ -101,34 +106,53 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
           {info && <Tooltip info={info} />}
         </div>
-        <div className="relative">
-          <input
-            type={inputType}
-            ref={ref}
+        {type === "datetime-local" ? (
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
             className={cn(
-              "block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm  dark:border-gray-700 dark:bg-gray-900 dark:text-white ",
+              "block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white",
               rounded ? "rounded-full" : "rounded-[8px]",
               (error || validationError) && "border-red-500 focus:ring-red-500",
               className
             )}
-            value={inputValue}
-            onBlur={handleBlur}
-            onChange={handleChange}
-            aria-invalid={!!(error || validationError)}
-            aria-describedby={props.id ? `${props.id}-error` : undefined}
-            {...props}
+            dateFormat="yyyy-MM-dd'T'HH:mm"
+            showTimeSelect
+            timeFormat="HH:mm"
+            placeholderText={placeholder}
           />
-          {type === "password" && (
-            <button
-              type="button"
-              className="absolute inset-y-0 right-3 flex items-center text-gray-500 dark:text-gray-400"
-              onClick={togglePasswordVisibility}
-              aria-label="Toggle password visibility"
-            >
-              {showPassword ? <FiEyeOff /> : <FiEye />}
-            </button>
-          )}
-        </div>
+        ) : (
+          <div className="relative">
+            <input
+              type={inputType}
+              ref={ref}
+              className={cn(
+                "block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white",
+                rounded ? "rounded-full" : "rounded-[8px]",
+                (error || validationError) &&
+                  "border-red-500 focus:ring-red-500",
+                className
+              )}
+              placeholder={placeholder}
+              value={inputValue}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              aria-invalid={!!(error || validationError)}
+              aria-describedby={props.id ? `${props.id}-error` : undefined}
+              {...props}
+            />
+            {type === "password" && (
+              <button
+                type="button"
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 dark:text-gray-400"
+                onClick={togglePasswordVisibility}
+                aria-label="Toggle password visibility"
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
+            )}
+          </div>
+        )}
         {(error || validationError) && (
           <p
             id={props.id ? `${props.id}-error` : undefined}
