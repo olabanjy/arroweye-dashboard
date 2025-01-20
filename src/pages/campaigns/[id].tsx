@@ -420,51 +420,63 @@ const ProjectDetails = () => {
           }`}
         >
           <Dialog
-            header=" Member Information"
+            header=" MEMBER INFORMATION"
             visible={selectedUser !== null}
             onHide={() => setSelectedUser(null)}
             breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-            style={{ width: "50vw" }}
+            style={{ width: "30vw" }}
+            headerClassName=" text-[12px] text-[#212529] font-[500]"
             className="custom-dialog-overlay"
           >
             {selectedUser && (
-              <div className="space-y-4">
-                <p className="text-3xl font-bold">{selectedUser.fullName}</p>
-                <div className=" text-[14px]">
-                  <p className="text-[14px]">Email: </p>
-                  <p className=" font-bold"> {selectedUser.email}</p>
+              <div className="space-y-4 font-IBM">
+                <p className="text-[30px] text-[#212529] font-[600]">
+                  {selectedUser.fullName}
+                </p>
+                <div className=" ">
+                  <p className="text-[16px] font-[400] text-[#212529]">
+                    Email{" "}
+                  </p>
+                  <p className=" font-[600] text-[16px] text-[#212529]">
+                    {" "}
+                    {selectedUser.email}
+                  </p>
                 </div>
-                <div className=" text-[14px]">
-                  <p className="text-[14px]">Role </p>
-                  <p className=" font-bold">Agent</p>
+                <div className=" text-[16px] font-[400] ">
+                  <p className="text-[#212529]">Role </p>
+                  <p className=" text-[#01a733] font-[600]">Agent</p>
                 </div>
-                <div className=" text-[14px]">
-                  <p className="text-[14px]">Member since </p>
-                  <p className=" font-bold">July 20, 2021</p>
+                <div className=" text-[16px] font-[400] text-[#212529]">
+                  <p className=" text-[#212529]">Member since </p>
+                  <p className=" font-[600]">July 20, 2021</p>
                 </div>
-                <div className=" text-[14px]">
-                  <p className="text-[14px]">Last addUser</p>
-                  <p className=" font-bold">May 2, 2024</p>
+                <div className=" text-[16px] font-[400] text-[#212529]">
+                  <p className="text-[#212529]">Last Login</p>
+                  <p className=" font-[600]">May 2, 2024</p>
                 </div>
 
-                <div
-                  className=" px-[16px] py-[8px] rounded bg-black text-white inline-block cursor-pointer"
-                  onClick={() => setDeleteModal(true)}
-                >
-                  <FaUserMinus />
+                <div className=" ">
+                  <div
+                    className=" px-[16px] py-[8px] rounded bg-black text-white inline-block cursor-pointer mt-[10px]"
+                    onClick={() => setDeleteModal(true)}
+                  >
+                    <FaUserMinus />
+                  </div>
+                  <div
+                    className=" px-[16px] py-[8px] text-black inline-block cursor-pointer"
+                    onClick={handleAdjustmentClick}
+                  >
+                    <HiAdjustmentsHorizontal />
+                  </div>
                 </div>
-                <div
-                  className=" px-[16px] py-[8px] text-black inline-block cursor-pointer"
-                  onClick={handleAdjustmentClick}
-                >
-                  <HiAdjustmentsHorizontal />
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    label="Close"
-                    icon="pi pi-times"
-                    onClick={() => setSelectedUser(null)}
-                  />
+                <div className=" hidden">
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      label="Close"
+                      icon="pi pi-times"
+                      onClick={() => setSelectedUser(null)}
+                    />
+                  </div>
                 </div>
               </div>
             )}

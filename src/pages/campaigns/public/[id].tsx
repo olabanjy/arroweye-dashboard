@@ -73,7 +73,7 @@ const ProjectDetailsPublic = () => {
           visible={selectedUser !== null}
           onHide={() => setSelectedUser(null)}
           breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "50vw" }}
+          style={{ width: "30vw" }}
           className="custom-dialog-overlay"
         >
           {selectedUser && (
@@ -96,12 +96,14 @@ const ProjectDetailsPublic = () => {
                 <p className=" font-bold">May 2, 2024</p>
               </div>
 
-              <div className="flex justify-end space-x-2">
-                <Button
-                  label="Close"
-                  icon="pi pi-times"
-                  onClick={() => setSelectedUser(null)}
-                />
+              <div className=" hidden">
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    label="Close"
+                    icon="pi pi-times"
+                    onClick={() => setSelectedUser(null)}
+                  />
+                </div>
               </div>
             </div>
           )}
