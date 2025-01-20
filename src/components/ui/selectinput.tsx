@@ -94,7 +94,7 @@ const SelectInput: React.FC<DropdownInputProps> = ({
         </div>
 
         {isOpen && (
-          <div className="absolute left-0 mt-1 bg-white shadow-lg rounded-[8px] z-10 dark:bg-gray-900 w-full max-h-60 overflow-y-auto">
+          <div className="absolute left-0 mt-1 bg-white shadow-lg rounded-[8px] z-10 dark:bg-gray-900 w-full max-h-60 overflow-y-auto scrollbar-hide scrollbar-hide::-webkit-scrollbar">
             {options.map((option) => (
               <div
                 key={option.value}

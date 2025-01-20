@@ -1,7 +1,8 @@
 import React from "react";
-import MomentNotificationCard from "../MomentNotificationCard";
 import ReminderNotificationCard from "../ReminderNotificationCard";
 import AdsNotificationCard from "../AdsNotificationCard";
+import AssetsNotificationCard from "../AssetsNotificationCard";
+import AssetsAdsNotificationCard from "../AssetsAdsNotificationCard";
 
 const AssetsNotification = () => {
   const handleDownload = () => {
@@ -12,8 +13,8 @@ const AssetsNotification = () => {
     console.log("Share triggered");
   };
   return (
-    <div className=" space-y-[20px]">
-      <MomentNotificationCard
+    <div className=" space-y-[20px] ">
+      <AssetsNotificationCard
         timeAgo="2 DAYS AGO"
         message=" Relive the moments! Highlights for Run This Town by Alor G have been uploaded "
         onDownload={handleDownload}
@@ -28,6 +29,12 @@ const AssetsNotification = () => {
       />
 
       <AdsNotificationCard
+        timeAgo="ADS BY VIVO"
+        message=" An ad about this item by this brand for $100 "
+        onDownload={handleDownload}
+        onShare={handleShare}
+      />
+      <AssetsAdsNotificationCard
         timeAgo="ADS BY VIVO"
         message=" An ad about this item by this brand for $100 "
         onDownload={handleDownload}

@@ -29,7 +29,7 @@ const PaymentMomentNotificationCard: FC<PaymentMomentNotificationCardProps> = ({
         <p className="font-[400] text-[16px] text-[#000000] leading-[25px]">
           {message} <span className="font-[600]">{highlight}</span>{" "}
         </p>
-        <div className="flex items-center gap-[10px] mt-[20px] text-[16px]">
+        <div className="flex items-center gap-[10px] mt-[14px] text-[16px]">
           <div
             className="w-10 h-[30px] rounded px-[10px] py-[4px] bg-[#000000] flex items-center justify-center cursor-pointer"
             onClick={onDownload}

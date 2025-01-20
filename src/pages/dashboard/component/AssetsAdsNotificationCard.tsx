@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { FC } from "react";
 
-interface AdsNotificationCardProps {
+interface AssetsAdsNotificationCardProps {
   timeAgo: string;
   message: string;
   highlight?: string;
@@ -9,7 +9,7 @@ interface AdsNotificationCardProps {
   onDownload: () => void;
 }
 
-const AdsNotificationCard: FC<AdsNotificationCardProps> = ({
+const AssetsAdsNotificationCard: FC<AssetsAdsNotificationCardProps> = ({
   timeAgo,
   message,
   highlight,
@@ -39,7 +39,7 @@ const AdsNotificationCard: FC<AdsNotificationCardProps> = ({
               className="h-8 rounded px-[10px] py-[8px] border bg-black flex items-center justify-center cursor-pointer"
               onClick={onShare}
             >
-              <p className="text-[#ffffff]">Discover</p>
+              <p className="text-[#ffffff]">Explore</p>
             </div>
             <div
               className="h-8 rounded px-[10px] py-[8px] border flex items-center justify-center cursor-pointer"
@@ -54,4 +54,4 @@ const AdsNotificationCard: FC<AdsNotificationCardProps> = ({
   );
 };
 
-export default AdsNotificationCard;
+export default AssetsAdsNotificationCard;

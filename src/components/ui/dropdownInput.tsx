@@ -167,7 +167,7 @@ const DropDownInput = React.forwardRef<HTMLInputElement, InputProps>(
                   onClick={() => handleOptionSelect(option.value, option.email)}
                   className="grid gap-[6px] px-4 py-2 text-sm text-gray-900 cursor-pointer hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
                 >
-                  <p className="font-[600] text-[16px] font-IBM text-[#212529]">
+                  <p className="font-[600] text-[14px] font-IBM text-[#212529]">
                     {option.label}
                   </p>
                   <p className="text-[14px] font-[400] text-[#212529] font-IBM">

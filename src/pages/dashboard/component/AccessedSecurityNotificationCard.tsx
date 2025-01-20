@@ -24,7 +24,7 @@ const AccessedSecurityNotificationCard: FC<
         <p className="font-[400] text-[16px] text-[#000000] leading-[25px]">
           {message} <span className="font-[600]">{highlight}</span>{" "}
         </p>
-        <div className="flex items-center gap-[10px] mt-[20px] ">
+        <div className="flex items-center gap-[10px] mt-[14px] ">
           <div
             className="text-[16px] h-8 rounded px-[10px] py-[8px] border bg-black flex items-center justify-center cursor-pointer"
             onClick={onShare}

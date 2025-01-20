@@ -56,7 +56,7 @@ const countryFlags = [
 const InsightChart = () => {
   return (
     <div className=" ">
-      <div className="mt-[20px] mb-[200px]">
+      <div className="mt-[20px] mb-[20px]">
         <div className=" grid grid-cols-1 lg:grid-cols-3 gap-[10px] w-full">
           <div className="border p-[20px] w-full rounded-[8px] space-y-[20px]  hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
             <div className="  border-b pb-[20px]">

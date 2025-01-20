@@ -38,11 +38,11 @@ const TopNav: FC = () => {
           </div>
 
           {isSidebarOpen && (
-            <>
-              <div className="absolute top-[35px] right-0 w-[350px] h-screen bg-white shadow-lg z-50 border border-gray-200 rounded-[8px] overflow-y-auto font-IBM">
-                <div className="sticky top-0  z-50">
-                  <div className="flex items-center text-[#000000] justify-between  p-4 border-b bg-[#f4faff]">
-                    <div className="flex items-center gap-[20px] text-[16px] ">
+            <div className=" ">
+              <div className="absolute top-[35px] right-0 w-[350px] h-screen bg-white shadow-lg z-50 border border-gray-200 rounded-[8px] flex flex-col scrollbar-hide scrollbar-hide::-webkit-scrollbar">
+                <div className="sticky top-0 z-50">
+                  <div className="flex items-center text-[#000000] justify-between p-4 border-b bg-[#f4faff]">
+                    <div className="flex items-center gap-[20px] text-[16px]">
                       <p
                         className={`cursor-pointer ${
                           activeMainTab === "updates"
@@ -56,8 +56,8 @@ const TopNav: FC = () => {
                       <p
                         className={`cursor-pointer ${
                           activeMainTab === "drops"
-                            ? "text-[#000000]  font-[500]"
-                            : "text-[#767676]  font-[400]"
+                            ? "text-[#000000] font-[500]"
+                            : "text-[#767676] font-[400]"
                         }`}
                         onClick={() => handleMainTabClick("drops")}
                       >
@@ -76,7 +76,7 @@ const TopNav: FC = () => {
                     {activeMainTab === "updates" && (
                       <>
                         <button
-                          className={` text-[16px] ${
+                          className={`text-[16px] ${
                             activeInnerTab === "campaign"
                               ? "text-[#0875d3] font-[500]"
                               : "text-[#000000] font-[400]"
@@ -86,7 +86,7 @@ const TopNav: FC = () => {
                           Campaign
                         </button>
                         <button
-                          className={` text-[16px] ${
+                          className={`text-[16px] ${
                             activeInnerTab === "milestones"
                               ? "text-[#ff5700] font-[500]"
                               : "text-[#000000] font-[400]"
@@ -96,7 +96,7 @@ const TopNav: FC = () => {
                           Milestones
                         </button>
                         <button
-                          className={` text-[16px] ${
+                          className={`text-[16px] ${
                             activeInnerTab === "security"
                               ? "text-[#767676] font-[500]"
                               : "text-[#000000] font-[400]"
@@ -107,11 +107,10 @@ const TopNav: FC = () => {
                         </button>
                       </>
                     )}
-
                     {activeMainTab === "drops" && (
                       <>
                         <button
-                          className={`text-[16px]  ${
+                          className={`text-[16px] ${
                             activeInnerTab === "assets"
                               ? "text-[#01a733] font-[500]"
                               : "text-[#000000] font-[400]"
@@ -121,7 +120,7 @@ const TopNav: FC = () => {
                           Assets
                         </button>
                         <button
-                          className={`text-[16px]  ${
+                          className={`text-[16px] ${
                             activeInnerTab === "payment"
                               ? "text-[#c304f1] font-[500]"
                               : "text-[#000000] font-[400]"
@@ -135,7 +134,7 @@ const TopNav: FC = () => {
                   </div>
                 </div>
 
-                <div className="text-sm text-gray-600 px-4 py-4">
+                <div className="text-sm text-gray-600 px-4 py-4 flex-1 overflow-y-auto scrollbar-hide scrollbar-hide::-webkit-scrollbar">
                   {activeMainTab === "updates" &&
                     activeInnerTab === "campaign" && (
                       <div>
@@ -166,8 +165,15 @@ const TopNav: FC = () => {
                       </div>
                     )}
                 </div>
+                {activeMainTab === "drops" && activeInnerTab === "assets" && (
+                  <div className="bg-black px-4 py-[4px] rounded text-center mx-4 mb-4">
+                    <button className="text-white font-medium text-[14px] w-full font-IBM">
+                      View All Assets
+                    </button>
+                  </div>
+                )}
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>

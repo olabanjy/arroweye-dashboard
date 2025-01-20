@@ -408,7 +408,7 @@ const ProjectDetails = () => {
 
         <InsightChart />
 
-        <div className=" mt-[20px] lg:mt-[50px] ">
+        <div className="  ">
           <Schedule filterIcon={false} />
         </div>
 

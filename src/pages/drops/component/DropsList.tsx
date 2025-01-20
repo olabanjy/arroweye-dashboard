@@ -10,7 +10,7 @@ const DropsList = () => {
           Drops
         </p>
       </div>
-      <div className="max-h-[1000px] overflow-y-auto ">
+      <div className="max-h-[1000px] overflow-y-auto scrollbar-hide scrollbar-hide::-webkit-scrollbar">
         <div className="border-b">
           <div className="flex items-center gap-[10px] p-[20px]">
             <div className="bg-[#e6ff99] text-[#01a733] p-[10px] rounded-[8px] inline-flex">
