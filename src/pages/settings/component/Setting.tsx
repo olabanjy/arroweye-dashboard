@@ -119,28 +119,28 @@ const Setting = () => {
           {renderCopyInput(
             "USER DETAILS",
             vendorName,
-            false,
+            toggleNotifications,
             "text",
             (e) => setVendorName(e.target.value),
             "User Details"
           )}
-          {renderCopyInput("", email, false, "email", (e) =>
+          {renderCopyInput("", email, toggleNotifications, "email", (e) =>
             setEmail(e.target.value)
           )}
-          {renderCopyInput("", labelName, false, "text", (e) =>
+          {renderCopyInput("", labelName, toggleNotifications, "text", (e) =>
             setLabelName(e.target.value)
           )}
-
           {renderCopyInput(
-            "NOTIFICATIONS",
+            "",
             phone,
-            false,
+            toggleNotifications,
             "text",
-            (e) => setPhone(e.target.value),
-            "Notification"
+            (e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 15)),
+            ""
           )}
-          <div className=" flex gap-[10px] items-end flex-1">
-            <div className=" mb-[4px]">
+
+          <div className="flex gap-[10px] items-end flex-1">
+            <div className="mb-[4px]">
               <InputSwitch
                 id="phone"
                 checked={toggleNotifications}
