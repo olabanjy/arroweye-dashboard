@@ -48,10 +48,17 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
         {MomentsTitle}
       </p>
 
-      <div className="relative ">
+      <div className="relative">
+        <div
+          className="absolute left-[15px] top-1/2 transform -translate-y-1/2 cursor-pointer z-10 bg-opacity-50 bg-black rounded-full p-3"
+          onClick={() => sliderRef.current?.slickPrev()}
+        >
+          <HiMiniArrowLeft className="text-white text-[14px]" />
+        </div>
+
         <Slider ref={sliderRef} {...sliderSettings}>
           {images?.map((image, index) => (
-            <div key={index} className="relative w-full h-[300px] ">
+            <div key={index} className="relative w-full h-[300px]">
               <Image
                 src={image}
                 alt={`Slide ${index + 1}`}
@@ -59,21 +66,16 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
                 width={500}
                 height={300}
               />
-              <div
-                className="absolute left-[15px] top-1/2 transform -translate-y-1/2 cursor-pointer z-10 bg-opacity-50 bg-black rounded-full p-3"
-                onClick={() => sliderRef.current?.slickPrev()}
-              >
-                <HiMiniArrowLeft className="text-white text-[14px]" />
-              </div>
-              <div
-                className="absolute right-[15px] top-1/2 transform -translate-y-1/2 cursor-pointer z-10 bg-opacity-50 bg-black rounded-full p-3"
-                onClick={() => sliderRef.current?.slickNext()}
-              >
-                <HiMiniArrowRight className="text-white text-[14px]" />
-              </div>
             </div>
           ))}
         </Slider>
+
+        <div
+          className="absolute right-[15px] top-1/2 transform -translate-y-1/2 cursor-pointer z-10 bg-opacity-50 bg-black rounded-full p-3"
+          onClick={() => sliderRef.current?.slickNext()}
+        >
+          <HiMiniArrowRight className="text-white text-[14px]" />
+        </div>
       </div>
 
       <div className="space-y-[5px] flex flex-col items-center justify-center">

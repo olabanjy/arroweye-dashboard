@@ -247,7 +247,7 @@ const InvoicesTab = () => {
                   placeholder="E-mail"
                   value={formData.email}
                   onChange={(e) => handleInputChange(e)}
-                  className=" text-[17px]"
+                  className=" text-[14px]"
                   // options={[
                   //   {
                   //     value: "1",

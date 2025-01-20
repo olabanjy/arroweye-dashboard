@@ -17,7 +17,7 @@ const AdsNotificationCard: FC<AdsNotificationCardProps> = ({
 }) => {
   return (
     <div className=" pb-[20px] border-b">
-      <div className="flex items-start gap-[10px] h-[120px] ">
+      <div className="flex items-start gap-[10px] h-[120px]">
         <div className=" flex-shrink relative w-[70px] h-full aspect-square ">
           <Image
             src="/assets/image (1).webp"

@@ -98,14 +98,14 @@ const Users = () => {
           onClose={() => setIsModalOpen(false)}
           maxWidth=" max-w-[300px]"
         >
-          <p className="text-[#7c7e81] text-[14px] uppercase">
+          <p className="text-[#7c7e81] text-[14px] uppercase font-IBM">
             Member Information
           </p>
           <div className="space-y-[20px] my-[20px]">
-            <p className="text-2xl font-bold">
+            <p className="text-2xl font-bold font-IBM">
               {selectedUser.staff[0].fullname}
             </p>
-            <div className="space-y-[10px]">
+            <div className="space-y-[10px] font-IBM">
               <div>
                 <p className="text-[#818486]">Email</p>
                 <p>{selectedUser.staff[0].staff_email || " "}</p>
@@ -127,7 +127,7 @@ const Users = () => {
                 <p className="text-[#000000] font-[600] flex items-center gap-[5px]">
                   {selectedUser.staff[0].licenses || 0}{" "}
                   <span>
-                    <IoIosAddCircle size={35} />
+                    <IoIosAddCircle size={20} />
                   </span>
                 </p>
               </div>

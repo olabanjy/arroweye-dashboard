@@ -444,8 +444,8 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-[20px]">
+              <div className="flex items-center gap-[5px]  lg:justify-between">
+                <div className="flex items-center gap-[5px] lg:gap-[20px]">
                   <button
                     className="cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
                     type="submit"
