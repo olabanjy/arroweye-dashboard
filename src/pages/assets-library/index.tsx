@@ -73,52 +73,46 @@ const AssetsLibrary = () => {
       </div>
       {filter && (
         <div className="my-[10px]">
-          <div className="flex items-center gap-[10px] mb-[20px]">
-            <div className="max-w-[200px] w-full rounded-full">
+          <div className="flex items-center flex-wrap gap-[10px] mb-[20px]">
+            <div className="max-w-[150px] w-full rounded-full">
               <SelectInput
+                placeholder="Year"
                 rounded={true}
                 options={[
-                  { value: "", label: "Year" },
                   { value: "2024", label: "2024" },
                   { value: "2023", label: "2023" },
                 ]}
               />
             </div>
-            <div className="max-w-[200px] w-full rounded-full">
+            <div className="max-w-[150px] w-full rounded-full">
               <SelectInput
+                placeholder="Month"
                 rounded={true}
                 options={[
-                  { value: "", label: "Month" },
                   { value: "january", label: "January" },
                   { value: "february", label: "February" },
                 ]}
               />
             </div>
-            <div className="max-w-[200px] w-full">
+            <div className="max-w-[150px] w-full">
               <SelectInput
+                placeholder="Vendor"
                 rounded={true}
-                options={[
-                  { value: "", label: "Vendor" },
-                  { value: "naville", label: "NAVILLE" },
-                ]}
+                options={[{ value: "naville", label: "NAVILLE" }]}
               />
             </div>
-            <div className="max-w-[200px] w-full">
+            <div className="max-w-[150px] w-full">
               <SelectInput
+                placeholder="Sub-Vendor"
                 rounded={true}
-                options={[
-                  { value: "", label: "Sub-Vendor" },
-                  { value: "naville", label: "NAVILLE" },
-                ]}
+                options={[{ value: "naville", label: "NAVILLE" }]}
               />
             </div>
-            <div className="max-w-[200px] w-full">
+            <div className="max-w-[150px] w-full">
               <SelectInput
+                placeholder="Platform"
                 rounded={true}
-                options={[
-                  { value: "", label: "Platform" },
-                  { value: "naville", label: "NAVILLE" },
-                ]}
+                options={[{ value: "naville", label: "NAVILLE" }]}
               />
             </div>
           </div>
