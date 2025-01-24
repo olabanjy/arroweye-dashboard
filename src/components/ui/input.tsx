@@ -15,6 +15,7 @@ const Tooltip = ({ info }: { info: string }) => (
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  labelClassName?: string;
   error?: string;
   validate?: "email" | "otp" | "datetime";
   info?: string;
@@ -56,6 +57,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
     {
       label,
+      labelClassName,
       type = "text",
       className,
       error,
@@ -99,7 +101,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {label && (
             <label
               htmlFor={props.id}
-              className="tracking-[.1rem] text-[12px] font-[400] text-[#212529] leading-[18px]"
+              className={cn(
+                "tracking-[.1rem] text-[12px] font-[400] text-[#212529] leading-[18px]",
+                labelClassName
+              )}
             >
               {label}
             </label>

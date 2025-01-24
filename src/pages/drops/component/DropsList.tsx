@@ -1,131 +1,51 @@
-import React from "react";
-import { IoCopy } from "react-icons/io5";
-import { MdOutlineFileDownload } from "react-icons/md";
+import React, { useState } from "react";
+import DropZoneInput from "./DropZoneInput";
+import AssetsNotificationCard from "@/pages/dashboard/component/AssetsNotificationCard";
+import DropForm from "./DropForm";
 
 const DropsList = () => {
+  const [isUnlocked, setIsUnlocked] = useState(false);
+
+  const handleDownload = () => {
+    console.log("Download triggered");
+  };
+
+  const handleShare = () => {
+    console.log("Share triggered");
+  };
+
+  const handleUnlock = () => {
+    setIsUnlocked(true);
+  };
+
   return (
-    <div>
-      <div className="border border-[#f4f0f0]">
-        <p className="border px-[16px] py-[8px] bg-[#f4faff] font-[600]">
-          Drops
-        </p>
+    <div className="mt-[50px] grid lg:grid-cols-2 items-start gap-[20px]">
+      <div className="border border-[#f4f0f0] max-h-[800px] h-full">
+        <div className="border-b border-[#f4f0f0]">
+          <p className="border px-[16px] py-[8px] bg-[#f4faff] text-[16px] text-[#212529] font-[900]">
+            Drops
+          </p>
+        </div>
+        <div className="h-[600px] overflow-y-auto scrollbar-hide scrollbar-hide::-webkit-scrollbar">
+          {[...Array(5)].map((_, index) => (
+            <div key={index} className="p-[20px]">
+              <AssetsNotificationCard
+                timeAgo="2 DAYS AGO"
+                message="Relive the moments! Highlights for Run This Town by Alor G have been uploaded"
+                onDownload={handleDownload}
+                onShare={handleShare}
+              />
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="max-h-[1000px] overflow-y-auto scrollbar-hide scrollbar-hide::-webkit-scrollbar">
-        <div className="border-b">
-          <div className="flex items-center gap-[10px] p-[20px]">
-            <div className="bg-[#e6ff99] text-[#01a733] p-[10px] rounded-[8px] inline-flex">
-              <IoCopy />
-            </div>
-            <div className="space-y-[10px]">
-              <p className="uppercase text-[8px] text-[#999999]">2 DAYS AGO</p>
-              <p>
-                <span className="font-[600]">Run This Town (Motion edits)</span>{" "}
-                has been uploaded for{" "}
-                <span className="font-[600]">Run This Town</span>
-              </p>
-              <div className="flex items-center gap-[10px]">
-                <div className="bg-[#000] text-[#ffffff] p-[10px] rounded inline-flex">
-                  <MdOutlineFileDownload />
-                </div>
-                <div className="border border-[#eeeeee] text-[#00000] px-[10px] py-[5px] rounded inline-flex">
-                  <p className="font-[400] text-[18px]">Share</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="border-b">
-          <div className="flex items-center gap-[10px] p-[20px]">
-            <div className="bg-[#e6ff99] text-[#01a733] p-[10px] rounded-[8px] inline-flex">
-              <IoCopy />
-            </div>
-            <div className="space-y-[10px]">
-              <p className="uppercase text-[8px] text-[#999999]">2 DAYS AGO</p>
-              <p>
-                <span className="font-[600]">Run This Town (Motion edits)</span>{" "}
-                has been uploaded for{" "}
-                <span className="font-[600]">Run This Town</span>
-              </p>
-              <div className="flex items-center gap-[10px]">
-                <div className="bg-[#000] text-[#ffffff] p-[10px] rounded inline-flex">
-                  <MdOutlineFileDownload />
-                </div>
-                <div className="border border-[#eeeeee] text-[#00000] px-[10px] py-[5px] rounded inline-flex">
-                  <p className="font-[400] text-[18px]">Share</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="border-b">
-          <div className="flex items-center gap-[10px] p-[20px]">
-            <div className="bg-[#e6ff99] text-[#01a733] p-[10px] rounded-[8px] inline-flex">
-              <IoCopy />
-            </div>
-            <div className="space-y-[10px]">
-              <p className="uppercase text-[8px] text-[#999999]">2 DAYS AGO</p>
-              <p>
-                <span className="font-[600]">Run This Town (Motion edits)</span>{" "}
-                has been uploaded for{" "}
-                <span className="font-[600]">Run This Town</span>
-              </p>
-              <div className="flex items-center gap-[10px]">
-                <div className="bg-[#000] text-[#ffffff] p-[10px] rounded inline-flex">
-                  <MdOutlineFileDownload />
-                </div>
-                <div className="border border-[#eeeeee] text-[#00000] px-[10px] py-[5px] rounded inline-flex">
-                  <p className="font-[400] text-[18px]">Share</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="border-b">
-          <div className="flex items-center gap-[10px] p-[20px]">
-            <div className="bg-[#e6ff99] text-[#01a733] p-[10px] rounded-[8px] inline-flex">
-              <IoCopy />
-            </div>
-            <div className="space-y-[10px]">
-              <p className="uppercase text-[8px] text-[#999999]">2 DAYS AGO</p>
-              <p>
-                <span className="font-[600]">Run This Town (Motion edits)</span>{" "}
-                has been uploaded for{" "}
-                <span className="font-[600]">Run This Town</span>
-              </p>
-              <div className="flex items-center gap-[10px]">
-                <div className="bg-[#000] text-[#ffffff] p-[10px] rounded inline-flex">
-                  <MdOutlineFileDownload />
-                </div>
-                <div className="border border-[#eeeeee] text-[#00000] px-[10px] py-[5px] rounded inline-flex">
-                  <p className="font-[400] text-[18px]">Share</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="border-b">
-          <div className="flex items-center gap-[10px] p-[20px]">
-            <div className="bg-[#e6ff99] text-[#01a733] p-[10px] rounded-[8px] inline-flex">
-              <IoCopy />
-            </div>
-            <div className="space-y-[10px]">
-              <p className="uppercase text-[8px] text-[#999999]">2 DAYS AGO</p>
-              <p>
-                <span className="font-[600]">Run This Town (Motion edits)</span>{" "}
-                has been uploaded for{" "}
-                <span className="font-[600]">Run This Town</span>
-              </p>
-              <div className="flex items-center gap-[10px]">
-                <div className="bg-[#000] text-[#ffffff] p-[10px] rounded inline-flex">
-                  <MdOutlineFileDownload />
-                </div>
-                <div className="border border-[#eeeeee] text-[#00000] px-[10px] py-[5px] rounded inline-flex">
-                  <p className="font-[400] text-[18px]">Share</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+
+      <div className="max-h-[800px] h-full overflow-y-auto scrollbar-hide scrollbar-hide::-webkit-scrollbar border rounded-[8px] border-[#f4f0f0] p-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+        {isUnlocked === false ? (
+          <DropZoneInput onUnlock={handleUnlock} />
+        ) : (
+          <DropForm />
+        )}
       </div>
     </div>
   );

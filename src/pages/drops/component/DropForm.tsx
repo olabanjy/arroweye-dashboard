@@ -39,8 +39,8 @@ const DropForm = () => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="space-y-[20px]">
-        <p className="font-[500] text-[18px]">Drop em!</p>
-        <p className="font-[400] text-[16px]">
+        <p className="font-[500] text-[18px] text-[#212529]">Drop em!</p>
+        <p className="font-[400] text-[16px] text-[#212529]">
           Fill accurately with link details
         </p>
       </div>
@@ -82,13 +82,13 @@ const DropForm = () => {
           placeholder=""
           readOnly
           className="w-full rounded-[8px]"
-          value="Read-Only Value"
+          value=""
         />
         <button
           type="submit"
-          className="font-bold gap-[10px] px-4 py-2 text-white bg-[#e4055a] rounded-[8px] hover:bg-[#000000] flex items-center"
+          className="font-[600] text-[16px] gap-[10px] px-4 h-[50px] text-white bg-[#e4055a] rounded-[8px] hover:bg-[#000000] flex items-center"
         >
-          Unlock <IoCloudUploadOutline size={14} />
+          Upload <IoCloudUploadOutline size={14} className=" font-bold" />
         </button>
       </div>
     </form>

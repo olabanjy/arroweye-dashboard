@@ -8,14 +8,18 @@ interface DropZoneInputProps {
 
 const DropZoneInput: React.FC<DropZoneInputProps> = ({ onUnlock }) => {
   return (
-    <div className="flex items-end gap-[10px]">
-      <Input
-        label="Unlock Dropzone"
-        type="password"
-        placeholder="Enter password"
-      />
+    <div className="flex items-end gap-[10px] w-full">
+      <div className=" flex-grow ">
+        <Input
+          label="Unlock Dropzone"
+          type="password"
+          placeholder="Enter 6-Digit PIN"
+          className=" w-full "
+          labelClassName=" text-[18px] font-[500] text-[#212529]"
+        />
+      </div>
       <button
-        className="font-bold gap-[10px] px-4 py-2 text-white bg-[#e4055a] rounded-[8px] hover:bg-[#000000] flex items-center"
+        className="font-[600] text-[16px] gap-[10px] px-4 h-[50px] text-white bg-[#e4055a] rounded-[8px] hover:bg-[#000000] flex items-center"
         onClick={onUnlock}
       >
         Unlock <LucideLockKeyhole size={14} />
