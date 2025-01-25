@@ -90,7 +90,7 @@ const Invoice = () => {
           {
             content: (
               <div key={`manage-button-${index}`} className=" text-start">
-                <Link href={`/campaigns/${item.id}`}>
+                <Link href={`/payments/${item.id}`}>
                   {item?.project?.title}
                 </Link>
               </div>
