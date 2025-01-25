@@ -9,23 +9,33 @@ import { IoIosArrowRoundDown } from "react-icons/io";
 import { FiMinus } from "react-icons/fi";
 import LibraryCard from "./component/LibraryCard";
 import { Dialog } from "primereact/dialog";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const users = [
-  { initials: "JJ", fullName: "John Jerome Video", email: "john@example.com" },
+  {
+    initials: "JJ",
+    fullName: "John Jerome Video",
+    email: "john@example.com",
+    link: "https://example.com/john",
+  },
   {
     initials: "EO",
     fullName: "Emily O'Connor Video",
     email: "emily@example.com",
+    link: "https://example.com/emily",
   },
   {
     initials: "MD",
     fullName: "Michael Douglas Video",
     email: "michael@example.com",
+    link: "https://example.com/michael",
   },
   {
     initials: "SO",
     fullName: "Sarah O'Neil Video",
     email: "sarah@example.com",
+    link: "https://example.com/sarah",
   },
 ];
 
@@ -58,6 +68,19 @@ const AssetsLibrary = () => {
 
   const handleUserClick = (user: User) => {
     setSelectedUser(user);
+  };
+
+  const handleCopyLink = (link: string) => {
+    navigator.clipboard.writeText(link).then(() => {
+      toast.success("Link has been copied!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    });
   };
 
   return (
@@ -136,11 +159,11 @@ const AssetsLibrary = () => {
         </div>
       )}
       <div className="mt-[20px]">
-        <div className="flex flex-wrap gap-4 h-full">
+        <div className=" grid md:grid-cols-2 lg:grid-cols-3 gap-4 h-full ">
           {users.map((user) => {
             const randomColor = getRandomColor();
             return (
-              <div key={user.email} className="group">
+              <div key={user.email} className="group w-full">
                 <LibraryCard
                   title={`${user.fullName}`}
                   mainIcon={
@@ -172,7 +195,10 @@ const AssetsLibrary = () => {
                     },
                     {
                       element: (
-                        <div className="border border-[#000] text-[#000] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer">
+                        <div
+                          className="border border-[#000] text-[#000] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer"
+                          onClick={() => handleCopyLink(user.link)}
+                        >
                           <FaRegCopy size={14} />
                         </div>
                       ),
