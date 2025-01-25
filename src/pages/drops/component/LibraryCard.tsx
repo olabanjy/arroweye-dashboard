@@ -22,8 +22,10 @@ const LibraryCard: React.FC<CardProps> = ({
   buttons = [],
 }) => {
   return (
-    <div className="py-[20px] px-[10px] border rounded-[8px] min-w-[300px] max-w-[350px] h-[200px] flex flex-col justify-between space-y-[10px] group">
-      <p className="text-[16px] md:text-[18px]">{title}</p>
+    <div className="hover:bg-blue-500 hover:bg-opacity-5 hover:border hover:border-blue-500 font-IBM py-[20px] px-[10px] border rounded-[20px] min-w-[300px] max-w-[350px] w-full h-[200px] flex flex-col justify-between space-y-[10px] group">
+      <p className="text-[16px] md:text-[18px] font-[500] text-[#212529]">
+        {title}
+      </p>
 
       <div className="flex items-center justify-between">
         {mainIcon || <FaGoogleDrive className="text-[#cbcbcb]" size={14} />}
