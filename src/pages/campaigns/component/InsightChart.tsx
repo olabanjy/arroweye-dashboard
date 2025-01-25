@@ -53,12 +53,27 @@ const countryFlags = [
   { flag: "🇩🇪", name: "Germany" },
 ];
 
-const InsightChart = () => {
+interface InsightChartProps {
+  editMode?: boolean;
+}
+
+const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   return (
     <div className=" ">
       <div className="mt-[20px] mb-[20px]">
-        <div className=" grid grid-cols-1 lg:grid-cols-3 gap-[10px] w-full">
+        <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px] w-full">
           <div className="border p-[20px] w-full rounded-[8px] space-y-[20px]  hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+            {editMode && (
+              <div className=" space-y-[20px]">
+                <p className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
+                  add data
+                </p>
+                <p className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
+                  add media
+                </p>
+              </div>
+            )}
+
             <div className="  border-b pb-[20px]">
               <DoughnutChart
                 title="AIRPLAY"
@@ -91,6 +106,17 @@ const InsightChart = () => {
             />
           </div>
           <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+            {editMode && (
+              <div className=" space-y-[20px]">
+                <p className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
+                  add data
+                </p>
+                <p className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
+                  add media
+                </p>
+              </div>
+            )}
+
             <div className="  border-b pb-[20px] ">
               <DoughnutChart
                 title="AIRPLAY"
@@ -124,6 +150,17 @@ const InsightChart = () => {
             />
           </div>
           <div className="border p-[20px]  rounded-[8px] space-y-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+            {editMode && (
+              <div className=" space-y-[20px]">
+                <p className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
+                  add data
+                </p>
+                <p className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
+                  add media
+                </p>
+              </div>
+            )}
+
             <div className="  border-b pb-[20px] ">
               <DoughnutChart
                 title="AIRPLAY"

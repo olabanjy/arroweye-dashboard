@@ -4,7 +4,7 @@ import InsightCard from "./InsightCard";
 const ProjectSingleInsight = () => {
   return (
     <div className="mt-[20px] relative ">
-      <div className="grid lg:grid-cols-3 gap-[10px] 2xl:gap-[20px] relative">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[10px] 2xl:gap-[20px] relative">
         <div className="w-full">
           <InsightCard
             title="TOTAL INVESTMENT "

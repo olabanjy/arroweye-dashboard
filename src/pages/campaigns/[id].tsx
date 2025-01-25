@@ -213,6 +213,8 @@ const ProjectDetails = () => {
     });
   }, [id]);
 
+  console.log(content);
+
   const predefinedColors = [
     "bg-blue-500",
     "bg-green-500",
@@ -406,7 +408,7 @@ const ProjectDetails = () => {
           </div>
         </form>
 
-        <InsightChart />
+        <InsightChart editMode={toggleNotifications} />
 
         <div className="  ">
           <Schedule filterIcon={false} />
