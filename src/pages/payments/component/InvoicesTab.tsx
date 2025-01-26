@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { IoFilter } from "react-icons/io5";
-import { MdOutlineGroupAdd } from "react-icons/md";
+import { MdOutlineGroupAdd, MdOutlineSettings } from "react-icons/md";
 import Invoice from "./Invoice";
 import { SelectInput } from "@/components/ui/selectinput";
 import Users from "./Users";
@@ -9,12 +9,15 @@ import { Dialog } from "primereact/dialog";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { CreateBusiness } from "@/services/api";
 import { DropDownInput } from "@/components/ui/dropdownInput";
-import { TbBuildingBank } from "react-icons/tb";
+import CompanyDetailsForm from "./CompanyDetailsForm";
+
+// import { TbBuildingBank } from "react-icons/tb";
 
 const InvoicesTab = () => {
   const [activeTab, setActiveTab] = useState("Invoice");
   const [filter, setFilter] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [detailsModal, setDetailsModal] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -30,6 +33,9 @@ const InvoicesTab = () => {
     type: "",
   });
 
+  const showDetailsDialog = () => {
+    setDetailsModal(true);
+  };
   // const handleInputChange = (
   //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   // ) => {
@@ -44,13 +50,11 @@ const InvoicesTab = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    console.log("Input Change - name:", name, "value:", value);
     setFormData((prev) => {
       const newState = {
         ...prev,
         [name]: value,
       };
-      console.log("New formData:", newState);
       return newState;
     });
   };
@@ -166,8 +170,11 @@ const InvoicesTab = () => {
               >
                 <MdOutlineGroupAdd />
               </div>
-              <div className="p-[16px] hover:bg-[#000000] hover:text-white border border-[#000000] text-[#000000] rounded-full">
-                <TbBuildingBank />
+              <div
+                className=" cursor-pointer p-[16px] hover:bg-[#000000] hover:text-white border border-[#000000] text-[#000000] rounded-full"
+                onClick={showDetailsDialog}
+              >
+                <MdOutlineSettings />
               </div>
             </div>
           </div>
@@ -218,6 +225,10 @@ const InvoicesTab = () => {
         {activeTab === "Users" && <Users />}
       </div>
 
+      <CompanyDetailsForm
+        visible={detailsModal}
+        onHide={() => setDetailsModal(false)}
+      />
       <div
         className={`custom-dialog-overlay  ${
           visible ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50" : "hidden"
