@@ -25,6 +25,26 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
   const [isEditable, setIsEditable] = useState(false);
   const [isPaymentEditable, setIsPaymentEditable] = useState(false);
 
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsEditable(true);
+  };
+
+  const handleSaveClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsEditable(true);
+  };
+
+  const handlePaymentEditClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsPaymentEditable(true);
+  };
+
+  const handlePaymentSaveClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsPaymentEditable(true);
+  };
+
   const [formData, setFormData] = useState({
     email: "example@gmail.com",
     company_name: "Naville Jones",
@@ -351,13 +371,13 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                 <div className="flex items-center space-x-2">
                   <button
                     // type="submit"
-                    onClick={() => setIsEditable(false)}
+                    onClick={handleSaveClick}
                     className="font-IBM  text-[14px] text-white hover:text-[#000000] bg-[#000000] border border-[#000000] hover:bg-[#ffffff] hover:border-[#000000] py-[8px] px-[20px] rounded "
                   >
                     Save
                   </button>
                   <button
-                    onClick={() => setIsEditable(true)}
+                    onClick={handleEditClick}
                     className="font-IBM  text-[14px] text-white hover:text-[#000000] bg-[#000000] border border-[#000000] hover:bg-[#ffffff] hover:border-[#000000] py-[8px] px-[20px] rounded"
                   >
                     Edit
@@ -476,13 +496,13 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                 <div className="flex items-center space-x-2">
                   <button
                     // type="submit"
-                    onClick={() => setIsPaymentEditable(false)}
+                    onClick={handlePaymentSaveClick}
                     className="font-IBM  text-[14px] text-white hover:text-[#000000] bg-[#000000] border border-[#000000] hover:bg-[#ffffff] hover:border-[#000000] py-[8px] px-[20px] rounded "
                   >
                     Save
                   </button>
                   <button
-                    onClick={() => setIsPaymentEditable(true)}
+                    onClick={handlePaymentEditClick}
                     className="font-IBM  text-[14px] text-white hover:text-[#000000] bg-[#000000] border border-[#000000] hover:bg-[#ffffff] hover:border-[#000000] py-[8px] px-[20px] rounded"
                   >
                     Edit
