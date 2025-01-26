@@ -143,11 +143,15 @@ export const CreateService = async (payload: unknown): Promise<void> => {
 
     console.log(response);
     toast.success("Service Created Successful!");
-    window.location.reload();
+    // window.location.reload();
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || error.response?.data[0]);
+        toast.error(
+          error.response?.data?.message ||
+            error.response?.data[0] ||
+            error.response?.data.name[0]
+        );
       } else if (error.response?.status === 403) {
         toast.error(error.response?.data?.message || "Access denied.");
       } else {
@@ -239,7 +243,6 @@ export const AddStaff = async (payload: unknown): Promise<void> => {
 
     console.log(response);
     toast.success("Adding Staff successful! Redirecting...");
-    window.location.reload();
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {

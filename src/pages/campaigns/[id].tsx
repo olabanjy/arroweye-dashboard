@@ -164,6 +164,10 @@ const ProjectDetails = () => {
           role: "",
           fullname: "",
         });
+
+        getSingleProject(Number(id)).then((fetchedContent) => {
+          setContent(fetchedContent);
+        });
       })
       .catch((err) => {
         console.error("Error in AddStaff submission:");

@@ -170,6 +170,9 @@ const Manage = () => {
         .then(() => {
           console.log("Form submitted successfully!");
           hideDialog();
+          getService().then((fetchedContent) => {
+            setContent(fetchedContent);
+          });
         })
         .catch((err) => {
           console.error("Error submitting form:", err);
@@ -544,20 +547,22 @@ const Manage = () => {
             ))}
           </div>
 
-          <div className="flex items-center gap-[10px] my-[40px]">
-            <button
-              type="submit"
-              className="cursor-pointer rounded-[4px] px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline"
-            >
-              Save
-            </button>
-            <div className="cursor-pointer rounded-[4px] px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline-flex items-start gap-[4px]">
-              <p>Download</p>
-              <sup className="font-bold p-[8px] rounded-full bg-white text-black">
-                PDF
-              </sup>
+          {items.length > 0 && (
+            <div className="flex items-center gap-[10px] my-[40px]">
+              <button
+                type="submit"
+                className="cursor-pointer rounded-[4px] px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline"
+              >
+                Save
+              </button>
+              <div className="cursor-pointer rounded-[4px] px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline-flex items-start gap-[4px]">
+                <p>Download</p>
+                <sup className="font-bold p-[8px] rounded-full bg-white text-black">
+                  PDF
+                </sup>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="mt-[20px] ">
             {selectedService && (
