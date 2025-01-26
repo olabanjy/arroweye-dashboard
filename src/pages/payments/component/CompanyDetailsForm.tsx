@@ -32,7 +32,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
 
   const handleSaveClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsEditable(true);
+    setIsEditable(false);
   };
 
   const handlePaymentEditClick = (e: React.MouseEvent) => {
@@ -42,7 +42,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
 
   const handlePaymentSaveClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsPaymentEditable(true);
+    setIsPaymentEditable(false);
   };
 
   const [formData, setFormData] = useState({
