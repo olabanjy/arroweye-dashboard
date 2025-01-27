@@ -1,9 +1,11 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import PieChart from "@/pages/payments/component/PieChart";
 import { ChartData } from "chart.js";
 import DoughnutChart from "@/pages/payments/component/Doughnut";
 import MomentCard from "../public/component/MomentCard";
 import MomentSliderCard from "../public/component/MomentSliderCard";
+import AddData from "./AddData";
 
 const chartDataForDoughnut: ChartData<"doughnut", number[], string> = {
   labels: ["Radio", "Cable", "TV", "DJ"],
@@ -58,6 +60,8 @@ interface InsightChartProps {
 }
 
 const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
+  const [detailsModal, setDetailsModal] = useState(false);
+
   return (
     <div className=" ">
       <div className="mt-[20px] mb-[20px]">
@@ -65,7 +69,10 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
           <div className="border p-[20px] w-full rounded-[8px] space-y-[20px]  hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
             {editMode && (
               <div className=" space-y-[20px]">
-                <p className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
+                <p
+                  className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
+                  onClick={() => setDetailsModal(true)}
+                >
                   add data
                 </p>
                 <p className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
@@ -119,7 +126,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
             <div className="  border-b pb-[20px] ">
               <DoughnutChart
-                title="AIRPLAY"
+                title="SOCIAL MEDIA"
                 value="1M"
                 selectOptions={selectOptions}
                 chartData={chartDataForDoughnut}
@@ -163,7 +170,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
             <div className="  border-b pb-[20px] ">
               <DoughnutChart
-                title="AIRPLAY"
+                title="DSP"
                 value="1M"
                 selectOptions={selectOptions}
                 chartData={chartDataForDoughnut}
@@ -214,6 +221,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
           </div>
         </div>
       </div>
+      <AddData visible={detailsModal} onHide={() => setDetailsModal(false)} />
       <div className="fixed bottom-[30px] lg:left-32 right-0 flex justify-center z-30 w-full">
         <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px]">
           <p className="rounded p-[8px] bg-black text-white !w-[70px] text-center">
