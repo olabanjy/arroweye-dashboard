@@ -120,7 +120,7 @@ const DspCovers = () => {
             {files.map((file, index) => (
               <div
                 key={index}
-                className="relative group flex gap-[40px] items-center "
+                className="relative group grid gap-[20px] lg:flex lg:gap-[40px] items-center "
               >
                 <Image
                   src={URL.createObjectURL(file)}
