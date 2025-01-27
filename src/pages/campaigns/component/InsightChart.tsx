@@ -6,6 +6,7 @@ import DoughnutChart from "@/pages/payments/component/Doughnut";
 import MomentCard from "../public/component/MomentCard";
 import MomentSliderCard from "../public/component/MomentSliderCard";
 import AddData from "./AddData";
+import AddMedia from "./AddMedia";
 
 const chartDataForDoughnut: ChartData<"doughnut", number[], string> = {
   labels: ["Radio", "Cable", "TV", "DJ"],
@@ -60,7 +61,8 @@ interface InsightChartProps {
 }
 
 const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
-  const [detailsModal, setDetailsModal] = useState(false);
+  const [addDataModal, setAddDataModal] = useState(false);
+  const [addMediaModal, setAddMediaModal] = useState(false);
 
   return (
     <div className=" ">
@@ -71,11 +73,14 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
               <div className=" space-y-[20px]">
                 <p
                   className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
-                  onClick={() => setDetailsModal(true)}
+                  onClick={() => setAddDataModal(true)}
                 >
                   add data
                 </p>
-                <p className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
+                <p
+                  className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
+                  onClick={() => setAddMediaModal(true)}
+                >
                   add media
                 </p>
               </div>
@@ -221,7 +226,11 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
           </div>
         </div>
       </div>
-      <AddData visible={detailsModal} onHide={() => setDetailsModal(false)} />
+      <AddData visible={addDataModal} onHide={() => setAddDataModal(false)} />
+      <AddMedia
+        visible={addMediaModal}
+        onHide={() => setAddMediaModal(false)}
+      />
       <div className="fixed bottom-[30px] lg:left-32 right-0 flex justify-center z-30 w-full">
         <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px]">
           <p className="rounded p-[8px] bg-black text-white !w-[70px] text-center">
