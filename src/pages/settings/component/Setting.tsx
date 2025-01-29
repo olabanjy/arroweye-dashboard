@@ -124,14 +124,22 @@ const Setting = () => {
             (e) => setVendorName(e.target.value),
             "User Details"
           )}
-          {renderCopyInput("", email, toggleNotifications, "email", (e) =>
-            setEmail(e.target.value)
-          )}
-          {renderCopyInput("", labelName, toggleNotifications, "text", (e) =>
-            setLabelName(e.target.value)
+          {renderCopyInput(
+            "USER EMAIL",
+            email,
+            toggleNotifications,
+            "email",
+            (e) => setEmail(e.target.value)
           )}
           {renderCopyInput(
-            "",
+            "VENDOR",
+            labelName,
+            toggleNotifications,
+            "text",
+            (e) => setLabelName(e.target.value)
+          )}
+          {renderCopyInput(
+            "PHONE NUMBER",
             phone,
             toggleNotifications,
             "text",

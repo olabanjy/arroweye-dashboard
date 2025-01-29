@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { MdOutlineArrowRightAlt } from "react-icons/md";
+// import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { MdArrowForward } from "react-icons/md";
+import { TfiMore } from "react-icons/tfi";
 
 const Sidebar: FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -162,7 +163,7 @@ const Sidebar: FC = () => {
                       <span className="bg-transparent w-1 h-1 rounded-full"></span>
                       <span>Resources</span>
                     </span>
-                    <HiOutlineDotsHorizontal size={24} />
+                    <TfiMore size={24} />
                   </li>
                 </Link>
 
@@ -206,7 +207,9 @@ const Sidebar: FC = () => {
               onClick={toggleResourcesSidebar}
             >
               <p className="">MENU</p>
-              <MdOutlineArrowRightAlt size={24} />
+              <div className=" text-[#000000]">
+                <MdArrowForward size={24} />
+              </div>
               <p className="">RESOURCES</p>
             </div>
             <ul className="space-y-4 p-4">

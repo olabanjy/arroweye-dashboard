@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { IoFilter } from "react-icons/io5";
-import { MdOutlineGroupAdd, MdOutlineSettings } from "react-icons/md";
+import { MdOutlineGroupAdd } from "react-icons/md";
 import Invoice from "./Invoice";
 import { SelectInput } from "@/components/ui/selectinput";
 import Users from "./Users";
@@ -11,7 +11,7 @@ import { CreateBusiness } from "@/services/api";
 import { DropDownInput } from "@/components/ui/dropdownInput";
 import CompanyDetailsForm from "./CompanyDetailsForm";
 
-// import { TbBuildingBank } from "react-icons/tb";
+import { TbBuildingBank } from "react-icons/tb";
 
 const InvoicesTab = () => {
   const [activeTab, setActiveTab] = useState("Invoice");
@@ -174,7 +174,7 @@ const InvoicesTab = () => {
                 className=" cursor-pointer p-[16px] hover:bg-[#000000] hover:text-white border border-[#000000] text-[#000000] rounded-full"
                 onClick={showDetailsDialog}
               >
-                <MdOutlineSettings />
+                <TbBuildingBank />
               </div>
             </div>
           </div>

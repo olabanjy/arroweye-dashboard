@@ -52,11 +52,6 @@ const Insight = () => {
                   { value: "february", label: "February" },
                   { value: "march", label: "March" },
                 ],
-                [
-                  { value: "", label: "Status" },
-                  { value: "pending", label: "Pending" },
-                  { value: "paid", label: "Paid" },
-                ],
               ]}
             />
 

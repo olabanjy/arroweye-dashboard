@@ -71,7 +71,7 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
       // setSelectedDate(selectedDate);
       setIsModalVisible(true);
     } else {
-      alert(`You cannot select a past date: ${selectedDate}`);
+      alert(`You cannot set events in the past`);
     }
   };
 
@@ -445,20 +445,26 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
               </div>
 
               <div className="flex items-center gap-[5px]  lg:justify-between">
-                <div className="flex items-center gap-[5px] lg:gap-[20px]">
+                <div className="flex items-center gap-[5px] lg:gap-[5px]">
                   <button
-                    className="cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
+                    className=" text-[14px] cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
                     type="submit"
                   >
                     Schedule
                   </button>
-                  <p className="px-[20px] py-[8px] bg-[#000] rounded-full text-[#fff] inline-flex">
+                  <p className="text-[14px] px-[20px] py-[8px] bg-[#000] rounded-full text-[#fff] inline-flex">
                     Share
                   </p>
                 </div>
 
-                <div className="bg-[#000] text-[#fff] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer">
-                  <GoArrowUpRight size={24} />
+                <div className="relative group">
+                  <div className="bg-[#000] hover:bg-orange-500 text-[#fff] rounded-full h-[40px] w-[40px] flex items-center justify-center cursor-pointer font-IBM">
+                    <GoArrowUpRight size={24} />
+                  </div>
+
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-max px-3 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-100">
+                    View Project
+                  </div>
                 </div>
               </div>
             </div>

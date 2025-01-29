@@ -74,7 +74,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
 
         {radioButtonText && (
           <p
-            className={`p-2 cursor-pointer text-[16px] font-[500] font-IBM w-full rounded text-center ${
+            className={`p-2 mt-[20px] cursor-pointer text-[16px] font-[500] font-IBM w-full rounded text-center ${
               outline
                 ? "border border-black text-black hover:bg-black hover:text-white"
                 : "hover:bg-orange-500 bg-black text-white"
