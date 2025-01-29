@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
-// import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { MdArrowForward } from "react-icons/md";
 import { TfiMore } from "react-icons/tfi";
 
@@ -17,11 +16,6 @@ const Sidebar: FC = () => {
 
   const toggleResourcesSidebar = () => {
     setIsResourcesOpen(!isResourcesOpen);
-    // if (!isResourcesOpen) {
-    //   setIsOpen(false);
-    // } else {
-    //   setIsOpen(true);
-    // }
   };
 
   const logout = () => {
@@ -34,13 +28,13 @@ const Sidebar: FC = () => {
 
   return (
     <div>
-      <div className=" absolute top-0 left-0">
-        <button className="lg:hidden p-4 text-[#17954c] focus:outline-none ">
+      <div className="absolute top-0 left-0">
+        <button className="lg:hidden p-4 text-[#17954c] focus:outline-none">
           {isOpen ? (
             <FiX
               size={24}
               onClick={() => setIsOpen(!isOpen)}
-              className=" z-50 cursor-pointer"
+              className="z-50 cursor-pointer"
             />
           ) : (
             <FiMenu
@@ -61,7 +55,7 @@ const Sidebar: FC = () => {
           msOverflowStyle: "none",
         }}
       >
-        <div className=" p-[50px] border-b flex items-center justify-center">
+        <div className="p-[50px] border-b flex items-center justify-center">
           <Image
             src="https://res.cloudinary.com/dih0krdcj/image/upload/v1710656700/Arroweye%20Pro/qkpawzztfn7c6osevfmm.svg"
             alt="Logo"
@@ -70,11 +64,16 @@ const Sidebar: FC = () => {
             priority
           />
         </div>
-        {isOpen && !isResourcesOpen && (
-          <div>
+
+        <div className="relative flex-1">
+          <div
+            className={`absolute inset-0 transition-transform duration-700 ${
+              isResourcesOpen ? "-translate-x-full" : "translate-x-0"
+            }`}
+          >
             <nav className="flex-1">
               <ul className="grid space-y-[20px] p-4">
-                <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer  text-[#03a835] text-[12px] font-semibold ">
+                <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer text-[#03a835] text-[12px] font-semibold">
                   <span className="flex items-center space-x-2">
                     <span className="bg-transparent w-1 h-1 rounded-full"></span>
                     <span>MENU</span>
@@ -92,7 +91,9 @@ const Sidebar: FC = () => {
                         } rounded-full`}
                       ></span>
                       <span
-                        className={`${isActive("/campaigns") ? " font-[500]" : " font-[400]"}`}
+                        className={`${
+                          isActive("/campaigns") ? "font-[500]" : "font-[400]"
+                        }`}
                       >
                         Campaigns
                       </span>
@@ -111,7 +112,9 @@ const Sidebar: FC = () => {
                         } rounded-full`}
                       ></span>
                       <span
-                        className={`${isActive("/drops") ? " font-[500]" : " font-[400]"}`}
+                        className={`${
+                          isActive("/drops") ? "font-[500]" : "font-[400]"
+                        }`}
                       >
                         Drops
                       </span>
@@ -130,7 +133,9 @@ const Sidebar: FC = () => {
                         } rounded-full`}
                       ></span>
                       <span
-                        className={`${isActive("/payments") ? " font-[500]" : " font-[400]"}`}
+                        className={`${
+                          isActive("/payments") ? "font-[500]" : "font-[400]"
+                        }`}
                       >
                         Payments
                       </span>
@@ -149,7 +154,9 @@ const Sidebar: FC = () => {
                         } rounded-full`}
                       ></span>
                       <span
-                        className={`${isActive("/schedule") ? " font-[500]" : " font-[400]"}`}
+                        className={`${
+                          isActive("/schedule") ? "font-[500]" : "font-[400]"
+                        }`}
                       >
                         Schedule
                       </span>
@@ -158,7 +165,7 @@ const Sidebar: FC = () => {
                 </Link>
 
                 <Link href="#" onClick={toggleResourcesSidebar}>
-                  <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer ">
+                  <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
                     <span className="flex items-center space-x-2">
                       <span className="bg-transparent w-1 h-1 rounded-full"></span>
                       <span>Resources</span>
@@ -178,7 +185,9 @@ const Sidebar: FC = () => {
                         } rounded-full`}
                       ></span>
                       <span
-                        className={`${isActive("/settings") ? " font-[500]" : " font-[400]"}`}
+                        className={`${
+                          isActive("/settings") ? "font-[500]" : "font-[400]"
+                        }`}
                       >
                         Settings
                       </span>
@@ -198,27 +207,29 @@ const Sidebar: FC = () => {
               </ul>
             </nav>
           </div>
-        )}
 
-        {isResourcesOpen && (
-          <div>
+          <div
+            className={`absolute inset-0 transition-transform duration-700 ${
+              isResourcesOpen ? "translate-x-0" : "translate-x-full"
+            }`}
+          >
             <div
-              className="p-4  flex gap-[8px] items-center text-[#03a835] text-[12px] font-semibold cursor-pointer"
+              className="p-4 flex gap-[8px] items-center text-[#03a835] text-[12px] font-semibold cursor-pointer"
               onClick={toggleResourcesSidebar}
             >
-              <p className="">MENU</p>
-              <div className=" text-[#000000]">
+              <p>MENU</p>
+              <div className="text-[#000000]">
                 <MdArrowForward size={24} />
               </div>
-              <p className="">RESOURCES</p>
+              <p>RESOURCES</p>
             </div>
             <ul className="space-y-4 p-4">
-              <li className="p-2 hover:bg-gray-200 rounded">Faqs</li>
+              <li className="p-2 hover:bg-gray-200 rounded">FAQs</li>
               <li className="p-2 hover:bg-gray-200 rounded">Learn</li>
               <li className="p-2 hover:bg-gray-200 rounded">Legal</li>
             </ul>
           </div>
-        )}
+        </div>
       </div>
 
       {(isOpen || isResourcesOpen) && (

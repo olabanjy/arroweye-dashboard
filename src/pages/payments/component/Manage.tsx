@@ -2,13 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { Dialog } from "primereact/dialog";
-import { CreateInvoice, CreateService, getService } from "@/services/api";
+import {
+  CreateInvoice,
+  CreateService,
+  getBusiness,
+  getService,
+} from "@/services/api";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { ContentItem } from "@/types/contents";
 interface Item {
   id: number;
   item: string;
-  cost: string;
+  cost: number | string;
   quantity: number;
   service_id?: number;
 }
@@ -16,6 +21,7 @@ interface Item {
 type ServiceError = {
   service_id: string | null;
   quantity: string | null;
+  cost: string | null;
 };
 
 type ProjectErrors = {
@@ -34,20 +40,22 @@ interface ProjectFormData {
   subvendor_id: string | number;
   po_code: string;
   currency: string | number;
-  services: { service_id: number; quantity: number }[];
+  services: { service_id: number; quantity: number; cost: number | string }[];
 }
 
 const Manage = () => {
   const [selectedService, setSelectedService] = useState<number | string>();
+  // const [selectedServiceCost, setSelectedServiceCost] = useState<
+  //   number | string
+  // >();
   const [isAddNewService, setIsAddNewService] = useState(false);
 
   const [content, setContent] = useState<ContentItem[] | null>(null);
+  const [business, setBusiness] = useState<ContentItem[] | null>(null);
 
   const [items, setItems] = useState<Item[]>([]);
 
   const handleCurrencyChange = (value: string | number) => {
-    console.log(value);
-
     setProjectFormData((prevState) => ({
       ...prevState,
       currency: value,
@@ -57,7 +65,6 @@ const Manage = () => {
   };
 
   const handleVendorChange = (value: string | number) => {
-    console.log("Vendor Value:", value);
     setProjectFormData((prevData) => ({
       ...prevData,
       vendor_id: value,
@@ -91,7 +98,6 @@ const Manage = () => {
       const updatedServices = prevData.services.filter(
         (_, index) => index !== items.findIndex((item) => item.id === id)
       );
-      console.log("Updated Services:", updatedServices);
       return {
         ...prevData,
         services: updatedServices,
@@ -105,9 +111,29 @@ const Manage = () => {
     });
   }, []);
 
-  const vendorOptions = [{ value: 2, label: "VIVO" }];
+  useEffect(() => {
+    getBusiness().then((fetchedContent) => {
+      setBusiness(fetchedContent);
+    });
+  }, []);
 
-  const subVendorOptions = [{ value: 4, label: "tedXOAU" }];
+  const vendorOptions = business
+    ? business
+        .filter((item) => item.type === "Vendor")
+        .map((item) => ({
+          value: item.id ?? 0,
+          label: item.organization_name ?? "",
+        }))
+    : [];
+
+  const subVendorOptions = business
+    ? business
+        .filter((item) => item.type === "SubVendor")
+        .map((item) => ({
+          value: item.id ?? 0,
+          label: item.organization_name ?? "",
+        }))
+    : [];
 
   const currencyOptions = [
     { value: "Dollars", label: "$USD" },
@@ -116,10 +142,11 @@ const Manage = () => {
   ];
 
   const customOptions = [
-    { value: 9, label: "Add new service" },
+    { value: 9, label: "Add new service", cost: 0 },
     ...(content?.map((item) => ({
       value: item.id ?? 0,
       label: item.name ?? "",
+      cost: `${item.cost ?? 0}`,
     })) || []),
   ];
 
@@ -168,7 +195,6 @@ const Manage = () => {
     if (!hasErrors) {
       CreateService(formData)
         .then(() => {
-          console.log("Form submitted successfully!");
           hideDialog();
           getService().then((fetchedContent) => {
             setContent(fetchedContent);
@@ -190,6 +216,7 @@ const Manage = () => {
       {
         service_id: 0,
         quantity: 0,
+        cost: 0,
       },
     ],
   });
@@ -205,6 +232,7 @@ const Manage = () => {
       {
         service_id: null,
         quantity: null,
+        cost: null,
       },
     ],
   });
@@ -213,11 +241,10 @@ const Manage = () => {
     e.preventDefault();
 
     const subtotal = items.reduce(
-      (sum, item) => sum + parseFloat(item.cost) * item.quantity,
+      (sum, item) => sum + parseFloat(item.cost.toString()) * item.quantity,
       0
     );
     const customCost = subtotal;
-    console.log("Subtotal: ", customCost);
 
     const newErrors: ProjectErrors = {
       project_title: "",
@@ -229,6 +256,7 @@ const Manage = () => {
       services: projectFormData.services.map(() => ({
         service_id: null,
         quantity: null,
+        cost: null,
       })),
     };
 
@@ -279,11 +307,8 @@ const Manage = () => {
         // cost: customCost,
       };
 
-      console.log("Updated Form Data with Cost:", updatedFormData);
-
       CreateInvoice(updatedFormData)
         .then(() => {
-          console.log("Form submitted successfully!");
           hideDialog();
         })
         .catch((err) => {
@@ -296,7 +321,9 @@ const Manage = () => {
 
   const calculateTotal = (items: Item[]) => {
     const subtotal = items.reduce(
-      (sum, item) => sum + parseFloat(item.cost) * item.quantity,
+      (sum, item) =>
+        sum +
+        (item.cost ? parseFloat(item.cost.toString()) : 0) * item.quantity,
       0
     );
 
@@ -436,23 +463,34 @@ const Manage = () => {
                         value={item.service_id || ""}
                         onChange={(value: string | number) => {
                           const selectedValue = Number(value);
+                          const selectedOption = customOptions.find(
+                            (opt) => opt.value === selectedValue
+                          );
+
+                          console.log(selectedOption);
 
                           if (selectedValue === 9) {
                             setIsAddNewService(true);
                           } else {
                             const updatedItems = items.map((i) =>
                               i.id === item.id
-                                ? { ...i, service_id: selectedValue }
+                                ? {
+                                    ...i,
+                                    service_id: selectedValue,
+                                    cost: selectedOption?.cost || "",
+                                  }
                                 : i
                             );
                             setItems(updatedItems);
 
+                            console.log(updatedItems);
                             const updatedServices = [
                               ...projectFormData.services,
                             ];
                             updatedServices[index] = {
                               ...updatedServices[index],
                               service_id: selectedValue,
+                              cost: selectedOption?.cost || "",
                             };
                             setProjectFormData((prevData) => ({
                               ...prevData,
@@ -461,6 +499,7 @@ const Manage = () => {
                           }
                         }}
                       />
+
                       {projectErrors.services[index]?.service_id && (
                         <p className="text-red-500 text-xs">
                           {projectErrors.services[index].service_id}
@@ -469,13 +508,14 @@ const Manage = () => {
                     </div>
                   </div>
 
-                  <div className="max-w-[350px] w-full">
+                  <div className="max-w-[350px] w-full ">
                     <Input
                       type="number"
                       name="cost"
                       placeholder="Cost"
                       label=" COST"
                       value={item.cost || ""}
+                      readOnly
                       onChange={(e) => {
                         const updatedCost = e.target.value;
 

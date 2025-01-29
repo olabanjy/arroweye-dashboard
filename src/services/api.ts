@@ -573,3 +573,43 @@ export const getStoredEvent = (): ContentItem[] | null => {
 
   return content as ContentItem[];
 };
+
+export const getPaymentInvoice = async (
+  id: number
+): Promise<ContentItem | null> => {
+  try {
+    const response = await apiRequest<ContentItem>({
+      method: "GET",
+      url: `/api/v1/payments/invoice/${id}/`,
+      data: null,
+      requireToken: false,
+    });
+
+    if (response && response.total && response.currency) {
+      const contentItem: ContentItem = response;
+
+      ls.set("PaymentInvoice", contentItem, { encrypt: true });
+
+      return contentItem;
+    } else {
+      console.error("Invalid Invoice item structure:", response);
+      return null;
+    }
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 403) {
+        const redirectUrl = error.response?.data?.redirect_url;
+
+        console.error("403 Forbidden:", error.response?.data);
+
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+        }
+      }
+    } else {
+      console.error("Unexpected Error:", error);
+    }
+
+    return null;
+  }
+};

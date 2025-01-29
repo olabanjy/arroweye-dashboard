@@ -265,10 +265,6 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                     <Image src={Logo} alt="Logo" width={50} height={50} />
                   </div>
 
-                  <p className="text-[30px] font-[600] text-[#212529] font-IBM hidden">
-                    Collaborate
-                  </p>
-
                   <div>
                     <Input
                       type="text"
@@ -277,7 +273,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                       value={formData.company_name}
                       onChange={handleInputChange}
                       disabled={!isEditable}
-                      className="text-[17px]"
+                      className="text-[14px]"
                     />
                     {errors.company_name && (
                       <p className="text-red-500 text-xs">
@@ -293,7 +289,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                       value={formData.company_address}
                       onChange={handleInputChange}
                       disabled={!isEditable}
-                      className="text-[17px]"
+                      className="text-[14px]"
                     />
                     {errors.company_address && (
                       <p className="text-red-500 text-xs">
@@ -309,7 +305,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                       value={formData.tax_id}
                       onChange={handleInputChange}
                       disabled={!isEditable}
-                      className="text-[17px]"
+                      className="text-[14px]"
                     />
                     {errors.tax_id && (
                       <p className="text-red-500 text-xs">{errors.tax_id}</p>
@@ -323,7 +319,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                       value={formData.phone_number}
                       onChange={handleInputChange}
                       disabled={!isEditable}
-                      className="text-[17px]"
+                      className="text-[14px]"
                     />
                     {errors.phone_number && (
                       <p className="text-red-500 text-xs">
@@ -339,7 +335,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                       value={formData.email}
                       onChange={handleInputChange}
                       disabled={!isEditable}
-                      className="text-[17px]"
+                      className="text-[14px]"
                     />
                     {errors.email && (
                       <p className="text-red-500 text-xs">{errors.email}</p>
@@ -406,7 +402,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                         value={paymemtFormData.bank_name}
                         onChange={handleInputChange}
                         disabled={!isPaymentEditable}
-                        className="text-[17px]"
+                        className="text-[14px]"
                       />
                       {paymentErrors.bank_name && (
                         <p className="text-red-500 text-xs">
@@ -422,7 +418,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                         value={paymemtFormData.account_number}
                         onChange={handleInputChange}
                         disabled={!isPaymentEditable}
-                        className="text-[17px]"
+                        className="text-[14px]"
                       />
                       {paymentErrors.account_number && (
                         <p className="text-red-500 text-xs">
@@ -444,7 +440,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                         value={paymemtFormData.foreign_bank_name}
                         onChange={handleInputChange}
                         disabled={!isPaymentEditable}
-                        className="text-[17px]"
+                        className="text-[14px]"
                       />
                       {paymentErrors.foreign_bank_name && (
                         <p className="text-red-500 text-xs">
@@ -460,7 +456,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                         value={paymemtFormData.foreign_account_number}
                         onChange={handleInputChange}
                         disabled={!isPaymentEditable}
-                        className="text-[17px]"
+                        className="text-[14px]"
                       />
                       {paymentErrors.foreign_account_number && (
                         <p className="text-red-500 text-xs">
@@ -482,7 +478,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                         value={paymemtFormData.wallet_address}
                         onChange={handleInputChange}
                         disabled={!isPaymentEditable}
-                        className="text-[17px]"
+                        className="text-[14px]"
                       />
                       {paymentErrors.wallet_address && (
                         <p className="text-red-500 text-xs">

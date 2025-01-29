@@ -27,10 +27,14 @@ export interface StaffItem {
 
 export interface ContentItem {
   start_dte?: string;
+  cost?: number;
+  tax_amount?: number;
   end_dte?: string;
   archived?: boolean;
   id?: number | string;
   subvendor?: number;
+  organization_name?: string;
+  items?: { service: { name: string; cost: number } }[];
   code?: number;
   pin?: number;
   currency?: string;
