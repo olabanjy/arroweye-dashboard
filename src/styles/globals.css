@@ -21,6 +21,24 @@
   scrollbar-width: none;
 }
 
+.scrollbar-tiny::-webkit-scrollbar {
+  width: 0.8px;
+  height: 1px;
+}
+
+.scrollbar-tiny::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.scrollbar-tiny::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.scrollbar-tiny::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .schedule-container {
   text-transform: capitalize;
 }

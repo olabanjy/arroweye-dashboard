@@ -53,7 +53,7 @@ const Invoice = () => {
     <div className="flex items-center justify-center h-screen bg-[#ffffff] font-IBM">
       <div
         id="invoice"
-        className="w-[400px] px-6 py-[20px] bg-white rounded-2xl shadow-md shadow-slate-400"
+        className="w-[400px] px-6 py-[20px] bg-white rounded-2xl shadow-custom shadow-slate-400"
       >
         <div className="text-center pb-[10px] border-b border-[#212529] flex items-center justify-between">
           <Image src={Logo} alt="Logo" width={30} height={30} />
@@ -85,7 +85,10 @@ const Invoice = () => {
 
         <div className="text-[16px]">
           <p className="font-[600] mb-2">Services</p>
-          <div className="text-[#212529] max-h-[70px] overflow-y-auto space-y-2 pr-2">
+          <div
+            className="text-[#212529] max-h-[70px] overflow-y-auto scrollbar-tiny space-y-2 pr-2"
+            style={{ scrollbarWidth: "thin" }}
+          >
             <div className="flex justify-between text-[16px]">
               <p className="font-[400]">Spotify Playlist Placement</p>
               <p className="font-[400]">$100</p>
@@ -126,12 +129,11 @@ const Invoice = () => {
 
         <div className="text-center text-xs text-gray-400">
           <p>Receipt ID: #123456789</p>
-          <p className="mt-2">© 2025 Arroweye.pro</p>
         </div>
 
         <button
           onClick={handlePrint}
-          className="w-full p-[10px] text-center font-[600] text-[16px] mt-2 rounded text-[#ffffff] bg-[#000000] hover:bg-orange-500"
+          className="w-full p-[10px] text-center font-[600] text-[16px] mt-2 rounded text-[#ffffff] bg-[#000000] hover:bg-orange-500 transition-all duration-700 ease-in-out transform "
         >
           Download Receipt
         </button>

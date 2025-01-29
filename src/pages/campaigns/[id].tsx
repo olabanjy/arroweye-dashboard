@@ -15,6 +15,8 @@ import { useRouter } from "next/router";
 import ProjectSingleInsight from "./component/ProjectSingleInsight";
 import Schedule from "../schedule/component/Schedule";
 import InsightChart from "./component/InsightChart";
+import { Tooltip } from "../drops";
+import DropsList from "../dropss/component/DropsList";
 
 const users = [
   { initials: "JJ", fullName: "John Jerome", email: "john@example.com" },
@@ -242,7 +244,7 @@ const ProjectDetails = () => {
               NEVILLE RECORDS
             </p>
           </div>
-          <div className=" grid gap-[20px] md:flex items-end md:justify-between">
+          <div className=" grid gap-[20px] md:flex items-end md:justify-between pr-[40px]">
             <div>
               <p className="font-extrabold text-5xl text-[#000000]">Jolie</p>
               <div className="mt-[20px] flex items-center gap-[5px] relative">
@@ -297,11 +299,15 @@ const ProjectDetails = () => {
             }`}
           >
             <Dialog
-              header="Add Members"
+              header={
+                <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#212529] !font-[500] relative">
+                  + <span>ADD MEMBERS</span>
+                </div>
+              }
               visible={visible}
               onHide={hideDialog}
               breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-              style={{ width: "50vw" }}
+              style={{ width: "40vw" }}
               className="custom-dialog-overlay"
             >
               <div className="space-y-4">
@@ -324,13 +330,13 @@ const ProjectDetails = () => {
                   <IoMdAddCircleOutline size={20} />
                   <p>Add Contact</p>
                 </div>
-                <div className="flex gap-[10px] items-center">
+                <div className="flex gap-[10px] items-end">
                   <div className=" w-full">
                     <SelectInput
                       name="role"
                       value={addUserFormData.role}
                       onChange={handleAddUserInputChange2}
-                      // labelText="Choose Role"
+                      placeholder="Choose Role"
                       options={[
                         { value: "Manager", label: "Manager" },
                         { value: "LeadAdmin", label: "LeadAdmin" },
@@ -341,18 +347,14 @@ const ProjectDetails = () => {
                       ]}
                     />
                   </div>
-                  <div className=" w-full">
-                    <div className="flex justify-end space-x-2">
-                      <button
-                        onClick={handleAddUserSubmit}
-                        disabled={isAddUserLoading}
-                        className=" text-[14px] bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
-                      >
-                        <IoIosAdd className="text-white" />
-                        <span className="text-white">Add User</span>
-                      </button>
-                    </div>
-                  </div>
+                  <button
+                    onClick={handleAddUserSubmit}
+                    disabled={isAddUserLoading}
+                    className=" text-[14px] bg-[#000] hover:bg-orange-500 w-full py-[15px] px-[12px] h-full rounded-[8px] flex items-center justify-center space-x-2"
+                  >
+                    <IoIosAdd className="text-white" />
+                    <span className="text-white">Add </span>
+                  </button>
                 </div>
               </div>
             </Dialog>
@@ -426,7 +428,13 @@ const ProjectDetails = () => {
           }`}
         >
           <Dialog
-            header=" MEMBER INFORMATION"
+            header={
+              <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
+                <Tooltip info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted." />
+
+                <span>MEMBER INFORMATION</span>
+              </div>
+            }
             visible={selectedUser !== null}
             onHide={() => setSelectedUser(null)}
             breakpoints={{ "960px": "75vw", "640px": "100vw" }}
@@ -563,6 +571,10 @@ const ProjectDetails = () => {
               </div>
             </div>
           </Dialog>
+        </div>
+
+        <div className=" mb-[100px]">
+          <DropsList />
         </div>
       </div>
     </DashboardLayout>

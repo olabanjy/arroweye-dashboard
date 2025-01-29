@@ -4,13 +4,14 @@ import { HiOutlineCube } from "react-icons/hi";
 import { IoFilter } from "react-icons/io5";
 import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
-import { FaGoogleDrive, FaRegCopy } from "react-icons/fa";
+import { FaGoogleDrive } from "react-icons/fa";
 import { IoIosArrowRoundDown } from "react-icons/io";
-import { FiMinus } from "react-icons/fi";
+import { FiInfo, FiMinus } from "react-icons/fi";
 import LibraryCard from "./component/LibraryCard";
 import { Dialog } from "primereact/dialog";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { LuCopy } from "react-icons/lu";
 
 const users = [
   {
@@ -18,24 +19,28 @@ const users = [
     fullName: "John Jerome Video",
     email: "john@example.com",
     link: "https://example.com/john",
+    uploader: "John Jerome",
   },
   {
     initials: "EO",
     fullName: "Emily O'Connor Video",
     email: "emily@example.com",
     link: "https://example.com/emily",
+    uploader: "Emily O'Connor",
   },
   {
     initials: "MD",
     fullName: "Michael Douglas Video",
     email: "michael@example.com",
     link: "https://example.com/michael",
+    uploader: "Michael Douglas",
   },
   {
     initials: "SO",
     fullName: "Sarah O'Neil Video",
     email: "sarah@example.com",
     link: "https://example.com/sarah",
+    uploader: "Sarah O'Neil",
   },
 ];
 
@@ -54,7 +59,17 @@ interface User {
   initials: string;
   fullName: string;
   email: string;
+  uploader: string;
 }
+
+export const Tooltip = ({ info }: { info: string }) => (
+  <div className="relative group flex items-center">
+    <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
+    <div className="absolute left-full ml-2 hidden w-56 p-2 text-xs text-white bg-black rounded-lg group-hover:block z-50 shadow-lg">
+      {info}
+    </div>
+  </div>
+);
 
 const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
 
@@ -152,14 +167,14 @@ const AssetsLibrary = () => {
                 options={[{ value: "naville", label: "NAVILLE" }]}
               />
             </div>
+            <p className="cursor-pointer text-[14px] rounded-full px-[16px] py-[7px] hover:bg-orange-500 bg-[#000000] text-white inline">
+              Clear Filters
+            </p>
           </div>
-          <p className="cursor-pointer text-[14px] rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
-            Clear Filters
-          </p>
         </div>
       )}
-      <div className="mt-[20px]">
-        <div className=" grid place-items-center md:grid-cols-2 lg:grid-cols-3 gap-4 h-full ">
+      <div className="my-[50px]">
+        <div className=" grid place-items-center md:grid-cols-2 lg:grid-cols-3 gap-2 h-full ">
           {users.map((user) => {
             const randomColor = getRandomColor();
             return (
@@ -199,7 +214,7 @@ const AssetsLibrary = () => {
                           className="border border-[#000] text-[#000] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer"
                           onClick={() => handleCopyLink(user.link)}
                         >
-                          <FaRegCopy size={14} />
+                          <LuCopy size={14} />
                         </div>
                       ),
                       tooltip: "Copy Link",
@@ -210,7 +225,7 @@ const AssetsLibrary = () => {
                           className={`${randomColor} rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer font-Poppins`}
                           onClick={() => handleUserClick(user)}
                         >
-                          <p className="text-[#fff] text-[16px] font-[600]">
+                          <p className="text-[#fff] text-[16px] font-[600] tracking-[.1rem] ">
                             {user.initials}
                           </p>
                         </div>
@@ -232,17 +247,23 @@ const AssetsLibrary = () => {
         }`}
       >
         <Dialog
-          header=" INFORMATION"
+          header={
+            <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
+              <Tooltip info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted." />
+
+              <span>INFORMATION</span>
+            </div>
+          }
           visible={selectedUser !== null}
           onHide={() => setSelectedUser(null)}
           breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "30vw" }}
+          style={{ width: "25vw" }}
           className="custom-dialog-overlay"
           headerClassName=" tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400]"
         >
           {selectedUser && (
             <div className="space-y-4 text-[#000] font-IBM">
-              <p className="text-[30px] font-[600]">{selectedUser.fullName}</p>
+              <p className="text-[30px] font-[600]">{selectedUser.uploader}</p>
               <div className="text-[16px]">
                 <p className="font-[400] text-[#7c7e81]">Email: </p>
                 <p className="font-[600]">{selectedUser.email}</p>

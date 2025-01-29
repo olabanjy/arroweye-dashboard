@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import DropsList from "./component/DropsList";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
+import { Tooltip } from "../drops";
 
 const users = [
   { initials: "JJ", fullName: "John Jerome", email: "john@example.com" },
@@ -77,7 +78,13 @@ const Drops = () => {
         }`}
       >
         <Dialog
-          header="MEMBER INFORMATION"
+          header={
+            <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
+              <Tooltip info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted." />
+
+              <span>MEMBER INFORMATION</span>
+            </div>
+          }
           visible={selectedUser !== null}
           onHide={() => setSelectedUser(null)}
           breakpoints={{ "960px": "75vw", "640px": "100vw" }}

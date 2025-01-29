@@ -19,7 +19,7 @@ const AirPlayNotificationCard: FC<AirPlayNotificationCardProps> = ({
 }) => {
   return (
     <div className="flex items-start gap-[10px] pb-[20px] border-b">
-      <div className="mt-[15px] w-8 h-8 rounded px-[10px] py-[4px] bg-red-400  flex items-center justify-center">
+      <div className="mt-[15px] w-8 h-8 rounded px-[10px] py-[4px] bg-[#DD2E49]  flex items-center justify-center">
         <GiMusicalNotes className="text-[#ffffff]  text-[21px]" size={24} />
       </div>
       <div>

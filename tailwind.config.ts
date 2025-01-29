@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import tailwindScrollbar from "tailwind-scrollbar";
 
 export default {
   darkMode: ["class"],
@@ -9,6 +10,12 @@ export default {
   ],
   theme: {
     extend: {
+      scrollbar: {
+        width: "0.8px",
+      },
+      boxShadow: {
+        custom: "0px 0px 20px rgba(0, 0, 0, 0.1)",
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
@@ -24,5 +31,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [tailwindScrollbar],
 } satisfies Config;
