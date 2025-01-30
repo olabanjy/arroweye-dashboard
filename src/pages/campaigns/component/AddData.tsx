@@ -4,7 +4,7 @@ import { Dialog } from "primereact/dialog";
 import { FiInfo } from "react-icons/fi";
 import { PiCalendarPlus } from "react-icons/pi";
 import RadioData from "./RadioData";
-import TvData from "./TvData";
+import TVData from "./TVData";
 
 interface CompanyDetailsFormProps {
   visible: boolean;
@@ -79,7 +79,7 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
             </div>
 
             {activeDetailsTab === "radio" && <RadioData />}
-            {activeDetailsTab === "TV" && <TvData />}
+            {activeDetailsTab === "TV" && <TVData />}
           </div>
         </Dialog>
       </div>

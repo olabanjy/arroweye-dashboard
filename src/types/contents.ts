@@ -29,6 +29,9 @@ export interface ContentItem {
   start_dte?: string;
   cost?: number;
   tax_amount?: number;
+  channel?: string;
+  impressions?: number;
+  audience?: number;
   end_dte?: string;
   archived?: boolean;
   id?: number | string;

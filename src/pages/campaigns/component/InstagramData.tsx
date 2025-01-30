@@ -2,8 +2,14 @@
 import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { WeekInput } from "@/components/ui/weekInput";
-import { CreateChannel, getChannel } from "@/services/api";
+import {
+  CreateMetric,
+  CreateSocialStats,
+  getMetric,
+  getSocialMedia,
+} from "@/services/api";
 import { ContentItem } from "@/types/contents";
+import { useRouter } from "next/router";
 import { Dialog } from "primereact/dialog";
 import React, { useEffect, useState } from "react";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
@@ -11,37 +17,43 @@ import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 interface Item {
   id: number;
   item: string;
-  week1: string;
-  week2: string;
-  week3: string;
-  week4: string;
-  service_id?: number;
+  week_1: string;
+  week_2: string;
+  week_3: string;
+  week_4: string;
+  metric_id?: number;
 }
 
 type ServiceError = {
-  service_id: string | null;
-  week1: string | null;
-  week2: string | null;
-  week3: string | null;
-  week4: string | null;
+  metric_id: string | null;
+  week_1: string | null;
+  week_2: string | null;
+  week_3: string | null;
+  week_4: string | null;
 };
 
 type ProjectErrors = {
-  services: ServiceError[];
+  sm_data: ServiceError[];
+  sm_id: number | null;
 };
 
 interface ProjectFormData {
-  services: {
-    service_id: number;
-    week1: string;
-    week2: string;
-    week3: string;
-    week4: string;
+  project_id: number;
+  sm_id: number;
+  sm_data: {
+    metric_id: number;
+    week_1: string;
+    week_2: string;
+    week_3: string;
+    week_4: string;
   }[];
 }
 
-const TVData = () => {
+const InstagramData = () => {
+  const { query } = useRouter();
+  const { id } = query;
   const [content, setContent] = useState<ContentItem[] | null>(null);
+  const [socials, setSocials] = useState<ContentItem[] | null>(null);
   const [totalImpressions, setTotalImpressions] = useState(0);
   const [totalAudience, setTotalAudience] = useState(0);
 
@@ -49,87 +61,97 @@ const TVData = () => {
   const [items, setItems] = useState<Item[]>([]);
 
   useEffect(() => {
-    getChannel().then((fetchedContent) => {
+    getMetric().then((fetchedContent) => {
       setContent(fetchedContent);
     });
+    getSocialMedia().then((fetchedContent) => {
+      setSocials(fetchedContent);
+    });
   }, []);
+
+  const FacebookID = socials?.find((social) => social.name === "Instagram")?.id;
+
+  console.log(FacebookID);
+
   const hideDialog = () => {
     setIsAddNewService(false);
 
     setErrors({
       name: "",
-      impressions: "",
-      audience: "",
     });
   };
 
   const [projectFormData, setProjectFormData] = useState<ProjectFormData>({
-    services: [
+    project_id: id ? parseInt(id as string, 10) : 0,
+    sm_id: 0,
+    sm_data: [
       {
-        service_id: 0,
-        week1: "",
-        week2: "",
-        week3: "",
-        week4: "",
+        metric_id: 0,
+        week_1: "",
+        week_2: "",
+        week_3: "",
+        week_4: "",
       },
     ],
   });
 
   const [projectErrors, setProjectErrors] = useState<ProjectErrors>({
-    services: [
+    sm_id: null,
+    sm_data: [
       {
-        service_id: null,
-        week1: null,
-        week2: null,
-        week3: null,
-        week4: null,
+        metric_id: null,
+        week_1: null,
+        week_2: null,
+        week_3: null,
+        week_4: null,
       },
     ],
   });
 
-  const { totalPlays, totalServices } = projectFormData.services.reduce(
+  const { totalSpins, totalServices } = projectFormData.sm_data.reduce(
     (totals, service) => {
-      const week1Value = parseFloat(service.week1 || "0");
-      const week2Value = parseFloat(service.week2 || "0");
-      const week3Value = parseFloat(service.week3 || "0");
-      const week4Value = parseFloat(service.week4 || "0");
+      const week1Value = parseFloat(service.week_1 || "0");
+      const week2Value = parseFloat(service.week_2 || "0");
+      const week3Value = parseFloat(service.week_3 || "0");
+      const week4Value = parseFloat(service.week_4 || "0");
 
-      const servicePlays =
+      const serviceSpins =
         (isNaN(week1Value) ? 0 : week1Value) +
         (isNaN(week2Value) ? 0 : week2Value) +
         (isNaN(week3Value) ? 0 : week3Value) +
         (isNaN(week4Value) ? 0 : week4Value);
 
       return {
-        totalPlays: totals.totalPlays + servicePlays,
+        totalSpins: totals.totalSpins + serviceSpins,
         totalServices: totals.totalServices + 1,
       };
     },
-    { totalPlays: 0, totalServices: 0 }
+    { totalSpins: 0, totalServices: 0 }
   );
 
   const handleProjectSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const newErrors: ProjectErrors = {
-      services: projectFormData.services.map(() => ({
-        service_id: null,
-        week1: null,
-        week2: null,
-        week3: null,
-        week4: null,
+      sm_id: null,
+      sm_data: projectFormData.sm_data.map(() => ({
+        metric_id: null,
+        week_1: null,
+        week_2: null,
+        week_3: null,
+        week_4: null,
       })),
     };
 
-    projectFormData.services.forEach((service, index) => {
-      if (!service.service_id) {
-        newErrors.services[index].service_id = "Please select a Service.";
+    projectFormData.sm_data.forEach((service, index) => {
+      if (!service.metric_id || isNaN(service.metric_id)) {
+        newErrors.sm_data[index].metric_id = "Please select a Metric.";
       }
-      ["week1", "week2", "week3", "week4"].forEach((week) => {
+      ["week_1", "week_2", "week_3", "week_4"].forEach((week) => {
         const weekValue = service[week as keyof typeof service];
         if (!weekValue || isNaN(parseFloat(weekValue.toString()))) {
-          newErrors.services[index][
-            week as keyof (typeof newErrors.services)[0]
+          newErrors.sm_data[index][
+            week as keyof (typeof newErrors.sm_data)[0]
           ] = "Please enter a valid quantity.";
         }
       });
@@ -137,7 +159,7 @@ const TVData = () => {
 
     setProjectErrors(newErrors);
 
-    const hasErrors = newErrors.services.some((service) =>
+    const hasErrors = newErrors.sm_data.some((service) =>
       Object.values(service).some((value) => value !== null)
     );
 
@@ -146,7 +168,7 @@ const TVData = () => {
         ...projectFormData,
       };
 
-      CreateChannel(updatedFormData)
+      CreateSocialStats(updatedFormData)
         .then(() => {
           console.log("Form submitted successfully!");
           hideDialog();
@@ -162,18 +184,16 @@ const TVData = () => {
   const customOptions = [
     {
       value: 99999,
-      label: "Add new service",
+      label: "add new metric",
       impressions: 0,
       audience: 0,
     },
-    ...(content
-      ?.filter((item) => item.channel === "TV")
-      .map((item) => ({
-        value: item.id ?? 0,
-        label: item.name ?? "",
-        impressions: item.impressions ?? 0,
-        audience: item.audience ?? 0,
-      })) || []),
+    ...(content?.map((item) => ({
+      value: item.id ?? 0,
+      label: item.name ?? "",
+      impressions: item.impressions ?? 0,
+      audience: item.audience ?? 0,
+    })) || []),
   ];
 
   const addItemField = () => {
@@ -182,10 +202,10 @@ const TVData = () => {
       {
         id: Date.now(),
         item: "",
-        week1: "",
-        week2: "",
-        week3: "",
-        week4: "",
+        week_1: "",
+        week_2: "",
+        week_3: "",
+        week_4: "",
       },
     ]);
   };
@@ -201,88 +221,54 @@ const TVData = () => {
     setItems(updatedItems);
 
     setProjectFormData((prevData) => {
-      const updatedServices = prevData.services.filter(
-        (_, index) => index !== items.findIndex((item) => item.id === id)
+      const indexToRemove = items.findIndex((item) => item.id === id);
+
+      const updatedServices = prevData.sm_data.filter(
+        (_, index) => index !== indexToRemove
       );
 
-      const newTotalImpressions = updatedServices.reduce((sum, service) => {
-        const serviceOption = customOptions.find(
-          (opt) => opt.value === service.service_id
-        );
-        return sum + (serviceOption?.impressions || 0);
-      }, 0);
-
-      const newTotalAudience = updatedServices.reduce((sum, service) => {
-        const serviceOption = customOptions.find(
-          (opt) => opt.value === service.service_id
-        );
-        return sum + (serviceOption?.audience || 0);
-      }, 0);
-
-      setTotalImpressions(newTotalImpressions);
-      setTotalAudience(newTotalAudience);
+      setTotalImpressions(0);
+      setTotalAudience(0);
 
       return {
         ...prevData,
-        services: updatedServices,
+        sm_data: updatedServices,
       };
     });
   };
 
   const [errors, setErrors] = useState({
     name: "",
-    impressions: "",
-    audience: "",
   });
   const [formData, setFormData] = useState({
     name: "",
-    impressions: "",
-    channel: "TV",
-    audience: "",
   });
-
-  useEffect(() => {
-    getChannel().then((fetchedContent) => {
-      setContent(fetchedContent);
-    });
-  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const newErrors = {
       name: "",
-      impressions: "",
-      audience: "",
     };
 
     if (!formData.name) {
       newErrors.name = "Please enter a valid name.";
-    }
-    if (!formData.impressions) {
-      newErrors.impressions = "Please enter impressions.";
-    }
-    if (!formData.audience) {
-      newErrors.audience = "Please enter audience.";
     }
 
     setErrors(newErrors);
 
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
     if (!hasErrors) {
-      CreateChannel(formData)
+      CreateMetric(formData)
         .then(() => {
           console.log("Form submitted successfully!");
           hideDialog();
 
           setFormData({
             name: "",
-            impressions: "",
-            audience: "",
-            channel: "TV",
           });
 
-          getChannel().then((fetchedContent) => {
+          getMetric().then((fetchedContent) => {
             setContent(fetchedContent);
           });
         })
@@ -321,52 +307,47 @@ const TVData = () => {
                     icon={true}
                     name="service"
                     options={customOptions}
-                    placeholder="Select Station"
-                    value={item.service_id || ""}
+                    placeholder="Select Metric"
+                    value={item.metric_id || ""}
                     onChange={(value: string | number) => {
                       const selectedValue = Number(value);
-
-                      // const selectedOption = customOptions.find(
-                      //   (opt) => opt.value === selectedValue
-                      // );
+                      console.log("Selected Value:", selectedValue);
 
                       if (selectedValue === 99999) {
                         setIsAddNewService(true);
                       } else {
+                        // const selectedOption = customOptions.find(
+                        //   (opt) => opt.value === selectedValue
+                        // );
+
                         const updatedItems = items.map((i) =>
                           i.id === item.id
-                            ? { ...i, service_id: selectedValue }
+                            ? {
+                                ...i,
+                                metric_id: selectedValue,
+                              }
                             : i
                         );
+
                         setItems(updatedItems);
 
-                        const updatedServices = [...projectFormData.services];
+                        const updatedServices = [...projectFormData.sm_data];
                         updatedServices[index] = {
                           ...updatedServices[index],
-                          service_id: selectedValue,
+                          metric_id: selectedValue,
                         };
+
                         setProjectFormData((prevData) => ({
                           ...prevData,
-                          services: updatedServices,
+                          sm_data: updatedServices,
                         }));
 
-                        // **Calculate the total impressions**
                         const newTotalImpressions = updatedServices.reduce(
-                          (sum, service) => {
-                            const serviceOption = customOptions.find(
-                              (opt) => opt.value === service.service_id
-                            );
-                            return sum + (serviceOption?.impressions || 0);
-                          },
+                          (sum) => sum + 0,
                           0
                         );
                         const newTotalAudience = updatedServices.reduce(
-                          (sum, service) => {
-                            const serviceOption = customOptions.find(
-                              (opt) => opt.value === service.service_id
-                            );
-                            return sum + (serviceOption?.audience || 0);
-                          },
+                          (sum) => sum + 0,
                           0
                         );
 
@@ -376,51 +357,42 @@ const TVData = () => {
                     }}
                   />
 
-                  {projectErrors.services[index]?.service_id && (
+                  {projectErrors?.sm_data[index]?.metric_id && (
                     <p className="text-red-500 text-xs">
-                      {projectErrors.services[index].service_id}
+                      {projectErrors.sm_data[index].metric_id}
                     </p>
-                  )}
-
-                  {index === 0 && (
-                    <div
-                      className=" mt-[10px] w-[40px] h-[40px]  flex items-center justify-center rounded-full bg-black cursor-pointer "
-                      onClick={addItemField}
-                    >
-                      <p className="text-white text-xl ">+</p>
-                    </div>
                   )}
                 </div>
 
                 <div className="max-w-[150px] w-full">
                   <WeekInput
                     type="number"
-                    name="week1"
+                    name="week_1"
                     label="WEEK 1"
-                    placeholder="Plays"
-                    value={item.week1 || ""}
+                    placeholder="Metric Value"
+                    value={item.week_1 || ""}
                     onChange={(e) => {
                       const updatedWeek1 = e.target.value;
 
                       const updatedItems = items.map((i) =>
-                        i.id === item.id ? { ...i, week1: updatedWeek1 } : i
+                        i.id === item.id ? { ...i, week_1: updatedWeek1 } : i
                       );
                       setItems(updatedItems);
 
-                      const updatedServices = [...projectFormData.services];
+                      const updatedServices = [...projectFormData.sm_data];
                       updatedServices[index] = {
                         ...updatedServices[index],
-                        week1: updatedWeek1,
+                        week_1: updatedWeek1,
                       };
                       setProjectFormData((prevData) => ({
                         ...prevData,
-                        services: updatedServices,
+                        sm_data: updatedServices,
                       }));
                     }}
                   />
-                  {projectErrors.services[index]?.week1 && (
+                  {projectErrors.sm_data[index]?.week_1 && (
                     <p className="text-red-500 text-xs">
-                      {projectErrors.services[index].week1}
+                      {projectErrors.sm_data[index].week_1}
                     </p>
                   )}
                 </div>
@@ -428,32 +400,32 @@ const TVData = () => {
                 <div className="max-w-[150px] w-full">
                   <WeekInput
                     type="number"
-                    name="week2"
+                    name="week_2"
                     label="WEEK 2"
-                    placeholder="Plays"
-                    value={item.week2 || ""}
+                    placeholder="Metric Value"
+                    value={item.week_2 || ""}
                     onChange={(e) => {
                       const updatedWeek2 = e.target.value;
 
                       const updatedItems = items.map((i) =>
-                        i.id === item.id ? { ...i, week2: updatedWeek2 } : i
+                        i.id === item.id ? { ...i, week_2: updatedWeek2 } : i
                       );
                       setItems(updatedItems);
 
-                      const updatedServices = [...projectFormData.services];
+                      const updatedServices = [...projectFormData.sm_data];
                       updatedServices[index] = {
                         ...updatedServices[index],
-                        week2: updatedWeek2,
+                        week_2: updatedWeek2,
                       };
                       setProjectFormData((prevData) => ({
                         ...prevData,
-                        services: updatedServices,
+                        sm_data: updatedServices,
                       }));
                     }}
                   />
-                  {projectErrors.services[index]?.week2 && (
+                  {projectErrors.sm_data[index]?.week_2 && (
                     <p className="text-red-500 text-xs">
-                      {projectErrors.services[index].week2}
+                      {projectErrors.sm_data[index].week_2}
                     </p>
                   )}
                 </div>
@@ -461,32 +433,32 @@ const TVData = () => {
                 <div className="max-w-[150px] w-full">
                   <WeekInput
                     type="number"
-                    name="week3"
+                    name="week_3"
                     label="WEEK 3"
-                    placeholder="Plays"
-                    value={item.week3 || ""}
+                    placeholder="Metric Value"
+                    value={item.week_3 || ""}
                     onChange={(e) => {
                       const updatedWeek3 = e.target.value;
 
                       const updatedItems = items.map((i) =>
-                        i.id === item.id ? { ...i, week3: updatedWeek3 } : i
+                        i.id === item.id ? { ...i, week_3: updatedWeek3 } : i
                       );
                       setItems(updatedItems);
 
-                      const updatedServices = [...projectFormData.services];
+                      const updatedServices = [...projectFormData.sm_data];
                       updatedServices[index] = {
                         ...updatedServices[index],
-                        week3: updatedWeek3,
+                        week_3: updatedWeek3,
                       };
                       setProjectFormData((prevData) => ({
                         ...prevData,
-                        services: updatedServices,
+                        sm_data: updatedServices,
                       }));
                     }}
                   />
-                  {projectErrors.services[index]?.week3 && (
+                  {projectErrors.sm_data[index]?.week_3 && (
                     <p className="text-red-500 text-xs">
-                      {projectErrors.services[index].week3}
+                      {projectErrors.sm_data[index].week_3}
                     </p>
                   )}
                 </div>
@@ -494,32 +466,33 @@ const TVData = () => {
                 <div className="max-w-[150px] w-full">
                   <WeekInput
                     type="number"
-                    name="week4"
+                    name="week_4"
                     label="WEEK 4"
-                    placeholder="Plays"
-                    value={item.week4 || ""}
+                    placeholder="Metric Value"
+                    value={item.week_4 || ""}
                     onChange={(e) => {
                       const updatedWeek4 = e.target.value;
 
                       const updatedItems = items.map((i) =>
-                        i.id === item.id ? { ...i, week4: updatedWeek4 } : i
+                        i.id === item.id ? { ...i, week_4: updatedWeek4 } : i
                       );
                       setItems(updatedItems);
 
-                      const updatedServices = [...projectFormData.services];
+                      const updatedServices = [...projectFormData.sm_data];
                       updatedServices[index] = {
                         ...updatedServices[index],
-                        week4: updatedWeek4,
+                        week_4: updatedWeek4,
                       };
                       setProjectFormData((prevData) => ({
                         ...prevData,
-                        services: updatedServices,
+                        sm_id: FacebookID ? Number(FacebookID) : 0,
+                        sm_data: updatedServices,
                       }));
                     }}
                   />
-                  {projectErrors.services[index]?.week4 && (
+                  {projectErrors.sm_data[index]?.week_4 && (
                     <p className="text-red-500 text-xs">
-                      {projectErrors.services[index].week4}
+                      {projectErrors.sm_data[index].week_4}
                     </p>
                   )}
                 </div>
@@ -527,10 +500,18 @@ const TVData = () => {
 
               {index !== 0 && (
                 <div
-                  className="w-[40px] h-[40px]  mb-[5px] flex items-center justify-center rounded-full bg-gray-400 cursor-pointer"
+                  className="w-[40px] h-[40px]   flex items-center justify-center rounded-full bg-gray-400 cursor-pointer"
                   onClick={() => removeItemField(item.id)}
                 >
                   <p className="text-white text-xl">-</p>
+                </div>
+              )}
+              {index === 0 && (
+                <div
+                  className=" mt-[10px] w-[40px] h-[40px]  flex items-center justify-center rounded-full bg-black cursor-pointer "
+                  onClick={addItemField}
+                >
+                  <p className="text-white text-xl ">+</p>
                 </div>
               )}
             </div>
@@ -549,18 +530,24 @@ const TVData = () => {
           </button>
         </div>
 
-        <div className="mt-[20px] grid lg:grid-cols-2 space-y-2">
+        <div className="mt-[20px] items-center grid sm:grid-cols-2 md:grid-cols-3 space-y-2">
           <p className="font-[400] text-[#212529] text-[16px]">
-            Total Stations:{totalServices}
+            Total Impressions: {totalServices}
           </p>
           <p className="font-[400] text-[#212529] text-[16px]">
-            Total Plays: {totalPlays}
+            Total Followers: {totalSpins}
           </p>
           <p className="font-[400] text-[#212529] text-[16px]">
-            Total Audience: {totalAudience.toLocaleString()}
+            Total Shares: {totalAudience.toLocaleString()}
           </p>
           <p className="font-[400] text-[#212529] text-[16px]">
-            Total Impressions: {totalImpressions.toLocaleString()}
+            Total Likes: {totalImpressions.toLocaleString()}
+          </p>
+          <p className="font-[400] text-[#212529] text-[16px]">
+            Total Saves: {totalAudience.toLocaleString()}
+          </p>
+          <p className="font-[400] text-[#212529] text-[16px]">
+            Total Views: {totalImpressions.toLocaleString()}
           </p>
         </div>
       </form>
@@ -573,7 +560,7 @@ const TVData = () => {
         }`}
       >
         <Dialog
-          header="Add TV Channel"
+          header="Add Instagram Metric"
           visible={isAddNewService}
           onHide={hideDialog}
           breakpoints={{ "960px": "75vw", "640px": "100vw" }}
@@ -586,36 +573,12 @@ const TVData = () => {
                 <Input
                   type="text"
                   name="name"
-                  placeholder="TV Name"
+                  placeholder="Name"
                   value={formData.name}
                   onChange={handleInputChange}
                 />
                 {errors.name && (
                   <p className="text-red-500 text-xs">{errors.name}</p>
-                )}
-              </div>
-              <div>
-                <Input
-                  type="number"
-                  name="audience"
-                  placeholder="Audience"
-                  value={formData.audience}
-                  onChange={handleInputChange}
-                />
-                {errors.audience && (
-                  <p className="text-red-500 text-xs">{errors.audience}</p>
-                )}
-              </div>
-              <div>
-                <Input
-                  type="number"
-                  name="impressions"
-                  placeholder="Impression"
-                  value={formData.impressions}
-                  onChange={handleInputChange}
-                />
-                {errors.impressions && (
-                  <p className="text-red-500 text-xs">{errors.impressions}</p>
                 )}
               </div>
 
@@ -632,7 +595,7 @@ const TVData = () => {
                     className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
                   >
                     <IoIosAdd className="text-white" />
-                    <span className="text-white">Add Channel</span>
+                    <span className="text-white">Add Metric</span>
                   </button>
                 </div>
               </div>
@@ -644,4 +607,4 @@ const TVData = () => {
   );
 };
 
-export default TVData;
+export default InstagramData;

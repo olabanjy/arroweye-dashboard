@@ -34,7 +34,7 @@ const AddMedia: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
           visible={visible}
           onHide={onHide}
           breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "50vw" }}
+          style={{ width: "60vw" }}
           className="font-IBM !overflow-y-auto"
         >
           <div className="">
@@ -43,7 +43,7 @@ const AddMedia: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
               <Tooltip info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted." />
             </div>
 
-            <div className="text-[16px] font-[400] flex gap-[20px] items-center mt-[10px]">
+            <div className="text-[16px] font-[400] flex gap-[20px] items-center mt-[10px] overflow-x-auto whitespace-nowrap scrollbar-hide">
               <button
                 className={`text-center py-2 px-[16px] ${
                   activeDetailsTab === "moments"
@@ -55,7 +55,7 @@ const AddMedia: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
                 Moments
               </button>
               <button
-                className={`text-center py-2 px-[16px]${
+                className={`text-center py-2 px-[16px] ${
                   activeDetailsTab === "Recap"
                     ? "  border-b border-[#212529] text-[#000000]"
                     : ""
@@ -65,7 +65,7 @@ const AddMedia: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
                 Recap
               </button>
               <button
-                className={`text-center py-2 px-[16px]${
+                className={`text-center py-2 px-[16px] ${
                   activeDetailsTab === "Dsp"
                     ? "  border-b border-[#212529] text-[#000000]"
                     : ""
@@ -74,11 +74,44 @@ const AddMedia: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
               >
                 DSP COVERS
               </button>
+              <button
+                className={`text-center py-2 px-[16px] ${
+                  activeDetailsTab === "Shazam"
+                    ? "  border-b border-[#212529] text-[#000000]"
+                    : ""
+                }`}
+                onClick={() => setActiveDetailsTab("Shazam")}
+              >
+                SHAZAM
+              </button>
+              <button
+                className={`text-center py-2 px-[16px] ${
+                  activeDetailsTab === "Editorial"
+                    ? "  border-b border-[#212529] text-[#000000]"
+                    : ""
+                }`}
+                onClick={() => setActiveDetailsTab("Editorial")}
+              >
+                EDITORIAL
+              </button>
+              <button
+                className={`text-center py-2 px-[16px] ${
+                  activeDetailsTab === "Gifting"
+                    ? "  border-b border-[#212529] text-[#000000]"
+                    : ""
+                }`}
+                onClick={() => setActiveDetailsTab("Gifting")}
+              >
+                GIFTING
+              </button>
             </div>
 
             {activeDetailsTab === "moments" && <Moments />}
             {activeDetailsTab === "Recap" && <Recap />}
             {activeDetailsTab === "Dsp" && <DspCovers />}
+            {activeDetailsTab === "Shazam" && <DspCovers />}
+            {activeDetailsTab === "Editorial" && <DspCovers />}
+            {activeDetailsTab === "Gifting" && <DspCovers />}
           </div>
         </Dialog>
       </div>

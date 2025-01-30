@@ -95,7 +95,6 @@ export const getStoredSingleContent = (): ContentItem | null => {
 
   return content as ContentItem;
 };
-
 export const CreateBusiness = async (payload: unknown): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
@@ -130,6 +129,105 @@ export const CreateBusiness = async (payload: unknown): Promise<void> => {
   }
 };
 
+export const CreateMetric = async (payload: unknown): Promise<void> => {
+  try {
+    const { data: response } = await apiRequest<
+      ApiRequestResponse<ApiResponse>
+    >({
+      method: "POST",
+      url: `/api/v1/projects/general/metric/`,
+      data: payload,
+      requireToken: false,
+    });
+
+    console.log(response);
+    toast.success("Creation successful!");
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400) {
+        console.log(error.response);
+
+        toast.error(error.response?.data?.message || error.response?.data[0]);
+      } else if (error.response?.status === 403) {
+        toast.error(error.response?.data?.message || "Access denied.");
+      } else {
+        toast.error(
+          error.response?.data?.message || "Request failed. Please try again."
+        );
+      }
+    } else {
+      toast.error("Request failed. Please try again.");
+      console.error("Unexpected Error:", error);
+    }
+  }
+};
+
+export const CreateChannel = async (payload: unknown): Promise<void> => {
+  try {
+    const { data: response } = await apiRequest<
+      ApiRequestResponse<ApiResponse>
+    >({
+      method: "POST",
+      url: `/api/v1/projects/general/airplay/`,
+      data: payload,
+      requireToken: false,
+    });
+
+    console.log(response);
+    toast.success("Creation successful!");
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400) {
+        console.log(error.response);
+
+        toast.error(error.response?.data?.message || error.response?.data[0]);
+      } else if (error.response?.status === 403) {
+        toast.error(error.response?.data?.message || "Access denied.");
+      } else {
+        toast.error(
+          error.response?.data?.message || "Request failed. Please try again."
+        );
+      }
+    } else {
+      toast.error("Request failed. Please try again.");
+      console.error("Unexpected Error:", error);
+    }
+  }
+};
+
+export const CreateSocialStats = async (payload: unknown): Promise<void> => {
+  try {
+    const { data: response } = await apiRequest<
+      ApiRequestResponse<ApiResponse>
+    >({
+      method: "POST",
+      url: `api/v1/projects/stats/social-media/`,
+      data: payload,
+      requireToken: false,
+    });
+
+    console.log(response);
+    toast.success("Creation successful!");
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400) {
+        console.log(error.response);
+
+        toast.error(error.response?.data?.message || error.response?.data[0]);
+      } else if (error.response?.status === 403) {
+        toast.error(error.response?.data?.message || "Access denied.");
+      } else {
+        toast.error(
+          error.response?.data?.message || "Request failed. Please try again."
+        );
+      }
+    } else {
+      toast.error("Request failed. Please try again.");
+      console.error("Unexpected Error:", error);
+    }
+  }
+};
+
 export const CreateService = async (payload: unknown): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
@@ -143,7 +241,6 @@ export const CreateService = async (payload: unknown): Promise<void> => {
 
     console.log(response);
     toast.success("Service Created Successful!");
-    // window.location.reload();
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
@@ -608,6 +705,84 @@ export const getPaymentInvoice = async (
       }
     } else {
       console.error("Unexpected Error:", error);
+    }
+
+    return null;
+  }
+};
+
+export const getChannel = async (): Promise<ContentItem[] | null> => {
+  try {
+    const response = await apiRequest({
+      method: "GET",
+      url: `/api/v1/projects/general/airplay/`,
+      data: null,
+      requireToken: false,
+    });
+
+    ls.set("Channel", response, { encrypt: true });
+
+    return response as ContentItem[];
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          "Content Retrieval failed. Please try again."
+      );
+    } else {
+      toast.error("Content Retrieval failed. Please try again.");
+    }
+
+    return null;
+  }
+};
+
+export const getMetric = async (): Promise<ContentItem[] | null> => {
+  try {
+    const response = await apiRequest({
+      method: "GET",
+      url: `/api/v1/projects/general/metric/`,
+      data: null,
+      requireToken: false,
+    });
+
+    ls.set("Channel", response, { encrypt: true });
+
+    return response as ContentItem[];
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          "Content Retrieval failed. Please try again."
+      );
+    } else {
+      toast.error("Content Retrieval failed. Please try again.");
+    }
+
+    return null;
+  }
+};
+
+export const getSocialMedia = async (): Promise<ContentItem[] | null> => {
+  try {
+    const response = await apiRequest({
+      method: "GET",
+      url: `/api/v1/projects/general/social-media/`,
+      data: null,
+      requireToken: false,
+    });
+
+    ls.set("SocialMedia", response, { encrypt: true });
+
+    return response as ContentItem[];
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          "Content Retrieval failed. Please try again."
+      );
+    } else {
+      toast.error("Content Retrieval failed. Please try again.");
     }
 
     return null;

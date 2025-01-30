@@ -17,8 +17,6 @@ const Invoice = () => {
     });
   }, [id]);
 
-  console.log(content);
-
   const handlePrint = () => {
     const originalContent = document.body.innerHTML;
     const invoiceContent = document.getElementById("invoice")?.outerHTML;
