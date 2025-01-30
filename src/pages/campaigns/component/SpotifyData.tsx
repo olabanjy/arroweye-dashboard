@@ -3,10 +3,10 @@ import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { WeekInput } from "@/components/ui/weekInput";
 import {
+  CreateDspStats,
   CreateMetric,
-  CreateSocialStats,
+  getDsp,
   getMetric,
-  getSocialMedia,
 } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
@@ -33,14 +33,13 @@ type ServiceError = {
 };
 
 type ProjectErrors = {
-  sm_data: ServiceError[];
-  sm_id: number | null;
+  dsp_data: ServiceError[];
+  dsp_id: number | null;
 };
 
 interface ProjectFormData {
-  project_id: number;
-  sm_id: number;
-  sm_data: {
+  dsp_id: number;
+  dsp_data: {
     metric_id: number;
     week_1: string;
     week_2: string;
@@ -64,12 +63,14 @@ const SpotifyData = () => {
     getMetric().then((fetchedContent) => {
       setContent(fetchedContent);
     });
-    getSocialMedia().then((fetchedContent) => {
+    getDsp().then((fetchedContent) => {
       setSocials(fetchedContent);
     });
   }, []);
 
-  const FacebookID = socials?.find((social) => social.name === "Spotify")?.id;
+  const FacebookID = socials
+    ? socials.find((social) => social.name === "Spotify")?.id
+    : null;
 
   console.log(FacebookID);
 
@@ -82,9 +83,8 @@ const SpotifyData = () => {
   };
 
   const [projectFormData, setProjectFormData] = useState<ProjectFormData>({
-    project_id: id ? parseInt(id as string, 10) : 0,
-    sm_id: 0,
-    sm_data: [
+    dsp_id: 0,
+    dsp_data: [
       {
         metric_id: 0,
         week_1: "",
@@ -96,8 +96,8 @@ const SpotifyData = () => {
   });
 
   const [projectErrors, setProjectErrors] = useState<ProjectErrors>({
-    sm_id: null,
-    sm_data: [
+    dsp_id: null,
+    dsp_data: [
       {
         metric_id: null,
         week_1: null,
@@ -108,7 +108,7 @@ const SpotifyData = () => {
     ],
   });
 
-  const { totalSpins, totalServices } = projectFormData.sm_data.reduce(
+  const { totalSpins, totalServices } = projectFormData.dsp_data.reduce(
     (totals, service) => {
       const week1Value = parseFloat(service.week_1 || "0");
       const week2Value = parseFloat(service.week_2 || "0");
@@ -133,8 +133,8 @@ const SpotifyData = () => {
     e.preventDefault();
 
     const newErrors: ProjectErrors = {
-      sm_id: null,
-      sm_data: projectFormData.sm_data.map(() => ({
+      dsp_id: null,
+      dsp_data: projectFormData.dsp_data.map(() => ({
         metric_id: null,
         week_1: null,
         week_2: null,
@@ -143,15 +143,15 @@ const SpotifyData = () => {
       })),
     };
 
-    projectFormData.sm_data.forEach((service, index) => {
+    projectFormData.dsp_data.forEach((service, index) => {
       if (!service.metric_id || isNaN(service.metric_id)) {
-        newErrors.sm_data[index].metric_id = "Please select a Metric.";
+        newErrors.dsp_data[index].metric_id = "Please select a Metric.";
       }
       ["week_1", "week_2", "week_3", "week_4"].forEach((week) => {
         const weekValue = service[week as keyof typeof service];
         if (!weekValue || isNaN(parseFloat(weekValue.toString()))) {
-          newErrors.sm_data[index][
-            week as keyof (typeof newErrors.sm_data)[0]
+          newErrors.dsp_data[index][
+            week as keyof (typeof newErrors.dsp_data)[0]
           ] = "Please enter a valid quantity.";
         }
       });
@@ -159,7 +159,7 @@ const SpotifyData = () => {
 
     setProjectErrors(newErrors);
 
-    const hasErrors = newErrors.sm_data.some((service) =>
+    const hasErrors = newErrors.dsp_data.some((service) =>
       Object.values(service).some((value) => value !== null)
     );
 
@@ -168,10 +168,23 @@ const SpotifyData = () => {
         ...projectFormData,
       };
 
-      CreateSocialStats(updatedFormData)
+      CreateDspStats(Number(id), updatedFormData)
         .then(() => {
           console.log("Form submitted successfully!");
           hideDialog();
+          setProjectFormData({
+            dsp_id: 0,
+            dsp_data: [
+              {
+                metric_id: 0,
+                week_1: "",
+                week_2: "",
+                week_3: "",
+                week_4: "",
+              },
+            ],
+          });
+          setItems([]);
         })
         .catch((err) => {
           console.error("Error submitting form:", err);
@@ -223,7 +236,7 @@ const SpotifyData = () => {
     setProjectFormData((prevData) => {
       const indexToRemove = items.findIndex((item) => item.id === id);
 
-      const updatedServices = prevData.sm_data.filter(
+      const updatedServices = prevData.dsp_data.filter(
         (_, index) => index !== indexToRemove
       );
 
@@ -232,7 +245,7 @@ const SpotifyData = () => {
 
       return {
         ...prevData,
-        sm_data: updatedServices,
+        dsp_data: updatedServices,
       };
     });
   };
@@ -331,7 +344,7 @@ const SpotifyData = () => {
 
                         setItems(updatedItems);
 
-                        const updatedServices = [...projectFormData.sm_data];
+                        const updatedServices = [...projectFormData.dsp_data];
                         updatedServices[index] = {
                           ...updatedServices[index],
                           metric_id: selectedValue,
@@ -339,7 +352,7 @@ const SpotifyData = () => {
 
                         setProjectFormData((prevData) => ({
                           ...prevData,
-                          sm_data: updatedServices,
+                          dsp_data: updatedServices,
                         }));
 
                         const newTotalImpressions = updatedServices.reduce(
@@ -357,9 +370,9 @@ const SpotifyData = () => {
                     }}
                   />
 
-                  {projectErrors?.sm_data[index]?.metric_id && (
+                  {projectErrors?.dsp_data[index]?.metric_id && (
                     <p className="text-red-500 text-xs">
-                      {projectErrors.sm_data[index].metric_id}
+                      {projectErrors.dsp_data[index].metric_id}
                     </p>
                   )}
                 </div>
@@ -379,20 +392,20 @@ const SpotifyData = () => {
                       );
                       setItems(updatedItems);
 
-                      const updatedServices = [...projectFormData.sm_data];
+                      const updatedServices = [...projectFormData.dsp_data];
                       updatedServices[index] = {
                         ...updatedServices[index],
                         week_1: updatedWeek1,
                       };
                       setProjectFormData((prevData) => ({
                         ...prevData,
-                        sm_data: updatedServices,
+                        dsp_data: updatedServices,
                       }));
                     }}
                   />
-                  {projectErrors.sm_data[index]?.week_1 && (
+                  {projectErrors.dsp_data[index]?.week_1 && (
                     <p className="text-red-500 text-xs">
-                      {projectErrors.sm_data[index].week_1}
+                      {projectErrors.dsp_data[index].week_1}
                     </p>
                   )}
                 </div>
@@ -412,20 +425,20 @@ const SpotifyData = () => {
                       );
                       setItems(updatedItems);
 
-                      const updatedServices = [...projectFormData.sm_data];
+                      const updatedServices = [...projectFormData.dsp_data];
                       updatedServices[index] = {
                         ...updatedServices[index],
                         week_2: updatedWeek2,
                       };
                       setProjectFormData((prevData) => ({
                         ...prevData,
-                        sm_data: updatedServices,
+                        dsp_data: updatedServices,
                       }));
                     }}
                   />
-                  {projectErrors.sm_data[index]?.week_2 && (
+                  {projectErrors.dsp_data[index]?.week_2 && (
                     <p className="text-red-500 text-xs">
-                      {projectErrors.sm_data[index].week_2}
+                      {projectErrors.dsp_data[index].week_2}
                     </p>
                   )}
                 </div>
@@ -445,20 +458,20 @@ const SpotifyData = () => {
                       );
                       setItems(updatedItems);
 
-                      const updatedServices = [...projectFormData.sm_data];
+                      const updatedServices = [...projectFormData.dsp_data];
                       updatedServices[index] = {
                         ...updatedServices[index],
                         week_3: updatedWeek3,
                       };
                       setProjectFormData((prevData) => ({
                         ...prevData,
-                        sm_data: updatedServices,
+                        dsp_data: updatedServices,
                       }));
                     }}
                   />
-                  {projectErrors.sm_data[index]?.week_3 && (
+                  {projectErrors.dsp_data[index]?.week_3 && (
                     <p className="text-red-500 text-xs">
-                      {projectErrors.sm_data[index].week_3}
+                      {projectErrors.dsp_data[index].week_3}
                     </p>
                   )}
                 </div>
@@ -478,21 +491,21 @@ const SpotifyData = () => {
                       );
                       setItems(updatedItems);
 
-                      const updatedServices = [...projectFormData.sm_data];
+                      const updatedServices = [...projectFormData.dsp_data];
                       updatedServices[index] = {
                         ...updatedServices[index],
                         week_4: updatedWeek4,
                       };
                       setProjectFormData((prevData) => ({
                         ...prevData,
-                        sm_id: FacebookID ? Number(FacebookID) : 0,
-                        sm_data: updatedServices,
+                        dsp_id: FacebookID ? Number(FacebookID) : 0,
+                        dsp_data: updatedServices,
                       }));
                     }}
                   />
-                  {projectErrors.sm_data[index]?.week_4 && (
+                  {projectErrors.dsp_data[index]?.week_4 && (
                     <p className="text-red-500 text-xs">
-                      {projectErrors.sm_data[index].week_4}
+                      {projectErrors.dsp_data[index].week_4}
                     </p>
                   )}
                 </div>

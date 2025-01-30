@@ -195,13 +195,52 @@ export const CreateChannel = async (payload: unknown): Promise<void> => {
   }
 };
 
-export const CreateSocialStats = async (payload: unknown): Promise<void> => {
+export const CreateSocialStats = async (
+  id: number,
+  payload: unknown
+): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
       ApiRequestResponse<ApiResponse>
     >({
       method: "POST",
-      url: `api/v1/projects/stats/social-media/`,
+      url: `api/v1/projects/${id}/social-media/`,
+      data: payload,
+      requireToken: false,
+    });
+
+    console.log(response);
+    toast.success("Creation successful!");
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400) {
+        console.log(error.response);
+
+        toast.error(error.response?.data?.message || error.response?.data[0]);
+      } else if (error.response?.status === 403) {
+        toast.error(error.response?.data?.message || "Access denied.");
+      } else {
+        toast.error(
+          error.response?.data?.message || "Request failed. Please try again."
+        );
+      }
+    } else {
+      toast.error("Request failed. Please try again.");
+      console.error("Unexpected Error:", error);
+    }
+  }
+};
+
+export const CreateDspStats = async (
+  id: number,
+  payload: unknown
+): Promise<void> => {
+  try {
+    const { data: response } = await apiRequest<
+      ApiRequestResponse<ApiResponse>
+    >({
+      method: "POST",
+      url: `api/v1/projects/${id}/dsp/`,
       data: payload,
       requireToken: false,
     });

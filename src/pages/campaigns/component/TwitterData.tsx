@@ -38,7 +38,6 @@ type ProjectErrors = {
 };
 
 interface ProjectFormData {
-  project_id: number;
   sm_id: number;
   sm_data: {
     metric_id: number;
@@ -51,7 +50,7 @@ interface ProjectFormData {
 
 const TwitterData = () => {
   const { query } = useRouter();
-  const { id } = query;
+  const id = Number(query.id);
   const [content, setContent] = useState<ContentItem[] | null>(null);
   const [socials, setSocials] = useState<ContentItem[] | null>(null);
   const [totalImpressions, setTotalImpressions] = useState(0);
@@ -82,7 +81,6 @@ const TwitterData = () => {
   };
 
   const [projectFormData, setProjectFormData] = useState<ProjectFormData>({
-    project_id: id ? parseInt(id as string, 10) : 0,
     sm_id: 0,
     sm_data: [
       {
@@ -168,10 +166,23 @@ const TwitterData = () => {
         ...projectFormData,
       };
 
-      CreateSocialStats(updatedFormData)
+      CreateSocialStats(id, updatedFormData)
         .then(() => {
           console.log("Form submitted successfully!");
           hideDialog();
+          setProjectFormData({
+            sm_id: 0,
+            sm_data: [
+              {
+                metric_id: 0,
+                week_1: "",
+                week_2: "",
+                week_3: "",
+                week_4: "",
+              },
+            ],
+          });
+          setItems([]);
         })
         .catch((err) => {
           console.error("Error submitting form:", err);
