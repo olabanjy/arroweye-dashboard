@@ -274,14 +274,22 @@ const ProjectDetails = () => {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <p className=" font-IBM font-[400] text-[16px]">Edit mode</p>
-              <InputSwitch
-                id="phone"
-                checked={toggleNotifications}
-                onChange={(e) => setToggleNotifications(e.value)}
-                className="custom-switch"
-              />
+            <div className="relative">
+              {toggleNotifications && (
+                <div className="fixed top-0 left-0 w-full h-[50px] flex items-center justify-center bg-blue-500 text-white text-[15px] font-[500] font-IBM z-[9999999]">
+                  Edit mode
+                </div>
+              )}
+
+              <div className="flex items-center space-x-4">
+                <p className="font-IBM font-[400] text-[16px]">Edit mode</p>
+                <InputSwitch
+                  id="phone"
+                  checked={toggleNotifications}
+                  onChange={(e) => setToggleNotifications(e.value)}
+                  className="custom-switch"
+                />
+              </div>
             </div>
           </div>
 

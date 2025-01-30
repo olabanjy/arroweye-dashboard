@@ -8,6 +8,7 @@ import MomentSliderCard from "../public/component/MomentSliderCard";
 import AddData from "./AddData";
 import AddMedia from "./AddMedia";
 import AddDataSocials from "./AddDataSocials";
+import AddDataDsp from "./AddDataDsp";
 
 const chartDataForDoughnut: ChartData<"doughnut", number[], string> = {
   labels: ["Radio", "Cable", "TV", "DJ"],
@@ -65,6 +66,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   const [addDataModal, setAddDataModal] = useState(false);
   const [addDataModalSocial, setAddDataModalSocial] = useState(false);
   const [addMediaModal, setAddMediaModal] = useState(false);
+  const [addDspModal, setAddDspModal] = useState(false);
 
   return (
     <div className=" ">
@@ -169,7 +171,10 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
           <div className="border p-[20px]  rounded-[8px] space-y-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
             {editMode && (
               <div className=" space-y-[20px]">
-                <p className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
+                <p
+                  className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
+                  onClick={() => setAddDspModal(true)}
+                >
                   add data
                 </p>
                 <p className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
@@ -240,6 +245,8 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
         visible={addMediaModal}
         onHide={() => setAddMediaModal(false)}
       />
+
+      <AddDataDsp visible={addDspModal} onHide={() => setAddDspModal(false)} />
       <div className="fixed bottom-[30px] lg:left-32 right-0 flex justify-center z-30 w-full">
         <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px]">
           <p className="rounded p-[8px] bg-black text-white !w-[70px] text-center">

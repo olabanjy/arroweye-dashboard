@@ -788,3 +788,29 @@ export const getSocialMedia = async (): Promise<ContentItem[] | null> => {
     return null;
   }
 };
+
+export const getDsp = async (): Promise<ContentItem[] | null> => {
+  try {
+    const response = await apiRequest({
+      method: "GET",
+      url: `/api/v1/projects/general/dsp/`,
+      data: null,
+      requireToken: false,
+    });
+
+    ls.set("DspMedia", response, { encrypt: true });
+
+    return response as ContentItem[];
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          "Content Retrieval failed. Please try again."
+      );
+    } else {
+      toast.error("Content Retrieval failed. Please try again.");
+    }
+
+    return null;
+  }
+};
