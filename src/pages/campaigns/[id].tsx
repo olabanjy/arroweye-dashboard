@@ -262,32 +262,35 @@ const ProjectDetails = () => {
             </p>
           </div>
           <div className=" grid gap-[20px] md:flex items-end md:justify-between pr-[40px]">
-            <div>
+            <div className=" ">
               <p className="font-extrabold text-5xl text-[#000000]">
                 {content?.title}
               </p>
-              {subvendorStaff?.map((user, index) => (
-                <div key={index} className="relative group">
-                  <p
-                    className={`${predefinedColors[index % predefinedColors.length]} tracking-[.1rem] text-[12px] font-[700] font-Poppins text-white rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer`}
-                    onClick={() => handleUserClick(user as ContentItem)}
-                  >
-                    {user.fullname?.slice(0, 2).toUpperCase()}
-                  </p>
 
-                  <div className="font-IBM absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 bg-black text-white text-xs  px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 text-nowrap">
-                    {user?.fullname}
+              <div className=" flex">
+                {subvendorStaff?.map((user, index) => (
+                  <div key={index} className="relative group">
+                    <p
+                      className={`${predefinedColors[index % predefinedColors.length]} tracking-[.1rem] text-[12px] font-[700] font-Poppins text-white rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer`}
+                      onClick={() => handleUserClick(user as ContentItem)}
+                    >
+                      {user.fullname?.slice(0, 2).toUpperCase()}
+                    </p>
+
+                    <div className="font-IBM absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 bg-black text-white text-xs  px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 text-nowrap">
+                      {user?.fullname}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
 
-              <div className="relative group">
-                <p
-                  className="bg-[#ffdead] text-[#000000] rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer"
-                  onClick={showDialog}
-                >
-                  <HiOutlineUserAdd size={24} />
-                </p>
+                <div className="relative group">
+                  <p
+                    className="bg-[#ffdead] text-[#000000] rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer"
+                    onClick={showDialog}
+                  >
+                    <HiOutlineUserAdd size={24} />
+                  </p>
+                </div>
               </div>
             </div>
 

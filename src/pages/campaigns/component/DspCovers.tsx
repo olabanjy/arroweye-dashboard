@@ -1,97 +1,77 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import { CreateService } from "@/services/api";
+import { CreateMedia } from "@/services/api";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 
-const DspCovers = () => {
-  const hideDialog = () => {
-    setErrors({
-      source_link: "",
-      embed_link: "",
-      download_link: "",
-    });
-  };
+type MediaItem = {
+  file: File;
+  embed_link: string;
+};
 
-  const [errors, setErrors] = useState({
-    source_link: "",
-    embed_link: "",
-    download_link: "",
-  });
-  const [formData, setFormData] = useState({
-    source_link: "",
-    embed_link: "",
-    download_link: "",
-  });
-  const [files, setFiles] = useState<File[]>([]);
+const DspCovers = () => {
+  const router = useRouter();
+  const id = Number(router.query.id);
+
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFiles = e.target.files ? Array.from(e.target.files) : [];
     const validFiles = uploadedFiles.filter((file) =>
       file.type.startsWith("image/")
     );
+
     if (validFiles.length !== uploadedFiles.length) {
       alert("Only image files are allowed.");
     }
-    setFiles((prev) => [...prev, ...validFiles]);
+
+    const newMediaItems: MediaItem[] = validFiles.map((file) => ({
+      file,
+      embed_link: "",
+    }));
+
+    setMediaItems((prev) => [...prev, ...newMediaItems]);
   };
 
-  const removeFile = (index: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== index));
+  const handleLinkChange = (index: number, value: string) => {
+    setMediaItems((prev) =>
+      prev.map((item, i) =>
+        i === index ? { ...item, embed_link: value } : item
+      )
+    );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const removeMediaItem = (index: number) => {
+    setMediaItems((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newErrors = {
-      source_link: "",
-      embed_link: "",
-      download_link: "",
-    };
-
-    if (!formData.embed_link) {
-      newErrors.embed_link = "Please enter a valid link.";
-    }
-    if (!formData.source_link) {
-      newErrors.source_link = "Please enter cost.";
+    if (mediaItems.length === 0) {
+      alert("Please upload at least one set of images.");
+      return;
     }
 
-    if (!formData.download_link) {
-      newErrors.download_link = "Please enter cost.";
+    if (mediaItems.some((item) => !item.embed_link.trim())) {
+      alert("Please add a link for each uploaded image.");
+      return;
     }
-    setErrors(newErrors);
 
-    const hasErrors = Object.values(newErrors).some((error) => error !== "");
-    if (!hasErrors) {
-      if (files.length === 0) {
-        alert("Please upload at least one image.");
-        return;
-      }
+    const requestData = new FormData();
+    mediaItems.forEach((item, index) => {
+      requestData.append(`files[${index}]`, item.file);
+      requestData.append(`embed_link[${index}]`, item.embed_link);
+    });
 
-      const data = {
-        ...formData,
-        files,
-      };
-
-      CreateService(data)
-        .then(() => {
-          console.log("Form submitted successfully!");
-          hideDialog();
-        })
-        .catch((err) => {
-          console.error("Error submitting form:", err);
-        });
+    try {
+      await CreateMedia(id, requestData);
+      console.log("Form submitted successfully!");
+      setMediaItems([]);
+    } catch (err) {
+      console.error("Error submitting form:", err);
     }
-  };
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
   };
 
   return (
@@ -116,39 +96,30 @@ const DspCovers = () => {
             />
           </div>
 
-          <div className=" mt-4 space-y-[20px] max-h-[200px] overflow-auto">
-            {files.map((file, index) => (
-              <div
-                key={index}
-                className="relative group grid gap-[20px] lg:flex lg:gap-[40px] items-center "
-              >
-                <Image
-                  src={URL.createObjectURL(file)}
-                  alt={`uploaded-${index}`}
-                  width={40}
-                  height={40}
-                  className=" w-[80px] h-[80px] object-cover rounded"
-                />
-                <div className=" w-full flex items-center gap-[10px] flex-1">
-                  <div className="w-full">
+          <div className="mt-4 space-y-[20px] max-h-[300px] overflow-auto">
+            {mediaItems.map((item, index) => (
+              <div key={index} className="space-y-[10px]">
+                <div className="flex gap-[10px] items-center flex-wrap">
+                  <div className="relative grid gap-[10px] lg:flex lg:gap-[20px] items-center">
+                    <Image
+                      src={URL.createObjectURL(item.file)}
+                      alt={`uploaded-${index}`}
+                      width={80}
+                      height={80}
+                      className="w-[80px] h-[80px] object-cover rounded"
+                    />
                     <Input
                       type="text"
-                      name="embed_link"
-                      placeholder="add link"
-                      value={formData.embed_link}
-                      onChange={handleInputChange}
-                      className=" rounded-full"
+                      placeholder="Enter link"
+                      value={item.embed_link}
+                      onChange={(e) => handleLinkChange(index, e.target.value)}
+                      className="w-full rounded-full"
                     />
-                    {errors.embed_link && (
-                      <p className="text-red-500 text-xs">
-                        {errors.embed_link}
-                      </p>
-                    )}
                   </div>
                   <button
                     type="button"
-                    onClick={() => removeFile(index)}
-                    className="  text-[#000000] text-xs  "
+                    onClick={() => removeMediaItem(index)}
+                    className="text-[#000000] text-xs"
                   >
                     X
                   </button>
@@ -160,11 +131,11 @@ const DspCovers = () => {
           <div className="mt-[20px] flex items-center space-x-2">
             <button
               type="submit"
-              className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-none py-[8px] px-[20px] rounded"
+              className="font-IBM text-[14px] text-white bg-[#000000] border border-[#000000] hover:bg-orange-500 py-[8px] px-[20px] rounded"
             >
               Save
             </button>
-            <button className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#1f9abd] hover:bg-gray-200 hover:border-none py-[8px] px-[20px] rounded">
+            <button className="font-IBM text-[14px] text-white bg-[#1f9abd] hover:bg-gray-200 py-[8px] px-[20px] rounded">
               Watch demo
             </button>
           </div>

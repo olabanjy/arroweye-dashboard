@@ -87,7 +87,7 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
                 ))}
             </div>
 
-            {activeDetailsTab === "Apple Music" && <AppleMusicData />}
+            {activeDetailsTab === "Apple" && <AppleMusicData />}
             {activeDetailsTab === "Spotify" && <SpotifyData />}
             {activeDetailsTab === "YouTube" && <YoutubeData />}
           </div>

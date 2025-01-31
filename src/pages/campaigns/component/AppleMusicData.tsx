@@ -69,7 +69,7 @@ const AppleMusicData = () => {
   }, []);
 
   const FacebookID = socials
-    ? socials.find((social) => social.name === "Apple Music")?.id
+    ? socials.find((social) => social.name === "Apple")?.id
     : null;
 
   console.log(FacebookID);
