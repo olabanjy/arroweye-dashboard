@@ -40,6 +40,7 @@ export interface ContentItem {
   id?: number | string;
   subvendor?: {
     organization_name: string;
+    id?: number;
   };
   organization_name?: string;
   items?: { service: { name: string; cost: number } }[];
@@ -60,8 +61,8 @@ export interface ContentItem {
   project?: {
     title: string;
     code: string;
-    vendor: string;
-    subvendor: string;
+    vendor?: { organization_name: string };
+    subvendor?: { organization_name: string };
     pin: number;
   };
   po_code?: string;

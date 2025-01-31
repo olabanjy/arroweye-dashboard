@@ -129,6 +129,42 @@ export const CreateBusiness = async (payload: unknown): Promise<void> => {
   }
 };
 
+export const CreateMedia = async (
+  id: number,
+  payload: unknown
+): Promise<void> => {
+  try {
+    const { data: response } = await apiRequest<
+      ApiRequestResponse<ApiResponse>
+    >({
+      method: "POST",
+      url: `/api/v1/projects/${id}/media/`,
+      data: payload,
+      requireToken: false,
+    });
+
+    console.log(response);
+    toast.success("Creation successful!");
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400) {
+        console.log(error.response);
+
+        toast.error(error.response?.data?.message || error.response?.data[0]);
+      } else if (error.response?.status === 403) {
+        toast.error(error.response?.data?.message || "Access denied.");
+      } else {
+        toast.error(
+          error.response?.data?.message || "Request failed. Please try again."
+        );
+      }
+    } else {
+      toast.error("Request failed. Please try again.");
+      console.error("Unexpected Error:", error);
+    }
+  }
+};
+
 export const CreateMetric = async (payload: unknown): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
@@ -851,5 +887,74 @@ export const getDsp = async (): Promise<ContentItem[] | null> => {
     }
 
     return null;
+  }
+};
+
+export const getBusinessStaff = async (
+  id: number
+): Promise<ContentItem[] | null> => {
+  try {
+    const response = await apiRequest<ContentItem[]>({
+      method: "GET",
+      url: `/api/v1/org/business/${id}/staff/`,
+      data: null,
+      requireToken: false,
+    });
+
+    const contentItem: ContentItem[] = response;
+
+    ls.set("BusinessStaff", contentItem, { encrypt: true });
+
+    return contentItem;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 403) {
+        const redirectUrl = error.response?.data?.redirect_url;
+
+        console.error("403 Forbidden:", error.response?.data);
+
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+        }
+      }
+    } else {
+      console.error("Unexpected Error:", error);
+    }
+
+    return null;
+  }
+};
+
+export const archiveProject = async (
+  id: number,
+  payload: unknown
+): Promise<void> => {
+  try {
+    const { data: response } = await apiRequest<
+      ApiRequestResponse<ApiResponse>
+    >({
+      method: "PATCH",
+      url: `/api/v1/projects/${id}/`,
+      data: payload,
+      requireToken: false,
+    });
+
+    console.log(response);
+    toast.success("Archiving successful!");
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400) {
+        toast.error(error.response?.data?.message || error.response?.data[0]);
+      } else if (error.response?.status === 403) {
+        toast.error(error.response?.data?.message || "Access denied.");
+      } else {
+        toast.error(
+          error.response?.data?.message || "Request failed. Please try again."
+        );
+      }
+    } else {
+      toast.error("Request failed. Please try again.");
+      console.error("Unexpected Error:", error);
+    }
   }
 };

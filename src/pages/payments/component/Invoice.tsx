@@ -100,11 +100,17 @@ const Invoice = () => {
           // { content: item?.project?.code },
           { content: <div className=" text-start">{item?.po_code} </div> },
           {
-            content: <div className=" text-start">{item?.project?.vendor}</div>,
+            content: (
+              <div className=" text-start">
+                {item?.project?.vendor?.organization_name}
+              </div>
+            ),
           },
           {
             content: (
-              <div className=" text-start">{item?.project?.subvendor}</div>
+              <div className=" text-start">
+                {item?.project?.subvendor?.organization_name}
+              </div>
             ),
           },
           {

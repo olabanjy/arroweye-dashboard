@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Table from "./Table";
 import { BsTrash } from "react-icons/bs";
 import { SelectInput } from "@/components/ui/selectinput";
-import { getProjects } from "@/services/api";
+import { archiveProject, getProjects } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 import Link from "next/link";
 import { MdOutlineModeEditOutline } from "react-icons/md";
@@ -24,18 +24,42 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
 
   const [copiedPin, setCopiedPin] = useState<string | null>(null);
   const [content, setContent] = useState<ContentItem[] | null>(null);
+  const [isArchiving, setIsArchiving] = useState<string | null>(null);
 
-  console.log(content);
   useEffect(() => {
-    getProjects().then((fetchedContent) => {
-      setContent(fetchedContent);
-    });
+    fetchProjects();
   }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const fetchedContent = await getProjects();
+      setContent(fetchedContent);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    }
+  };
 
   const handleCopyPin = (pin: string) => {
     navigator.clipboard.writeText(pin);
     setCopiedPin(pin);
     setTimeout(() => setCopiedPin(null), 2000);
+  };
+
+  const handleArchiveSubmit = async (projectId: string) => {
+    if (!projectId || isArchiving) return;
+
+    setIsArchiving(projectId);
+
+    try {
+      await archiveProject(Number(projectId), { archived: true });
+      console.log(`Project ${projectId} archived successfully!`);
+
+      fetchProjects();
+    } catch (error) {
+      console.error(`Error archiving project ${projectId}:`, error);
+    } finally {
+      setIsArchiving(null);
+    }
   };
 
   return (
@@ -67,12 +91,13 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
           </p>
         </div>
       )}
-      <div className=" mt-[20px]">
+      <div className="mt-[20px]">
         <Table
           highlightFirstCell={true}
           headers={headers}
           rows={content
-            ?.slice()
+            ?.filter((item) => !item.archived)
+            .slice()
             .reverse()
             .map((item, index) => ({
               data: [
@@ -82,7 +107,6 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
                 item?.vendor?.organization_name,
                 item?.subvendor?.organization_name,
                 item?.created?.slice(0, 10) || "2025-01-13",
-                // item?.code,
                 <div
                   className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500] w-[150px] md:w-full whitespace-nowrap"
                   key={"code"}
@@ -94,8 +118,8 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
                   href={`/campaigns/${item.id}`}
                   key={`manage-button-${index}`}
                 >
-                  <div className="flex justify-center ">
-                    <button className=" text-[#000000]  ">
+                  <div className="flex justify-center">
+                    <button className="text-[#000000]">
                       <MdOutlineModeEditOutline size={20} />
                     </button>
                   </div>
@@ -105,8 +129,11 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
                   className="flex justify-center gap-2"
                 >
                   <button
-                    className=" text-[#000000] "
-                    onClick={() => alert("Action triggered!")}
+                    className={`text-[#000000] ${isArchiving === item.id ? "opacity-50" : ""}`}
+                    onClick={() =>
+                      item.id && handleArchiveSubmit(String(item.id))
+                    }
+                    disabled={isArchiving === item.id}
                   >
                     <BsTrash size={20} />
                   </button>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Table from "./Table";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { SelectInput } from "@/components/ui/selectinput";
-import { getProjects } from "@/services/api";
+import { getProjects, archiveProject } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 
 interface ProjectsProps {
@@ -21,6 +21,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
   ];
 
   const [content, setContent] = useState<ContentItem[] | null>(null);
+  const [isArchiving, setIsArchiving] = useState<string | null>(null);
 
   useEffect(() => {
     getProjects().then((fetchedContent) => {
@@ -29,6 +30,25 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
   }, []);
 
   const filteredContent = content?.filter((item) => item.archived === true);
+
+  const handleArchiveSubmit = async (projectId: string, archive: boolean) => {
+    if (!projectId || isArchiving) return;
+
+    setIsArchiving(projectId);
+
+    try {
+      await archiveProject(Number(projectId), { archived: archive });
+      const updatedContent = await getProjects();
+      setContent(updatedContent);
+    } catch (error) {
+      console.error(
+        `Error ${archive ? "archiving" : "unarchiving"} project ${projectId}:`,
+        error
+      );
+    } finally {
+      setIsArchiving(null);
+    }
+  };
 
   return (
     <div className="">
@@ -74,7 +94,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
               <button
                 key={`manage-button-${index}`}
                 className="p-[8px] text-blue-600 hover:text-blue-800 "
-                onClick={() => alert("Manage action triggered!")}
+                onClick={() => handleArchiveSubmit(String(item.id), false)}
               >
                 Manage
               </button>,

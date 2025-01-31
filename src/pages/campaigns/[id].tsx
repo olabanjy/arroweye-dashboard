@@ -9,7 +9,7 @@ import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { SelectInput } from "@/components/ui/selectinput";
 import { FaUserMinus } from "react-icons/fa";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
-import { AddStaff, getSingleProject } from "@/services/api";
+import { AddStaff, getBusinessStaff, getSingleProject } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
 import ProjectSingleInsight from "./component/ProjectSingleInsight";
@@ -18,16 +18,9 @@ import InsightChart from "./component/InsightChart";
 import { Tooltip } from "../drops";
 import DropsList from "../dropss/component/DropsList";
 
-const users = [
-  { initials: "JJ", fullName: "John Jerome", email: "john@example.com" },
-  { initials: "EO", fullName: "Emily O'Connor", email: "emily@example.com" },
-  { initials: "MD", fullName: "Michael Douglas", email: "michael@example.com" },
-  { initials: "SO", fullName: "Sarah O'Neil", email: "sarah@example.com" },
-];
-
 interface User {
   initials: string;
-  fullName: string;
+  fullname: string;
   email: string;
 }
 
@@ -40,8 +33,11 @@ interface User {
 
 const ProjectDetails = () => {
   const [content, setContent] = useState<ContentItem | null>(null);
+  const [subvendorStaff, setSubVendorStaff] = useState<ContentItem[] | null>(
+    null
+  );
 
-  console.log(content);
+  console.log(subvendorStaff);
 
   const { query } = useRouter();
   const { id } = query;
@@ -207,8 +203,13 @@ const ProjectDetails = () => {
     setNameDialogVisible(true);
   };
 
-  const handleUserClick = (user: User) => {
-    setSelectedUser(user);
+  const handleUserClick = (user: ContentItem) => {
+    const mappedUser: User = {
+      initials: user.fullname?.slice(0, 2).toUpperCase() || "",
+      fullname: user.fullname || "",
+      email: user.email || "",
+    };
+    setSelectedUser(mappedUser);
   };
 
   const handleAdjustmentClick = () => {
@@ -221,7 +222,19 @@ const ProjectDetails = () => {
     });
   }, [id]);
 
-  console.log(content);
+  console.log(content?.subvendor?.id);
+
+  useEffect(() => {
+    if (content?.subvendor?.id) {
+      getBusinessStaff(content.subvendor.id).then(
+        (fetchedContent: ContentItem[] | null) => {
+          setSubVendorStaff(fetchedContent);
+        }
+      );
+    }
+  }, [content?.subvendor?.id]);
+
+  console.log(subvendorStaff);
 
   const predefinedColors = [
     "bg-blue-500",
@@ -241,38 +254,40 @@ const ProjectDetails = () => {
       <div className="relative">
         <div className="space-y-[50px] ">
           <div className="text-[#919393] flex items-center gap-[10px] text-[0.875rem]">
-            <p className="text-[#5e5e5e] tracking-[.1rem]">KHAID</p>
+            <p className="text-[#5e5e5e] tracking-[.1rem]">
+              {content?.vendor?.organization_name}
+            </p>
             <p className="p-[4px] border border-[#d5d9db] bg-[#f7fcff] rounded tracking-[.1rem]">
-              NEVILLE RECORDS
+              {content?.subvendor?.organization_name}
             </p>
           </div>
           <div className=" grid gap-[20px] md:flex items-end md:justify-between pr-[40px]">
             <div>
-              <p className="font-extrabold text-5xl text-[#000000]">Jolie</p>
-              <div className="mt-[20px] flex items-center gap-[5px] relative">
-                {users.map((user, index) => (
-                  <div key={index} className="relative group">
-                    <p
-                      className={`${predefinedColors[index % predefinedColors.length]} tracking-[.1rem] text-[12px] font-[700] font-Poppins text-white rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer`}
-                      onClick={() => handleUserClick(user)}
-                    >
-                      {user.initials}
-                    </p>
-
-                    <div className="font-IBM absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 bg-black text-white text-xs  px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 text-nowrap">
-                      {user.fullName}
-                    </div>
-                  </div>
-                ))}
-
-                <div className="relative group">
+              <p className="font-extrabold text-5xl text-[#000000]">
+                {content?.title}
+              </p>
+              {subvendorStaff?.map((user, index) => (
+                <div key={index} className="relative group">
                   <p
-                    className="bg-[#ffdead] text-[#000000] rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer"
-                    onClick={showDialog}
+                    className={`${predefinedColors[index % predefinedColors.length]} tracking-[.1rem] text-[12px] font-[700] font-Poppins text-white rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer`}
+                    onClick={() => handleUserClick(user as ContentItem)}
                   >
-                    <HiOutlineUserAdd size={24} />
+                    {user.fullname?.slice(0, 2).toUpperCase()}
                   </p>
+
+                  <div className="font-IBM absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 bg-black text-white text-xs  px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 text-nowrap">
+                    {user?.fullname}
+                  </div>
                 </div>
+              ))}
+
+              <div className="relative group">
+                <p
+                  className="bg-[#ffdead] text-[#000000] rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer"
+                  onClick={showDialog}
+                >
+                  <HiOutlineUserAdd size={24} />
+                </p>
               </div>
             </div>
 
@@ -455,7 +470,7 @@ const ProjectDetails = () => {
             {selectedUser && (
               <div className="space-y-4 font-IBM">
                 <p className="text-[30px] text-[#212529] font-[600]">
-                  {selectedUser.fullName}
+                  {selectedUser.fullname}
                 </p>
                 <div className=" ">
                   <p className="text-[16px] font-[400] text-[#212529]">
