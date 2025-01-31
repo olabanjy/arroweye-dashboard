@@ -25,6 +25,9 @@ export interface StaffItem {
   role: string;
 }
 
+export interface vendorItem {
+  organization_name: string;
+}
 export interface ContentItem {
   start_dte?: string;
   cost?: number;
@@ -35,7 +38,9 @@ export interface ContentItem {
   end_dte?: string;
   archived?: boolean;
   id?: number | string;
-  subvendor?: number;
+  subvendor?: {
+    organization_name: string;
+  };
   organization_name?: string;
   items?: { service: { name: string; cost: number } }[];
   code?: number;
@@ -47,7 +52,9 @@ export interface ContentItem {
   fullname?: string;
   email?: string;
   role?: string;
-  vendor?: string;
+  vendor?: {
+    organization_name: string;
+  };
   licenses?: string;
   staff?: Staff[];
   project?: {

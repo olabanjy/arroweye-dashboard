@@ -25,6 +25,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
   const [copiedPin, setCopiedPin] = useState<string | null>(null);
   const [content, setContent] = useState<ContentItem[] | null>(null);
 
+  console.log(content);
   useEffect(() => {
     getProjects().then((fetchedContent) => {
       setContent(fetchedContent);
@@ -78,8 +79,8 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
                 <div key={`manage-button-${index}`}>
                   <Link href={`/campaigns/${item.id}`}>{item?.title}</Link>
                 </div>,
-                item?.vendor,
-                item?.subvendor,
+                item?.vendor?.organization_name,
+                item?.subvendor?.organization_name,
                 item?.created?.slice(0, 10) || "2025-01-13",
                 // item?.code,
                 <div

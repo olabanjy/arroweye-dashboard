@@ -114,7 +114,7 @@ const Invoice = () => {
           },
           {
             content: (
-              <div className=" text-start">{`${getCurrencySymbol(item?.currency ?? "")}${item.total}`}</div>
+              <div className=" text-start">{`${getCurrencySymbol(item?.currency ?? "")}${item.total?.toLocaleString()}`}</div>
             ),
           },
           {

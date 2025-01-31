@@ -41,6 +41,8 @@ interface User {
 const ProjectDetails = () => {
   const [content, setContent] = useState<ContentItem | null>(null);
 
+  console.log(content);
+
   const { query } = useRouter();
   const { id } = query;
   const [visible, setVisible] = useState(false);
