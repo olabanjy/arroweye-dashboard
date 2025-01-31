@@ -66,8 +66,8 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
           rows={filteredContent?.map((item, index) => ({
             data: [
               item?.title,
-              item?.vendor,
-              item?.subvendor,
+              item?.vendor?.organization_name,
+              item?.subvendor?.organization_name,
               item?.created?.slice(0, 10),
               item?.code,
               item?.pin,
