@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PieChart from "@/pages/payments/component/PieChart";
 import { ChartData } from "chart.js";
 import DoughnutChart from "@/pages/payments/component/Doughnut";
@@ -9,6 +9,9 @@ import AddData from "./AddData";
 import AddMedia from "./AddMedia";
 import AddDataSocials from "./AddDataSocials";
 import AddDataDsp from "./AddDataDsp";
+import { useRouter } from "next/router";
+import { ContentItem } from "@/types/contents";
+import { getSingleProject } from "@/services/api";
 
 const chartDataForDoughnut: ChartData<"doughnut", number[], string> = {
   labels: ["Radio", "Cable", "TV", "DJ"],
@@ -68,6 +71,17 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   const [addMediaModal, setAddMediaModal] = useState(false);
   const [addDspModal, setAddDspModal] = useState(false);
 
+  const { query } = useRouter();
+
+  const [content, setContent] = useState<ContentItem | null>(null);
+  const { id } = query;
+
+  useEffect(() => {
+    getSingleProject(Number(id)).then((fetchedContent) => {
+      setContent(fetchedContent);
+    });
+  }, [id]);
+
   return (
     <div className=" ">
       <div className="mt-[20px] mb-[20px]">
@@ -93,7 +107,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             <div className="  border-b pb-[20px]">
               <DoughnutChart
                 title="AIRPLAY"
-                value="1M"
+                value={content?.airplay_count ?? 0}
                 selectOptions={selectOptions}
                 chartData={chartDataForDoughnut}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
@@ -139,7 +153,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             <div className="  border-b pb-[20px] ">
               <DoughnutChart
                 title="SOCIAL MEDIA"
-                value="1M"
+                value={content?.social_media_count ?? 0}
                 selectOptions={selectOptions}
                 chartData={chartDataForDoughnut}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
@@ -186,7 +200,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             <div className="  border-b pb-[20px] ">
               <DoughnutChart
                 title="DSP"
-                value="1M"
+                value={content?.dsp_count ?? 0}
                 selectOptions={selectOptions}
                 chartData={chartDataForDoughnut}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."

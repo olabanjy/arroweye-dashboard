@@ -29,6 +29,11 @@ export interface vendorItem {
   organization_name: string;
 }
 export interface ContentItem {
+  airplay_count?: number;
+  social_media_count?: number;
+  dsp_count?: number;
+  total_revenue?: number;
+  total_audience_growth?: number;
   start_dte?: string;
   cost?: number;
   tax_amount?: number;
@@ -38,6 +43,7 @@ export interface ContentItem {
   end_dte?: string;
   archived?: boolean;
   id?: number | string;
+  total_investment?: number;
   subvendor?: {
     organization_name: string;
     id?: number;

@@ -37,7 +37,7 @@ const ProjectDetails = () => {
     null
   );
 
-  console.log(subvendorStaff);
+  console.log(content);
 
   const { query } = useRouter();
   const { id } = query;
