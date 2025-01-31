@@ -18,6 +18,7 @@ interface Item {
   week_4: string;
   metric_id?: number;
   // air_play_id?: number;
+  // air_play_id?: number;
 }
 
 type ServiceError = {
