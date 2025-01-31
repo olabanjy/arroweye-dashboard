@@ -4,7 +4,7 @@ import { Dialog } from "primereact/dialog";
 import { FiInfo } from "react-icons/fi";
 import { PiCalendarPlus } from "react-icons/pi";
 import RadioData from "./RadioData";
-import TVData from "./TVData";
+import TVData from "./TvData";
 
 interface CompanyDetailsFormProps {
   visible: boolean;

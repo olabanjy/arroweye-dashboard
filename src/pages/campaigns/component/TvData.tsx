@@ -40,7 +40,7 @@ interface ProjectFormData {
   }[];
 }
 
-const TVData = () => {
+const TvData = () => {
   const [content, setContent] = useState<ContentItem[] | null>(null);
   const [totalImpressions, setTotalImpressions] = useState(0);
   const [totalAudience, setTotalAudience] = useState(0);
@@ -644,4 +644,4 @@ const TVData = () => {
   );
 };
 
-export default TVData;
+export default TvData;
