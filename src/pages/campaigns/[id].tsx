@@ -48,6 +48,7 @@ const ProjectDetails = () => {
   const [broadcast, setBroadcast] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [adjustmentModalVisible, setAdjustmentModalVisible] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
 
   const showDialog = () => {
@@ -347,7 +348,14 @@ const ProjectDetails = () => {
                 <InputSwitch
                   id="phone"
                   checked={toggleNotifications}
-                  onChange={(e) => setToggleNotifications(e.value)}
+                  onChange={(e) => {
+                    setToggleNotifications(e.value);
+                    if (e.value) {
+                      setEditMode(true);
+                    } else {
+                      setEditMode(false);
+                    }
+                  }}
                   className="custom-switch"
                 />
               </div>
@@ -636,6 +644,48 @@ const ProjectDetails = () => {
                   label="Cancel"
                   onClick={() => setDeleteModal(false)}
                   className=" px-[16px] py-[8px] text-white rounded-[8px] bg-slate-500"
+                />
+              </div>
+            </div>
+          </Dialog>
+        </div>
+
+        <div
+          className={`custom-dialog-overlay ${
+            editMode
+              ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+              : "hidden"
+          }`}
+        >
+          <Dialog
+            visible={editMode}
+            onHide={() => setEditMode(false)}
+            breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+            style={{ width: "30vw" }}
+            className="custom-dialog-overlay"
+          >
+            <div className="space-y-4">
+              <p className="text-[16px] font-[400]">
+                Do you want to switch to edit mode?
+              </p>
+
+              <div className="flex justify-end space-x-2">
+                <Button
+                  label="Yes"
+                  onClick={() => {
+                    setEditMode(false);
+                    setToggleNotifications(true);
+                  }}
+                  className=" px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
+                />
+
+                <Button
+                  label="No"
+                  onClick={() => {
+                    setEditMode(false);
+                    setToggleNotifications(false);
+                  }}
+                  className=" px-[16px] py-[8px] text-[#000000] rounded-[8px] bg-slate-100"
                 />
               </div>
             </div>
