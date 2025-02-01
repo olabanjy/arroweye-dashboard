@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import InsightCard from "./InsightCard";
+import { Dialog } from "primereact/dialog";
 
 const Insight = () => {
+  const [exportModal, setExportModal] = useState(false);
   return (
     <div>
       <div className="mt-[20px] relative ">
@@ -106,7 +108,10 @@ const Insight = () => {
 
         <div className="fixed bottom-[30px] lg:left-32 right-0 flex justify-center z-30 w-full">
           <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px]">
-            <p className="rounded p-[8px] bg-black text-white !w-[70px] text-center">
+            <p
+              className="rounded p-[8px] bg-black text-white !w-[70px] text-center cursor-pointer"
+              onClick={() => setExportModal(true)}
+            >
               Export
             </p>
             <p className="rounded p-[8px] bg-[#007bff] text-white w-[70px] text-center">
@@ -117,6 +122,39 @@ const Insight = () => {
             </p>
           </div>
         </div>
+      </div>
+
+      <div
+        className={`custom-dialog-overlay ${
+          exportModal
+            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+            : "hidden"
+        }`}
+      >
+        <Dialog
+          visible={exportModal}
+          onHide={() => {
+            setExportModal(false);
+          }}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "30vw" }}
+          className="custom-dialog-overlay"
+        >
+          <div className="space-y-4">
+            <p className="text-[16px] font-[400]">
+              Select your preferred format
+            </p>
+
+            <div className=" grid grid-cols-2 gap-[10px]">
+              <div className=" border rounded-[8px] border-black hover:border-blue-500">
+                PDF
+              </div>
+              <div className="border rounded-[8px] border-black hover:border-blue-500">
+                CSV
+              </div>
+            </div>
+          </div>
+        </Dialog>
       </div>
     </div>
   );

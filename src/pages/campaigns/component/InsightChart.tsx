@@ -13,19 +13,7 @@ import { useRouter } from "next/router";
 import { ContentItem } from "@/types/contents";
 import { getSingleProject } from "@/services/api";
 import ColumnChart from "@/pages/payments/component/ColumnChart";
-
-// const chartDataForDoughnutSocials: ChartData<"doughnut", number[], string> = {
-//   labels: ["TikTok", "Twitter", "Instagram", "Facebook", "YouTube"],
-//   datasets: [
-//     {
-//       label: "Social Media",
-//       data: [300, 50, 100, 22, 10],
-//       backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
-//       borderWidth: 2,
-//       borderColor: "rgba(255, 255, 255, 1)",
-//     },
-//   ],
-// };
+import { Dialog } from "primereact/dialog";
 
 const chartDataForLine: ChartData<"bar", number[], string> = {
   labels: ["Apple Music", "Youtube", "Spotify", "others"],
@@ -151,6 +139,8 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   const [addDataModalSocial, setAddDataModalSocial] = useState(false);
   const [addMediaModal, setAddMediaModal] = useState(false);
   const [addDspModal, setAddDspModal] = useState(false);
+  const [exportModal, setExportModal] = useState(false);
+  const [shareButtonText, setShareButtonText] = useState("Share");
 
   const { query } = useRouter();
 
@@ -162,6 +152,14 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
       setContent(fetchedContent);
     });
   }, [id]);
+
+  const handleShareClick = () => {
+    navigator.clipboard.writeText("https://your-link.com");
+    setShareButtonText("Copied");
+    setTimeout(() => {
+      setShareButtonText("Share");
+    }, 3000);
+  };
 
   return (
     <div className=" ">
@@ -349,16 +347,55 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
       <AddDataDsp visible={addDspModal} onHide={() => setAddDspModal(false)} />
       <div className="fixed bottom-[30px] lg:left-32 right-0 flex justify-center z-30 w-full">
         <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px]">
-          <p className="rounded p-[8px] bg-black text-white !w-[70px] text-center">
+          <p
+            className="rounded p-[8px] bg-black text-white !w-[70px] text-center cursor-pointer"
+            onClick={() => setExportModal(true)}
+          >
             Export
           </p>
           <p className="rounded p-[8px] bg-[#007bff] text-white w-[70px] text-center">
             Send
           </p>
-          <p className="rounded border p-[8px] text-black bg-white w-[70px] text-center">
-            Share
+          <p
+            className="rounded border p-[8px] text-black bg-white w-[70px] text-center cursor-pointer"
+            onClick={handleShareClick}
+          >
+            {shareButtonText}
           </p>
         </div>
+      </div>
+
+      <div
+        className={`custom-dialog-overlay ${
+          exportModal
+            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+            : "hidden"
+        }`}
+      >
+        <Dialog
+          visible={exportModal}
+          onHide={() => {
+            setExportModal(false);
+          }}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "30vw" }}
+          className="custom-dialog-overlay"
+        >
+          <div className="space-y-[20px]">
+            <p className=" text-center text-[18px] font-[400] font-IBM text-[#000000]">
+              Select your preferred format
+            </p>
+
+            <div className=" grid grid-cols-2 gap-[10px]">
+              <div className=" font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center">
+                PDF
+              </div>
+              <div className=" font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center">
+                CSV
+              </div>
+            </div>
+          </div>
+        </Dialog>
       </div>
     </div>
   );
