@@ -16,10 +16,13 @@ interface InsightChartProps {
   title: string;
   value: number | string;
   percentageChange?: string;
-  selectOptions: Array<{ value: string; label: string }[]>;
+  selectOptions?: Array<{ value: string; label: string }[]>;
+  selectOptionsBottom?: Array<{ value: string; label: string }[]>;
   chartData?: ChartData<"doughnut", number[], string>;
   // maxWidth?: string;
+  valuePlaceholder?: string;
   info?: string;
+  placeholder?: string;
 }
 
 const Tooltip = ({ info }: { info: string }) => (
@@ -35,7 +38,10 @@ const DoughnutChart: FC<InsightChartProps> = ({
   title,
   value,
   selectOptions,
+  selectOptionsBottom,
   chartData,
+  placeholder,
+  valuePlaceholder,
   // maxWidth = "400px",
   info,
 }) => {
@@ -44,7 +50,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
       labels: ["Radio", "Cable", "TV", "DJ"],
       datasets: [
         {
-          label: "AIRPLAY",
+          label: "SOCIAL MEDIA",
           data: [300, 50, 100, 22],
           backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
           borderWidth: 2,
@@ -86,13 +92,13 @@ const DoughnutChart: FC<InsightChartProps> = ({
           <p className="!text-[12px] font-[400] tracking-[.1rem]">{title}</p>
           {info && <Tooltip info={info} />}
         </div>
-        <div className="">
+        <div className=" ">
           {selectOptions?.map((options, index) => (
             <div key={index} className="max-w-[180px] w-full">
               <SelectInput
                 rounded={true}
                 options={options}
-                placeholder="Country"
+                placeholder={placeholder}
               />
             </div>
           ))}
@@ -102,7 +108,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
       <p className="text-2xl lg:text-[56px] font-[600] font-IBM">{value}</p>
       <div className="">
         <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000]">
-          TOP CHANNELS
+          {valuePlaceholder}
         </p>
 
         {defaultChartData && (
@@ -130,7 +136,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
 
       <div className="flex items-center justify-between">
         <div className="">
-          {selectOptions?.map((options, index) => (
+          {selectOptionsBottom?.map((options, index) => (
             <div key={index} className="max-w-[110px] w-full">
               <SelectInput
                 rounded={true}
@@ -141,7 +147,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
           ))}
         </div>
         <div className="">
-          {selectOptions?.map((options, index) => (
+          {selectOptionsBottom?.map((options, index) => (
             <div key={index} className="max-w-[110px] w-full">
               <SelectInput
                 rounded={true}

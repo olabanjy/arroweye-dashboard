@@ -252,26 +252,26 @@ const ProjectDetails = () => {
   return (
     <DashboardLayout withBorder={false}>
       <div className="relative">
-        <div className="space-y-[50px] ">
-          <div className="text-[#919393] flex items-center gap-[10px] text-[0.875rem]">
-            <p className="text-[#5e5e5e] tracking-[.1rem]">
+        <div className="space-y-[5px] ">
+          <div className="text-[#919393] flex items-center gap-[5px] text-[0.875rem]">
+            <p className=" uppercase text-[#5e5e5e] tracking-[.1rem]">
               {content?.vendor?.organization_name}
             </p>
-            <p className="p-[4px] border border-[#d5d9db] bg-[#f7fcff] rounded tracking-[.1rem]">
+            <p className="uppercase p-[4px] border border-[#d5d9db] bg-[#f7fcff] rounded tracking-[.1rem]">
               {content?.subvendor?.organization_name}
             </p>
           </div>
-          <div className=" grid gap-[20px] md:flex items-end md:justify-between pr-[40px]">
+          <div className="  grid gap-[20px] md:flex items-end md:justify-between pr-[40px]">
             <div className=" ">
-              <p className="font-extrabold text-5xl text-[#000000]">
+              <p className="font-[900] text-[45px] text-[#000000]">
                 {content?.title}
               </p>
 
-              <div className=" flex">
+              <div className=" flex space-x-[5px]">
                 {subvendorStaff?.map((user, index) => (
                   <div key={index} className="relative group">
                     <p
-                      className={`${predefinedColors[index % predefinedColors.length]} tracking-[.1rem] text-[12px] font-[700] font-Poppins text-white rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer`}
+                      className={`${predefinedColors[index % predefinedColors.length]} tracking-[.1rem] text-[12px] font-[700] font-Poppins text-white rounded-full p-4 w-[40px] h-[40px] flex items-center justify-center text-center cursor-pointer`}
                       onClick={() => handleUserClick(user as ContentItem)}
                     >
                       {user.fullname?.slice(0, 2).toUpperCase()}
@@ -285,10 +285,10 @@ const ProjectDetails = () => {
 
                 <div className="relative group">
                   <p
-                    className="bg-[#ffdead] text-[#000000] rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer"
+                    className="bg-[#ffdead] text-[#000000] rounded-full p-2 w-[40px] h-[40px] flex items-center justify-center text-center cursor-pointer"
                     onClick={showDialog}
                   >
-                    <HiOutlineUserAdd size={24} />
+                    <HiOutlineUserAdd size={14} />
                   </p>
                 </div>
               </div>

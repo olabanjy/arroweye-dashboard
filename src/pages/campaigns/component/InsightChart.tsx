@@ -12,13 +12,53 @@ import AddDataDsp from "./AddDataDsp";
 import { useRouter } from "next/router";
 import { ContentItem } from "@/types/contents";
 import { getSingleProject } from "@/services/api";
+import ColumnChart from "@/pages/payments/component/ColumnChart";
 
-const chartDataForDoughnut: ChartData<"doughnut", number[], string> = {
+// const chartDataForDoughnut: ChartData<"doughnut", number[], string> = {
+//   labels: ["TikTok", "Twitter", "Instagram", "Facebook", "YouTube"],
+//   datasets: [
+//     {
+//       label: "Social Media",
+//       data: [300, 50, 100, 22, 10],
+//       backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
+//       borderWidth: 2,
+//       borderColor: "rgba(255, 255, 255, 1)",
+//     },
+//   ],
+// };
+
+const chartDataForLine: ChartData<"bar", number[], string> = {
+  labels: ["TikTok", "Twitter", "Instagram", "Facebook", "YouTube"],
+  datasets: [
+    {
+      label: "Social Media",
+      data: [300, 50, 100, 22, 10],
+      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
+      borderWidth: 2,
+      borderColor: "rgba(255, 255, 255, 1)",
+    },
+  ],
+};
+
+const chartDataForDoughnutActions: ChartData<"doughnut", number[], string> = {
+  labels: ["Shares", "Saves", "Comments", "Likes", "Followers", "Views"],
+  datasets: [
+    {
+      label: "Social Media",
+      data: [300, 50, 100, 22, 10],
+      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
+      borderWidth: 2,
+      borderColor: "rgba(255, 255, 255, 1)",
+    },
+  ],
+};
+
+const chartDataForDoughnutAirplay: ChartData<"doughnut", number[], string> = {
   labels: ["Radio", "Cable", "TV", "DJ"],
   datasets: [
     {
       label: "Airplay",
-      data: [300, 50, 100, 22, 10],
+      data: [300, 50, 100, 22],
       backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
       borderWidth: 2,
       borderColor: "rgba(255, 255, 255, 1)",
@@ -39,12 +79,40 @@ const chartData: ChartData<"pie", number[], string> = {
   ],
 };
 
+const chartDataForDoughnutDSP: ChartData<"pie", number[], string> = {
+  labels: ["Pre-saves", "Purchases", "Listens", "Streams", "Downloads"],
+  datasets: [
+    {
+      label: "PERFORMANCE ",
+      data: [300, 50, 100],
+      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8"],
+      borderWidth: 2,
+      borderColor: "rgba(255, 255, 255, 1)",
+    },
+  ],
+};
+
 const selectOptions = [
   [
     { value: "nigeria", label: "Nigeria" },
     { value: "ghana", label: "Ghana" },
     { value: "kenya", label: "Kenya" },
     { value: "ivoryCoast", label: "Ivory Coast" },
+  ],
+];
+const selectOptionsAirPlay = [
+  [
+    { value: "radio", label: "Radio" },
+    { value: "dj", label: "DJ" },
+    { value: "localTv", label: "Local TV" },
+    { value: "cable", label: "Cable" },
+  ],
+];
+const selectOptionsAudience = [
+  [
+    { value: "radio", label: "Radio" },
+    { value: "dj", label: "DJ" },
+    { value: "localTv", label: "Local TV" },
   ],
 ];
 
@@ -107,9 +175,11 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             <div className="  border-b pb-[20px]">
               <DoughnutChart
                 title="AIRPLAY"
+                valuePlaceholder="TOP CHANNELS"
                 value={content?.airplay_count ?? 0}
-                selectOptions={selectOptions}
-                chartData={chartDataForDoughnut}
+                selectOptions={selectOptionsAirPlay}
+                chartData={chartDataForDoughnutAirplay}
+                placeholder="Channels"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
             </div>
@@ -118,7 +188,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
               <PieChart
                 title="AUDIENCE "
                 value="300K"
-                selectOptions={selectOptions}
+                selectOptions={selectOptionsAudience}
                 chartData={chartData}
                 // maxWidth="500px"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
@@ -151,22 +221,21 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             )}
 
             <div className="  border-b pb-[20px] ">
-              <DoughnutChart
+              <PieChart
                 title="SOCIAL MEDIA"
+                valuePlaceHolder="TOP PLATFORMS"
                 value={content?.social_media_count ?? 0}
-                selectOptions={selectOptions}
-                chartData={chartDataForDoughnut}
+                chartData={chartData}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
             </div>
 
             <div className="border-b pb-[20px]">
-              <PieChart
-                title="AUDIENCE "
+              <DoughnutChart
+                title="ACTIONS"
                 value="300K"
-                selectOptions={selectOptions}
-                chartData={chartData}
-                // maxWidth="500px"
+                chartData={chartDataForDoughnutActions}
+                selectOptionsBottom={selectOptionsAudience}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
             </div>
@@ -198,21 +267,21 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             )}
 
             <div className="  border-b pb-[20px] ">
-              <DoughnutChart
-                title="DSP"
+              <ColumnChart
+                title="TOP DSPs"
+                valuePlaceholder="DSP"
                 value={content?.dsp_count ?? 0}
-                selectOptions={selectOptions}
-                chartData={chartDataForDoughnut}
+                chartData={chartDataForLine}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
             </div>
 
             <div className="border-b pb-[20px]">
               <PieChart
-                title="AUDIENCE "
+                title="PERFORMANCE "
                 value="300K"
-                selectOptions={selectOptions}
-                chartData={chartData}
+                selectOptionsBottom={selectOptions}
+                chartData={chartDataForDoughnutDSP}
                 // maxWidth="500px"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />

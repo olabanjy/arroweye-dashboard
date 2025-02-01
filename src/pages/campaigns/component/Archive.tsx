@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Table from "./Table";
-import { BsCurrencyDollar } from "react-icons/bs";
+// import { BsCurrencyDollar } from "react-icons/bs";
 import { SelectInput } from "@/components/ui/selectinput";
 import { getProjects, archiveProject } from "@/services/api";
 import { ContentItem } from "@/types/contents";
@@ -98,17 +98,17 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
               >
                 Manage
               </button>,
-              <div
-                key={`action-buttons-${index}`}
-                className="flex justify-center gap-2"
-              >
-                <button
-                  className="p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
-                  onClick={() => alert("Action triggered!")}
-                >
-                  <BsCurrencyDollar />
-                </button>
-              </div>,
+              // <div
+              //   key={`action-buttons-${index}`}
+              //   className="flex justify-center gap-2"
+              // >
+              //   <button
+              //     className="p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
+              //     onClick={() => alert("Action triggered!")}
+              //   >
+              //     <BsCurrencyDollar />
+              //   </button>
+              // </div>,
             ],
           }))}
           emptyState={

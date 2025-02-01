@@ -1,16 +1,28 @@
 import React, { FC } from "react";
 import { FiInfo } from "react-icons/fi";
 import { SelectInput } from "@/components/ui/selectinput";
-import { Pie } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  ArcElement,
-  Tooltip,
+  BarElement,
+  PointElement,
+  LinearScale,
+  Title,
+  Tooltip as ChartTooltip,
   Legend,
+  CategoryScale,
   ChartData,
 } from "chart.js";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(
+  BarElement,
+  PointElement,
+  LinearScale,
+  Title,
+  ChartTooltip,
+  Legend,
+  CategoryScale
+);
 
 interface InsightChartProps {
   title: string;
@@ -18,39 +30,39 @@ interface InsightChartProps {
   percentageChange?: string;
   selectOptions?: Array<{ value: string; label: string }[]>;
   selectOptionsBottom?: Array<{ value: string; label: string }[]>;
-  chartData?: ChartData<"pie", number[], string>;
-  valuePlaceHolder?: string;
-  // maxWidth?: string;
+  chartData?: ChartData<"bar", number[], string>;
+  valuePlaceholder?: string;
   info?: string;
+  placeholder?: string;
 }
 
-const TooltipComponent = ({ info }: { info: string }) => (
+const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 hidden w-52 p-2 text-xs font-[400] text-white bg-black rounded-lg group-hover:block z-10 shadow-lg font-IBM">
+    <div className="absolute font-[300] left-full top-1/2 transform -translate-y-1/2 ml-2 hidden w-[230px] p-2 text-xs text-white bg-black bg-opacity-90 rounded-lg group-hover:block z-10 shadow-lg font-IBM">
       {info}
     </div>
   </div>
 );
 
-const PieChart: FC<InsightChartProps> = ({
+const ColumnChart: FC<InsightChartProps> = ({
   title,
   value,
   selectOptions,
   selectOptionsBottom,
   chartData,
+  placeholder,
+  valuePlaceholder,
   info,
-  valuePlaceHolder,
 }) => {
-  const defaultChartData: ChartData<"pie", number[], string> = chartData || {
-    labels: ["Radio", "Cable", "TV", "DJ"],
+  const defaultChartData: ChartData<"bar", number[], string> = chartData || {
+    labels: ["January", "February", "March", "April"],
     datasets: [
       {
-        label: "AIRPLAY",
-        data: [300, 50, 100, 22],
-        backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
-        borderWidth: 2,
-        borderColor: "rgba(255, 255, 255, 1)",
+        label: "SOCIAL MEDIA",
+        data: [65, 59, 80, 81],
+        borderColor: "#42A5F5",
+        backgroundColor: "rgba(66, 165, 245, 0.2)",
       },
     ],
   };
@@ -79,19 +91,19 @@ const PieChart: FC<InsightChartProps> = ({
   ];
 
   return (
-    <div className="space-y-[20px]">
+    <div className={`space-y-[20px] font-IBM w-full`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
           <p className="!text-[12px] font-[400] tracking-[.1rem]">{title}</p>
-          {info && <TooltipComponent info={info} />}
+          {info && <Tooltip info={info} />}
         </div>
-        <div>
+        <div className=" ">
           {selectOptions?.map((options, index) => (
             <div key={index} className="max-w-[180px] w-full">
               <SelectInput
                 rounded={true}
                 options={options}
-                placeholder="Channels"
+                placeholder={placeholder}
               />
             </div>
           ))}
@@ -99,14 +111,14 @@ const PieChart: FC<InsightChartProps> = ({
       </div>
 
       <p className="text-2xl lg:text-[56px] font-[600] font-IBM">{value}</p>
-      <div>
-        <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-IBM">
-          {valuePlaceHolder}
+      <div className="">
+        <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000]">
+          {valuePlaceholder}
         </p>
 
         {defaultChartData && (
           <div className="w-full h-[300px] font-IBM">
-            <Pie
+            <Bar
               data={defaultChartData}
               options={{
                 responsive: true,
@@ -119,20 +131,15 @@ const PieChart: FC<InsightChartProps> = ({
                       font: { size: 12 },
                     },
                   },
-                  tooltip: {
-                    enabled: true,
-                    callbacks: {
-                      label: function (tooltipItem) {
-                        const dataset =
-                          defaultChartData.datasets[tooltipItem.datasetIndex];
-                        const currentValue =
-                          dataset.data[tooltipItem.dataIndex];
-                        const label = defaultChartData.labels
-                          ? defaultChartData.labels[tooltipItem.dataIndex]
-                          : "";
-                        return `${label}: ${currentValue}`;
-                      },
-                    },
+                  tooltip: { enabled: true },
+                },
+                scales: {
+                  x: {
+                    type: "category",
+                    labels: defaultChartData.labels,
+                  },
+                  y: {
+                    beginAtZero: true,
                   },
                 },
               }}
@@ -142,7 +149,7 @@ const PieChart: FC<InsightChartProps> = ({
       </div>
 
       <div className="flex items-center justify-between">
-        <div>
+        <div className="">
           {selectOptionsBottom?.map((options, index) => (
             <div key={index} className="max-w-[110px] w-full">
               <SelectInput
@@ -153,7 +160,7 @@ const PieChart: FC<InsightChartProps> = ({
             </div>
           ))}
         </div>
-        <div>
+        <div className="">
           {selectOptionsBottom?.map((options, index) => (
             <div key={index} className="max-w-[110px] w-full">
               <SelectInput
@@ -169,4 +176,4 @@ const PieChart: FC<InsightChartProps> = ({
   );
 };
 
-export default PieChart;
+export default ColumnChart;
