@@ -7,7 +7,7 @@ import { InputSwitch } from "primereact/inputswitch";
 import { Input } from "@/components/ui/input";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { SelectInput } from "@/components/ui/selectinput";
-import { FaUserMinus } from "react-icons/fa";
+import { FaCheckCircle, FaUserMinus } from "react-icons/fa";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { AddStaff, getBusinessStaff, getSingleProject } from "@/services/api";
 import { ContentItem } from "@/types/contents";
@@ -17,6 +17,7 @@ import Schedule from "../schedule/component/Schedule";
 import InsightChart from "./component/InsightChart";
 import { Tooltip } from "../drops";
 import DropsList from "../dropss/component/DropsList";
+import { GiCancel } from "react-icons/gi";
 
 interface User {
   initials: string;
@@ -249,6 +250,9 @@ const ProjectDetails = () => {
     "bg-gray-500",
   ];
 
+  const [showIcons, setShowIcons] = useState(false);
+  const originalTitle = content?.title || "";
+
   return (
     <DashboardLayout withBorder={false}>
       <div className="relative">
@@ -264,16 +268,42 @@ const ProjectDetails = () => {
           <div className="  grid gap-[20px] md:flex items-end md:justify-between pr-[40px]">
             <div className=" ">
               {toggleNotifications ? (
-                <input
-                  type="text"
-                  className="font-[900] text-[45px] text-[#000000] border-b-2 border-gray-300 focus:outline-none"
-                  value={content?.title}
-                  onChange={(e) =>
-                    setContent({ ...content, title: e.target.value })
-                  }
-                />
+                <div className="flex items-center">
+                  <div className="">
+                    <input
+                      type="text"
+                      className="font-[900] text-[45px] text-[#000000] focus:outline-none"
+                      value={content?.title}
+                      onChange={(e) => {
+                        setContent({ ...content, title: e.target.value });
+                        setShowIcons(true);
+                      }}
+                    />
+                    {showIcons && (
+                      <div className="flex items-center gap-[5px] my-[20px]">
+                        <FaCheckCircle
+                          size={24}
+                          className="text-blue-500 cursor-pointer"
+                          onClick={() => {
+                            // Save changes
+                            setShowIcons(false);
+                          }}
+                        />
+                        <GiCancel
+                          size={24}
+                          className="text-red-500 cursor-pointer"
+                          onClick={() => {
+                            // Restore original title
+                            setContent({ ...content, title: originalTitle });
+                            setShowIcons(false);
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
               ) : (
-                <p className="font-[900] text-[45px] text-[#000000]">
+                <p className="font-[900] text-[45px] text-[#000000] flex-grow">
                   {content?.title}
                 </p>
               )}

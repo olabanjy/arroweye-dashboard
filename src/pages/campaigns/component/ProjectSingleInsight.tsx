@@ -25,7 +25,7 @@ const ProjectSingleInsight = () => {
           <InsightCard
             title="TOTAL INVESTMENT "
             value={`$${content?.total_investment?.toLocaleString() || 0}`}
-            percentageChange="5%"
+            percentageChange="↑ 5%"
             extraClass="h-[220px]"
             percentageColor="#11cc48"
             info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
@@ -36,7 +36,7 @@ const ProjectSingleInsight = () => {
             title="TOTAL REVENUE"
             value={`$${content?.total_revenue?.toLocaleString() || 0}`}
             extraClass="h-[220px]"
-            percentageChange="-3%"
+            percentageChange="↓ -3%"
             percentageColor="#ff4d4f"
             info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
           />
@@ -47,7 +47,7 @@ const ProjectSingleInsight = () => {
             title="AUDIENCE GROWTH"
             value={`$${content?.total_audience_growth?.toLocaleString() || 0}`}
             extraClass="h-[220px]"
-            percentageChange="-3%"
+            percentageChange="↓ -3%"
             percentageColor="#ff4d4f"
             info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
           />
