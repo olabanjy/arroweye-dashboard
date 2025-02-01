@@ -16,6 +16,7 @@ interface ProjectsProps {
 
 const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const [editMode, setEditMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const headers: { content: string; align: "left" | "center" | "right" }[] = [
     { content: "Campaigns", align: "left" },
@@ -42,6 +43,8 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
       setContent(fetchedContent);
     } catch (error) {
       console.error("Error fetching projects:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -157,11 +160,23 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
               ],
             }))}
           emptyState={
-            <div className="flex h-[50vh] flex-col items-center justify-center text-center">
-              <div className="my-[32px]">
-                <p className="text-[20px] font-[600] text-grey-400">No Data</p>
+            isLoading ? (
+              <div className="flex h-[50vh] flex-col items-center justify-center text-center">
+                <div className="my-[32px]">
+                  <p className="text-[20px] font-[600] text-grey-400">
+                    Loading...
+                  </p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex h-[50vh] flex-col items-center justify-center text-center">
+                <div className="my-[32px]">
+                  <p className="text-[20px] font-[600] text-grey-400">
+                    No Data
+                  </p>
+                </div>
+              </div>
+            )
           }
         />
       </div>

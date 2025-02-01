@@ -13,6 +13,7 @@ interface ProjectsProps {
 
 const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const [editMode, setEditMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const headers: { content: string; align: "left" | "center" | "right" }[] = [
     { content: "Title", align: "left" },
     { content: "Vendor", align: "left" },
@@ -29,6 +30,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   useEffect(() => {
     getProjects().then((fetchedContent) => {
       setContent(fetchedContent);
+      setIsLoading(false);
     });
   }, []);
 
@@ -86,39 +88,49 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
       )}
 
       <div className="mt-[20px]">
-        <Table
-          headers={headers}
-          rows={filteredContent?.map((item, index) => ({
-            data: [
-              item?.title,
-              item?.vendor?.organization_name,
-              item?.subvendor?.organization_name,
-              item?.created?.slice(0, 10),
-              item?.code,
-              item?.pin,
-              <button
-                key={`manage-button-${index}`}
-                className={`p-[8px] text-blue-600 hover:text-blue-800 ${
-                  isArchiving === String(item.id) ? "opacity-50" : ""
-                }`}
-                onClick={() => {
-                  setEditMode(true);
-                  setIsArchiving(String(item.id));
-                }}
-                disabled={isArchiving === String(item.id)}
-              >
-                Manage
-              </button>,
-            ],
-          }))}
-          emptyState={
-            <div className="flex h-[50vh] flex-col items-center justify-center text-center">
-              <div className="my-[32px]">
-                <p className="text-[20px] font-[600] text-grey-400">No Data</p>
-              </div>
+        {isLoading ? (
+          <div className="flex h-[50vh] flex-col items-center justify-center text-center">
+            <div className="my-[32px]">
+              <p className="text-[20px] font-[600] text-grey-400">Loading...</p>
             </div>
-          }
-        />
+          </div>
+        ) : (
+          <Table
+            headers={headers}
+            rows={filteredContent?.map((item, index) => ({
+              data: [
+                item?.title,
+                item?.vendor?.organization_name,
+                item?.subvendor?.organization_name,
+                item?.created?.slice(0, 10) || "-",
+                item?.code,
+                item?.pin,
+                <button
+                  key={`manage-button-${index}`}
+                  className={`p-[8px] text-blue-600 hover:text-blue-800 ${
+                    isArchiving === String(item.id) ? "opacity-50" : ""
+                  }`}
+                  onClick={() => {
+                    setEditMode(true);
+                    setIsArchiving(String(item.id));
+                  }}
+                  disabled={isArchiving === String(item.id)}
+                >
+                  Restore
+                </button>,
+              ],
+            }))}
+            emptyState={
+              <div className="flex h-[50vh] flex-col items-center justify-center text-center">
+                <div className="my-[32px]">
+                  <p className="text-[20px] font-[600] text-grey-400">
+                    No Data
+                  </p>
+                </div>
+              </div>
+            }
+          />
+        )}
       </div>
 
       <div
