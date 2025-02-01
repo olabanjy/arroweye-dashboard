@@ -6,6 +6,8 @@ import { archiveProject, getProjects } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 import Link from "next/link";
 import { MdOutlineModeEditOutline } from "react-icons/md";
+import { Dialog } from "primereact/dialog";
+import { Button } from "@/components/ui/button";
 
 interface ProjectsProps {
   filterVisible: boolean;
@@ -13,6 +15,8 @@ interface ProjectsProps {
 }
 
 const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
+  const [editMode, setEditMode] = useState(false);
+
   const headers: { content: string; align: "left" | "center" | "right" }[] = [
     { content: "Campaigns", align: "left" },
     { content: "Label", align: "left" },
@@ -25,8 +29,9 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
 
   const [copiedPin, setCopiedPin] = useState<string | null>(null);
   const [content, setContent] = useState<ContentItem[] | null>(null);
-  const [isArchiving, setIsArchiving] = useState<string | null>(null);
+  const [isArchiving, setIsArchiving] = useState<number | null>(null);
 
+  console.log(isArchiving);
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -46,16 +51,12 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
     setTimeout(() => setCopiedPin(null), 2000);
   };
 
-  const handleArchiveSubmit = async (projectId: string) => {
-    if (!projectId || isArchiving) return;
-
-    setIsArchiving(projectId);
-
+  const handleArchiveSubmit = async (projectId: number) => {
     try {
-      await archiveProject(Number(projectId), { archived: true });
-      console.log(`Project ${projectId} archived successfully!`);
-
-      fetchProjects();
+      setIsArchiving(projectId);
+      await archiveProject(projectId, { archived: true });
+      await fetchProjects();
+      setEditMode(false);
     } catch (error) {
       console.error(`Error archiving project ${projectId}:`, error);
     } finally {
@@ -142,9 +143,12 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                 >
                   <button
                     className={`text-[#000000] ${isArchiving === item.id ? "opacity-50" : ""}`}
-                    onClick={() =>
-                      item.id && handleArchiveSubmit(String(item.id))
-                    }
+                    onClick={() => {
+                      setEditMode(true);
+                      setIsArchiving(
+                        typeof item.id === "number" ? item.id : null
+                      );
+                    }}
                     disabled={isArchiving === item.id}
                   >
                     <BsTrash size={20} />
@@ -160,6 +164,52 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
             </div>
           }
         />
+      </div>
+
+      <div
+        className={`custom-dialog-overlay ${
+          editMode
+            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+            : "hidden"
+        }`}
+      >
+        <Dialog
+          visible={editMode}
+          onHide={() => {
+            setEditMode(false);
+            setIsArchiving(null);
+          }}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "30vw" }}
+          className="custom-dialog-overlay"
+        >
+          <div className="space-y-4">
+            <p className="text-[16px] font-[400]">
+              Are you sure you want to archive this item?
+            </p>
+
+            <div className="flex justify-end space-x-2">
+              <Button
+                label="Yes"
+                onClick={async () => {
+                  if (isArchiving !== null) {
+                    await handleArchiveSubmit(isArchiving);
+                  }
+                }}
+                className="px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
+              />
+
+              <Button
+                label="No"
+                onClick={() => {
+                  setEditMode(false);
+                  setIsArchiving(null);
+                }}
+                className="px-[16px] py-[8px] text-[#000000] rounded-[8px] bg-slate-100"
+              />
+            </div>
+          </div>
+        </Dialog>
       </div>
     </>
   );

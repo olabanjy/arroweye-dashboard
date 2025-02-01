@@ -95,7 +95,6 @@ const Moments = () => {
       return;
     }
 
-    // Log the formData before submitting
     console.log("Form data before submission:", formData);
 
     try {
@@ -110,25 +109,21 @@ const Moments = () => {
         formDataToSend.append("report", file);
       }
 
-      // Debugging: Log FormData content
       for (const [key, value] of formDataToSend.entries()) {
         console.log(`Key: ${key}, Value:`, value);
       }
 
-      // Check if file was appended successfully
       if (formDataToSend.get("report")) {
         console.log("File is appended to FormData");
       } else {
         console.log("File is NOT appended to FormData");
       }
 
-      // Make the API request to upload the file
       await CreateMedia(id, formDataToSend);
 
       console.log("Form submitted successfully!");
       hideDialog();
 
-      // Reset form after submission
       setFormData({
         source_link: "",
         embed_link: "",

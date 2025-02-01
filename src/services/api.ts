@@ -940,7 +940,7 @@ export const archiveProject = async (
     });
 
     console.log(response);
-    toast.success("Archiving successful!");
+    toast.success("Action successful!");
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
