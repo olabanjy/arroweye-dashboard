@@ -15,17 +15,18 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const [editMode, setEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const headers: { content: string; align: "left" | "center" | "right" }[] = [
-    { content: "Title", align: "left" },
-    { content: "Vendor", align: "left" },
-    { content: "Subvendor", align: "left" },
+    { content: "Campaigns", align: "left" },
+    { content: "Label", align: "left" },
+    { content: "Artist", align: "left" },
     { content: "Start Date", align: "left" },
+    // { content: "Code", align: "center" },
     { content: "Pin", align: "center" },
-    { content: "Code", align: "center" },
     { content: "Action", align: "center" },
   ];
 
-  const [content, setContent] = useState<ContentItem[] | null>(null);
   const [isArchiving, setIsArchiving] = useState<string | null>(null);
+  const [copiedPin, setCopiedPin] = useState<string | null>(null);
+  const [content, setContent] = useState<ContentItem[] | null>(null);
 
   useEffect(() => {
     getProjects().then((fetchedContent) => {
@@ -55,6 +56,12 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
     } finally {
       setIsArchiving(null);
     }
+  };
+
+  const handleCopyPin = (pin: string) => {
+    navigator.clipboard.writeText(pin);
+    setCopiedPin(pin);
+    setTimeout(() => setCopiedPin(null), 2000);
   };
 
   return (
@@ -102,9 +109,15 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                 item?.title,
                 item?.vendor?.organization_name,
                 item?.subvendor?.organization_name,
-                item?.created?.slice(0, 10) || "-",
-                item?.code,
-                item?.pin,
+                item?.created?.slice(0, 10) || "2025-01-13",
+                // item?.code,
+                <div
+                  className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500] w-[150px] md:w-full whitespace-nowrap"
+                  key={"code"}
+                  onClick={() => handleCopyPin(String(item?.pin ?? ""))}
+                >
+                  {copiedPin === String(item?.pin) ? "Copied!" : "Copy PIN"}
+                </div>,
                 <button
                   key={`manage-button-${index}`}
                   className={`p-[8px] text-blue-600 hover:text-blue-800 ${
