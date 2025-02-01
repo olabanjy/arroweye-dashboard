@@ -173,7 +173,7 @@ const AssetsLibrary = () => {
           </div>
         </div>
       )}
-      <div className="my-[50px]">
+      <div className="mt-[50px] mb-[100px]">
         <div className=" grid place-items-center md:grid-cols-2 lg:grid-cols-3 gap-2 h-full ">
           {users.map((user) => {
             const randomColor = getRandomColor();
