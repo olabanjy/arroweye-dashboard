@@ -9,6 +9,7 @@ const InvoicesTab: React.FC = () => {
     "Campaigns"
   );
   const [filter, setFilter] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>("");
 
   useEffect(() => {
     setFilter(false);
@@ -48,6 +49,8 @@ const InvoicesTab: React.FC = () => {
                   type="text"
                   placeholder="Search by title, label and artist..."
                   className=" w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
                 />
               </div>
               <div
@@ -67,14 +70,18 @@ const InvoicesTab: React.FC = () => {
             activeTab === "Campaigns" ? "opacity-100" : "opacity-0 absolute"
           }`}
         >
-          {activeTab === "Campaigns" && <Campaigns filterVisible={filter} />}
+          {activeTab === "Campaigns" && (
+            <Campaigns filterVisible={filter} searchValue={searchValue} />
+          )}
         </div>
         <div
           className={`transition-opacity duration-500 ease-in-out ${
             activeTab === "Archive" ? "opacity-100" : "opacity-0 absolute"
           }`}
         >
-          {activeTab === "Archive" && <Archive filterVisible={filter} />}
+          {activeTab === "Archive" && (
+            <Archive searchValue={searchValue} filterVisible={filter} />
+          )}
         </div>
       </div>
     </div>

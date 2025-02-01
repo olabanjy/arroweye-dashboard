@@ -14,7 +14,7 @@ import { ContentItem } from "@/types/contents";
 import { getSingleProject } from "@/services/api";
 import ColumnChart from "@/pages/payments/component/ColumnChart";
 
-// const chartDataForDoughnut: ChartData<"doughnut", number[], string> = {
+// const chartDataForDoughnutSocials: ChartData<"doughnut", number[], string> = {
 //   labels: ["TikTok", "Twitter", "Instagram", "Facebook", "YouTube"],
 //   datasets: [
 //     {
@@ -28,6 +28,19 @@ import ColumnChart from "@/pages/payments/component/ColumnChart";
 // };
 
 const chartDataForLine: ChartData<"bar", number[], string> = {
+  labels: ["Apple Music", "Youtube", "Spotify", "others"],
+  datasets: [
+    {
+      label: "",
+      data: [300, 50, 100, 22],
+      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
+      borderWidth: 2,
+      borderColor: "rgba(255, 255, 255, 1)",
+    },
+  ],
+};
+
+const chartDataForPie: ChartData<"pie", number[], string> = {
   labels: ["TikTok", "Twitter", "Instagram", "Facebook", "YouTube"],
   datasets: [
     {
@@ -178,6 +191,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                 valuePlaceholder="TOP CHANNELS"
                 value={content?.airplay_count ?? 0}
                 selectOptions={selectOptionsAirPlay}
+                selectOptionsBottom={selectOptionsAudience}
                 chartData={chartDataForDoughnutAirplay}
                 placeholder="Channels"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
@@ -190,6 +204,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                 value="300K"
                 selectOptions={selectOptionsAudience}
                 chartData={chartData}
+                selectOptionsBottom={selectOptionsAudience}
                 // maxWidth="500px"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
@@ -225,7 +240,8 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                 title="SOCIAL MEDIA"
                 valuePlaceHolder="TOP PLATFORMS"
                 value={content?.social_media_count ?? 0}
-                chartData={chartData}
+                chartData={chartDataForPie}
+                selectOptionsBottom={selectOptionsAudience}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
             </div>
@@ -268,10 +284,11 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
             <div className="  border-b pb-[20px] ">
               <ColumnChart
-                title="TOP DSPs"
-                valuePlaceholder="DSP"
+                title="DSP"
+                valuePlaceholder="TOP DSPs"
                 value={content?.dsp_count ?? 0}
                 chartData={chartDataForLine}
+                selectOptionsBottom={selectOptions}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
             </div>

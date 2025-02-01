@@ -9,9 +9,10 @@ import { MdOutlineModeEditOutline } from "react-icons/md";
 
 interface ProjectsProps {
   filterVisible: boolean;
+  searchValue: string;
 }
 
-const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
+const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const headers: { content: string; align: "left" | "center" | "right" }[] = [
     { content: "Campaigns", align: "left" },
     { content: "Label", align: "left" },
@@ -62,6 +63,18 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
     }
   };
 
+  const filteredContent = content?.filter(
+    (item) =>
+      !item.archived &&
+      (item.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item.vendor?.organization_name
+          ?.toLowerCase()
+          .includes(searchValue.toLowerCase()) ||
+        item.subvendor?.organization_name
+          ?.toLowerCase()
+          .includes(searchValue.toLowerCase()))
+  );
+
   return (
     <>
       {filterVisible && (
@@ -95,9 +108,8 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible }) => {
         <Table
           highlightFirstCell={true}
           headers={headers}
-          rows={content
-            ?.filter((item) => !item.archived)
-            .slice()
+          rows={filteredContent
+            ?.slice()
             .reverse()
             .map((item, index) => ({
               data: [

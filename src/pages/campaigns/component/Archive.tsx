@@ -7,9 +7,10 @@ import { ContentItem } from "@/types/contents";
 
 interface ProjectsProps {
   filterVisible: boolean;
+  searchValue: string;
 }
 
-const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
+const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const headers: { content: string; align: "left" | "center" | "right" }[] = [
     { content: "Title", align: "left" },
     { content: "Vendor", align: "left" },
@@ -29,7 +30,11 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible }) => {
     });
   }, []);
 
-  const filteredContent = content?.filter((item) => item.archived === true);
+  const filteredContent = content
+    ?.filter((item) => item.archived === true)
+    ?.filter((item) =>
+      item.title?.toLowerCase().includes(searchValue.toLowerCase())
+    );
 
   const handleArchiveSubmit = async (projectId: string, archive: boolean) => {
     if (!projectId || isArchiving) return;
