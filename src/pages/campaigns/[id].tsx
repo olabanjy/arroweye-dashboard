@@ -263,9 +263,20 @@ const ProjectDetails = () => {
           </div>
           <div className="  grid gap-[20px] md:flex items-end md:justify-between pr-[40px]">
             <div className=" ">
-              <p className="font-[900] text-[45px] text-[#000000]">
-                {content?.title}
-              </p>
+              {toggleNotifications ? (
+                <input
+                  type="text"
+                  className="font-[900] text-[45px] text-[#000000] border-b-2 border-gray-300 focus:outline-none"
+                  value={content?.title}
+                  onChange={(e) =>
+                    setContent({ ...content, title: e.target.value })
+                  }
+                />
+              ) : (
+                <p className="font-[900] text-[45px] text-[#000000]">
+                  {content?.title}
+                </p>
+              )}
 
               <div className=" flex space-x-[5px]">
                 {subvendorStaff?.map((user, index) => (
