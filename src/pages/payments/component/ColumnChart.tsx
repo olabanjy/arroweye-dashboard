@@ -107,6 +107,11 @@ const ColumnChart: FC<InsightChartProps> = ({
               />
             </div>
           ))}
+          <div>
+            {!selectOptions && (
+              <div className="h-[40px] max-w-[180px] w-full"></div>
+            )}
+          </div>
         </div>
       </div>
 
