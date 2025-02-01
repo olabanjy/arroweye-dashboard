@@ -14,6 +14,8 @@ import { ContentItem } from "@/types/contents";
 import { getSingleProject } from "@/services/api";
 import ColumnChart from "@/pages/payments/component/ColumnChart";
 import { Dialog } from "primereact/dialog";
+import { Input } from "@/components/ui/input";
+import { BsTelegram } from "react-icons/bs";
 
 const chartDataForLine: ChartData<"bar", number[], string> = {
   labels: ["Apple Music", "Youtube", "Spotify", "others"],
@@ -136,6 +138,7 @@ interface InsightChartProps {
 
 const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   const [addDataModal, setAddDataModal] = useState(false);
+  const [openChatModal, setOpenChatModal] = useState(false);
   const [addDataModalSocial, setAddDataModalSocial] = useState(false);
   const [addMediaModal, setAddMediaModal] = useState(false);
   const [addDspModal, setAddDspModal] = useState(false);
@@ -345,6 +348,27 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
       />
 
       <AddDataDsp visible={addDspModal} onHide={() => setAddDspModal(false)} />
+
+      {openChatModal && (
+        <div className="fixed bottom-[90px] lg:left-32 right-0 flex justify-center z-30 w-full">
+          <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px] max-w-[500px] w-full relative">
+            <button
+              className=" font-IBM text-[20px] z-10 absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setOpenChatModal(false)}
+            >
+              &times;
+            </button>
+            <div className="p-inputgroup grid space-y-[10px] py-[10px] mb-2">
+              <Input
+                placeholder="hello@arroweye.pro"
+                className="border-none focus:ring-0 focus:outline-none focus:border-transparent placeholder:font-IBM"
+              />
+              <BsTelegram size={44} className="text-blue-500 cursor-pointer" />
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="fixed bottom-[30px] lg:left-32 right-0 flex justify-center z-30 w-full">
         <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px]">
           <p
@@ -353,7 +377,10 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
           >
             Export
           </p>
-          <p className="rounded p-[8px] bg-[#007bff] text-white w-[70px] text-center">
+          <p
+            className=" cursor-pointer rounded p-[8px] bg-[#007bff] text-white w-[70px] text-center"
+            onClick={() => setOpenChatModal(!openChatModal)}
+          >
             Send
           </p>
           <p
