@@ -628,7 +628,7 @@ const ProjectDetails = () => {
             className="custom-dialog-overlay"
           >
             <div className="space-y-4">
-              <p className="text-[16px] font-[400]">
+              <p className="text-[16px] font-[400] font-IBM">
                 Are you sure you want to remove this profile from this project?
               </p>
 

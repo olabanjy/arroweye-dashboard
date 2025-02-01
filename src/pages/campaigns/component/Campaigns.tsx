@@ -23,7 +23,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
     { content: "Label", align: "left" },
     { content: "Artist", align: "left" },
     { content: "Start Date", align: "left" },
-    { content: "PIN", align: "center" },
+    { content: "Pin", align: "center" },
     { content: "Manage", align: "center" },
     { content: "Action", align: "center" },
   ];
@@ -199,7 +199,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           className="custom-dialog-overlay"
         >
           <div className="space-y-4">
-            <p className="text-[16px] font-[400]">
+            <p className="text-[16px] font-[400] font-IBM">
               Are you sure you want to archive this item?
             </p>
 

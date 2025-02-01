@@ -175,13 +175,13 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                   className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
                   onClick={() => setAddDataModal(true)}
                 >
-                  add data
+                  + add data
                 </p>
                 <p
                   className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
                   onClick={() => setAddMediaModal(true)}
                 >
-                  add media
+                  + add media
                 </p>
               </div>
             )}
@@ -228,10 +228,10 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                   className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
                   onClick={() => setAddDataModalSocial(true)}
                 >
-                  add data
+                  + add data
                 </p>
                 <p className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
-                  add media
+                  + add media
                 </p>
               </div>
             )}
@@ -275,10 +275,10 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                   className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
                   onClick={() => setAddDspModal(true)}
                 >
-                  add data
+                  + add data
                 </p>
                 <p className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
-                  add media
+                  + add media
                 </p>
               </div>
             )}

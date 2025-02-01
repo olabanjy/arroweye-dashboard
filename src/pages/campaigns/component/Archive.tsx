@@ -20,7 +20,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
     { content: "Subvendor", align: "left" },
     { content: "Start Date", align: "left" },
     { content: "Pin", align: "center" },
-    { content: "Manage", align: "center" },
+    { content: "Code", align: "center" },
     { content: "Action", align: "center" },
   ];
 
@@ -151,7 +151,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           className="custom-dialog-overlay"
         >
           <div className="space-y-4">
-            <p className="text-[16px] font-[400]">
+            <p className="text-[16px] font-[400] font-IBM">
               Are you sure you want to unarchive this item?
             </p>
 
