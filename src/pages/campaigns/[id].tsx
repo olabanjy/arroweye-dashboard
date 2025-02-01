@@ -515,7 +515,7 @@ const ProjectDetails = () => {
             breakpoints={{ "960px": "75vw", "640px": "100vw" }}
             style={{ width: "30vw" }}
             headerClassName=" text-[12px] text-[#212529] font-[500]"
-            className="custom-dialog-overlay"
+            className="custom-dialog-overlay font-IBM"
           >
             {selectedUser && (
               <div className="space-y-4 font-IBM">
@@ -585,7 +585,7 @@ const ProjectDetails = () => {
             style={{ width: "30vw" }}
             className="custom-dialog-overlay"
           >
-            <div className="space-y-4">
+            <div className="space-y-4 font-IBM">
               <p className="text-[16px] font-[400]">MANAGE ACCESS</p>
               <div className=" w-full">
                 <SelectInput
@@ -627,7 +627,7 @@ const ProjectDetails = () => {
             style={{ width: "30vw" }}
             className="custom-dialog-overlay"
           >
-            <div className="space-y-4">
+            <div className="space-y-4 font-IBM">
               <p className="text-[16px] font-[400] font-IBM">
                 Are you sure you want to remove this profile from this project?
               </p>
@@ -662,7 +662,7 @@ const ProjectDetails = () => {
             style={{ width: "30vw" }}
             className="custom-dialog-overlay"
           >
-            <div className="space-y-4">
+            <div className="space-y-4 font-IBM">
               <p className="text-[16px] font-[400]">
                 Do you want to switch to edit mode?
               </p>
@@ -704,7 +704,7 @@ const ProjectDetails = () => {
             style={{ width: "30vw" }}
             className="custom-dialog-overlay"
           >
-            <div className="space-y-4">
+            <div className="space-y-4 font-IBM">
               <p className="text-[16px] font-[400]">
                 Make sure all your changes are saved before you proceed. Please
                 note that any unsaved changes will be lost permanently.
