@@ -314,7 +314,7 @@ const YoutubeData = () => {
         <div className="mt-[20px] space-y-[20px] h-[200px] overflow-auto  ">
           {items.map((item, index) => (
             <div className="flex items-center gap-[20px]" key={item.id}>
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 items-center gap-[20px]">
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 items-end gap-[20px]">
                 <div className=" max-w-[200px] w-full">
                   <SelectInput
                     icon={true}
