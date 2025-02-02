@@ -64,7 +64,7 @@ const Invoice = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-[#ffffff] font-IBM">
+    <div className="flex items-center justify-center h-full bg-[#ffffff] font-IBM">
       <div
         id="invoice"
         className="w-[400px] px-6 py-[20px] bg-white rounded-2xl shadow-custom shadow-slate-400"
@@ -99,8 +99,9 @@ const Invoice = () => {
 
         <div className="text-[16px]">
           <p className="font-[600] mb-2">Services</p>
+          {/* max-h-[70px] overflow-y-auto scrollbar-tiny */}
           <div
-            className="text-[#212529] max-h-[70px] overflow-y-auto scrollbar-tiny space-y-2 pr-2"
+            className="text-[#212529]  space-y-2 pr-2"
             style={{ scrollbarWidth: "thin" }}
           >
             {content?.items?.map((item, index) => (
@@ -145,7 +146,7 @@ const Invoice = () => {
           <p>Receipt ID: #123456789</p>
         </div>
 
-        {content?.status === "Unpaid" ? (
+        {content?.status !== "Unpaid" ? (
           <button
             onClick={handlePrint}
             disabled
