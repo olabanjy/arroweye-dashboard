@@ -173,7 +173,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             {editMode && (
               <div className=" space-y-[20px]">
                 <p
-                  className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
+                  className="cursor-pointer  p-[15px] border border-[#000] rounded-full hover:border bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
                   onClick={() => setAddDataModal(true)}
                 >
                   + add data

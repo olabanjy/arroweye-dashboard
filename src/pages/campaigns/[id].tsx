@@ -267,52 +267,53 @@ const ProjectDetails = () => {
               {content?.subvendor?.organization_name}
             </p>
           </div>
-          <div className="  grid gap-[20px] md:flex items-end md:justify-between pr-[40px]">
-            <div className=" ">
-              {toggleNotifications ? (
-                <div className="flex items-center">
-                  <div className="">
-                    <input
-                      type="text"
-                      className="font-[900] text-[45px] text-[#000000] focus:outline-none"
-                      value={content?.title}
-                      onChange={(e) => {
-                        setContent({ ...content, title: e.target.value });
-                        setShowIcons(true);
-                      }}
-                    />
-                    {showIcons && (
-                      <div className="flex items-center gap-[5px] my-[20px]">
-                        <FaCheckCircle
-                          size={24}
-                          className="text-blue-500 cursor-pointer"
-                          onClick={() => {
-                            setShowIcons(false);
-                          }}
-                        />
-                        <GiCancel
-                          size={24}
-                          className="text-red-500 cursor-pointer"
-                          onClick={() => {
-                            setContent({ ...content, title: originalTitle });
-                            setShowIcons(false);
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <p className="font-[900] text-[45px] text-[#000000] flex-grow">
-                  {content?.title}
-                </p>
-              )}
 
-              <div className=" flex space-x-[5px]">
+          <div className="  pr-[40px]">
+            {toggleNotifications ? (
+              <div className="flex items-center">
+                <div className="">
+                  <input
+                    type="text"
+                    className="font-[900] text-[45px] text-[#000000] focus:outline-none"
+                    value={content?.title}
+                    onChange={(e) => {
+                      setContent({ ...content, title: e.target.value });
+                      setShowIcons(true);
+                    }}
+                  />
+                  {showIcons && (
+                    <div className="flex items-center gap-[5px] my-[20px]">
+                      <FaCheckCircle
+                        size={24}
+                        className="text-blue-500 cursor-pointer"
+                        onClick={() => {
+                          setShowIcons(false);
+                        }}
+                      />
+                      <GiCancel
+                        size={24}
+                        className="text-red-500 cursor-pointer"
+                        onClick={() => {
+                          setContent({ ...content, title: originalTitle });
+                          setShowIcons(false);
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <p className="font-[900] text-[45px] text-[#000000] flex-grow">
+                {content?.title}
+              </p>
+            )}
+
+            <div className="my-[20px] gap-[20px] flex-wrap flex items-center justify-between">
+              <div className=" flex space-x-[5px] ">
                 {subvendorStaff?.map((user, index) => (
                   <div key={index} className="relative group">
                     <p
-                      className={`${predefinedColors[index % predefinedColors.length]} tracking-[.1rem] text-[12px] font-[700] font-Poppins text-white rounded-full p-4 w-[40px] h-[40px] flex items-center justify-center text-center cursor-pointer`}
+                      className={`${predefinedColors[index % predefinedColors.length]}  tracking-[.2rem]  text-[12px] font-[700] font-Poppins rounded-full h-[50px] w-[50px] flex items-center justify-center text-white text-center cursor-pointer`}
                       onClick={() => handleUserClick(user as ContentItem)}
                     >
                       {user.fullname?.slice(0, 2).toUpperCase()}
@@ -326,36 +327,36 @@ const ProjectDetails = () => {
 
                 <div className="relative group">
                   <p
-                    className="bg-[#ffdead] text-[#000000] rounded-full p-2 w-[40px] h-[40px] flex items-center justify-center text-center cursor-pointer"
+                    className="bg-[#ffdead] text-[#000000] rounded-full w-[50px] h-[50px] flex items-center justify-center  text-center cursor-pointer"
                     onClick={showDialog}
                   >
                     <HiOutlineUserAdd size={14} />
                   </p>
                 </div>
               </div>
-            </div>
 
-            <div className="relative">
-              {toggleNotifications && (
-                <div className="fixed top-0 left-0 w-full h-[50px] flex items-center justify-center bg-blue-500 text-white text-[15px] font-[500] font-IBM z-[9999999]">
-                  Edit mode
+              <div className="relative">
+                {toggleNotifications && (
+                  <div className="fixed top-0 left-0 w-full h-[50px] flex items-center justify-center bg-blue-500 text-white text-[15px] font-[500] font-IBM z-[9999999]">
+                    Edit mode
+                  </div>
+                )}
+
+                <div className="flex items-center space-x-4">
+                  <p className="font-IBM font-[400] text-[16px]">Edit mode</p>
+                  <InputSwitch
+                    id="phone"
+                    checked={toggleNotifications}
+                    onChange={(e) => {
+                      if (e.value) {
+                        setEditMode(true);
+                      } else {
+                        setEditModeOff(true);
+                      }
+                    }}
+                    className="custom-switch"
+                  />
                 </div>
-              )}
-
-              <div className="flex items-center space-x-4">
-                <p className="font-IBM font-[400] text-[16px]">Edit mode</p>
-                <InputSwitch
-                  id="phone"
-                  checked={toggleNotifications}
-                  onChange={(e) => {
-                    if (e.value) {
-                      setEditMode(true);
-                    } else {
-                      setEditModeOff(true);
-                    }
-                  }}
-                  className="custom-switch"
-                />
               </div>
             </div>
           </div>

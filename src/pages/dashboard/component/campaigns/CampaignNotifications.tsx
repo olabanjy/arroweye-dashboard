@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MomentNotificationCard from "../MomentNotificationCard";
 import FirstPlayNotificationCard from "../FirstPlayNotificationCard";
 import AirPlayNotificationCard from "../AirPlayNotificationCard";
@@ -8,8 +8,20 @@ import DspNotificationCard from "../DspNotificationCard";
 import NewsNotificationCard from "../NewsNotificationCard";
 import WebNotificationCard from "../WebNotificationCard";
 import AdsNotificationCard from "../AdsNotificationCard";
+import { ContentItem } from "@/types/contents";
+import { getNotification } from "@/services/api";
 
 const CampaignNotifications = () => {
+  const [content, setContent] = useState<ContentItem[] | null>(null);
+
+  useEffect(() => {
+    getNotification().then((fetchedContent) => {
+      setContent(fetchedContent);
+    });
+  }, []);
+
+  console.log(content);
+
   const handleDownload = () => {
     console.log("Download triggered");
   };

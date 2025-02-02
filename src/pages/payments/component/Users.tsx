@@ -45,7 +45,7 @@ const Users = () => {
               className="flex justify-center"
             >
               <div
-                className={` font-Poppins font-[700]  text-[12px] cursor-pointer w-[48px] h-[48px] flex items-center justify-center p-[16px] text-white border-[#ffffff] rounded-full ${
+                className={` font-Poppins  tracking-[.1rem]  font-[700]  text-[12px] cursor-pointer w-[48px] h-[48px] flex items-center justify-center p-[16px] text-white border-[#ffffff] rounded-full ${
                   colorPalette[index % colorPalette.length]
                 }`}
                 onClick={() => {
