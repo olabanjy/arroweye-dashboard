@@ -12,7 +12,7 @@ const DropZoneInput: React.FC<DropZoneInputProps> = ({ onUnlock }) => {
       <div className=" flex-grow ">
         <Input
           label="Unlock Dropzone"
-          type="password"
+          type="text"
           placeholder="Enter 6-Digit PIN"
           className=" w-full "
           labelClassName=" text-[18px] font-[500] text-[#212529]"

@@ -59,8 +59,8 @@ const MomentCard: React.FC<MomentCardProps> = ({
               }
               alt="Icon"
               style={{ display: isPlaying ? "none" : "block" }}
-              width={100}
-              height={100}
+              width={50}
+              height={50}
             />
           </button>
         )}

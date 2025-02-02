@@ -214,12 +214,12 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
             <MomentCard
               MomentsTitle="MOMENTS"
-              videoUrl="https://www.youtube.com/embed/L_kVchHsCYM"
+              videoUrl="https://www.youtube.com/embed/L_kVchHsCYM?controls=1&autoplay=1&mute=1"
               videoTitle="How to use Chat GPT to generate social media captions"
               watchButtonText="Watch"
               downloadButtonText="Download Data"
               radioButtonText="Radio Monitor"
-              subText="Radio monitor report is populating... "
+              subText="Radio monitor report is populating..."
             />
           </div>
           <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
@@ -260,7 +260,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
             <MomentCard
               MomentsTitle="REWIND"
-              videoUrl="https://www.youtube.com/embed/L_kVchHsCYM"
+              videoUrl="https://www.youtube.com/embed/L_kVchHsCYM?controls=1&autoplay=1&mute=1"
               videoTitle="How to use Chat GPT to generate social media captions"
               watchButtonText="Watch"
               downloadButtonText="Download Data"
