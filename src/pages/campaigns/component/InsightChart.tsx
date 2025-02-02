@@ -107,7 +107,7 @@ const selectOptionsAirPlay = [
   [
     { value: "Nigeria", label: "Nigeria" },
     { value: "Kenya", label: "Kenya" },
-    { value: "SouthAfrica", label: "South Africa" },
+    { value: "SouthAfrica", label: "S.Africa" },
     { value: "IvoryCoast", label: "Ivory Coast" },
     { value: "Ghana", label: "Ghana" },
   ],
