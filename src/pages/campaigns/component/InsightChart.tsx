@@ -105,10 +105,11 @@ const selectOptions = [
 ];
 const selectOptionsAirPlay = [
   [
-    { value: "radio", label: "Radio" },
-    { value: "dj", label: "DJ" },
-    { value: "localTv", label: "Local TV" },
-    { value: "cable", label: "Cable" },
+    { value: "Nigeria", label: "Nigeria" },
+    { value: "Kenya", label: "Kenya" },
+    { value: "SouthAfrica", label: "South Africa" },
+    { value: "IvoryCoast", label: "Ivory Coast" },
+    { value: "Ghana", label: "Ghana" },
   ],
 ];
 const selectOptionsAudience = [
@@ -194,7 +195,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                 selectOptions={selectOptionsAirPlay}
                 selectOptionsBottom={selectOptionsAudience}
                 chartData={chartDataForDoughnutAirplay}
-                placeholder="Channels"
+                placeholder="Country"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
             </div>

@@ -28,7 +28,7 @@ interface InsightChartProps {
 const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute font-[300] left-full top-1/2 transform -translate-y-1/2 ml-2 hidden w-[230px] p-2 text-xs text-white bg-black bg-opacity-90 rounded-lg group-hover:block z-10 shadow-lg font-IBM">
+    <div className="absolute font-[500] left-full top-1/2 transform -translate-y-1/2 ml-2 hidden w-[230px] p-2 text-xs text-white bg-black bg-opacity-90 rounded-lg group-hover:block z-10 shadow-lg font-IBM">
       {info}
     </div>
   </div>
@@ -64,7 +64,6 @@ const DoughnutChart: FC<InsightChartProps> = ({
     { value: "week2", label: "Week 2" },
     { value: "week3", label: "Week 3" },
     { value: "week4", label: "Week 4" },
-    { value: "week5", label: "Week 5" },
   ];
 
   const months = [
@@ -142,7 +141,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
       <div className="flex items-center justify-between">
         <div className="">
           {selectOptionsBottom?.map((options, index) => (
-            <div key={index} className="max-w-[110px] w-full">
+            <div key={index} className="max-w-[200px] w-full">
               <SelectInput
                 rounded={true}
                 options={weeksOptions}

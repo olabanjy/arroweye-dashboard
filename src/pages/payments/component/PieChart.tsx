@@ -27,7 +27,7 @@ interface InsightChartProps {
 const TooltipComponent = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 hidden w-52 p-2 text-xs font-[400] text-white bg-black rounded-lg group-hover:block z-10 shadow-lg font-IBM">
+    <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 hidden w-52 p-2 text-xs font-[500] text-white bg-black rounded-lg group-hover:block z-10 shadow-lg font-IBM">
       {info}
     </div>
   </div>
@@ -60,7 +60,6 @@ const PieChart: FC<InsightChartProps> = ({
     { value: "week2", label: "Week 2" },
     { value: "week3", label: "Week 3" },
     { value: "week4", label: "Week 4" },
-    { value: "week5", label: "Week 5" },
   ];
 
   const months = [
