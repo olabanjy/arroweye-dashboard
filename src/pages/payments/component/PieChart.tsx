@@ -20,7 +20,6 @@ interface InsightChartProps {
   selectOptionsBottom?: Array<{ value: string; label: string }[]>;
   chartData?: ChartData<"pie", number[], string>;
   valuePlaceHolder?: string;
-  // maxWidth?: string;
   info?: string;
 }
 
@@ -50,11 +49,13 @@ const PieChart: FC<InsightChartProps> = ({
         label: "AIRPLAY",
         data: [300, 50, 100, 22],
         backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
-        borderWidth: 2,
-        borderColor: "rgba(255, 255, 255, 1)",
+        borderColor: ["#e0a1a2", "#a1c4e8", "#e0d8a1", "#a1e0d8"],
+        borderWidth: 3,
       },
     ],
   };
+
+  console.log(defaultChartData);
 
   const weeksOptions = [
     { value: "week1", label: "Week 1" },

@@ -316,6 +316,11 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
               downloadIcon={true}
               MomentsTitle="DSP EDITORIAL"
               assetsButton="Download Assets"
+              links={[
+                "https://www.google.com",
+                "https://www.figma.com",
+                "https://www.youtube.com",
+              ]}
               additionalContent={
                 <div className="hidden">
                   <p className=" text-start font-[400] text-[8px] font-IBM">
