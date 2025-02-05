@@ -7,7 +7,7 @@ import { FaRegCirclePlay } from "react-icons/fa6";
 
 interface MomentSliderCardProps {
   images: string[];
-  links: string[];
+  links?: string[];
   watchButtonText?: string;
   downloadButtonText?: string;
   radioButtonText?: string;
@@ -21,7 +21,7 @@ interface MomentSliderCardProps {
 
 const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
   images,
-  links,
+  // links,
   watchButtonText,
   downloadButtonText = "Download Data",
   radioButtonText,
@@ -70,11 +70,12 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
                 height={300}
               />
               <a
-                href={
-                  links[index].startsWith("http")
-                    ? links[index]
-                    : `https://${links[index]}`
-                }
+                // href={
+                //   links[index].startsWith("http")
+                //     ? links[index]
+                //     : `https://${links[index]}`
+                // }
+                href=""
                 target="_blank"
                 rel="noopener noreferrer"
                 className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-[#ffffff] text-[#000000] text-[12px] font-[400] rounded-full px-3 py-1"

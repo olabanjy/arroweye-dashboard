@@ -16,6 +16,7 @@ import ColumnChart from '@/pages/payments/component/ColumnChart';
 import { Dialog } from 'primereact/dialog';
 import { Input } from '@/components/ui/input';
 import { BsTelegram } from 'react-icons/bs';
+import { usePDF } from 'react-to-pdf';
 
 
 
@@ -169,8 +170,12 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   };
 
 
+  const { toPDF, targetRef } = usePDF({ filename: 'dashboard.pdf' });
+
+
+
   return (
-    <div className=" ">
+    <div className=" " ref={targetRef}>
       <div className="mt-[20px] mb-[80px]">
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px] w-full">
           <div className="border p-[20px] w-full rounded-[8px] space-y-[20px]  hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
@@ -435,7 +440,10 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             </p>
 
             <div className="grid grid-cols-2 gap-[10px] pb-5">
-              <div className="font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center">
+              <div
+                className="font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center"
+                onClick={() => toPDF()}
+              >
                 PDF
               </div>
               <div className="font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center">
