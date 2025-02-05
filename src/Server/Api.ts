@@ -8,11 +8,14 @@ import axios, {
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN as string,
-  timeout: 10000,
+  timeout: 20000,
   headers: {
     "Content-Type": "application/json",
   },
 });
+
+console.log('Base URL:', process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN);
+
 
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {

@@ -256,8 +256,8 @@ const ProjectDetails = () => {
   const originalTitle = content?.title || "";
 
   return (
-    <DashboardLayout withBorder={false}>
-      <div className="relative">
+    <DashboardLayout withBorder={false} >
+      <div className=" relative " style={{marginBottom: '80px'}}>
         <div className="space-y-[5px] ">
           <div className="text-[#919393] flex items-center gap-[5px] text-[0.875rem]">
             <p className=" uppercase text-[#5e5e5e] tracking-[.1rem]">
@@ -268,7 +268,7 @@ const ProjectDetails = () => {
             </p>
           </div>
 
-          <div className="  pr-[40px]">
+          <div className="pr-[40px]">
             {toggleNotifications ? (
               <div className="flex items-center">
                 <div className="">

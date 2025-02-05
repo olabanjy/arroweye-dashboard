@@ -1,136 +1,138 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import PieChart from "@/pages/payments/component/PieChart";
-import { ChartData } from "chart.js";
-import DoughnutChart from "@/pages/payments/component/Doughnut";
-import MomentCard from "../public/component/MomentCard";
-import MomentSliderCard from "../public/component/MomentSliderCard";
-import AddData from "./AddData";
-import AddMedia from "./AddMedia";
-import AddDataSocials from "./AddDataSocials";
-import AddDataDsp from "./AddDataDsp";
-import { useRouter } from "next/router";
-import { ContentItem } from "@/types/contents";
-import { getSingleProject } from "@/services/api";
-import ColumnChart from "@/pages/payments/component/ColumnChart";
-import { Dialog } from "primereact/dialog";
-import { Input } from "@/components/ui/input";
-import { BsTelegram } from "react-icons/bs";
+'use client';
+import React, { useEffect, useState } from 'react';
+import PieChart from '@/pages/payments/component/PieChart';
+import { ChartData } from 'chart.js';
+import DoughnutChart from '@/pages/payments/component/Doughnut';
+import MomentCard from '../public/component/MomentCard';
+import MomentSliderCard from '../public/component/MomentSliderCard';
+import AddData from './AddData';
+import AddMedia from './AddMedia';
+import AddDataSocials from './AddDataSocials';
+import AddDataDsp from './AddDataDsp';
+import { useRouter } from 'next/router';
+import { ContentItem } from '@/types/contents';
+import { getSingleProject, sendProjectEmail } from '@/services/api';
+import ColumnChart from '@/pages/payments/component/ColumnChart';
+import { Dialog } from 'primereact/dialog';
+import { Input } from '@/components/ui/input';
+import { BsTelegram } from 'react-icons/bs';
 
-const chartDataForLine: ChartData<"bar", number[], string> = {
-  labels: ["Apple Music", "Youtube", "Spotify", "others"],
+
+
+const chartDataForLine: ChartData<'bar', number[], string> = {
+  labels: ['Apple Music', 'Youtube', 'Spotify', 'others'],
   datasets: [
     {
-      label: "",
+      label: '',
       data: [300, 50, 100, 22],
-      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
+      backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
       borderWidth: 2,
-      borderColor: "rgba(255, 255, 255, 1)",
+      borderColor: 'rgba(255, 255, 255, 1)',
     },
   ],
 };
 
-const chartDataForPie: ChartData<"pie", number[], string> = {
-  labels: ["TikTok", "Twitter", "Instagram", "Facebook", "YouTube"],
+const chartDataForPie: ChartData<'pie', number[], string> = {
+  labels: ['TikTok', 'Twitter', 'Instagram', 'Facebook', 'YouTube'],
   datasets: [
     {
-      label: "Social Media",
+      label: 'Social Media',
       data: [300, 50, 100, 22, 10],
-      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
+      backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
       borderWidth: 2,
-      borderColor: "rgba(255, 255, 255, 1)",
+      borderColor: 'rgba(255, 255, 255, 1)',
     },
   ],
 };
 
-const chartDataForDoughnutActions: ChartData<"doughnut", number[], string> = {
-  labels: ["Shares", "Saves", "Comments", "Likes", "Followers", "Views"],
+const chartDataForDoughnutActions: ChartData<'doughnut', number[], string> = {
+  labels: ['Shares', 'Saves', 'Comments', 'Likes', 'Followers', 'Views'],
   datasets: [
     {
-      label: "Social Media",
+      label: 'Social Media',
       data: [300, 50, 100, 22, 10],
-      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
+      backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
       borderWidth: 2,
-      borderColor: "rgba(255, 255, 255, 1)",
+      borderColor: 'rgba(255, 255, 255, 1)',
     },
   ],
 };
 
-const chartDataForDoughnutAirplay: ChartData<"doughnut", number[], string> = {
-  labels: ["Radio", "Cable", "TV", "DJ"],
+const chartDataForDoughnutAirplay: ChartData<'doughnut', number[], string> = {
+  labels: ['Radio', 'Cable', 'TV', 'DJ'],
   datasets: [
     {
-      label: "Airplay",
+      label: 'Airplay',
       data: [300, 50, 100, 22],
-      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
+      backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
       borderWidth: 2,
-      borderColor: "rgba(255, 255, 255, 1)",
+      borderColor: 'rgba(255, 255, 255, 1)',
     },
   ],
 };
 
-const chartData: ChartData<"pie", number[], string> = {
-  labels: ["Gen Z", "Millenials", "others"],
+const chartData: ChartData<'pie', number[], string> = {
+  labels: ['Gen Z', 'Millenials', 'others'],
   datasets: [
     {
-      label: "AUDIENCE",
+      label: 'AUDIENCE',
       data: [300, 50, 100],
-      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8"],
+      backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8'],
       borderWidth: 2,
-      borderColor: "rgba(255, 255, 255, 1)",
+      borderColor: 'rgba(255, 255, 255, 1)',
     },
   ],
 };
 
-const chartDataForDoughnutDSP: ChartData<"pie", number[], string> = {
-  labels: ["Pre-saves", "Purchases", "Listens", "Streams", "Downloads"],
+const chartDataForDoughnutDSP: ChartData<'pie', number[], string> = {
+  labels: ['Pre-saves', 'Purchases', 'Listens', 'Streams', 'Downloads'],
   datasets: [
     {
-      label: "PERFORMANCE ",
+      label: 'PERFORMANCE ',
       data: [300, 50, 100],
-      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8"],
+      backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8'],
       borderWidth: 2,
-      borderColor: "rgba(255, 255, 255, 1)",
+      borderColor: 'rgba(255, 255, 255, 1)',
     },
   ],
 };
 
 const selectOptions = [
   [
-    { value: "nigeria", label: "Nigeria" },
-    { value: "ghana", label: "Ghana" },
-    { value: "kenya", label: "Kenya" },
-    { value: "ivoryCoast", label: "Ivory Coast" },
+    { value: 'nigeria', label: 'Nigeria' },
+    { value: 'ghana', label: 'Ghana' },
+    { value: 'kenya', label: 'Kenya' },
+    { value: 'ivoryCoast', label: 'Ivory Coast' },
   ],
 ];
 const selectOptionsAirPlay = [
   [
-    { value: "Nigeria", label: "Nigeria" },
-    { value: "Kenya", label: "Kenya" },
-    { value: "SouthAfrica", label: "S.Africa" },
-    { value: "IvoryCoast", label: "Ivory Coast" },
-    { value: "Ghana", label: "Ghana" },
+    { value: 'Nigeria', label: 'Nigeria' },
+    { value: 'Kenya', label: 'Kenya' },
+    { value: 'SouthAfrica', label: 'S.Africa' },
+    { value: 'IvoryCoast', label: 'Ivory Coast' },
+    { value: 'Ghana', label: 'Ghana' },
   ],
 ];
 const selectOptionsAudience = [
   [
-    { value: "radio", label: "Radio" },
-    { value: "dj", label: "DJ" },
-    { value: "localTv", label: "Local TV" },
+    { value: 'radio', label: 'Radio' },
+    { value: 'dj', label: 'DJ' },
+    { value: 'localTv', label: 'Local TV' },
   ],
 ];
 
 const countryFlags = [
-  { flag: "🇺🇸", name: "United States" },
-  { flag: "🇬🇧", name: "United Kingdom" },
-  { flag: "🇨🇦", name: "Canada" },
-  { flag: "🇦🇺", name: "Australia" },
-  { flag: "🇮🇳", name: "India" },
-  { flag: "🇯🇵", name: "Japan" },
-  { flag: "🇮🇹", name: "Italy" },
-  { flag: "🇨🇳", name: "China" },
-  { flag: "🇫🇷", name: "France" },
-  { flag: "🇩🇪", name: "Germany" },
+  { flag: '🇺🇸', name: 'United States' },
+  { flag: '🇬🇧', name: 'United Kingdom' },
+  { flag: '🇨🇦', name: 'Canada' },
+  { flag: '🇦🇺', name: 'Australia' },
+  { flag: '🇮🇳', name: 'India' },
+  { flag: '🇯🇵', name: 'Japan' },
+  { flag: '🇮🇹', name: 'Italy' },
+  { flag: '🇨🇳', name: 'China' },
+  { flag: '🇫🇷', name: 'France' },
+  { flag: '🇩🇪', name: 'Germany' },
 ];
 
 interface InsightChartProps {
@@ -144,7 +146,8 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   const [addMediaModal, setAddMediaModal] = useState(false);
   const [addDspModal, setAddDspModal] = useState(false);
   const [exportModal, setExportModal] = useState(false);
-  const [shareButtonText, setShareButtonText] = useState("Share");
+  const [shareButtonText, setShareButtonText] = useState('Share');
+    const [email, setEmail] = useState('');
 
   const { query } = useRouter();
 
@@ -158,16 +161,17 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   }, [id]);
 
   const handleShareClick = () => {
-    navigator.clipboard.writeText("https://your-link.com");
-    setShareButtonText("Copied");
+    navigator.clipboard.writeText('https://your-link.com');
+    setShareButtonText('Copied');
     setTimeout(() => {
-      setShareButtonText("Share");
+      setShareButtonText('Share');
     }, 3000);
   };
 
+
   return (
     <div className=" ">
-      <div className="mt-[20px] mb-[20px]">
+      <div className="mt-[20px] mb-[80px]">
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px] w-full">
           <div className="border p-[20px] w-full rounded-[8px] space-y-[20px]  hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
             {editMode && (
@@ -308,18 +312,18 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
             <MomentSliderCard
               images={[
-                "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg",
-                "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg",
-                "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg",
+                'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg',
+                'https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg',
+                'https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg',
               ]}
               downloadButtonText="Download Data"
               downloadIcon={true}
               MomentsTitle="DSP EDITORIAL"
               assetsButton="Download Assets"
               links={[
-                "https://www.google.com",
-                "https://www.figma.com",
-                "https://www.youtube.com",
+                'https://www.google.com',
+                'https://www.figma.com',
+                'https://www.youtube.com',
               ]}
               additionalContent={
                 <div className="hidden">
@@ -368,8 +372,21 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
               <Input
                 placeholder="hello@arroweye.pro"
                 className="border-none focus:ring-0 focus:outline-none focus:border-transparent placeholder:font-IBM"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
-              <BsTelegram size={44} className="text-blue-500 cursor-pointer" />
+              <BsTelegram
+                size={44}
+                className="text-blue-500 cursor-pointer"
+                onClick={() => {
+                  console.log('yeah');
+                  if (content?.id) {
+                    const currentUrl =
+                      typeof window !== 'undefined' ? window.location.href : '';
+                    sendProjectEmail(content.id, { email, url: currentUrl });
+                  }
+                }}
+              />
             </div>
           </div>
         </div>
@@ -400,9 +417,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
       <div
         className={`custom-dialog-overlay ${
-          exportModal
-            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
-            : "hidden"
+          exportModal ? 'bg-white fixed inset-0 z-50 p-8' : 'hidden'
         }`}
       >
         <Dialog
@@ -410,20 +425,20 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
           onHide={() => {
             setExportModal(false);
           }}
-          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "30vw" }}
+          breakpoints={{ '960px': '75vw', '640px': '100vw' }}
+          style={{ width: '30vw', padding: '20px', backgroundColor: 'white' }}
           className="custom-dialog-overlay"
         >
-          <div className="space-y-[20px]">
-            <p className=" text-center text-[18px] font-[400] font-IBM text-[#000000]">
+          <div className="space-y-[30px] p-4">
+            <p className="text-center text-[18px] font-[400] font-IBM text-[#000000]">
               Select your preferred format
             </p>
 
-            <div className=" grid grid-cols-2 gap-[10px]">
-              <div className=" font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center">
+            <div className="grid grid-cols-2 gap-[10px] pb-5">
+              <div className="font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center">
                 PDF
               </div>
-              <div className=" font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center">
+              <div className="font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center">
                 CSV
               </div>
             </div>

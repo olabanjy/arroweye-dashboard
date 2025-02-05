@@ -1,40 +1,79 @@
-import { Input } from "@/components/ui/input";
-import { LoginEP } from "@/services/api";
-import React, { useState } from "react";
-import { IoCloudUploadOutline } from "react-icons/io5";
-import { toast } from "react-toastify";
+import { Input } from '@/components/ui/input';
+import { createDropzone } from '@/services/api';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import { IoCloudUploadOutline } from 'react-icons/io5';
+import { toast } from 'react-toastify';
 
 const DropForm = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    folderName: "",
-    link: "",
+    firstName: '',
+    lastName: '',
+    folderName: '',
+    link: '',
+    dropType: '',
   });
+
+  const { query } = useRouter();
+  const projectId = typeof query.id === 'string' ? query.id : '';
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => {
+      const newData = { ...prev, [name]: value };
+      if (name === 'link') {
+        if (value.includes('drive.google.com'))
+          newData.dropType = 'GoogleDrive';
+        else if (value.includes('wetransfer.com'))
+          newData.dropType = 'WeTransfer';
+        else if (value.includes('onedrive.live.com'))
+          newData.dropType = 'OneDrive';
+        else if (value.includes('dropbox.com')) newData.dropType = 'Dropbox';
+        else if (value.includes('pcloud.com')) newData.dropType = 'PCloud';
+        else newData.dropType = '';
+      }
+      return newData;
+    });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+ const handleSubmit = async (e: React.FormEvent) => {
+   e.preventDefault();
 
-    if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.folderName ||
-      !formData.link
-    ) {
-      toast.error("Please fill in all fields.");
-      return;
-    }
+   if (!projectId) {
+     toast.error('Project ID is missing');
+     return;
+   }
 
-    LoginEP(formData);
-  };
+   if (
+     !formData.firstName ||
+     !formData.lastName ||
+     !formData.folderName ||
+     !formData.link
+   ) {
+     toast.error('Please fill in all fields.');
+     return;
+   }
+
+   const payload = {
+     folder_name: formData.folderName,
+     first_name: formData.firstName,
+     last_name: formData.lastName,
+     link: formData.link,
+     drop_type: formData.dropType,
+   };
+
+   const response = await createDropzone(projectId, payload);
+   if (response) {
+     toast.success('Dropzone created successfully');
+     setFormData({
+       firstName: '',
+       lastName: '',
+       folderName: '',
+       link: '',
+       dropType: '',
+     });
+   }
+ };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -79,10 +118,10 @@ const DropForm = () => {
         />
         <Input
           type="text"
-          placeholder=""
+          placeholder="Drop Type"
           readOnly
           className="w-full rounded-[8px]"
-          value=""
+          value={formData.dropType}
         />
         <button
           type="submit"

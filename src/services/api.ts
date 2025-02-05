@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import apiRequest from "@/Server/Api";
 import { ContentItem, EventsItem, StaffItem } from "@/types/contents";
+import { DropzonePayload } from "@/types/dropzone";
 
 if (typeof window !== "undefined" && window?.sessionStorage)
   ls.config.storage = sessionStorage;
@@ -18,6 +19,17 @@ interface ApiRequestResponse<T> {
   message: string;
   status: number | string;
 }
+
+interface SendEmailResponse {
+  message: string;
+  status: string;
+}
+
+interface SendEmailPayload {
+  email: string;
+  url: string;
+}
+
 
 export const getGenreContents = async (): Promise<ContentItem[] | null> => {
   try {
@@ -572,31 +584,69 @@ export const getStoredBusiness = (): StaffItem[] | null => {
   return content as StaffItem[];
 };
 
+// export const getProjects = async (): Promise<ContentItem[] | null> => {
+//   try {
+//     const response = await apiRequest({
+//       method: "GET",
+//       url: `/api/v1/projects/`,
+//       data: null,
+//       requireToken: false,
+//     });
+
+//     ls.set("Projects", response, { encrypt: true });
+
+//     return response as ContentItem[];
+//   } catch (error: unknown) {
+//     if (axios.isAxiosError(error)) {
+//       toast.error(
+//         error.response?.data?.message ||
+//           "Content Retrieval failed. Please try again."
+//       );
+//     } else {
+//       toast.error("Content Retrieval failed. Please try again.");
+//     }
+
+//     return null;
+//   }
+// };
+
+
+
 export const getProjects = async (): Promise<ContentItem[] | null> => {
   try {
     const response = await apiRequest({
-      method: "GET",
+      method: 'GET',
       url: `/api/v1/projects/`,
       data: null,
       requireToken: false,
     });
 
-    ls.set("Projects", response, { encrypt: true });
+    ls.set('Projects', response, { encrypt: true });
 
     return response as ContentItem[];
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
+      if (error.response?.status === 404) {
+        toast.error(
+          'Projects not found. Please check the URL or try again later.'
+        );
+      } else {
+        toast.error(
+          error.response?.data?.message ||
+            'Content Retrieval failed. Please try again.'
+        );
+      }
     } else {
-      toast.error("Content Retrieval failed. Please try again.");
+      toast.error('Content Retrieval failed. Please try again.');
     }
 
     return null;
   }
 };
+
+
+
+
 
 export const getStoredProjects = (): ContentItem[] | null => {
   const content = ls.get("Projects", { decrypt: true });
@@ -1015,6 +1065,60 @@ export const getNotification = async (): Promise<ContentItem[] | null> => {
       toast.error("Content Retrieval failed. Please try again.");
     }
 
+    return null;
+  }
+};
+
+export const sendProjectEmail = async (
+  id: number | string,
+  payload: SendEmailPayload
+): Promise<SendEmailResponse | null> => {
+  try {
+    const response = await apiRequest({
+      method: 'POST',
+      url: `/api/v1/projects/${id}/share-project/`,
+      data: payload,
+      requireToken: true,
+    });
+
+    toast.success('Email sent successfully!');
+    return response as SendEmailResponse;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          'Failed to send email. Please try again.'
+      );
+    } else {
+      toast.error('Failed to send email. Please try again.');
+    }
+
+    return null;
+  }
+};
+
+export const createDropzone = async (
+  projectId: string,
+  data: DropzonePayload
+): Promise<DropzonePayload | null> => {
+  try {
+    const response = await apiRequest({
+      method: 'POST',
+      url: `/api/v1/projects/${projectId}/dropzone/`,
+      data,
+      requireToken: true,
+    });
+
+    return response as DropzonePayload;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          'Failed to create dropzone. Please try again.'
+      );
+    } else {
+      toast.error('Failed to create dropzone. Please try again.');
+    }
     return null;
   }
 };
