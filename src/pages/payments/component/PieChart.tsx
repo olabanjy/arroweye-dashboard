@@ -45,11 +45,14 @@ const CustomLegend: FC<CustomLegendProps> = ({ payload }) => {
         display: 'flex',
         justifyContent: 'center',
         gap: '10px',
-        marginBottom: '20px',
       }}
     >
       {payload.map((entry, index) => (
-        <span key={`item-${index}`} style={{ color: 'black', fontSize: 12 }}>
+        <span
+          key={`item-${index}`}
+          className="flex items-center flex-wrap"
+          style={{ color: 'black', fontSize: 12 }}
+        >
           <span
             style={{
               display: 'inline-block',
@@ -97,7 +100,9 @@ const PieChart: FC<InsightChartProps> = ({
   // Convert Chart.js data format to Recharts format
   const rechartsData =
     chartData?.labels?.map((label, index) => {
-      const backgroundColor = Array.isArray(chartData.datasets[0].backgroundColor)
+      const backgroundColor = Array.isArray(
+        chartData.datasets[0].backgroundColor
+      )
         ? chartData.datasets[0].backgroundColor[index]
         : undefined;
       const borderColor = Array.isArray(chartData.datasets[0].borderColor)
@@ -112,7 +117,13 @@ const PieChart: FC<InsightChartProps> = ({
       };
     }) || [];
 
-  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { name: string; value: number }[] }) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+  }: {
+    active?: boolean;
+    payload?: { name: string; value: number }[];
+  }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-2 border border-gray-200 shadow-lg rounded">
@@ -158,42 +169,48 @@ const PieChart: FC<InsightChartProps> = ({
           {valuePlaceHolder}
         </p>
 
-        <div className="w-full h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <RechartsChart>
-              <Pie
-                data={rechartsData}
-                cx="50%"
-                cy="45%"
-                innerRadius={0}
-                outerRadius={150}
-                paddingAngle={0}
-                dataKey="value"
-                strokeWidth={2}
-              >
-                {rechartsData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={entry.fill}
-                    stroke={entry.stroke}
-                  />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend
-                content={<CustomLegend />}
-                layout="horizontal"
-                align="center"
-                verticalAlign="top"
-                iconType="square"
-                iconSize={15}
-                formatter={renderColorfulLegendText}
-                wrapperStyle={{
-                  padding: '20px',
-                }}
-              />
-            </RechartsChart>
-          </ResponsiveContainer>
+        <div className="w-full h-full flex justify-center items-center">
+          <div className="w-[313px] h-[313px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <RechartsChart>
+                <Legend
+                  content={<CustomLegend />}
+                  verticalAlign="top"
+                  align="center"
+                  formatter={renderColorfulLegendText}
+                />
+                <Pie
+                  data={rechartsData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={0}
+                  outerRadius={130}
+                  paddingAngle={0}
+                  dataKey="value"
+                  strokeWidth={2}
+                >
+                  {rechartsData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.fill}
+                      stroke={entry.stroke}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+                {/* <Legend
+                  content={<CustomLegend />}
+                  layout="horizontal"
+                  align="center"
+                  verticalAlign="top"
+                  iconType="square"
+                  iconSize={15}
+                  
+                 
+                /> */}
+              </RechartsChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 

@@ -44,6 +44,16 @@ export interface ContentItem {
   archived?: boolean;
   id?: number | string;
   total_investment?: number;
+  dropzone?: {
+    project: number;
+    folder_name: string;
+    first_name: string;
+    last_name: string;
+    link: string;
+    drop_type: string;
+    created: string;
+  }[]; 
+  
   subvendor?: {
     organization_name: string;
     id?: number;

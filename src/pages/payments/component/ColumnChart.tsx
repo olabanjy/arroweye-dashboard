@@ -136,7 +136,8 @@ const ColumnChart: FC<InsightChartProps> = ({
           {valuePlaceholder}
         </p>
 
-        <div className="w-full h-[300px]">
+        <div className="w-full h-full flex justify-center items-center">
+          <div className="w-[313px] h-[313px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={data}
@@ -177,6 +178,7 @@ const ColumnChart: FC<InsightChartProps> = ({
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
       </div>
 
       <div className="flex items-center justify-between">

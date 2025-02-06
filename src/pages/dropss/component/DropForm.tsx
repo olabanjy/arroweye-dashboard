@@ -4,8 +4,13 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { IoCloudUploadOutline } from 'react-icons/io5';
 import { toast } from 'react-toastify';
+import { ContentItem } from '@/types/contents';
 
-const DropForm = () => {
+interface DropFormProps {
+  setDropzoneData: React.Dispatch<React.SetStateAction<ContentItem | null>>;
+}
+
+const DropForm: React.FC<DropFormProps> = ({ setDropzoneData }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -14,6 +19,7 @@ const DropForm = () => {
     dropType: '',
   });
 
+  const [loading, setLoading] = useState(false);
   const { query } = useRouter();
   const projectId = typeof query.id === 'string' ? query.id : '';
 
@@ -36,44 +42,53 @@ const DropForm = () => {
     });
   };
 
- const handleSubmit = async (e: React.FormEvent) => {
-   e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-   if (!projectId) {
-     toast.error('Project ID is missing');
-     return;
-   }
+    if (!projectId) {
+      toast.error('Project ID is missing');
+      return;
+    }
 
-   if (
-     !formData.firstName ||
-     !formData.lastName ||
-     !formData.folderName ||
-     !formData.link
-   ) {
-     toast.error('Please fill in all fields.');
-     return;
-   }
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.folderName ||
+      !formData.link
+    ) {
+      toast.error('Please fill in all fields.');
+      return;
+    }
 
-   const payload = {
-     folder_name: formData.folderName,
-     first_name: formData.firstName,
-     last_name: formData.lastName,
-     link: formData.link,
-     drop_type: formData.dropType,
-   };
+    setLoading(true);
 
-   const response = await createDropzone(projectId, payload);
-   if (response) {
-     toast.success('Dropzone created successfully');
-     setFormData({
-       firstName: '',
-       lastName: '',
-       folderName: '',
-       link: '',
-       dropType: '',
-     });
-   }
- };
+    const payload = {
+      project: Number(projectId),
+      folder_name: formData.folderName,
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      link: formData.link,
+      drop_type: formData.dropType,
+      created: new Date().toISOString(),
+    };
+
+    const response = await createDropzone(projectId, payload);
+    if (response) {
+      toast.success('Dropzone created successfully');
+      setDropzoneData((prevData) => ({
+        ...prevData,
+        dropzone: [...(prevData?.dropzone || []), payload],
+      }));
+      setFormData({
+        firstName: '',
+        lastName: '',
+        folderName: '',
+        link: '',
+        dropType: '',
+      });
+    }
+    setLoading(false);
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -127,7 +142,8 @@ const DropForm = () => {
           type="submit"
           className="font-[600] text-[16px] gap-[10px] px-4 h-[50px] text-white bg-[#e4055a] rounded-[8px] hover:bg-[#000000] flex items-center"
         >
-          Upload <IoCloudUploadOutline size={14} className=" font-bold" />
+          {loading ? 'Uploading...' : 'Upload'}
+          {!loading && <IoCloudUploadOutline size={14} className="font-bold" />}
         </button>
       </div>
     </form>

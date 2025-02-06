@@ -204,6 +204,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                 selectOptions={selectOptionsAirPlay}
                 selectOptionsBottom={selectOptionsAudience}
                 chartData={chartDataForDoughnutAirplay}
+                
                 placeholder="Country"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
