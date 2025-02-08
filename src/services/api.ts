@@ -155,7 +155,7 @@ export const CreateMedia = async (
       requireToken: false,
     });
 
-    console.log(response);
+    console.log(`create media response: ${response}`);
     toast.success("Creation successful!");
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -1122,5 +1122,9 @@ export const createDropzone = async (
     return null;
   }
 };
+
+
+
+
 
 

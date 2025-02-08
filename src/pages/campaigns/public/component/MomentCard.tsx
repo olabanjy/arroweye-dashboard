@@ -44,7 +44,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
           src={isPlaying ? videoUrl : `${videoUrl}?autoplay=0`}
           title={videoTitle}
           frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         ></iframe>
