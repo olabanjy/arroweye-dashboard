@@ -1,3 +1,5 @@
+
+
 'use client';
 import { Input } from '@/components/ui/input';
 import { CreateMedia } from '@/services/api';
@@ -9,16 +11,9 @@ import axios from 'axios';
 const Moments = () => {
   const router = useRouter();
   const id = Number(router.query.id);
-  const [files, setFiles] = useState<File[]>([]);
 
-  const hideDialog = () => {
-    setErrors({
-      source_link: '',
-      embed_link: '',
-      download_link: '',
-      file: '',
-    });
-  };
+  const [files, setFiles] = useState<File[]>([]);
+  const [file, setFile] = useState<File | null>(null);
 
   const [errors, setErrors] = useState({
     source_link: '',
@@ -33,167 +28,98 @@ const Moments = () => {
     download_link: '',
   });
 
-  const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
- const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-   const selectedFiles = Array.from(e.target.files || []);
-
-   // Validate files if needed
-   const invalidFiles = selectedFiles.filter(
-     (file) => !file.name.toLowerCase().endsWith('.zip')
-   );
-   if (invalidFiles.length > 0) {
-     setErrors((prev) => ({ ...prev, file: 'Please upload only .zip files' }));
-     return;
-   }
-
-   // Check size for each file
-   const maxSize = 100 * 1024 * 1024; // 100MB
-   const oversizedFiles = selectedFiles.filter((file) => file.size > maxSize);
-   if (oversizedFiles.length > 0) {
-     setErrors((prev) => ({ ...prev, file: 'Files must be less than 100MB' }));
-     return;
-   }
-
-   setFiles(selectedFiles);
-   setErrors((prev) => ({ ...prev, file: '' }));
- };
-
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   console.log('Form submitted successfully!?????????????');
-  //   setIsUploading(true);
-
-  //   const newErrors = {
-  //     source_link: '',
-  //     embed_link: '',
-  //     download_link: '',
-  //     file: '',
-  //   };
-
-  //   if (!formData.embed_link) {
-  //     newErrors.embed_link = 'Please enter a valid embed link.';
-  //   }
-  //   if (!formData.source_link) {
-  //     newErrors.source_link = 'Please enter a valid source link.';
-  //   }
-  //   if (!formData.download_link) {
-  //     newErrors.download_link = 'Please enter a valid download link.';
-  //   }
-  //   if (!file) {
-  //     newErrors.file = 'Please upload a .zip file.';
-  //   }
-
-  //   setErrors(newErrors);
-
-  //   const hasErrors = Object.values(newErrors).some((error) => error !== '');
-  //   if (hasErrors) {
-  //     setIsUploading(false);
-  //     return;
-  //   }
-
-  //   console.log('Form data before submission:', formData);
-
-  //   try {
-  //     const formDataToSend = new FormData();
-  //     formDataToSend.append('embed_link', formData.embed_link);
-  //     formDataToSend.append('source_link', formData.source_link);
-  //     formDataToSend.append('download_link', formData.download_link);
-  //     formDataToSend.append('type', 'Moment');
-
-  //     if (file) {
-  //       formDataToSend.append('report', file);
-  //     }
-
-  //     for (const [key, value] of formDataToSend.entries()) {
-  //       console.log(`Key: ${key}, Value:`, value);
-  //     }
-
-  //     if (formDataToSend.get('report')) {
-  //       console.log('File is appended to FormData');
-  //     } else {
-  //       console.log('File is NOT appended to FormData');
-  //     }
-
-  //     await CreateMedia(id, formDataToSend);
-
-  //     console.log('Form submitted successfully!');
-  //     hideDialog();
-
-  //     setFormData({
-  //       source_link: '',
-  //       embed_link: '',
-  //       download_link: '',
-  //     });
-  //     setFile(null);
-  //   } catch (err) {
-  //     console.error('Error submitting form:', err);
-  //     setErrors((prev) => ({
-  //       ...prev,
-  //       file: 'Error uploading file. Please try again.',
-  //     }));
-  //   } finally {
-  //     setIsUploading(false);
-  //   }
-  // };
-
-
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsUploading(true);
-
-  try {
-    const formDataToSend = new FormData();
-
-    // Add basic fields
-    formDataToSend.append('embed_link', formData.embed_link);
-    formDataToSend.append('source_link', formData.source_link);
-    formDataToSend.append('download_link', formData.download_link);
-    formDataToSend.append('type', 'Moment');
-
-    // Handle multiple files
-    if (files.length > 0) {
-      files.forEach((file, index) => {
-        formDataToSend.append(`files[${index}][file]`, file);
-      });
-    } else {
-      formDataToSend.append('files', JSON.stringify([]));
-    }
-
-    // Handle report file if needed
-    if (file) {
-      formDataToSend.append('report', file);
-    }
-
-    await CreateMedia(id, formDataToSend);
-
-    toast.success('Media created successfully!');
-    hideDialog();
-    setFormData({
+  const hideDialog = () => {
+    setErrors({
       source_link: '',
       embed_link: '',
       download_link: '',
+      file: '',
     });
-    setFiles([]);
-    setFile(null);
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      const errorMessage =
-        err.response?.data?.[0] ||
-        err.response?.data?.message ||
-        'Failed to create media';
-      toast.error(errorMessage);
-    } else {
-      toast.error('An unexpected error occurred');
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+
+    // Validate that every file is a .zip file.
+    const invalidFiles = selectedFiles.filter(
+      (file) => !file.name.toLowerCase().endsWith('.zip')
+    );
+    if (invalidFiles.length > 0) {
+      setErrors((prev) => ({ ...prev, file: 'Please upload only .zip files' }));
+      return;
     }
-  } finally {
-    setIsUploading(false);
-  }
-};
 
+    // Validate that each file is less than 100MB.
+    const maxSize = 100 * 1024 * 1024; // 100MB
+    const oversizedFiles = selectedFiles.filter((file) => file.size > maxSize);
+    if (oversizedFiles.length > 0) {
+      setErrors((prev) => ({ ...prev, file: 'Files must be less than 100MB' }));
+      return;
+    }
 
+    // Update both states:
+    // - files: for building the files array
+    // - file: for display and for the report field
+    setFiles(selectedFiles);
+    setFile(selectedFiles.length > 0 ? selectedFiles[0] : null);
+    setErrors((prev) => ({ ...prev, file: '' }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsUploading(true);
+
+    try {
+      const formDataToSend = new FormData();
+
+      // Append text fields.
+      formDataToSend.append('embed_link', formData.embed_link);
+      formDataToSend.append('source_link', formData.source_link);
+      formDataToSend.append('download_link', formData.download_link);
+      formDataToSend.append('type', 'Moment');
+
+      // Append files:
+      // Instead of trying to nest the file under an object,
+      // simply append each file with the same key.
+      if (files.length > 0) {
+        files.forEach((f) => {
+          formDataToSend.append('files', f);
+        });
+      }
+      // Append the report file if available.
+      if (file) {
+        formDataToSend.append('report', file);
+      }
+
+      await CreateMedia(id, formDataToSend);
+
+      toast.success('Media created successfully!');
+      hideDialog();
+
+      // Reset state.
+      setFormData({
+        source_link: '',
+        embed_link: '',
+        download_link: '',
+      });
+      setFiles([]);
+      setFile(null);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const errorMessage =
+          err.response?.data?.[0] ||
+          err.response?.data?.message ||
+          'Failed to create media';
+        toast.error(errorMessage);
+      } else {
+        toast.error('An unexpected error occurred');
+      }
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -284,3 +210,4 @@ const handleSubmit = async (e: React.FormEvent) => {
 };
 
 export default Moments;
+
