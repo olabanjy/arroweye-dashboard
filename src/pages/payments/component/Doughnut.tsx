@@ -304,19 +304,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
   // maxWidth = "400px",
   info,
 }) => {
-  // const defaultChartData: ChartData<'doughnut', number[], string> =
-  //   chartData || {
-  //     labels: ['Radio', 'Cable', 'TV', 'DJ'],
-  //     datasets: [
-  //       {
-  //         label: 'SOCIAL MEDIA',
-  //         data: [300, 50, 100, 22],
-  //         backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
-  //         borderWidth: 2,
-  //         borderColor: ['#f3b6b8', '#a5d4f3', '#f3e79d', '#a0e1d8'],
-  //       },
-  //     ],
-  //   };
+ 
 
   const weeksOptions = [
     { value: 'week1', label: 'Week 1' },

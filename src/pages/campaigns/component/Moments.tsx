@@ -1,5 +1,3 @@
-
-
 'use client';
 import { Input } from '@/components/ui/input';
 import { CreateMedia } from '@/services/api';
@@ -12,20 +10,22 @@ const Moments = () => {
   const router = useRouter();
   const id = Number(router.query.id);
 
-  const [files, setFiles] = useState<File[]>([]);
-  const [file, setFile] = useState<File | null>(null);
+  // In this form we only collect these fields:
+  const [formData, setFormData] = useState({
+    embed_link: '',
+    source_link: '',
+    download_link: '',
+  });
+
+  // File(s) state:
+  const [file, setFile] = useState<File | null>(null); // For "report"
+  const [files, setFiles] = useState<File[]>([]); // For "files" array
 
   const [errors, setErrors] = useState({
     source_link: '',
     embed_link: '',
     download_link: '',
     file: '',
-  });
-
-  const [formData, setFormData] = useState({
-    source_link: '',
-    embed_link: '',
-    download_link: '',
   });
 
   const [isUploading, setIsUploading] = useState(false);
@@ -44,7 +44,7 @@ const Moments = () => {
 
     // Validate that every file is a .zip file.
     const invalidFiles = selectedFiles.filter(
-      (file) => !file.name.toLowerCase().endsWith('.zip')
+      (f) => !f.name.toLowerCase().endsWith('.zip')
     );
     if (invalidFiles.length > 0) {
       setErrors((prev) => ({ ...prev, file: 'Please upload only .zip files' }));
@@ -52,16 +52,14 @@ const Moments = () => {
     }
 
     // Validate that each file is less than 100MB.
-    const maxSize = 100 * 1024 * 1024; // 100MB
-    const oversizedFiles = selectedFiles.filter((file) => file.size > maxSize);
+    const maxSize = 100 * 1024 * 1024;
+    const oversizedFiles = selectedFiles.filter((f) => f.size > maxSize);
     if (oversizedFiles.length > 0) {
       setErrors((prev) => ({ ...prev, file: 'Files must be less than 100MB' }));
       return;
     }
 
-    // Update both states:
-    // - files: for building the files array
-    // - file: for display and for the report field
+    // We use the same file for both the report and the files array.
     setFiles(selectedFiles);
     setFile(selectedFiles.length > 0 ? selectedFiles[0] : null);
     setErrors((prev) => ({ ...prev, file: '' }));
@@ -74,34 +72,49 @@ const Moments = () => {
     try {
       const formDataToSend = new FormData();
 
-      // Append text fields.
-      formDataToSend.append('embed_link', formData.embed_link);
-      formDataToSend.append('source_link', formData.source_link);
-      formDataToSend.append('download_link', formData.download_link);
+      // Append only non-empty text fields.
+      if (formData.embed_link) {
+        formDataToSend.append('embed_link', formData.embed_link);
+      }
+      if (formData.source_link) {
+        formDataToSend.append('source_link', formData.source_link);
+      }
+      if (formData.download_link) {
+        formDataToSend.append('download_link', formData.download_link);
+      }
+
+      // Append a required static field.
       formDataToSend.append('type', 'Moment');
 
-      // Append files:
-      // Instead of trying to nest the file under an object,
-      // simply append each file with the same key.
+      // For the file fields:
+      // Append the "files" field only if there is at least one file.
       if (files.length > 0) {
-        files.forEach((f) => {
-          formDataToSend.append('files', f);
+        // The expected structure is an array of objects with key "file".
+        // We can mimic that by using a key like: files[0][file]
+        files.forEach((f, index) => {
+          formDataToSend.append(`files[${index}][file]`, f);
         });
       }
-      // Append the report file if available.
+
+      // Append the "report" field if a file is selected.
       if (file) {
         formDataToSend.append('report', file);
       }
+
+      // (Optional) Uncomment to log FormData entries for debugging.
+      // for (const pair of formDataToSend.entries()) {
+      //   console.log(pair[0], pair[1]);
+      // }
 
       await CreateMedia(id, formDataToSend);
 
       toast.success('Media created successfully!');
       hideDialog();
 
-      // Reset state.
+      // Reset the form state.
       setFormData({
-        source_link: '',
         embed_link: '',
+        source_link: '',
         download_link: '',
       });
       setFiles([]);
@@ -210,4 +223,3 @@ const Moments = () => {
 };
 
 export default Moments;
-

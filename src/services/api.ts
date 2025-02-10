@@ -336,6 +336,7 @@ export const CreateService = async (payload: unknown): Promise<void> => {
             error.response?.data[0] ||
             error.response?.data.name[0]
         );
+        console.log(error.response);
       } else if (error.response?.status === 403) {
         toast.error(error.response?.data?.message || "Access denied.");
       } else {
@@ -1120,6 +1121,39 @@ export const createDropzone = async (
       toast.error('Failed to create dropzone. Please try again.');
     }
     return null;
+  }
+};
+
+export const AddAirplayData = async (payload: unknown): Promise<void> => {
+  try {
+    const { data: response } = await apiRequest<
+      ApiRequestResponse<ApiResponse>
+    >({
+      method: 'POST',
+      url: `/api/v1/projects/stats/air-plays/`,
+      data: payload,
+      requireToken: false,
+    });
+
+    console.log(response);
+    toast.success('Creation successful!');
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400) {
+        console.log(error.response);
+
+        toast.error(error.response?.data?.message || error.response?.data[0]);
+      } else if (error.response?.status === 403) {
+        toast.error(error.response?.data?.message || 'Access denied.');
+      } else {
+        toast.error(
+          error.response?.data?.message || 'Request failed. Please try again.'
+        );
+      }
+    } else {
+      toast.error('Request failed. Please try again.');
+      console.error('Unexpected Error:', error);
+    }
   }
 };
 

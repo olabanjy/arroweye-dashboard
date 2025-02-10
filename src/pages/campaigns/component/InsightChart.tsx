@@ -17,8 +17,7 @@ import { Dialog } from 'primereact/dialog';
 import { Input } from '@/components/ui/input';
 import { BsTelegram } from 'react-icons/bs';
 import { usePDF } from 'react-to-pdf';
-
-
+import getDarkerColor from '@/pages/payments/helper/getDarkerColor';
 
 const chartDataForLine: ChartData<'bar', number[], string> = {
   labels: ['Apple Music', 'Youtube', 'Spotify', 'others'],
@@ -27,7 +26,7 @@ const chartDataForLine: ChartData<'bar', number[], string> = {
       label: '',
       data: [300, 50, 100, 22],
       backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
-      borderWidth: 2,
+      borderWidth: 1,
       borderColor: 'rgba(255, 255, 255, 1)',
     },
   ],
@@ -39,9 +38,13 @@ const chartDataForPie: ChartData<'pie', number[], string> = {
     {
       label: 'Social Media',
       data: [300, 50, 100, 22, 10],
-      backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
-      borderWidth: 2,
-      borderColor: 'rgba(255, 255, 255, 1)',
+      backgroundColor: ['#f8e0e1', '#8f4080', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
+      borderWidth: 1,
+      borderColor: getDarkerColor(
+        ['#f8e0e1', '#8f4080', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
+        20
+      ),
+      borderAlign: 'inner',
     },
   ],
 };
@@ -51,10 +54,21 @@ const chartDataForDoughnutActions: ChartData<'doughnut', number[], string> = {
   datasets: [
     {
       label: 'Social Media',
-      data: [300, 50, 100, 22, 10],
-      backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
-      borderWidth: 2,
-      borderColor: 'rgba(255, 255, 255, 1)',
+      data: [300, 50, 100, 22, 10, 15], // Now 6 data points
+      backgroundColor: [
+        '#f8e0e1',
+        '#d7ecfb',
+        '#f8f5d8',
+        '#d4f2ed',
+        '#d2f0ec',
+        '#f1e6d9',
+      ], // 6 background colors
+      borderWidth: 1,
+      borderColor: getDarkerColor(
+        ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed', '#d2f0ec', '#f1e6d9'],
+        20
+      ),
+      borderAlign: 'inner',
     },
   ],
 };
@@ -66,8 +80,12 @@ const chartDataForDoughnutAirplay: ChartData<'doughnut', number[], string> = {
       label: 'Airplay',
       data: [300, 50, 100, 22],
       backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
-      borderWidth: 2,
-      borderColor: 'rgba(255, 255, 255, 1)',
+      borderWidth: 1,
+      borderColor: getDarkerColor(
+        ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
+        20
+      ),
+      borderAlign: 'inner',
     },
   ],
 };
@@ -79,8 +97,9 @@ const chartData: ChartData<'pie', number[], string> = {
       label: 'AUDIENCE',
       data: [300, 50, 100],
       backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8'],
-      borderWidth: 2,
-      borderColor: 'rgba(255, 255, 255, 1)',
+      borderWidth: 1,
+      borderColor: getDarkerColor(['#f8e0e1', '#d7ecfb', '#f8f5d8'], 20),
+      borderAlign: 'inner',
     },
   ],
 };
@@ -92,8 +111,8 @@ const chartDataForDoughnutDSP: ChartData<'pie', number[], string> = {
       label: 'PERFORMANCE ',
       data: [300, 50, 100],
       backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8'],
-      borderWidth: 2,
-      borderColor: 'rgba(255, 255, 255, 1)',
+      borderWidth: 1,
+      borderColor: getDarkerColor(['#f8e0e1', '#d7ecfb', '#f8f5d8'], 20),
     },
   ],
 };
@@ -148,7 +167,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   const [addDspModal, setAddDspModal] = useState(false);
   const [exportModal, setExportModal] = useState(false);
   const [shareButtonText, setShareButtonText] = useState('Share');
-    const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('');
 
   const { query } = useRouter();
 
@@ -169,10 +188,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
     }, 3000);
   };
 
-
   const { toPDF, targetRef } = usePDF({ filename: 'dashboard.pdf' });
-
-
 
   return (
     <div className=" " ref={targetRef}>
@@ -204,7 +220,6 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                 selectOptions={selectOptionsAirPlay}
                 selectOptionsBottom={selectOptionsAudience}
                 chartData={chartDataForDoughnutAirplay}
-                
                 placeholder="Country"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />

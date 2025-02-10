@@ -57,10 +57,10 @@ const Recap = () => {
 
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
     if (!hasErrors) {
-      if (!file) {
-        alert("Please upload a .zip file.");
-        return;
-      }
+      // if (!file) {
+      //   alert("Please upload a .zip file.");
+      //   return;
+      // }
 
       const data = {
         ...formData,

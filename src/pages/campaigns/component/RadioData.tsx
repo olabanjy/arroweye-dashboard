@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { WeekInput } from "@/components/ui/weekInput";
-import { CreateChannel, getChannel, getMetric } from "@/services/api";
+import { AddAirplayData, getChannel, getMetric } from '@/services/api';
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
 import { Dialog } from "primereact/dialog";
@@ -169,13 +169,13 @@ const RadioData = () => {
         ...projectFormData,
       };
 
-      CreateChannel(updatedFormData)
+      AddAirplayData(updatedFormData)
         .then(() => {
-          console.log("Form submitted successfully!");
+          console.log('Form submitted successfully!');
           hideDialog();
         })
         .catch((err) => {
-          console.error("Error submitting form:", err);
+          console.error('Error submitting form:', err);
         });
     } else {
       console.log("Form has errors. Not submitting.");
@@ -291,16 +291,16 @@ const RadioData = () => {
 
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
     if (!hasErrors) {
-      CreateChannel(formData)
+      AddAirplayData(formData)
         .then(() => {
-          console.log("Form submitted successfully!");
+          console.log('Form submitted successfully!');
           hideDialog();
 
           setFormData({
-            name: "",
-            impressions: "",
-            audience: "",
-            channel: "Radio",
+            name: '',
+            impressions: '',
+            audience: '',
+            channel: 'Radio',
           });
 
           getChannel().then((fetchedContent) => {
@@ -308,7 +308,7 @@ const RadioData = () => {
           });
         })
         .catch((err) => {
-          console.error("Error submitting form:", err);
+          console.error('Error submitting form:', err);
         });
     }
   };
