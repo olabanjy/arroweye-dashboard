@@ -13,9 +13,11 @@ const ProjectSingleInsight = () => {
   const { id } = query;
 
   useEffect(() => {
-    getSingleProject(Number(id)).then((fetchedContent) => {
-      setContent(fetchedContent);
-    });
+    if (!!id) {
+      getSingleProject(Number(id)).then((fetchedContent) => {
+        setContent(fetchedContent);
+      });
+    }
   }, [id]);
 
   return (

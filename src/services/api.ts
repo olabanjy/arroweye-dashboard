@@ -30,7 +30,6 @@ interface SendEmailPayload {
   url: string;
 }
 
-
 export const getGenreContents = async (): Promise<ContentItem[] | null> => {
   try {
     const response = await apiRequest({
@@ -611,48 +610,180 @@ export const getStoredBusiness = (): StaffItem[] | null => {
 //   }
 // };
 
-
-
 export const getProjects = async (): Promise<ContentItem[] | null> => {
   try {
     const response = await apiRequest({
-      method: 'GET',
+      method: "GET",
       url: `/api/v1/projects/`,
       data: null,
       requireToken: false,
     });
 
-    ls.set('Projects', response, { encrypt: true });
+    ls.set("Projects", response, { encrypt: true });
 
     return response as ContentItem[];
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 404) {
         toast.error(
-          'Projects not found. Please check the URL or try again later.'
+          "Projects not found. Please check the URL or try again later."
         );
       } else {
         toast.error(
           error.response?.data?.message ||
-            'Content Retrieval failed. Please try again.'
+            "Content Retrieval failed. Please try again."
         );
       }
     } else {
-      toast.error('Content Retrieval failed. Please try again.');
+      toast.error("Content Retrieval failed. Please try again.");
     }
 
     return null;
   }
 };
 
-
-
-
-
 export const getStoredProjects = (): ContentItem[] | null => {
   const content = ls.get("Projects", { decrypt: true });
 
   return content as ContentItem[];
+};
+
+export const getAirPlayStats = async (id: number): Promise<any | null> => {
+  try {
+    const response = await apiRequest<any>({
+      method: "GET",
+      url: `/api/v1/projects/${id}/get-airplay-stats/`,
+      data: null,
+      requireToken: false,
+    });
+
+    // Validate response structure before using
+    if (response && typeof response === "object") {
+      const airPlayStats: any = response;
+
+      // Store in localStorage securely
+      ls.set(`AirPlayStats_${id}`, airPlayStats, { encrypt: true });
+
+      return airPlayStats;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", error.message);
+
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+
+        if (error.response.status === 403) {
+          const redirectUrl = error.response.data?.redirect_url;
+          if (redirectUrl) {
+            window.location.href = redirectUrl;
+          }
+        }
+      } else if (error.request) {
+        console.error("No response received from server.");
+      }
+    } else {
+      console.error("Unexpected error:", error);
+    }
+
+    return null;
+  }
+};
+
+export const getSocialMediaStats = async (id: number): Promise<any | null> => {
+  try {
+    const response = await apiRequest<any>({
+      method: "GET",
+      url: `/api/v1/projects/${id}/get-social-media-stats/`,
+      data: null,
+      requireToken: false,
+    });
+
+    // Validate response structure before using
+    if (response && typeof response === "object") {
+      const airPlayStats: any = response;
+
+      // Store in localStorage securely
+      ls.set(`AirPlayStats_${id}`, airPlayStats, { encrypt: true });
+
+      return airPlayStats;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", error.message);
+
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+
+        if (error.response.status === 403) {
+          const redirectUrl = error.response.data?.redirect_url;
+          if (redirectUrl) {
+            window.location.href = redirectUrl;
+          }
+        }
+      } else if (error.request) {
+        console.error("No response received from server.");
+      }
+    } else {
+      console.error("Unexpected error:", error);
+    }
+
+    return null;
+  }
+};
+
+export const getDSPStats = async (id: number): Promise<any | null> => {
+  try {
+    const response = await apiRequest<any>({
+      method: "GET",
+      url: `/api/v1/projects/${id}/get-dsp-stats/`,
+      data: null,
+      requireToken: false,
+    });
+
+    // Validate response structure before using
+    if (response && typeof response === "object") {
+      const airPlayStats: any = response;
+
+      // Store in localStorage securely
+      ls.set(`AirPlayStats_${id}`, airPlayStats, { encrypt: true });
+
+      return airPlayStats;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", error.message);
+
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+
+        if (error.response.status === 403) {
+          const redirectUrl = error.response.data?.redirect_url;
+          if (redirectUrl) {
+            window.location.href = redirectUrl;
+          }
+        }
+      } else if (error.request) {
+        console.error("No response received from server.");
+      }
+    } else {
+      console.error("Unexpected error:", error);
+    }
+
+    return null;
+  }
 };
 
 export const getSingleProject = async (
@@ -1076,22 +1207,22 @@ export const sendProjectEmail = async (
 ): Promise<SendEmailResponse | null> => {
   try {
     const response = await apiRequest({
-      method: 'POST',
+      method: "POST",
       url: `/api/v1/projects/${id}/share-project/`,
       data: payload,
       requireToken: true,
     });
 
-    toast.success('Email sent successfully!');
+    toast.success("Email sent successfully!");
     return response as SendEmailResponse;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       toast.error(
         error.response?.data?.message ||
-          'Failed to send email. Please try again.'
+          "Failed to send email. Please try again."
       );
     } else {
-      toast.error('Failed to send email. Please try again.');
+      toast.error("Failed to send email. Please try again.");
     }
 
     return null;
@@ -1104,7 +1235,7 @@ export const createDropzone = async (
 ): Promise<DropzonePayload | null> => {
   try {
     const response = await apiRequest({
-      method: 'POST',
+      method: "POST",
       url: `/api/v1/projects/${projectId}/dropzone/`,
       data,
       requireToken: true,
@@ -1115,28 +1246,31 @@ export const createDropzone = async (
     if (axios.isAxiosError(error)) {
       toast.error(
         error.response?.data?.message ||
-          'Failed to create dropzone. Please try again.'
+          "Failed to create dropzone. Please try again."
       );
     } else {
-      toast.error('Failed to create dropzone. Please try again.');
+      toast.error("Failed to create dropzone. Please try again.");
     }
     return null;
   }
 };
 
-export const AddAirplayData = async (payload: unknown): Promise<void> => {
+export const AddAirplayData = async (
+  payload: unknown,
+  id: number
+): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
       ApiRequestResponse<ApiResponse>
     >({
-      method: 'POST',
-      url: `/api/v1/projects/stats/air-plays/`,
+      method: "POST",
+      url: `/api/v1/projects/${id}/air-plays/`,
       data: payload,
       requireToken: false,
     });
 
     console.log(response);
-    toast.success('Creation successful!');
+    toast.success("Creation successful!");
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
@@ -1144,21 +1278,15 @@ export const AddAirplayData = async (payload: unknown): Promise<void> => {
 
         toast.error(error.response?.data?.message || error.response?.data[0]);
       } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || 'Access denied.');
+        toast.error(error.response?.data?.message || "Access denied.");
       } else {
         toast.error(
-          error.response?.data?.message || 'Request failed. Please try again.'
+          error.response?.data?.message || "Request failed. Please try again."
         );
       }
     } else {
-      toast.error('Request failed. Please try again.');
-      console.error('Unexpected Error:', error);
+      toast.error("Request failed. Please try again.");
+      console.error("Unexpected Error:", error);
     }
   }
 };
-
-
-
-
-
-

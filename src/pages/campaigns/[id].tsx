@@ -220,9 +220,11 @@ const ProjectDetails = () => {
   };
 
   useEffect(() => {
-    getSingleProject(Number(id)).then((fetchedContent) => {
-      setContent(fetchedContent);
-    });
+    if (!!id) {
+      getSingleProject(Number(id)).then((fetchedContent) => {
+        setContent(fetchedContent);
+      });
+    }
   }, [id]);
 
   console.log(content?.subvendor?.id);
@@ -256,8 +258,8 @@ const ProjectDetails = () => {
   const originalTitle = content?.title || "";
 
   return (
-    <DashboardLayout withBorder={false} >
-      <div className=" relative " style={{marginBottom: '80px'}}>
+    <DashboardLayout withBorder={false}>
+      <div className=" relative " style={{ marginBottom: "80px" }}>
         <div className="space-y-[5px] ">
           <div className="text-[#919393] flex items-center gap-[5px] text-[0.875rem]">
             <p className=" uppercase text-[#5e5e5e] tracking-[.1rem]">
