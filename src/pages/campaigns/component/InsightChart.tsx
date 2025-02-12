@@ -1,158 +1,117 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import PieChart from '@/pages/payments/component/PieChart';
-import { ChartData } from 'chart.js';
-import DoughnutChart from '@/pages/payments/component/Doughnut';
-import MomentCard from '../public/component/MomentCard';
-import MomentSliderCard from '../public/component/MomentSliderCard';
-import AddData from './AddData';
-import AddMedia from './AddMedia';
-import AddDataSocials from './AddDataSocials';
-import AddDataDsp from './AddDataDsp';
-import { useRouter } from 'next/router';
-import { ContentItem } from '@/types/contents';
-import { getSingleProject, sendProjectEmail } from '@/services/api';
-import ColumnChart from '@/pages/payments/component/ColumnChart';
-import { Dialog } from 'primereact/dialog';
-import { Input } from '@/components/ui/input';
-import { BsTelegram } from 'react-icons/bs';
-import { usePDF } from 'react-to-pdf';
-import getDarkerColor from '@/pages/payments/helper/getDarkerColor';
+"use client";
+import React, { useEffect, useState } from "react";
+import PieChart from "@/pages/payments/component/PieChart";
+import { ChartData } from "chart.js";
+import DoughnutChart from "@/pages/payments/component/Doughnut";
+import MomentCard from "../public/component/MomentCard";
+import MomentSliderCard from "../public/component/MomentSliderCard";
+import AddData from "./AddData";
+import AddMedia from "./AddMedia";
+import AddDataSocials from "./AddDataSocials";
+import AddDataDsp from "./AddDataDsp";
+import { useRouter } from "next/router";
+import { ContentItem } from "@/types/contents";
+import {
+  getSingleProject,
+  sendProjectEmail,
+  getAirPlayStats,
+  getSocialMediaStats,
+  getDSPStats,
+} from "@/services/api";
+import ColumnChart from "@/pages/payments/component/ColumnChart";
+import { Dialog } from "primereact/dialog";
+import { Input } from "@/components/ui/input";
+import { BsTelegram } from "react-icons/bs";
+import { usePDF } from "react-to-pdf";
+import getDarkerColor from "@/lib/getDarkerColor";
 
-const chartDataForLine: ChartData<'bar', number[], string> = {
-  labels: ['Apple Music', 'Youtube', 'Spotify', 'others'],
+const chartDataForDoughnutActions: ChartData<"doughnut", number[], string> = {
+  labels: ["Shares", "Saves", "Comments", "Likes", "Followers", "Views"],
   datasets: [
     {
-      label: '',
-      data: [300, 50, 100, 22],
-      backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
-      borderWidth: 1,
-      borderColor: 'rgba(255, 255, 255, 1)',
-    },
-  ],
-};
-
-const chartDataForPie: ChartData<'pie', number[], string> = {
-  labels: ['TikTok', 'Twitter', 'Instagram', 'Facebook', 'YouTube'],
-  datasets: [
-    {
-      label: 'Social Media',
-      data: [300, 50, 100, 22, 10],
-      backgroundColor: ['#f8e0e1', '#8f4080', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
-      borderWidth: 1,
-      borderColor: getDarkerColor(
-        ['#f8e0e1', '#8f4080', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
-        20
-      ),
-      borderAlign: 'inner',
-    },
-  ],
-};
-
-const chartDataForDoughnutActions: ChartData<'doughnut', number[], string> = {
-  labels: ['Shares', 'Saves', 'Comments', 'Likes', 'Followers', 'Views'],
-  datasets: [
-    {
-      label: 'Social Media',
+      label: "Social Media",
       data: [300, 50, 100, 22, 10, 15], // Now 6 data points
       backgroundColor: [
-        '#f8e0e1',
-        '#d7ecfb',
-        '#f8f5d8',
-        '#d4f2ed',
-        '#d2f0ec',
-        '#f1e6d9',
+        "#f8e0e1",
+        "#d7ecfb",
+        "#f8f5d8",
+        "#d4f2ed",
+        "#d2f0ec",
+        "#f1e6d9",
       ], // 6 background colors
       borderWidth: 1,
       borderColor: getDarkerColor(
-        ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed', '#d2f0ec', '#f1e6d9'],
+        ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed", "#d2f0ec", "#f1e6d9"],
         20
       ),
-      borderAlign: 'inner',
+      borderAlign: "inner",
     },
   ],
 };
 
-const chartDataForDoughnutAirplay: ChartData<'doughnut', number[], string> = {
-  labels: ['Radio', 'Cable', 'TV', 'DJ'],
+const chartData: ChartData<"pie", number[], string> = {
+  labels: ["Gen Z", "Millenials", "others"],
   datasets: [
     {
-      label: 'Airplay',
-      data: [300, 50, 100, 22],
-      backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
-      borderWidth: 1,
-      borderColor: getDarkerColor(
-        ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
-        20
-      ),
-      borderAlign: 'inner',
-    },
-  ],
-};
-
-const chartData: ChartData<'pie', number[], string> = {
-  labels: ['Gen Z', 'Millenials', 'others'],
-  datasets: [
-    {
-      label: 'AUDIENCE',
+      label: "AUDIENCE",
       data: [300, 50, 100],
-      backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8'],
+      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8"],
       borderWidth: 1,
-      borderColor: getDarkerColor(['#f8e0e1', '#d7ecfb', '#f8f5d8'], 20),
-      borderAlign: 'inner',
+      borderColor: getDarkerColor(["#f8e0e1", "#d7ecfb", "#f8f5d8"], 20),
+      borderAlign: "inner",
     },
   ],
 };
 
-const chartDataForDoughnutDSP: ChartData<'pie', number[], string> = {
-  labels: ['Pre-saves', 'Purchases', 'Listens', 'Streams', 'Downloads'],
+const chartDataForDoughnutDSP: ChartData<"pie", number[], string> = {
+  labels: ["Pre-saves", "Purchases", "Listens", "Streams", "Downloads"],
   datasets: [
     {
-      label: 'PERFORMANCE ',
+      label: "PERFORMANCE ",
       data: [300, 50, 100],
-      backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8'],
+      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8"],
       borderWidth: 1,
-      borderColor: getDarkerColor(['#f8e0e1', '#d7ecfb', '#f8f5d8'], 20),
+      borderColor: getDarkerColor(["#f8e0e1", "#d7ecfb", "#f8f5d8"], 20),
     },
   ],
 };
 
 const selectOptions = [
   [
-    { value: 'nigeria', label: 'Nigeria' },
-    { value: 'ghana', label: 'Ghana' },
-    { value: 'kenya', label: 'Kenya' },
-    { value: 'ivoryCoast', label: 'Ivory Coast' },
+    { value: "nigeria", label: "Nigeria" },
+    { value: "ghana", label: "Ghana" },
+    { value: "kenya", label: "Kenya" },
+    { value: "ivoryCoast", label: "Ivory Coast" },
   ],
 ];
 const selectOptionsAirPlay = [
   [
-    { value: 'Nigeria', label: 'Nigeria' },
-    { value: 'Kenya', label: 'Kenya' },
-    { value: 'SouthAfrica', label: 'S.Africa' },
-    { value: 'IvoryCoast', label: 'Ivory Coast' },
-    { value: 'Ghana', label: 'Ghana' },
+    { value: "Nigeria", label: "Nigeria" },
+    { value: "Kenya", label: "Kenya" },
+    { value: "SouthAfrica", label: "S.Africa" },
+    { value: "IvoryCoast", label: "Ivory Coast" },
+    { value: "Ghana", label: "Ghana" },
   ],
 ];
 const selectOptionsAudience = [
   [
-    { value: 'radio', label: 'Radio' },
-    { value: 'dj', label: 'DJ' },
-    { value: 'localTv', label: 'Local TV' },
+    { value: "radio", label: "Radio" },
+    { value: "dj", label: "DJ" },
+    { value: "localTv", label: "Local TV" },
   ],
 ];
 
 const countryFlags = [
-  { flag: '🇺🇸', name: 'United States' },
-  { flag: '🇬🇧', name: 'United Kingdom' },
-  { flag: '🇨🇦', name: 'Canada' },
-  { flag: '🇦🇺', name: 'Australia' },
-  { flag: '🇮🇳', name: 'India' },
-  { flag: '🇯🇵', name: 'Japan' },
-  { flag: '🇮🇹', name: 'Italy' },
-  { flag: '🇨🇳', name: 'China' },
-  { flag: '🇫🇷', name: 'France' },
-  { flag: '🇩🇪', name: 'Germany' },
+  { flag: "🇺🇸", name: "United States" },
+  { flag: "🇬🇧", name: "United Kingdom" },
+  { flag: "🇨🇦", name: "Canada" },
+  { flag: "🇦🇺", name: "Australia" },
+  { flag: "🇮🇳", name: "India" },
+  { flag: "🇯🇵", name: "Japan" },
+  { flag: "🇮🇹", name: "Italy" },
+  { flag: "🇨🇳", name: "China" },
+  { flag: "🇫🇷", name: "France" },
+  { flag: "🇩🇪", name: "Germany" },
 ];
 
 interface InsightChartProps {
@@ -166,8 +125,11 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   const [addMediaModal, setAddMediaModal] = useState(false);
   const [addDspModal, setAddDspModal] = useState(false);
   const [exportModal, setExportModal] = useState(false);
-  const [shareButtonText, setShareButtonText] = useState('Share');
-  const [email, setEmail] = useState('');
+  const [shareButtonText, setShareButtonText] = useState("Share");
+  const [email, setEmail] = useState("");
+  const [airPlayData, setAirPlayData] = useState<any>({});
+  const [socialMediaData, setSocialMediaData] = useState<any>({});
+  const [dspData, setDspData] = useState<any>({});
 
   const { query } = useRouter();
 
@@ -175,20 +137,188 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   const { id } = query;
 
   useEffect(() => {
-    getSingleProject(Number(id)).then((fetchedContent) => {
-      setContent(fetchedContent);
-    });
+    if (!!id) {
+      getSingleProject(Number(id)).then((fetchedContent) => {
+        setContent(fetchedContent);
+      });
+    }
   }, [id]);
 
+  useEffect(() => {
+    if (!!id) {
+      getAirPlayStats(Number(id)).then((fetchedContent) => {
+        console.log("Air Plays", fetchedContent);
+        setAirPlayData(fetchedContent);
+      });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (!!id) {
+      getSocialMediaStats(Number(id)).then((fetchedContent) => {
+        console.log("Socials", fetchedContent);
+        setSocialMediaData(fetchedContent);
+      });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (!!id) {
+      getDSPStats(Number(id)).then((fetchedContent) => {
+        console.log("DSP", fetchedContent);
+        setDspData(fetchedContent);
+      });
+    }
+  }, [id]);
+
+  const generateDoughnutChartData = (
+    data: Record<string, number>
+  ): ChartData<"doughnut", number[], string> => {
+    const filteredEntries = Object.entries(data).filter(
+      ([key]) => key !== "total_count"
+    );
+
+    if (filteredEntries.length === 0) {
+      return {
+        labels: ["Total Count"],
+        datasets: [
+          {
+            label: "Airplay",
+            data: [data.total_count],
+            backgroundColor: ["#d4d4d4"],
+            borderWidth: 1,
+            borderColor: getDarkerColor(["#d4d4d4"], 20),
+          },
+        ],
+      };
+    }
+
+    const labels = filteredEntries.map(([key]) => key);
+    const values = filteredEntries.map(([_, value]) => value);
+
+    const backgroundColors = labels.map(
+      (_, i) => `hsl(${(i * 60) % 360}, 70%, 80%)`
+    );
+    const borderColors = getDarkerColor(backgroundColors, 20);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Airplay",
+          data: values,
+          backgroundColor: backgroundColors,
+          borderWidth: 1,
+          borderColor: borderColors,
+        },
+      ],
+    };
+  };
+
+  const chartDataForDoughnutAirplay =
+    airPlayData && generateDoughnutChartData(airPlayData);
+
+  const generatePieChartData = (
+    data: Record<string, number>
+  ): ChartData<"pie", number[], string> => {
+    const filteredEntries = Object.entries(data).filter(
+      ([key]) => key !== "total_count"
+    );
+
+    if (filteredEntries.length === 0) {
+      return {
+        labels: ["Total Count"],
+        datasets: [
+          {
+            label: "Total",
+            data: [data.total_count],
+            backgroundColor: ["#d4d4d4"],
+            borderWidth: 1,
+            borderColor: getDarkerColor(["#d4d4d4"], 20),
+          },
+        ],
+      };
+    }
+
+    const labels = filteredEntries.map(([key]) => key);
+    const values = filteredEntries.map(([_, value]) => value);
+
+    const backgroundColors = labels.map(
+      (_, i) => `hsl(${(i * 60) % 360}, 70%, 80%)`
+    );
+    const borderColors = getDarkerColor(backgroundColors, 20);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Social Media",
+          data: values,
+          backgroundColor: backgroundColors,
+          borderWidth: 1,
+          borderColor: borderColors,
+          borderAlign: "inner",
+        },
+      ],
+    };
+  };
+
+  const chartDataForPie = generatePieChartData(socialMediaData);
+
+  const generateBarChartData = (
+    data: Record<string, number>
+  ): ChartData<"bar", number[], string> => {
+    const filteredEntries = Object.entries(data).filter(
+      ([key]) => key !== "total_count"
+    );
+
+    if (filteredEntries.length === 0) {
+      return {
+        labels: ["Total Count"],
+        datasets: [
+          {
+            label: "Total",
+            data: [data.total_count],
+            backgroundColor: ["#d4d4d4"],
+            borderWidth: 1,
+            borderColor: "rgba(255, 255, 255, 1)",
+          },
+        ],
+      };
+    }
+
+    const labels = filteredEntries.map(([key]) => key);
+    const values = filteredEntries.map(([_, value]) => value);
+
+    const backgroundColors = labels.map(
+      (_, i) => `hsl(${(i * 60) % 360}, 70%, 80%)`
+    );
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Platform Usage",
+          data: values,
+          backgroundColor: backgroundColors,
+          borderWidth: 1,
+          borderColor: "rgba(255, 255, 255, 1)",
+        },
+      ],
+    };
+  };
+
+  const chartDataForBar = generateBarChartData(dspData);
+
   const handleShareClick = () => {
-    navigator.clipboard.writeText('https://your-link.com');
-    setShareButtonText('Copied');
+    navigator.clipboard.writeText("https://your-link.com");
+    setShareButtonText("Copied");
     setTimeout(() => {
-      setShareButtonText('Share');
+      setShareButtonText("Share");
     }, 3000);
   };
 
-  const { toPDF, targetRef } = usePDF({ filename: 'dashboard.pdf' });
+  const { toPDF, targetRef } = usePDF({ filename: "dashboard.pdf" });
 
   return (
     <div className=" " ref={targetRef}>
@@ -216,7 +346,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
               <DoughnutChart
                 title="AIRPLAY"
                 valuePlaceholder="TOP CHANNELS"
-                value={content?.airplay_count ?? 0}
+                value={airPlayData?.total_count ?? 0}
                 selectOptions={selectOptionsAirPlay}
                 selectOptionsBottom={selectOptionsAudience}
                 chartData={chartDataForDoughnutAirplay}
@@ -266,7 +396,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
               <PieChart
                 title="SOCIAL MEDIA"
                 valuePlaceHolder="TOP PLATFORMS"
-                value={content?.social_media_count ?? 0}
+                value={socialMediaData?.total_count ?? 0}
                 chartData={chartDataForPie}
                 selectOptionsBottom={selectOptionsAudience}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
@@ -313,8 +443,8 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
               <ColumnChart
                 title="DSP"
                 valuePlaceholder="TOP DSPs"
-                value={content?.dsp_count ?? 0}
-                chartData={chartDataForLine}
+                value={dspData?.total_count ?? 0}
+                chartData={chartDataForBar}
                 selectOptionsBottom={selectOptions}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
@@ -333,18 +463,18 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
             <MomentSliderCard
               images={[
-                'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg',
-                'https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg',
-                'https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg',
+                "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg",
+                "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg",
+                "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg",
               ]}
               downloadButtonText="Download Data"
               downloadIcon={true}
               MomentsTitle="DSP EDITORIAL"
               assetsButton="Download Assets"
               links={[
-                'https://www.google.com',
-                'https://www.figma.com',
-                'https://www.youtube.com',
+                "https://www.google.com",
+                "https://www.figma.com",
+                "https://www.youtube.com",
               ]}
               additionalContent={
                 <div className="hidden">
@@ -400,10 +530,10 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                 size={44}
                 className="text-blue-500 cursor-pointer"
                 onClick={() => {
-                  console.log('yeah');
+                  console.log("yeah");
                   if (content?.id) {
                     const currentUrl =
-                      typeof window !== 'undefined' ? window.location.href : '';
+                      typeof window !== "undefined" ? window.location.href : "";
                     sendProjectEmail(content.id, { email, url: currentUrl });
                   }
                 }}
@@ -438,7 +568,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
       <div
         className={`custom-dialog-overlay ${
-          exportModal ? 'bg-white fixed inset-0 z-50 p-8' : 'hidden'
+          exportModal ? "bg-white fixed inset-0 z-50 p-8" : "hidden"
         }`}
       >
         <Dialog
@@ -446,8 +576,8 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
           onHide={() => {
             setExportModal(false);
           }}
-          breakpoints={{ '960px': '75vw', '640px': '100vw' }}
-          style={{ width: '30vw', padding: '20px', backgroundColor: 'white' }}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "30vw", padding: "20px", backgroundColor: "white" }}
           className="custom-dialog-overlay"
         >
           <div className="space-y-[30px] p-4">
