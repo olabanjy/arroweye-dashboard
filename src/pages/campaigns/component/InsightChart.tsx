@@ -23,7 +23,7 @@ import { Dialog } from "primereact/dialog";
 import { Input } from "@/components/ui/input";
 import { BsTelegram } from "react-icons/bs";
 import { usePDF } from "react-to-pdf";
-import getDarkerColor from "@/pages/payments/helper/getDarkerColor";
+import getDarkerColor from "@/lib/getDarkerColor";
 
 const chartDataForDoughnutActions: ChartData<"doughnut", number[], string> = {
   labels: ["Shares", "Saves", "Comments", "Likes", "Followers", "Views"],
