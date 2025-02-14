@@ -6,68 +6,50 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
+import { SelectInput } from "@/components/ui/selectinput";
+import CountrySelector from "./CountrySelector";
 
 interface FormData {
-  embed_link: string;
-  source_link: string;
-  download_link: string;
+  title: string;
 }
 
 interface FormErrors {
-  embed_link: string;
-  source_link: string;
-  download_link: string;
+  title: string;
   file: string;
 }
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
-const Recap = () => {
+const GiftingAddMedia = () => {
   const router = useRouter();
   const id = Number(router.query.id);
 
   const [formData, setFormData] = useState<FormData>({
-    embed_link: "",
-    source_link: "",
-    download_link: "",
+    title: "",
   });
 
   const [file, setFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<FormErrors>({
-    embed_link: "",
-    source_link: "",
-    download_link: "",
+    title: "",
     file: "",
   });
   const [isUploading, setIsUploading] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {
-      embed_link: "",
-      source_link: "",
-      download_link: "",
+      title: "",
       file: "",
     };
 
     let isValid = true;
 
-    if (!formData.embed_link.trim()) {
-      newErrors.embed_link = "Embed link is required";
-      isValid = false;
-    }
-
-    if (!formData.source_link.trim()) {
-      newErrors.source_link = "Source link is required";
-      isValid = false;
-    }
-
-    if (!formData.download_link.trim()) {
-      newErrors.download_link = "Download link is required";
+    if (!formData.title.trim()) {
+      newErrors.title = "Title is required";
       isValid = false;
     }
 
     if (!file) {
-      newErrors.file = "Please upload a zip file";
+      newErrors.file = "Please upload a pdf file";
       isValid = false;
     }
 
@@ -76,8 +58,8 @@ const Recap = () => {
   };
 
   const validateFile = (selectedFile: File): string => {
-    if (!selectedFile.name.toLowerCase().endsWith(".zip")) {
-      return "Please upload only .zip files";
+    if (!selectedFile.name.toLowerCase().endsWith(".pdf")) {
+      return "Please upload only .pdf files";
     }
 
     if (selectedFile.size > MAX_FILE_SIZE) {
@@ -119,10 +101,8 @@ const Recap = () => {
 
     try {
       const payload = {
-        embed_link: formData.embed_link.trim(),
-        source_link: formData.source_link.trim(),
-        download_link: formData.download_link.trim(),
-        type: "Recap",
+        title: formData.title.trim(),
+        type: "Gifting",
         report: file,
       };
 
@@ -155,15 +135,11 @@ const Recap = () => {
 
   const resetForm = () => {
     setFormData({
-      embed_link: "",
-      source_link: "",
-      download_link: "",
+      title: "",
     });
     setFile(null);
     setErrors({
-      embed_link: "",
-      source_link: "",
-      download_link: "",
+      title: "",
       file: "",
     });
   };
@@ -184,56 +160,25 @@ const Recap = () => {
 
   return (
     <div className="px-[20px] mt-[20px]">
-      <Button onClick={() => console.log("file", file)}>Test</Button>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="space-y-4">
           <div>
             <Input
               type="text"
-              name="embed_link"
-              placeholder="Add embed link *"
-              value={formData.embed_link}
+              name="title"
+              placeholder="Add title *"
+              value={formData.title}
               onChange={handleInputChange}
-              className={errors.embed_link ? "border-red-500" : ""}
+              className={errors.title ? "border-red-500" : ""}
               disabled={isUploading}
             />
-            {errors.embed_link && (
-              <p className="text-red-500 text-xs mt-1">{errors.embed_link}</p>
-            )}
-          </div>
-          <div>
-            <Input
-              type="text"
-              name="source_link"
-              placeholder="Add source link *"
-              value={formData.source_link}
-              onChange={handleInputChange}
-              className={errors.source_link ? "border-red-500" : ""}
-              disabled={isUploading}
-            />
-            {errors.source_link && (
-              <p className="text-red-500 text-xs mt-1">{errors.source_link}</p>
-            )}
-          </div>
-          <div>
-            <Input
-              type="text"
-              name="download_link"
-              placeholder="Add download link *"
-              value={formData.download_link}
-              onChange={handleInputChange}
-              className={errors.download_link ? "border-red-500" : ""}
-              disabled={isUploading}
-            />
-            {errors.download_link && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.download_link}
-              </p>
+            {errors.title && (
+              <p className="text-red-500 text-xs mt-1">{errors.title}</p>
             )}
           </div>
 
           <div
-            className={`flex flex-col items-center justify-center h-[100px] border border-dotted bg-gray-200 ${
+            className={`mt-10 flex flex-col items-center justify-center h-[100px] border border-dotted bg-gray-200 ${
               errors.file ? "border-red-500" : ""
             }`}
           >
@@ -241,12 +186,12 @@ const Recap = () => {
               htmlFor="file-upload"
               className="cursor-pointer font-medium text-[16px] text-center text-[#000000] hover:underline"
             >
-              {file ? file.name : "+ Add insights report (.zip) *"}
+              {file ? file.name : "+ Add Media (.pdf) *"}
             </label>
             <input
               id="file-upload"
               type="file"
-              accept=".zip"
+              accept=".pdf"
               className="hidden"
               onChange={handleFileUpload}
               disabled={isUploading}
@@ -282,4 +227,4 @@ const Recap = () => {
   );
 };
 
-export default Recap;
+export default GiftingAddMedia;

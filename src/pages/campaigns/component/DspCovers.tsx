@@ -7,7 +7,7 @@ import React, { useState } from "react";
 
 type MediaItem = {
   file: File;
-  embed_link: string;
+  // embed_link: string;
 };
 
 const DspCovers = () => {
@@ -28,18 +28,9 @@ const DspCovers = () => {
 
     const newMediaItems: MediaItem[] = validFiles.map((file) => ({
       file,
-      embed_link: "",
     }));
 
     setMediaItems((prev) => [...prev, ...newMediaItems]);
-  };
-
-  const handleLinkChange = (index: number, value: string) => {
-    setMediaItems((prev) =>
-      prev.map((item, i) =>
-        i === index ? { ...item, embed_link: value } : item
-      )
-    );
   };
 
   const removeMediaItem = (index: number) => {
@@ -54,21 +45,19 @@ const DspCovers = () => {
       return;
     }
 
-    if (mediaItems.some((item) => !item.embed_link.trim())) {
-      alert("Please add a link for each uploaded image.");
-      return;
-    }
+    console.log("ITEMS", mediaItems);
 
+    // Convert the array to JSON
     const requestData = new FormData();
-    mediaItems.forEach((item, index) => {
-      requestData.append(`files[${index}]`, item.file);
-      requestData.append(`embed_link[${index}]`, item.embed_link);
-    });
+    requestData.append("files", JSON.stringify(mediaItems));
 
     try {
-      await CreateMedia(id, requestData);
-      console.log("Form submitted successfully!");
-      setMediaItems([]);
+      CreateMedia(id, requestData)
+        .then((response) => {
+          console.log("RESPONSE", response);
+          setMediaItems([]); // Clear the form
+        })
+        .catch((err) => console.log(err));
     } catch (err) {
       console.error("Error submitting form:", err);
     }
@@ -89,7 +78,7 @@ const DspCovers = () => {
             <input
               id="file-upload"
               type="file"
-              accept="image/*"
+              accept=".jpg, .png,.jpeg,.gif"
               multiple
               className="hidden"
               onChange={handleFileUpload}
@@ -108,13 +97,13 @@ const DspCovers = () => {
                       height={80}
                       className="w-[80px] h-[80px] object-cover rounded"
                     />
-                    <Input
+                    {/* <Input
                       type="text"
                       placeholder="Enter link"
                       value={item.embed_link}
                       onChange={(e) => handleLinkChange(index, e.target.value)}
                       className="w-full rounded-full"
-                    />
+                    /> */}
                   </div>
                   <button
                     type="button"

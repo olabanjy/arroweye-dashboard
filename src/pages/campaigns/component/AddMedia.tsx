@@ -1,14 +1,17 @@
-"use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog } from "primereact/dialog";
 import { FiInfo } from "react-icons/fi";
 import Moments from "./Moments";
 import Recap from "./Recap";
 import DspCovers from "./DspCovers";
+import ShazamAddMedia from "./ShazamAddMedia";
+import GiftingAddMedia from "./GiftingAddMedia";
+import EditorialAddMedia from "./EditorialAddMedia";
 
 interface CompanyDetailsFormProps {
   visible: boolean;
   onHide: () => void;
+  initialTab?: "moments" | "Recap" | "Dsp" | "Shazam" | "Editorial" | "Gifting";
 }
 
 const Tooltip = ({ info }: { info: string }) => (
@@ -21,8 +24,19 @@ const Tooltip = ({ info }: { info: string }) => (
   </div>
 );
 
-const AddMedia: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
-  const [activeDetailsTab, setActiveDetailsTab] = useState("moments");
+const AddMedia: React.FC<CompanyDetailsFormProps> = ({
+  visible,
+  onHide,
+  initialTab = "moments",
+}) => {
+  const [activeDetailsTab, setActiveDetailsTab] = useState(initialTab);
+
+  // Update active tab when initialTab prop changes
+  useEffect(() => {
+    if (visible) {
+      setActiveDetailsTab(initialTab);
+    }
+  }, [visible, initialTab]);
 
   return (
     <>
@@ -110,9 +124,9 @@ const AddMedia: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
             {activeDetailsTab === "moments" && <Moments />}
             {activeDetailsTab === "Recap" && <Recap />}
             {activeDetailsTab === "Dsp" && <DspCovers />}
-            {activeDetailsTab === "Shazam" && <DspCovers />}
-            {activeDetailsTab === "Editorial" && <DspCovers />}
-            {activeDetailsTab === "Gifting" && <DspCovers />}
+            {activeDetailsTab === "Shazam" && <ShazamAddMedia />}
+            {activeDetailsTab === "Editorial" && <EditorialAddMedia />}
+            {activeDetailsTab === "Gifting" && <GiftingAddMedia />}
           </div>
         </Dialog>
       </div>
