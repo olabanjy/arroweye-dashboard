@@ -50,6 +50,7 @@ const DspCovers = () => {
     // Convert the array to JSON
     const requestData = new FormData();
     requestData.append("files", JSON.stringify(mediaItems));
+    requestData.append("type", "DSP_Covers");
 
     try {
       CreateMedia(id, requestData)
