@@ -119,6 +119,7 @@ interface InsightChartProps {
 }
 
 const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
+  const [initialTab, setInitialTab] = useState<any>("moments");
   const [addDataModal, setAddDataModal] = useState(false);
   const [openChatModal, setOpenChatModal] = useState(false);
   const [addDataModalSocial, setAddDataModalSocial] = useState(false);
@@ -335,7 +336,10 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                 </p>
                 <p
                   className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
-                  onClick={() => setAddMediaModal(true)}
+                  onClick={() => {
+                    setInitialTab("moments");
+                    setAddMediaModal(true);
+                  }}
                 >
                   + add media
                 </p>
@@ -386,7 +390,13 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                 >
                   + add data
                 </p>
-                <p className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
+                <p
+                  className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
+                  onClick={() => {
+                    setInitialTab("Recap");
+                    setAddMediaModal(true);
+                  }}
+                >
                   + add media
                 </p>
               </div>
@@ -433,7 +443,13 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                 >
                   + add data
                 </p>
-                <p className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]">
+                <p
+                  className=" cursor-pointer p-[15px] border border-[#000] rounded-full hover:border-none bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
+                  onClick={() => {
+                    setInitialTab("Dsp");
+                    setAddMediaModal(true);
+                  }}
+                >
                   + add media
                 </p>
               </div>
@@ -506,6 +522,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
       <AddMedia
         visible={addMediaModal}
         onHide={() => setAddMediaModal(false)}
+        initialTab={initialTab}
       />
 
       <AddDataDsp visible={addDspModal} onHide={() => setAddDspModal(false)} />

@@ -14,8 +14,7 @@ const axiosInstance = axios.create({
   },
 });
 
-console.log('Base URL:', process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN);
-
+console.log("Base URL:", process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN);
 
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
@@ -51,6 +50,7 @@ interface ApiRequestParams {
   data?: unknown;
   params?: Record<string, unknown>;
   requireToken?: boolean;
+  headers?: Record<string, string>; // Add this line
 }
 
 const apiRequest = async <T>({
@@ -59,6 +59,7 @@ const apiRequest = async <T>({
   data = null,
   params = {},
   requireToken = true,
+  headers = {}, // Add this line
 }: ApiRequestParams): Promise<T> => {
   try {
     if (!requireToken) {
@@ -70,6 +71,7 @@ const apiRequest = async <T>({
       url,
       data,
       params,
+      headers: { ...axiosInstance.defaults.headers, ...headers }, // Merge default headers with custom headers
     } as AxiosRequestConfig);
     return response.data;
   } catch (error) {

@@ -6,6 +6,8 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
+import { SelectInput } from "@/components/ui/selectinput";
+import CountrySelector from "./CountrySelector";
 
 interface FormData {
   embed_link: string;
@@ -14,57 +16,28 @@ interface FormData {
 }
 
 interface FormErrors {
-  embed_link: string;
-  source_link: string;
-  download_link: string;
   file: string;
 }
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
-const Recap = () => {
+const ShazamAddMedia = () => {
   const router = useRouter();
   const id = Number(router.query.id);
-
-  const [formData, setFormData] = useState<FormData>({
-    embed_link: "",
-    source_link: "",
-    download_link: "",
-  });
+  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
 
   const [file, setFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<FormErrors>({
-    embed_link: "",
-    source_link: "",
-    download_link: "",
     file: "",
   });
   const [isUploading, setIsUploading] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {
-      embed_link: "",
-      source_link: "",
-      download_link: "",
       file: "",
     };
 
     let isValid = true;
-
-    if (!formData.embed_link.trim()) {
-      newErrors.embed_link = "Embed link is required";
-      isValid = false;
-    }
-
-    if (!formData.source_link.trim()) {
-      newErrors.source_link = "Source link is required";
-      isValid = false;
-    }
-
-    if (!formData.download_link.trim()) {
-      newErrors.download_link = "Download link is required";
-      isValid = false;
-    }
 
     if (!file) {
       newErrors.file = "Please upload a zip file";
@@ -119,15 +92,12 @@ const Recap = () => {
 
     try {
       const payload = {
-        embed_link: formData.embed_link.trim(),
-        source_link: formData.source_link.trim(),
-        download_link: formData.download_link.trim(),
-        type: "Recap",
+        type: "Shazam",
+        countries: selectedCountries,
         report: file,
       };
 
       console.log("PAYLOAD", payload);
-
       CreateMedia(id, payload)
         .then((response) => {
           console.log("RESPONSE", response);
@@ -154,82 +124,22 @@ const Recap = () => {
   };
 
   const resetForm = () => {
-    setFormData({
-      embed_link: "",
-      source_link: "",
-      download_link: "",
-    });
+    setSelectedCountries([]);
     setFile(null);
     setErrors({
-      embed_link: "",
-      source_link: "",
-      download_link: "",
       file: "",
     });
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    setErrors((prev) => ({
-      ...prev,
-      [name]: "",
-    }));
-  };
-
   return (
     <div className="px-[20px] mt-[20px]">
-      <Button onClick={() => console.log("file", file)}>Test</Button>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="space-y-4">
           <div>
-            <Input
-              type="text"
-              name="embed_link"
-              placeholder="Add embed link *"
-              value={formData.embed_link}
-              onChange={handleInputChange}
-              className={errors.embed_link ? "border-red-500" : ""}
-              disabled={isUploading}
+            <CountrySelector
+              selectedCountries={selectedCountries}
+              setSelectedCountries={setSelectedCountries}
             />
-            {errors.embed_link && (
-              <p className="text-red-500 text-xs mt-1">{errors.embed_link}</p>
-            )}
-          </div>
-          <div>
-            <Input
-              type="text"
-              name="source_link"
-              placeholder="Add source link *"
-              value={formData.source_link}
-              onChange={handleInputChange}
-              className={errors.source_link ? "border-red-500" : ""}
-              disabled={isUploading}
-            />
-            {errors.source_link && (
-              <p className="text-red-500 text-xs mt-1">{errors.source_link}</p>
-            )}
-          </div>
-          <div>
-            <Input
-              type="text"
-              name="download_link"
-              placeholder="Add download link *"
-              value={formData.download_link}
-              onChange={handleInputChange}
-              className={errors.download_link ? "border-red-500" : ""}
-              disabled={isUploading}
-            />
-            {errors.download_link && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.download_link}
-              </p>
-            )}
           </div>
 
           <div
@@ -241,7 +151,7 @@ const Recap = () => {
               htmlFor="file-upload"
               className="cursor-pointer font-medium text-[16px] text-center text-[#000000] hover:underline"
             >
-              {file ? file.name : "+ Add insights report (.zip) *"}
+              {file ? file.name : "+ Add Shazam report (.zip) *"}
             </label>
             <input
               id="file-upload"
@@ -282,4 +192,4 @@ const Recap = () => {
   );
 };
 
-export default Recap;
+export default ShazamAddMedia;
