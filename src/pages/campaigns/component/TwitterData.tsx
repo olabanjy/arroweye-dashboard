@@ -68,9 +68,7 @@ const TwitterData = () => {
     });
   }, []);
 
-  const FacebookID = socials?.find((social) => social.name === "Twitter")?.id;
-
-  console.log(FacebookID);
+  const TwitterID = socials?.find((social) => social.name === "Twitter")?.id;
 
   const hideDialog = () => {
     setIsAddNewService(false);
@@ -496,7 +494,7 @@ const TwitterData = () => {
                       };
                       setProjectFormData((prevData) => ({
                         ...prevData,
-                        sm_id: FacebookID ? Number(FacebookID) : 0,
+                        sm_id: TwitterID ? Number(TwitterID) : 0,
                         sm_data: updatedServices,
                       }));
                     }}

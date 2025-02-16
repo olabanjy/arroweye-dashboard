@@ -38,8 +38,6 @@ const ProjectDetails = () => {
     null
   );
 
-  console.log(content);
-
   const { query } = useRouter();
   const { id } = query;
   const [visible, setVisible] = useState(false);
@@ -92,7 +90,6 @@ const ProjectDetails = () => {
         ...prevData,
         [name]: value,
       };
-      console.log("Updated form data:", updatedData);
       return updatedData;
     });
   };
@@ -105,7 +102,6 @@ const ProjectDetails = () => {
         ...prevData,
         [name]: value,
       };
-      console.log("Updated form data:", updatedData);
       return updatedData;
     });
   };
@@ -140,7 +136,6 @@ const ProjectDetails = () => {
     );
 
     if (hasErrors) {
-      console.log("Validation errors:", newAddUserErrors);
       setAddUserErrors(newAddUserErrors);
       setIsAddUserLoading(false);
       return;
@@ -148,11 +143,8 @@ const ProjectDetails = () => {
 
     const payload = {
       ...addUserFormData,
-      business_id: 1,
-      role: content?.subvendor,
+      business_id: content?.subvendor?.id,
     };
-
-    console.log("Form data with business_id added:", payload);
 
     AddStaff(payload)
       .then((response) => {
@@ -171,6 +163,13 @@ const ProjectDetails = () => {
         getSingleProject(Number(id)).then((fetchedContent) => {
           setContent(fetchedContent);
         });
+        if (content?.subvendor?.id) {
+          getBusinessStaff(content.subvendor.id).then(
+            (fetchedContent: ContentItem[] | null) => {
+              setSubVendorStaff(fetchedContent);
+            }
+          );
+        }
       })
       .catch((err) => {
         console.error("Error in AddStaff submission:");
@@ -195,10 +194,6 @@ const ProjectDetails = () => {
       })
       .finally(() => {
         setIsAddUserLoading(false);
-        console.log(
-          "Form submission completed. Final form data:",
-          addUserFormData
-        );
       });
   };
 
@@ -227,8 +222,6 @@ const ProjectDetails = () => {
     }
   }, [id]);
 
-  console.log(content?.subvendor?.id);
-
   useEffect(() => {
     if (content?.subvendor?.id) {
       getBusinessStaff(content.subvendor.id).then(
@@ -238,8 +231,6 @@ const ProjectDetails = () => {
       );
     }
   }, [content?.subvendor?.id]);
-
-  console.log(subvendorStaff);
 
   const predefinedColors = [
     "bg-blue-500",
@@ -407,6 +398,11 @@ const ProjectDetails = () => {
                 >
                   <IoMdAddCircleOutline size={20} />
                   <p>Add Contact</p>
+                  {addUserErrors.fullname && (
+                    <p className="font-IBM text-sm text-red-500">
+                      {addUserErrors.fullname}
+                    </p>
+                  )}
                 </div>
                 <div className="flex gap-[10px] items-end">
                   <div className=" w-full">
@@ -423,6 +419,7 @@ const ProjectDetails = () => {
                         { value: "Vendor", label: "Vendor" },
                         { value: "Subvendor", label: "Subvendor" },
                       ]}
+                      error={addUserErrors.role}
                     />
                   </div>
                   <button

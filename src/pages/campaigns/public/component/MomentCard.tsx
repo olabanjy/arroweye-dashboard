@@ -1,8 +1,11 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MdOutlineFileDownload } from "react-icons/md";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
 interface MomentCardProps {
-  videoUrl: string;
+  videoUrls: string[];
   videoTitle: string;
   watchButtonText?: string;
   downloadButtonText?: string;
@@ -15,7 +18,7 @@ interface MomentCardProps {
 }
 
 const MomentCard: React.FC<MomentCardProps> = ({
-  videoUrl,
+  videoUrls = [],
   videoTitle,
   watchButtonText,
   downloadButtonText = "Download Data",
@@ -27,9 +30,48 @@ const MomentCard: React.FC<MomentCardProps> = ({
   assetsButton,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
+  // Validate video URLs on component mount and when URLs change
+  useEffect(() => {
+    validateVideoUrls();
+  }, [videoUrls]);
+
+  const validateVideoUrls = () => {
+    if (!videoUrls || videoUrls.length === 0) {
+      setError("No Media Added Yet");
+      return false;
+    }
+
+    setError(null);
+    return true;
+  };
 
   const handlePlayClick = () => {
-    setIsPlaying(true);
+    if (validateVideoUrls()) {
+      setIsPlaying(true);
+    }
+  };
+
+  const handlePrevVideo = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (validateVideoUrls()) {
+      setCurrentVideoIndex((prev) =>
+        prev === 0 ? videoUrls.length - 1 : prev - 1
+      );
+      setIsPlaying(false);
+    }
+  };
+
+  const handleNextVideo = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (validateVideoUrls()) {
+      setCurrentVideoIndex((prev) =>
+        prev === videoUrls.length - 1 ? 0 : prev + 1
+      );
+      setIsPlaying(false);
+    }
   };
 
   return (
@@ -38,31 +80,55 @@ const MomentCard: React.FC<MomentCardProps> = ({
         {MomentsTitle}
       </p>
 
-      <div className="relative h-[300px] rounded overflow-hidden">
-        <iframe
-          className="w-full h-full"
-          src={isPlaying ? videoUrl : `${videoUrl}?autoplay=0`}
-          title={videoTitle}
-          frameBorder="0"
-          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerPolicy="strict-origin-when-cross-origin"
-          allowFullScreen
-        ></iframe>
-        {!isPlaying && (
-          <button
-            className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-4xl"
-            onClick={handlePlayClick}
+      <div className="relative h-[300px] rounded overflow-hidden group">
+        {error ? (
+          <Alert
+            variant="destructive"
+            className="h-full flex items-center justify-center"
           >
-            <Image
-              src={
-                "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI1LjIuMywgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCA3MDAgNzAwIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA3MDAgNzAwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+Cgkuc3Qwe2ZpbGw6I0ZGRkZGRjt9Cjwvc3R5bGU+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0zNTQuMywxMi43Yy04OS4zLDAtMTc0LjksMzUuNS0yMzgsOTguNmMtNjMuMSw2My4xLTk4LjYsMTQ4LjctOTguNiwyMzhzMzUuNSwxNzQuOSw5OC42LDIzOAoJYzYzLjEsNjMuMSwxNDguNyw5OC42LDIzOCw5OC42czE3NC45LTM1LjUsMjM4LTk4LjZjNjMuMS02My4xLDk4LjYtMTQ4LjcsOTguNi0yMzhjMC01OS4xLTE1LjYtMTE3LjEtNDUuMS0xNjguMwoJYy0yOS41LTUxLjItNzItOTMuNi0xMjMuMi0xMjMuMlM0MTMuMywxMi43LDM1NC4zLDEyLjdMMzU0LjMsMTIuN3ogTTQ4MS4xLDM4MS42TDMyMy42LDQ4NS43Yy04LjUsNS43LTE4LjgsOC0yOC45LDYuNwoJYy0xMC4xLTEuNC0xOS40LTYuNC0yNi4yLTE0LjFjLTYuNy03LjctMTAuNC0xNy42LTEwLjQtMjcuOFYyNDhjMC0xMC4yLDMuNy0yMC4xLDEwLjQtMjcuOGM2LjctNy43LDE2LTEyLjcsMjYuMi0xNC4xCgljMTAuMS0xLjQsMjAuNCwxLDI4LjksNi43bDE1Ny42LDEwNC4xYzEwLjgsNy4yLDE3LjMsMTkuNCwxNy4zLDMyLjRDNDk4LjQsMzYyLjMsNDkxLjksMzc0LjQsNDgxLjEsMzgxLjZMNDgxLjEsMzgxLjZ6Ii8+Cjwvc3ZnPgo="
-              }
-              alt="Icon"
-              style={{ display: isPlaying ? "none" : "block" }}
-              width={50}
-              height={50}
-            />
-          </button>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        ) : (
+          <>
+            <iframe
+              className="w-full h-full"
+              src={`${videoUrls[currentVideoIndex]}?autoplay=${isPlaying ? "1" : "0"}&controls=1&showinfo=0&rel=0`}
+              title={`${videoTitle} - Video ${currentVideoIndex + 1}`}
+              frameBorder="0"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            ></iframe>
+
+            {/* Navigation Buttons */}
+            {videoUrls.length > 1 && (
+              <>
+                <button
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={handlePrevVideo}
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={handleNextVideo}
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+
+            {!isPlaying && (
+              <button
+                className="absolute inset-0 flex items-center justify-center bg-black/50 hover:bg-black/40 transition-colors"
+                onClick={handlePlayClick}
+              >
+                <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
+                  <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[24px] border-l-black border-b-[12px] border-b-transparent ml-1" />
+                </div>
+              </button>
+            )}
+          </>
         )}
       </div>
 
@@ -81,9 +147,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
           )}
         </div>
         {assetsButton && (
-          <p
-            className={`p-2 cursor-pointer text-[16px] font-[500] font-IBM w-full rounded text-center hover:bg-orange-500 bg-black text-white`}
-          >
+          <p className="p-2 cursor-pointer text-[16px] font-[500] font-IBM w-full rounded text-center hover:bg-orange-500 bg-black text-white">
             {assetsButton}
           </p>
         )}
