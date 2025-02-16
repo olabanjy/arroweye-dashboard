@@ -564,6 +564,8 @@ export const getBusiness = async (): Promise<StaffItem[] | null> => {
       requireToken: false,
     });
 
+    console.log("BUSINESS", response);
+
     ls.set("Business", response, { encrypt: true });
 
     return response as StaffItem[];
@@ -748,6 +750,146 @@ export const getDSPStats = async (id: number): Promise<any | null> => {
     const response = await apiRequest<any>({
       method: "GET",
       url: `/api/v1/projects/${id}/get-dsp-stats/`,
+      data: null,
+      requireToken: false,
+    });
+
+    // Validate response structure before using
+    if (response && typeof response === "object") {
+      const airPlayStats: any = response;
+
+      // Store in localStorage securely
+      ls.set(`AirPlayStats_${id}`, airPlayStats, { encrypt: true });
+
+      return airPlayStats;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", error.message);
+
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+
+        if (error.response.status === 403) {
+          const redirectUrl = error.response.data?.redirect_url;
+          if (redirectUrl) {
+            window.location.href = redirectUrl;
+          }
+        }
+      } else if (error.request) {
+        console.error("No response received from server.");
+      }
+    } else {
+      console.error("Unexpected error:", error);
+    }
+
+    return null;
+  }
+};
+
+export const getAudienceStats = async (id: number): Promise<any | null> => {
+  try {
+    const response = await apiRequest<any>({
+      method: "GET",
+      url: `/api/v1/projects/${id}/audience-stats/`,
+      data: null,
+      requireToken: false,
+    });
+
+    // Validate response structure before using
+    if (response && typeof response === "object") {
+      const airPlayStats: any = response;
+
+      // Store in localStorage securely
+      ls.set(`AirPlayStats_${id}`, airPlayStats, { encrypt: true });
+
+      return airPlayStats;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", error.message);
+
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+
+        if (error.response.status === 403) {
+          const redirectUrl = error.response.data?.redirect_url;
+          if (redirectUrl) {
+            window.location.href = redirectUrl;
+          }
+        }
+      } else if (error.request) {
+        console.error("No response received from server.");
+      }
+    } else {
+      console.error("Unexpected error:", error);
+    }
+
+    return null;
+  }
+};
+
+export const geteSMActionStats = async (id: number): Promise<any | null> => {
+  try {
+    const response = await apiRequest<any>({
+      method: "GET",
+      url: `/api/v1/projects/${id}/sm-actions-stats/`,
+      data: null,
+      requireToken: false,
+    });
+
+    // Validate response structure before using
+    if (response && typeof response === "object") {
+      const airPlayStats: any = response;
+
+      // Store in localStorage securely
+      ls.set(`AirPlayStats_${id}`, airPlayStats, { encrypt: true });
+
+      return airPlayStats;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", error.message);
+
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+
+        if (error.response.status === 403) {
+          const redirectUrl = error.response.data?.redirect_url;
+          if (redirectUrl) {
+            window.location.href = redirectUrl;
+          }
+        }
+      } else if (error.request) {
+        console.error("No response received from server.");
+      }
+    } else {
+      console.error("Unexpected error:", error);
+    }
+
+    return null;
+  }
+};
+
+export const geteDSPPerformanceStats = async (
+  id: number
+): Promise<any | null> => {
+  try {
+    const response = await apiRequest<any>({
+      method: "GET",
+      url: `/api/v1/projects/${id}/dsp-performance-stats/`,
       data: null,
       requireToken: false,
     });

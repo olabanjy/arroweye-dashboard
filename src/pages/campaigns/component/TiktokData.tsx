@@ -68,9 +68,9 @@ const TiktokData = () => {
     });
   }, []);
 
-  const FacebookID = socials?.find((social) => social.name === "Tik Tok")?.id;
+  const TiktokID = socials?.find((social) => social.name === "TikTok")?.id;
 
-  console.log(FacebookID);
+  console.log(TiktokID);
 
   const hideDialog = () => {
     setIsAddNewService(false);
@@ -495,7 +495,7 @@ const TiktokData = () => {
                       };
                       setProjectFormData((prevData) => ({
                         ...prevData,
-                        sm_id: FacebookID ? Number(FacebookID) : 0,
+                        sm_id: TiktokID ? Number(TiktokID) : 0,
                         sm_data: updatedServices,
                       }));
                     }}

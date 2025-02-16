@@ -41,6 +41,25 @@ const Recap = () => {
   });
   const [isUploading, setIsUploading] = useState(false);
 
+  const isValidYoutubeEmbed = (url: string): boolean => {
+    try {
+      const urlObj = new URL(url);
+      // Check if the domain is youtube-nocookie.com or youtube.com
+      const isYoutubeDomain = [
+        "youtube-nocookie.com",
+        "www.youtube-nocookie.com",
+        "youtube.com",
+        "www.youtube.com",
+      ].includes(urlObj.hostname);
+
+      const isEmbedPath = urlObj.pathname.startsWith("/embed/");
+
+      return isYoutubeDomain && isEmbedPath;
+    } catch {
+      return false;
+    }
+  };
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {
       embed_link: "",
@@ -53,6 +72,11 @@ const Recap = () => {
 
     if (!formData.embed_link.trim()) {
       newErrors.embed_link = "Embed link is required";
+      isValid = false;
+    }
+    if (!isValidYoutubeEmbed(formData.embed_link)) {
+      newErrors.embed_link =
+        "Please provide a valid YouTube embed link (e.g., https://www.youtube.com/embed/VIDEO_ID)";
       isValid = false;
     }
 
@@ -184,7 +208,6 @@ const Recap = () => {
 
   return (
     <div className="px-[20px] mt-[20px]">
-      <Button onClick={() => console.log("file", file)}>Test</Button>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="space-y-4">
           <div>

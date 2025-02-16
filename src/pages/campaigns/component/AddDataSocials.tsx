@@ -35,7 +35,6 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
   useEffect(() => {
     getSocialMedia().then((fetchedContent) => {
       setContent(fetchedContent);
-
       if (fetchedContent && fetchedContent.length > 0) {
         setActiveDetailsTab(fetchedContent[0].name || "");
       }
@@ -95,7 +94,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
 
             {activeDetailsTab === "Facebook" && <FacebookData />}
             {activeDetailsTab === "Instagram" && <InstagramData />}
-            {activeDetailsTab === "Tik Tok" && <TiktokData />}
+            {activeDetailsTab === "TikTok" && <TiktokData />}
             {activeDetailsTab === "Twitter" && <TwitterData />}
           </div>
         </Dialog>

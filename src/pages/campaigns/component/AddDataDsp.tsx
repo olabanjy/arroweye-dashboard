@@ -4,10 +4,13 @@ import { Dialog } from "primereact/dialog";
 import { FiInfo } from "react-icons/fi";
 import { PiCalendarPlus } from "react-icons/pi";
 import { ContentItem } from "@/types/contents";
-import { getDsp } from "@/services/api";
+import { CreateDspStats, getDsp, getMetric } from "@/services/api";
 import AppleMusicData from "./AppleMusicData";
 import SpotifyData from "./SpotifyData";
 import YoutubeData from "./YoutubeData";
+import { WeekInput } from "@/components/ui/weekInput";
+import { SelectInput } from "@/components/ui/selectinput";
+import { useRouter } from "next/router";
 
 interface CompanyDetailsFormProps {
   visible: boolean;
@@ -24,20 +27,143 @@ const Tooltip = ({ info }: { info: string }) => (
   </div>
 );
 
+interface AddDspData {
+  metric_id: number;
+  week_1: string;
+  week_2: string;
+  week_3: string;
+  week_4: string;
+}
+
+const initialAddDspData: AddDspData = {
+  metric_id: 1,
+  week_1: "",
+  week_2: "",
+  week_3: "",
+  week_4: "",
+};
+
 const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
+  const { query } = useRouter();
+  const { id } = query;
   const [activeDetailsTab, setActiveDetailsTab] = useState<string>("");
   const [content, setContent] = useState<ContentItem[] | null>(null);
+  const [metric, setMetric] = useState<any>(null);
+  const [isAddNewService, setIsAddNewService] = useState(false);
+  const [addDspData, setAddDspData] = useState<AddDspData[]>([
+    { ...initialAddDspData },
+  ]);
+  const [dspId, setDspID] = useState<any>("");
 
-  console.log(activeDetailsTab);
+  const [errors, setErrors] = useState<{
+    [key: string]: { metric_id?: string; weeks?: string };
+  }>({});
+
   useEffect(() => {
     getDsp().then((fetchedContent) => {
       setContent(fetchedContent);
 
       if (fetchedContent && fetchedContent.length > 0) {
+        setDspID(fetchedContent[0].id || 0);
         setActiveDetailsTab(fetchedContent[0].name || "");
       }
     });
+    getMetric().then((fetchedContent) => {
+      setMetric(fetchedContent);
+    });
   }, []);
+
+  const customOptions = [
+    {
+      value: 99999,
+      label: "add new metric",
+      impressions: 0,
+      audience: 0,
+    },
+    ...(metric?.map((item: any) => ({
+      value: item.id ?? 0,
+      label: item.name ?? "",
+      impressions: item.impressions ?? 0,
+      audience: item.audience ?? 0,
+    })) || []),
+  ];
+
+  const resetForm = () => {
+    setAddDspData([{ ...initialAddDspData }]);
+    setErrors({});
+  };
+
+  const addItemField = () => {
+    setAddDspData([...addDspData, { ...initialAddDspData }]);
+  };
+
+  const removeItemField = (index: number) => {
+    setAddDspData(addDspData.filter((_, i) => i !== index));
+  };
+
+  const validateData = () => {
+    const newErrors: {
+      [key: string]: { metric_id?: string; weeks?: string };
+    } = {};
+
+    return addDspData.reduce((hasErrors, item, index) => {
+      if (!item.metric_id || item.metric_id === 0) {
+        newErrors[index] = {
+          ...newErrors[index],
+          metric_id: "Please select a Metric",
+        };
+        hasErrors = true;
+      }
+
+      const weeks = [item.week_1, item.week_2, item.week_3, item.week_4];
+      if (weeks.some((week) => !week || isNaN(Number(week)))) {
+        newErrors[index] = {
+          ...newErrors[index],
+          weeks: "Please enter valid values for all weeks",
+        };
+        hasErrors = true;
+      }
+
+      setErrors(newErrors);
+      return hasErrors;
+    }, false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const hasErrors = validateData();
+
+    if (!hasErrors && id) {
+      const payload = {
+        dsp_id: dspId || 1,
+        dsp_data: addDspData.map((item) => ({
+          ...item,
+          week_1: Number(item.week_1),
+          week_2: Number(item.week_2),
+          week_3: Number(item.week_3),
+          week_4: Number(item.week_4),
+        })),
+      };
+
+      try {
+        await CreateDspStats(Number(id), payload);
+        console.log("Form submitted successfully!");
+        resetForm(); // Reset form after successful submission
+      } catch (err) {
+        console.error("Error submitting form:", err);
+      }
+    }
+  };
+
+  const updateAddDspData = (
+    index: number,
+    field: keyof AddDspData,
+    value: string | number
+  ) => {
+    setAddDspData((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+    );
+  };
 
   return (
     <>
@@ -81,16 +207,111 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
                         ? "border-b border-[#212529] text-[#000000]"
                         : ""
                     }`}
-                    onClick={() => setActiveDetailsTab(item.name || "")}
+                    onClick={() => {
+                      setDspID(item.id);
+                      setActiveDetailsTab(item.name || "");
+                    }}
                   >
                     {item.name}
                   </button>
                 ))}
             </div>
 
-            {activeDetailsTab === "Apple" && <AppleMusicData />}
+            <div>
+              <form onSubmit={handleSubmit} className="scrollbar-hide">
+                <div className="mt-5 space-y-5 max-h-[400px] overflow-auto">
+                  {addDspData.map((item, index) => (
+                    <div key={index} className="flex items-center gap-5">
+                      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 items-end gap-5">
+                        <div className="max-w-[200px] w-full">
+                          <SelectInput
+                            icon={true}
+                            name="service"
+                            options={customOptions}
+                            placeholder="Select Metric"
+                            value={item.metric_id || ""}
+                            onChange={(value: string | number) => {
+                              const selectedValue = Number(value);
+                              if (selectedValue === 99999) {
+                                setIsAddNewService(true);
+                              } else {
+                                updateAddDspData(
+                                  index,
+                                  "metric_id",
+                                  selectedValue
+                                );
+                              }
+                            }}
+                          />
+                          {errors[index]?.metric_id && (
+                            <p className="text-red-500 text-xs">
+                              {errors[index].metric_id}
+                            </p>
+                          )}
+                        </div>
+
+                        {["week_1", "week_2", "week_3", "week_4"].map(
+                          (week) => (
+                            <div key={week} className="max-w-[150px] w-full">
+                              <WeekInput
+                                type="number"
+                                name={week}
+                                label={`WEEK ${week.slice(-1)}`}
+                                placeholder="Spins"
+                                value={item[week as keyof AddDspData] || ""}
+                                onChange={(e) =>
+                                  updateAddDspData(
+                                    index,
+                                    week as keyof AddDspData,
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            </div>
+                          )
+                        )}
+                      </div>
+
+                      {index !== 0 && (
+                        <button
+                          type="button"
+                          className="w-10 h-10 mb-[5px] flex items-center justify-center rounded-full bg-gray-400 text-white text-xl"
+                          onClick={() => removeItemField(index)}
+                        >
+                          -
+                        </button>
+                      )}
+
+                      {index === 0 && (
+                        <button
+                          type="button"
+                          className="w-10 h-10 flex items-center justify-center rounded-full bg-black text-white text-xl"
+                          onClick={addItemField}
+                        >
+                          +
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-[20px] flex items-center space-x-2">
+                  <button
+                    type="submit"
+                    className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-none py-[8px] px-[20px] rounded"
+                  >
+                    Save
+                  </button>
+                  <button className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#1f9abd] hover:bg-gray-200 hover:border-none py-[8px] px-[20px] rounded">
+                    Watch demo
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* {activeDetailsTab === "Apple" && <AppleMusicData />}
             {activeDetailsTab === "Spotify" && <SpotifyData />}
-            {activeDetailsTab === "YouTube" && <YoutubeData />}
+            {activeDetailsTab === "YouTube" && <YoutubeData />} */}
           </div>
         </Dialog>
       </div>

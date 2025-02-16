@@ -72,8 +72,6 @@ const AppleMusicData = () => {
     ? socials.find((social) => social.name === "Apple")?.id
     : null;
 
-  console.log(FacebookID);
-
   const hideDialog = () => {
     setIsAddNewService(false);
 
@@ -170,7 +168,6 @@ const AppleMusicData = () => {
 
       CreateDspStats(Number(id), updatedFormData)
         .then(() => {
-          console.log("Form submitted successfully!");
           hideDialog();
           setProjectFormData({
             dsp_id: 0,
@@ -274,7 +271,6 @@ const AppleMusicData = () => {
     if (!hasErrors) {
       CreateMetric(formData)
         .then(() => {
-          console.log("Form submitted successfully!");
           hideDialog();
 
           setFormData({

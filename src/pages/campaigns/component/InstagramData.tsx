@@ -68,9 +68,7 @@ const InstagramData = () => {
     });
   }, []);
 
-  const FacebookID = socials?.find((social) => social.name === "Instagram")?.id;
-
-  console.log(FacebookID);
+  const InstagramID = socials?.find((social) => social.name === "Instagram")?.id;
 
   const hideDialog = () => {
     setIsAddNewService(false);
@@ -496,7 +494,7 @@ const InstagramData = () => {
                       };
                       setProjectFormData((prevData) => ({
                         ...prevData,
-                        sm_id: FacebookID ? Number(FacebookID) : 0,
+                        sm_id: InstagramID ? Number(InstagramID) : 0,
                         sm_data: updatedServices,
                       }));
                     }}

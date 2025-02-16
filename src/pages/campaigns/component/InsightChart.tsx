@@ -17,6 +17,9 @@ import {
   getAirPlayStats,
   getSocialMediaStats,
   getDSPStats,
+  getAudienceStats,
+  geteSMActionStats,
+  geteDSPPerformanceStats,
 } from "@/services/api";
 import ColumnChart from "@/pages/payments/component/ColumnChart";
 import { Dialog } from "primereact/dialog";
@@ -24,57 +27,6 @@ import { Input } from "@/components/ui/input";
 import { BsTelegram } from "react-icons/bs";
 import { usePDF } from "react-to-pdf";
 import getDarkerColor from "@/lib/getDarkerColor";
-
-const chartDataForDoughnutActions: ChartData<"doughnut", number[], string> = {
-  labels: ["Shares", "Saves", "Comments", "Likes", "Followers", "Views"],
-  datasets: [
-    {
-      label: "Social Media",
-      data: [300, 50, 100, 22, 10, 15], // Now 6 data points
-      backgroundColor: [
-        "#f8e0e1",
-        "#d7ecfb",
-        "#f8f5d8",
-        "#d4f2ed",
-        "#d2f0ec",
-        "#f1e6d9",
-      ], // 6 background colors
-      borderWidth: 1,
-      borderColor: getDarkerColor(
-        ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed", "#d2f0ec", "#f1e6d9"],
-        20
-      ),
-      borderAlign: "inner",
-    },
-  ],
-};
-
-const chartData: ChartData<"pie", number[], string> = {
-  labels: ["Gen Z", "Millenials", "others"],
-  datasets: [
-    {
-      label: "AUDIENCE",
-      data: [300, 50, 100],
-      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8"],
-      borderWidth: 1,
-      borderColor: getDarkerColor(["#f8e0e1", "#d7ecfb", "#f8f5d8"], 20),
-      borderAlign: "inner",
-    },
-  ],
-};
-
-const chartDataForDoughnutDSP: ChartData<"pie", number[], string> = {
-  labels: ["Pre-saves", "Purchases", "Listens", "Streams", "Downloads"],
-  datasets: [
-    {
-      label: "PERFORMANCE ",
-      data: [300, 50, 100],
-      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8"],
-      borderWidth: 1,
-      borderColor: getDarkerColor(["#f8e0e1", "#d7ecfb", "#f8f5d8"], 20),
-    },
-  ],
-};
 
 const selectOptions = [
   [
@@ -131,16 +83,24 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   const [airPlayData, setAirPlayData] = useState<any>({});
   const [socialMediaData, setSocialMediaData] = useState<any>({});
   const [dspData, setDspData] = useState<any>({});
+  const [audienceData, setAudienceData] = useState<any>({});
+  const [smactionData, setSmactionData] = useState<any>({});
+  const [dspPerformanceData, setDspPerformanceData] = useState<any>({});
+  const [momentMediaData, setMomentMediaData] = useState<any>([]);
+  const [recapMediaData, setRecapMediaData] = useState<any>([]);
+  const [dspMediaData, setDspMediaData] = useState<any>([]);
 
   const { query } = useRouter();
 
   const [content, setContent] = useState<ContentItem | null>(null);
+  const [media, setMedia] = useState<any | null>([]);
   const { id } = query;
 
   useEffect(() => {
     if (!!id) {
       getSingleProject(Number(id)).then((fetchedContent) => {
         setContent(fetchedContent);
+        setMedia(fetchedContent?.media);
       });
     }
   }, [id]);
@@ -148,7 +108,6 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   useEffect(() => {
     if (!!id) {
       getAirPlayStats(Number(id)).then((fetchedContent) => {
-        console.log("Air Plays", fetchedContent);
         setAirPlayData(fetchedContent);
       });
     }
@@ -157,7 +116,6 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   useEffect(() => {
     if (!!id) {
       getSocialMediaStats(Number(id)).then((fetchedContent) => {
-        console.log("Socials", fetchedContent);
         setSocialMediaData(fetchedContent);
       });
     }
@@ -166,8 +124,31 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   useEffect(() => {
     if (!!id) {
       getDSPStats(Number(id)).then((fetchedContent) => {
-        console.log("DSP", fetchedContent);
         setDspData(fetchedContent);
+      });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (!!id) {
+      getAudienceStats(Number(id)).then((fetchedContent) => {
+        setAudienceData(fetchedContent);
+      });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (!!id) {
+      geteSMActionStats(Number(id)).then((fetchedContent) => {
+        setSmactionData(fetchedContent);
+      });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (!!id) {
+      geteDSPPerformanceStats(Number(id)).then((fetchedContent) => {
+        setDspPerformanceData(fetchedContent);
       });
     }
   }, [id]);
@@ -219,6 +200,9 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   const chartDataForDoughnutAirplay =
     airPlayData && generateDoughnutChartData(airPlayData);
 
+  const chartDataForDoughnutSMAction =
+    smactionData && generateDoughnutChartData(smactionData);
+
   const generatePieChartData = (
     data: Record<string, number>
   ): ChartData<"pie", number[], string> => {
@@ -264,7 +248,14 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
     };
   };
 
-  const chartDataForPie = generatePieChartData(socialMediaData);
+  const chartDataForPie =
+    socialMediaData && generatePieChartData(socialMediaData);
+
+  const pieChartDataAudience =
+    audienceData && generatePieChartData(audienceData);
+
+  const pieChartDataDSPPerformance =
+    dspPerformanceData && generatePieChartData(dspPerformanceData);
 
   const generateBarChartData = (
     data: Record<string, number>
@@ -321,6 +312,23 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
   const { toPDF, targetRef } = usePDF({ filename: "dashboard.pdf" });
 
+  useEffect(() => {
+    if (media.length > 0) {
+      const newMomentMedia = media.filter(
+        (item: any) => item?.type === "Moment"
+      );
+      const embedMomentLinks = newMomentMedia.map(
+        (item: any) => item.embed_link
+      );
+      const newRecapMedia = media.filter((item: any) => item?.type === "Recap");
+      const embedRecapLinks = newRecapMedia.map((item: any) => item.embed_link);
+      setMomentMediaData(embedMomentLinks);
+      setRecapMediaData(embedRecapLinks);
+      console.log("THIS IS THE EMBED LINKS ARRAY:", embedMomentLinks);
+      console.log("THIS IS THE RECAP LINKS ARRAY:", embedRecapLinks);
+    }
+  }, [media]);
+
   return (
     <div className=" " ref={targetRef}>
       <div className="mt-[20px] mb-[80px]">
@@ -362,9 +370,9 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             <div className="border-b pb-[20px]">
               <PieChart
                 title="AUDIENCE "
-                value="300K"
+                value={audienceData?.total_count ?? 0}
                 selectOptions={selectOptionsAudience}
-                chartData={chartData}
+                chartData={pieChartDataAudience}
                 selectOptionsBottom={selectOptionsAudience}
                 // maxWidth="500px"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
@@ -373,8 +381,8 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
             <MomentCard
               MomentsTitle="MOMENTS"
-              videoUrl="https://www.youtube.com/embed/L_kVchHsCYM?controls=1&autoplay=1&mute=1"
-              videoTitle="How to use Chat GPT to generate social media captions"
+              videoUrls={momentMediaData}
+              videoTitle="Moments"
               watchButtonText="Watch"
               downloadButtonText="Download Data"
               radioButtonText="Radio Monitor"
@@ -416,8 +424,8 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             <div className="border-b pb-[20px]">
               <DoughnutChart
                 title="ACTIONS"
-                value="300K"
-                chartData={chartDataForDoughnutActions}
+                value={smactionData?.total_count ?? 0}
+                chartData={chartDataForDoughnutSMAction}
                 selectOptionsBottom={selectOptionsAudience}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
@@ -425,8 +433,8 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
             <MomentCard
               MomentsTitle="REWIND"
-              videoUrl="https://www.youtube.com/embed/L_kVchHsCYM?controls=1&autoplay=1&mute=1"
-              videoTitle="How to use Chat GPT to generate social media captions"
+              videoUrls={recapMediaData}
+              videoTitle="Recap"
               watchButtonText="Watch"
               downloadButtonText="Download Data"
               radioButtonText="Claim Reward"
@@ -469,9 +477,9 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             <div className="border-b pb-[20px]">
               <PieChart
                 title="PERFORMANCE "
-                value="300K"
+                value={dspPerformanceData?.total_count ?? 0}
                 selectOptionsBottom={selectOptions}
-                chartData={chartDataForDoughnutDSP}
+                chartData={pieChartDataDSPPerformance}
                 // maxWidth="500px"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
@@ -547,7 +555,6 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
                 size={44}
                 className="text-blue-500 cursor-pointer"
                 onClick={() => {
-                  console.log("yeah");
                   if (content?.id) {
                     const currentUrl =
                       typeof window !== "undefined" ? window.location.href : "";

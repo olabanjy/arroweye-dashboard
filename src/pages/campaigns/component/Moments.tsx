@@ -41,6 +41,25 @@ const Moments = () => {
   });
   const [isUploading, setIsUploading] = useState(false);
 
+  const isValidYoutubeEmbed = (url: string): boolean => {
+    try {
+      const urlObj = new URL(url);
+      // Check if the domain is youtube-nocookie.com or youtube.com
+      const isYoutubeDomain = [
+        "youtube-nocookie.com",
+        "www.youtube-nocookie.com",
+        "youtube.com",
+        "www.youtube.com",
+      ].includes(urlObj.hostname);
+
+      const isEmbedPath = urlObj.pathname.startsWith("/embed/");
+
+      return isYoutubeDomain && isEmbedPath;
+    } catch {
+      return false;
+    }
+  };
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {
       embed_link: "",
@@ -53,6 +72,12 @@ const Moments = () => {
 
     if (!formData.embed_link.trim()) {
       newErrors.embed_link = "Embed link is required";
+      isValid = false;
+    }
+
+    if (!isValidYoutubeEmbed(formData.embed_link)) {
+      newErrors.embed_link =
+        "Please provide a valid YouTube embed link (e.g., https://www.youtube.com/embed/VIDEO_ID)";
       isValid = false;
     }
 
@@ -108,14 +133,13 @@ const Moments = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setIsUploading(true);
     e.preventDefault();
 
     if (!validateForm()) {
       toast.error("Please fill in all required fields");
       return;
     }
-
-    setIsUploading(true);
 
     try {
       const payload = {
@@ -184,7 +208,6 @@ const Moments = () => {
 
   return (
     <div className="px-[20px] mt-[20px]">
-      <Button onClick={() => console.log("file", file)}>Test</Button>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="space-y-4">
           <div>
@@ -265,7 +288,8 @@ const Moments = () => {
             <button
               type="submit"
               disabled={isUploading}
-              className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-none py-[8px] px-[20px] rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`"font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-none py-[8px] px-[20px] rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              ${isUploading && "opacity-15"}`}
             >
               {isUploading ? "Uploading..." : "Save"}
             </button>
