@@ -1,11 +1,7 @@
 import React from "react";
-import AccessedSecurityNotificationCard from "../AccessedSecurityNotificationCard";
-import ArchivedSecurityNotificationCard from "../ArchivedSecurityNotificationCard";
-import ViewSecurityNotificationCard from "../ViewSecurityNotificationCard";
-import MusicAdsNotificationCard from "../MusicAdsNotificationCard";
 import SecurityNotificationCard from "../SecurityNotificationCard";
 
-const SecurityNotification = () => {
+const SecurityNotification: React.FC<any> = ({ notification }) => {
   const handleDownload = () => {
     console.log("Download triggered");
   };
@@ -16,56 +12,25 @@ const SecurityNotification = () => {
   return (
     <div>
       <div className=" space-y-[20px]">
-        <SecurityNotificationCard
-          timeAgo="2 DAYS AGO"
-          message=" Your team member Kolapo Oladapo just clocked in "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-
-        <ViewSecurityNotificationCard
-          timeAgo="2 DAYS AGO"
-          message=" Your team member Kolapo Oladapo just clocked in "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-        <ArchivedSecurityNotificationCard
-          timeAgo="2 DAYS AGO"
-          message="  Your team member Kolapo Oladapo archived Jolie "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-        <AccessedSecurityNotificationCard
-          timeAgo="2 DAYS AGO"
-          message=" Your account has just been accessed by someone "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-
-        <MusicAdsNotificationCard
-          timeAgo="ADS BY VIVO"
-          message=" Out now! Listen to HEIS by Afrobeats superstar Rema "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-        <ViewSecurityNotificationCard
-          timeAgo="2 DAYS AGO"
-          message=" Your team member Kolapo Oladapo just clocked in "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-        <ArchivedSecurityNotificationCard
-          timeAgo="2 DAYS AGO"
-          message="  Your team member Kolapo Oladapo archived Jolie "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-        <AccessedSecurityNotificationCard
-          timeAgo="2 DAYS AGO"
-          message=" Your account has just been accessed by someone "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
+        {!!notification && notification.length > 0 ? (
+          notification?.map((item: any, index: number) => {
+            return (
+              <SecurityNotificationCard
+                key={index}
+                timeAgo="2 DAYS AGO"
+                message={item.content}
+                onDownload={handleDownload}
+                onShare={handleShare}
+              />
+            );
+          })
+        ) : (
+          <div className="flex flex-col gap-10">
+            <p className="lg:text-lg">
+              You do not have security notifications currently
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
-import React, { FC } from 'react';
-import { FiInfo } from 'react-icons/fi';
-import { SelectInput } from '@/components/ui/selectinput';
+import React, { FC } from "react";
+import { FiInfo } from "react-icons/fi";
+import { SelectInput } from "@/components/ui/selectinput";
 import {
   BarChart,
   Bar,
@@ -9,8 +9,9 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Cell,
-} from 'recharts';
-import { ChartData } from 'chart.js';
+  Tooltip as RechartsTooltip,
+} from "recharts";
+import { ChartData } from "chart.js";
 
 interface InsightChartProps {
   title: string;
@@ -18,25 +19,18 @@ interface InsightChartProps {
   percentageChange?: string;
   selectOptions?: Array<{ value: string; label: string }[]>;
   selectOptionsBottom?: Array<{ value: string; label: string }[]>;
-  chartData?: ChartData<'bar', number[], string>;
+  chartData?: ChartData<"bar", number[], string>;
   valuePlaceholder?: string;
   info?: string;
   placeholder?: string;
 }
 
-const COLORS = {
-  'Apple Music': { fill: '#FFE4E6', stroke: '#DB7093' },
-  Youtube: { fill: '#E1F0FF', stroke: '#9370DB' },
-  Spotify: { fill: '#FFF7E6', stroke: '#DEB887' },
-  others: { fill: '#E6F4F1', stroke: '#48D1CC' },
-};
-
-const DEFAULT_COLORS = [
-  { fill: '#FFE4E6', stroke: '#FFC7CB' },
-  { fill: '#E1F0FF', stroke: '#B3D7FF' },
-  { fill: '#FFF7E6', stroke: '#FFE4B3' },
-  { fill: '#E6F4F1', stroke: '#B3E3D9' },
-];
+interface ChartDataItem {
+  name: string;
+  value: number;
+  fill: string;
+  stroke: string;
+}
 
 const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
@@ -48,12 +42,10 @@ const Tooltip = ({ info }: { info: string }) => (
   </div>
 );
 
-interface ChartDataItem {
-  name: string;
-  value: number;
-  fill: string;
-  stroke: string;
-}
+const generateDynamicColor = (index: number) => {
+  const hue = (index * 137.5) % 360;
+  return `hsl(${hue}, 70%, 70%)`;
+};
 
 const ColumnChart: FC<InsightChartProps> = ({
   title,
@@ -68,41 +60,39 @@ const ColumnChart: FC<InsightChartProps> = ({
   const formatDataForRecharts = (): ChartDataItem[] => {
     if (!chartData?.labels || !chartData.datasets[0].data) return [];
 
-    return chartData.labels.map((label, index) => {
-      const knownColor = COLORS[label as keyof typeof COLORS];
-      const defaultColor = DEFAULT_COLORS[index % DEFAULT_COLORS.length];
-
-      return {
+    // Filter out entries with zero values
+    return chartData.labels
+      .map((label, index) => ({
         name: label,
         value: chartData.datasets[0].data[index],
-        fill: knownColor?.fill || defaultColor.fill,
-        stroke: knownColor?.stroke || defaultColor.stroke,
-      };
-    });
+        fill: generateDynamicColor(index),
+        stroke: generateDynamicColor(index),
+      }))
+      .filter((item) => item.value > 0); // Only include items with values greater than 0
   };
 
   const data = formatDataForRecharts();
 
-  const weeksOptions: Array<{ value: string; label: string }> = [
-    { value: 'week1', label: 'Week 1' },
-    { value: 'week2', label: 'Week 2' },
-    { value: 'week3', label: 'Week 3' },
-    { value: 'week4', label: 'Week 4' },
+  const weeksOptions = [
+    { value: "week1", label: "Week 1" },
+    { value: "week2", label: "Week 2" },
+    { value: "week3", label: "Week 3" },
+    { value: "week4", label: "Week 4" },
   ];
 
-  const months: Array<{ value: string; label: string }> = [
-    { value: 'jan', label: 'January' },
-    { value: 'feb', label: 'February' },
-    { value: 'mar', label: 'March' },
-    { value: 'apr', label: 'April' },
-    { value: 'may', label: 'May' },
-    { value: 'jun', label: 'June' },
-    { value: 'jul', label: 'July' },
-    { value: 'aug', label: 'August' },
-    { value: 'sep', label: 'September' },
-    { value: 'oct', label: 'October' },
-    { value: 'nov', label: 'November' },
-    { value: 'dec', label: 'December' },
+  const months = [
+    { value: "jan", label: "January" },
+    { value: "feb", label: "February" },
+    { value: "mar", label: "March" },
+    { value: "apr", label: "April" },
+    { value: "may", label: "May" },
+    { value: "jun", label: "June" },
+    { value: "jul", label: "July" },
+    { value: "aug", label: "August" },
+    { value: "sep", label: "September" },
+    { value: "oct", label: "October" },
+    { value: "nov", label: "November" },
+    { value: "dec", label: "December" },
   ];
 
   return (
@@ -122,11 +112,7 @@ const ColumnChart: FC<InsightChartProps> = ({
               />
             </div>
           ))}
-          <div>
-            {!selectOptions && (
-              <div className="h-10 max-w-[180px] w-full"></div>
-            )}
-          </div>
+          {!selectOptions && <div className="h-10 max-w-[180px] w-full"></div>}
         </div>
       </div>
 
@@ -138,47 +124,70 @@ const ColumnChart: FC<InsightChartProps> = ({
 
         <div className="w-full h-full flex justify-center items-center">
           <div className="w-[313px] h-[313px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={data}
-              margin={{
-                top: 20,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                horizontal={true}
-                vertical={false}
-                stroke="#E5E5E5"
-              />
-              <XAxis
-                dataKey="name"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 12, fill: '#666' }}
-              />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 12, fill: '#666' }}
-              />
-              <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={entry.fill}
-                    stroke={entry.stroke}
-                    strokeWidth={1}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={data}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+                barSize={30}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  horizontal
+                  vertical={false}
+                  stroke="#E5E5E5"
+                />
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12, fill: "#666" }}
+                  interval={0}
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12, fill: "#666" }}
+                />
+                <RechartsTooltip
+                  wrapperStyle={{
+                    backgroundColor: "#fff",
+                    borderRadius: "4px",
+                    padding: "10px",
+                    fontSize: "12px",
+                  }}
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="tooltip-content">
+                          <p>{`${payload[0].payload.name}: ${payload[0].value}`}</p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                  {data.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.fill}
+                      stroke={entry.stroke}
+                      strokeWidth={1}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-      </div>
       </div>
 
       <div className="flex items-center justify-between">

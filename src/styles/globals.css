@@ -121,17 +121,16 @@ img.animate__animated.animate__slideInUp {
   animation-duration: 7s;
   animation-fill-mode: forwards;
   background-color: rgba(255, 255, 255, 0.5);
-  background-image: -webkit-linear-gradient(
-    left,
-    #ffffff 0,
-    #ffffff 50%,
-    transparent 50%
-  );
+  background-image: -webkit-linear-gradient(left,
+      #ffffff 0,
+      #ffffff 50%,
+      transparent 50%);
   background-position: 100% 0;
   background-size: 200% 200%;
   color: transparent;
   -webkit-background-clip: text;
 }
+
 #preloader_line {
   display: block;
   height: 1px;
@@ -139,14 +138,14 @@ img.animate__animated.animate__slideInUp {
   margin: 0 auto;
   animation-name: loader_line;
   animation-duration: 7s;
-  background: linear-gradient(to left, #ccc 50%, #000000 50%) 0 0/200% 100%
-    #ffffff;
+  background: linear-gradient(to left, #ccc 50%, #000000 50%) 0 0/200% 100% #ffffff;
 }
 
 @keyframes loader_line {
   from {
     background-position: 100% 0;
   }
+
   to {
     background-position: 0% 0;
   }
@@ -159,4 +158,9 @@ img.animate__animated.animate__slideInUp {
 .p-dialog-content {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.Toastify__toast-container {
+  z-index: 9999;
+  /* Set your desired z-index */
 }

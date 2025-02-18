@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 interface CompanyDetailsFormProps {
   visible: boolean;
   onHide: () => void;
+  onAddDataSuccess: () => void;
 }
 
 const Tooltip = ({ info }: { info: string }) => (
@@ -43,7 +44,11 @@ const initialAddDspData: AddDspData = {
   week_4: "",
 };
 
-const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
+const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
+  visible,
+  onHide,
+  onAddDataSuccess,
+}) => {
   const { query } = useRouter();
   const { id } = query;
   const [activeDetailsTab, setActiveDetailsTab] = useState<string>("");
@@ -148,6 +153,7 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
       try {
         await CreateDspStats(Number(id), payload);
         console.log("Form submitted successfully!");
+        onAddDataSuccess();
         resetForm(); // Reset form after successful submission
       } catch (err) {
         console.error("Error submitting form:", err);
