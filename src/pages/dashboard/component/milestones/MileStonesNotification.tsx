@@ -1,8 +1,7 @@
 import React from "react";
-import MusicAdsNotificationCard from "../MusicAdsNotificationCard";
 import MilestoneNotificationCard from "../MilestoneNotificationCard";
 
-const MileStonesNotification = () => {
+const MileStonesNotification: React.FC<any> = ({ notification }) => {
   const handleDownload = () => {
     console.log("Download triggered");
   };
@@ -13,71 +12,25 @@ const MileStonesNotification = () => {
   return (
     <div>
       <div className=" space-y-[20px]">
-        <MilestoneNotificationCard
-          timeAgo="2 DAYS AGO"
-          message=" New milestone! Run This Town just hit 1,000,000 impressions on radio "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-
-        <MusicAdsNotificationCard
-          timeAgo="ADS BY VIVO"
-          message=" Out now! Listen to HEIS by Afrobeats superstar Rema "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-        <MilestoneNotificationCard
-          timeAgo="2 DAYS AGO"
-          message=" New milestone! Run This Town just hit 1,000,000 impressions on radio "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-
-        <MusicAdsNotificationCard
-          timeAgo="ADS BY VIVO"
-          message=" Out now! Listen to HEIS by Afrobeats superstar Rema "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-        <MilestoneNotificationCard
-          timeAgo="2 DAYS AGO"
-          message=" New milestone! Run This Town just hit 1,000,000 impressions on radio "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-
-        <MusicAdsNotificationCard
-          timeAgo="ADS BY VIVO"
-          message=" Out now! Listen to HEIS by Afrobeats superstar Rema "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-        <MilestoneNotificationCard
-          timeAgo="2 DAYS AGO"
-          message=" New milestone! Run This Town just hit 1,000,000 impressions on radio "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-
-        <MusicAdsNotificationCard
-          timeAgo="ADS BY VIVO"
-          message=" Out now! Listen to HEIS by Afrobeats superstar Rema "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-        <MilestoneNotificationCard
-          timeAgo="2 DAYS AGO"
-          message=" New milestone! Run This Town just hit 1,000,000 impressions on radio "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
-
-        <MusicAdsNotificationCard
-          timeAgo="ADS BY VIVO"
-          message=" Out now! Listen to HEIS by Afrobeats superstar Rema "
-          onDownload={handleDownload}
-          onShare={handleShare}
-        />
+        {!!notification && notification.length > 0 ? (
+          notification?.map((item: any, index: number) => {
+            return (
+              <MilestoneNotificationCard
+                key={index}
+                timeAgo="2 DAYS AGO"
+                message={item.content}
+                onDownload={handleDownload}
+                onShare={handleShare}
+              />
+            );
+          })
+        ) : (
+          <div className="flex flex-col gap-10">
+            <p className="lg:text-lg">
+              You do not have milestone notifications currently
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

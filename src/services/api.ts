@@ -106,6 +106,7 @@ export const getStoredSingleContent = (): ContentItem | null => {
 
   return content as ContentItem;
 };
+
 export const CreateBusiness = async (payload: unknown): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
@@ -652,7 +653,48 @@ export const getStoredProjects = (): ContentItem[] | null => {
 
   return content as ContentItem[];
 };
+export const getProjectNotifications = async (
+  id: number
+): Promise<any | null> => {
+  try {
+    const response = await apiRequest<any>({
+      method: "GET",
+      url: `/api/v1/projects/${id}/notifications/`,
+      data: null,
+      requireToken: false,
+    });
 
+    // Validate response structure before using
+    if (response && typeof response === "object") {
+      return response;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", error.message);
+
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+
+        if (error.response.status === 403) {
+          const redirectUrl = error.response.data?.redirect_url;
+          if (redirectUrl) {
+            window.location.href = redirectUrl;
+          }
+        }
+      } else if (error.request) {
+        console.error("No response received from server.");
+      }
+    } else {
+      console.error("Unexpected error:", error);
+    }
+
+    return null;
+  }
+};
 export const getAirPlayStats = async (id: number): Promise<any | null> => {
   try {
     const response = await apiRequest<any>({

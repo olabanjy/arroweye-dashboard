@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { FaRegBell } from "react-icons/fa";
 import { IoIosClose } from "react-icons/io";
 import CampaignNotifications from "./campaigns/CampaignNotifications";
@@ -6,8 +6,18 @@ import MileStonesNotification from "./milestones/MileStonesNotification";
 import SecurityNotification from "./security/SecurityNotification";
 import AssetsNotification from "./assets/AssetsNotification";
 import PaymentsNotification from "./payments/PaymentsNotification";
+import { getProjectNotifications } from "@/services/api";
+import { useRouter } from "next/router";
 
 const TopNav: FC = () => {
+  const { id } = useRouter().query;
+  const [notifications, setNotifications] = useState<any>({
+    campaigns: [],
+    milestones: [],
+    security: [],
+    assets: [],
+    payments: [],
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeMainTab, setActiveMainTab] = useState("updates");
   const [activeInnerTab, setActiveInnerTab] = useState("campaign");
@@ -25,17 +35,50 @@ const TopNav: FC = () => {
     setActiveInnerTab(tab);
   };
 
+  useEffect(() => {
+    if (!!id) {
+      getProjectNotifications(Number(id)).then((fetchedContent) => {
+        // Group notifications by type
+        console.log("Notifs when fetched", fetchedContent);
+        const groupedNotifications = fetchedContent.reduce(
+          (acc: any, notification: any) => {
+            const type = notification.type.toLowerCase();
+            return {
+              ...acc,
+              [type]: [...(acc[type] || []), notification],
+            };
+          },
+          {
+            campaigns: [],
+            milestones: [],
+            security: [],
+            assets: [],
+            payments: [],
+          }
+        );
+
+        setNotifications(groupedNotifications);
+      });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    console.log("Notifications", notifications);
+  }, [notifications]);
+
   return (
     <div className="relative">
       <div className="h-[10px]  text-white flex items-center justify-between px-[10px] lg:px-[40px] pt-[50px] relative">
         <div className="text-lg font-semibold opacity-0">Dashboard</div>
         <div className="relative">
-          <div
-            className="text-black cursor-pointer mb-[40px] md:mb-0"
-            onClick={toggleSidebar}
-          >
-            <FaRegBell size={27} />
-          </div>
+          {!!id && (
+            <div
+              className="text-black cursor-pointer mb-[40px] md:mb-0"
+              onClick={toggleSidebar}
+            >
+              <FaRegBell size={27} />
+            </div>
+          )}
 
           {isSidebarOpen && (
             <div className=" ">
@@ -138,30 +181,38 @@ const TopNav: FC = () => {
                   {activeMainTab === "updates" &&
                     activeInnerTab === "campaign" && (
                       <div>
-                        <CampaignNotifications />
+                        <CampaignNotifications
+                          notification={notifications.campaigns}
+                        />
                       </div>
                     )}
                   {activeMainTab === "updates" &&
                     activeInnerTab === "milestones" && (
                       <div>
-                        <MileStonesNotification />
+                        <MileStonesNotification
+                          notification={notifications.milestones}
+                        />
                       </div>
                     )}
                   {activeMainTab === "updates" &&
                     activeInnerTab === "security" && (
                       <div>
-                        <SecurityNotification />
+                        <SecurityNotification
+                          notification={notifications.security}
+                        />
                       </div>
                     )}
                   {activeMainTab === "drops" && activeInnerTab === "assets" && (
                     <div>
-                      <AssetsNotification />
+                      <AssetsNotification notification={notifications.assets} />
                     </div>
                   )}
                   {activeMainTab === "drops" &&
                     activeInnerTab === "payment" && (
                       <div>
-                        <PaymentsNotification />
+                        <PaymentsNotification
+                          notification={notifications.payments}
+                        />
                       </div>
                     )}
                 </div>

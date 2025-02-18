@@ -1,10 +1,7 @@
 import React from "react";
-import ReminderNotificationCard from "../ReminderNotificationCard";
-import AdsNotificationCard from "../AdsNotificationCard";
 import AssetsNotificationCard from "../AssetsNotificationCard";
-import AssetsAdsNotificationCard from "../AssetsAdsNotificationCard";
 
-const AssetsNotification = () => {
+const AssetsNotification: React.FC<any> = ({ notification }) => {
   const handleDownload = () => {
     console.log("Download triggered");
   };
@@ -13,33 +10,28 @@ const AssetsNotification = () => {
     console.log("Share triggered");
   };
   return (
-    <div className=" space-y-[20px] ">
-      <AssetsNotificationCard
-        timeAgo="2 DAYS AGO"
-        message=" Relive the moments! Highlights for Run This Town by Alor G have been uploaded "
-        onDownload={handleDownload}
-        onShare={handleShare}
-      />
-
-      <ReminderNotificationCard
-        timeAgo="REMINDER"
-        message=" Get ready! Your event Glitch Session Reharsals is coming up in 2 days "
-        onDownload={handleDownload}
-        onShare={handleShare}
-      />
-
-      <AdsNotificationCard
-        timeAgo="ADS BY VIVO"
-        message=" An ad about this item by this brand for $100 "
-        onDownload={handleDownload}
-        onShare={handleShare}
-      />
-      <AssetsAdsNotificationCard
-        timeAgo="ADS BY VIVO"
-        message=" An ad about this item by this brand for $100 "
-        onDownload={handleDownload}
-        onShare={handleShare}
-      />
+    <div>
+      <div className=" space-y-[20px]">
+        {!!notification && notification.length > 0 ? (
+          notification?.map((item: any, index: number) => {
+            return (
+              <AssetsNotificationCard
+                key={index}
+                timeAgo="2 DAYS AGO"
+                message={item.content}
+                onDownload={handleDownload}
+                onShare={handleShare}
+              />
+            );
+          })
+        ) : (
+          <div className="flex flex-col gap-5">
+            <p className="lg:text-lg">
+              You do not have assets notifications currently
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

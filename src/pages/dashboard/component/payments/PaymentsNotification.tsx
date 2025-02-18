@@ -1,9 +1,7 @@
 import React from "react";
-import AdsNotificationCard from "../AdsNotificationCard";
 import PaymentMomentNotificationCard from "./PaymentMomentNotificationCard";
-import InvoiceNotificationCard from "./InvoiceNotificationCard ";
 
-const PaymentsNotification = () => {
+const PaymentsNotification: React.FC<any> = ({ notification }) => {
   const handleDownload = () => {
     console.log("Download triggered");
   };
@@ -12,26 +10,28 @@ const PaymentsNotification = () => {
     console.log("Share triggered");
   };
   return (
-    <div className=" space-y-[20px]">
-      <PaymentMomentNotificationCard
-        timeAgo="2 DAYS AGO"
-        message="MOU-Run-This-Town (PO-4564) has been uploaded for Run This Town "
-        onDownload={handleDownload}
-        onShare={handleShare}
-      />
-      <AdsNotificationCard
-        timeAgo="ADS BY VIVO"
-        message=" An ad about this item by this brand for $100 "
-        onDownload={handleDownload}
-        onShare={handleShare}
-      />
-
-      <InvoiceNotificationCard
-        timeAgo="2 DAYS AGO"
-        message="INV-3434-Run-This-Town (PO-4564) has been uploaded for Run This Town"
-        onDownload={handleDownload}
-        onShare={handleShare}
-      />
+    <div>
+      <div className=" space-y-[20px]">
+        {!!notification && notification.length > 0 ? (
+          notification?.map((item: any, index: number) => {
+            return (
+              <PaymentMomentNotificationCard
+                key={index}
+                timeAgo="2 DAYS AGO"
+                message={item.content}
+                onDownload={handleDownload}
+                onShare={handleShare}
+              />
+            );
+          })
+        ) : (
+          <div className="flex flex-col gap-10">
+            <p className="lg:text-lg">
+              You do not have payment notifications currently
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

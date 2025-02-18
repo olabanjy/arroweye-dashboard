@@ -1,14 +1,20 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { FiInfo } from "react-icons/fi";
 import { PiCalendarPlus } from "react-icons/pi";
 import RadioData from "./RadioData";
 import TVData from "./TvData";
+import { ContentItem } from "@/types/contents";
+import { useRouter } from "next/router";
+import { AddAirplayData, getChannel } from "@/services/api";
+import { WeekInput } from "@/components/ui/weekInput";
+import { SelectInput } from "@/components/ui/selectinput";
 
 interface CompanyDetailsFormProps {
   visible: boolean;
   onHide: () => void;
+  onAddDataSuccess: () => void;
 }
 
 const Tooltip = ({ info }: { info: string }) => (
@@ -21,8 +27,145 @@ const Tooltip = ({ info }: { info: string }) => (
   </div>
 );
 
-const AddData: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
-  const [activeDetailsTab, setActiveDetailsTab] = useState("radio");
+interface AirPlayData {
+  airplay_id: number;
+  metric_id: number;
+  week_1: string;
+  week_2: string;
+  week_3: string;
+  week_4: string;
+}
+
+const initialAirPlayData: AirPlayData = {
+  airplay_id: 0,
+  metric_id: 1,
+  week_1: "",
+  week_2: "",
+  week_3: "",
+  week_4: "",
+};
+
+const AddData: React.FC<CompanyDetailsFormProps> = ({
+  visible,
+  onHide,
+  onAddDataSuccess,
+}) => {
+  const { query } = useRouter();
+  const { id } = query;
+  const [activeDetailsTab, setActiveDetailsTab] = useState("Radio");
+  const [stations, setStations] = useState<ContentItem[]>([]);
+  const [isAddNewService, setIsAddNewService] = useState(false);
+
+  const [airPlayData, setAirPlayData] = useState<AirPlayData[]>([
+    { ...initialAirPlayData },
+  ]);
+  const [errors, setErrors] = useState<{
+    [key: string]: { airplay_id?: string; weeks?: string };
+  }>({});
+
+  useEffect(() => {
+    getChannel().then((content: any) => {
+      const radioContent = content.filter(
+        (item: any) => item.channel === activeDetailsTab
+      );
+      setStations(radioContent);
+    });
+  }, [activeDetailsTab]);
+
+  const resetForm = () => {
+    setAirPlayData([{ ...initialAirPlayData }]);
+    setErrors({});
+  };
+
+  const stationOptions = [
+    {
+      value: 99999,
+      label: "Add new service",
+    },
+    ...stations.map((station) => ({
+      value: station.id ?? 0,
+      label: station.name ?? "",
+    })),
+  ];
+
+  const addItemField = () => {
+    setAirPlayData([...airPlayData, { ...initialAirPlayData }]);
+  };
+
+  const removeItemField = (index: number) => {
+    setAirPlayData(airPlayData.filter((_, i) => i !== index));
+  };
+
+  const validateData = () => {
+    const newErrors: {
+      [key: string]: { airplay_id?: string; weeks?: string };
+    } = {};
+
+    return airPlayData.reduce((hasErrors, item, index) => {
+      if (!item.airplay_id || item.airplay_id === 0) {
+        newErrors[index] = {
+          ...newErrors[index],
+          airplay_id: "Please select a service",
+        };
+        hasErrors = true;
+      }
+
+      const weeks = [item.week_1, item.week_2, item.week_3, item.week_4];
+      if (weeks.some((week) => !week || isNaN(Number(week)))) {
+        newErrors[index] = {
+          ...newErrors[index],
+          weeks: "Please enter valid values for all weeks",
+        };
+        hasErrors = true;
+      }
+
+      setErrors(newErrors);
+      return hasErrors;
+    }, false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const hasErrors = validateData();
+
+    if (!hasErrors && id) {
+      const payload = {
+        air_play_data: airPlayData.map((item) => ({
+          ...item,
+          week_1: Number(item.week_1),
+          week_2: Number(item.week_2),
+          week_3: Number(item.week_3),
+          week_4: Number(item.week_4),
+        })),
+      };
+
+      console.log(payload);
+      try {
+        await AddAirplayData(payload, Number(id));
+        console.log("Form submitted successfully!");
+        onAddDataSuccess();
+        resetForm();
+      } catch (err) {
+        console.error("Error submitting form:", err);
+      }
+    }
+  };
+
+  const updateAirPlayData = (
+    index: number,
+    field: keyof AirPlayData,
+    value: string | number
+  ) => {
+    setAirPlayData((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+    );
+  };
+
+  const updateAllAirPlayIds = (newId: number) => {
+    setAirPlayData((prev) =>
+      prev.map((item) => ({ ...item, metric_id: newId }))
+    );
+  };
 
   return (
     <>
@@ -59,11 +202,14 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
             <div className="text-[16px] font-[400] flex gap-[20px] items-center mt-[10px]">
               <button
                 className={`text-center py-2 px-[16px] ${
-                  activeDetailsTab === "radio"
+                  activeDetailsTab === "Radio"
                     ? "  border-b border-[#212529] text-[#000000]"
                     : ""
                 }`}
-                onClick={() => setActiveDetailsTab("radio")}
+                onClick={() => {
+                  updateAllAirPlayIds(1);
+                  setActiveDetailsTab("radio");
+                }}
               >
                 Radio
               </button>
@@ -73,14 +219,110 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({ visible, onHide }) => {
                     ? "  border-b border-[#212529] text-[#000000]"
                     : ""
                 }`}
-                onClick={() => setActiveDetailsTab("TV")}
+                onClick={() => {
+                  updateAllAirPlayIds(2);
+                  setActiveDetailsTab("TV");
+                }}
               >
                 TV
               </button>
             </div>
 
-            {activeDetailsTab === "radio" && <RadioData />}
-            {activeDetailsTab === "TV" && <TVData />}
+            <div>
+              <form onSubmit={handleSubmit} className="scrollbar-hide">
+                <div className="mt-5 space-y-5 max-h-[400px] overflow-auto">
+                  {airPlayData.map((item, index) => (
+                    <div key={index} className="flex items-center gap-5">
+                      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 items-end gap-5">
+                        <div className="max-w-[200px] w-full">
+                          <SelectInput
+                            icon={true}
+                            name="service"
+                            options={stationOptions}
+                            placeholder="Select Station"
+                            value={item.airplay_id || ""}
+                            onChange={(value: string | number) => {
+                              const selectedValue = Number(value);
+                              if (selectedValue === 99999) {
+                                setIsAddNewService(true);
+                              } else {
+                                updateAirPlayData(
+                                  index,
+                                  "airplay_id",
+                                  selectedValue
+                                );
+                              }
+                            }}
+                          />
+                          {errors[index]?.airplay_id && (
+                            <p className="text-red-500 text-xs">
+                              {errors[index].airplay_id}
+                            </p>
+                          )}
+                        </div>
+
+                        {["week_1", "week_2", "week_3", "week_4"].map(
+                          (week) => (
+                            <div key={week} className="max-w-[150px] w-full">
+                              <WeekInput
+                                type="number"
+                                name={week}
+                                label={`WEEK ${week.slice(-1)}`}
+                                placeholder={
+                                  activeDetailsTab === "Radio"
+                                    ? "Spins"
+                                    : "Plays"
+                                }
+                                value={item[week as keyof AirPlayData] || ""}
+                                onChange={(e) =>
+                                  updateAirPlayData(
+                                    index,
+                                    week as keyof AirPlayData,
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            </div>
+                          )
+                        )}
+                      </div>
+
+                      {index !== 0 && (
+                        <button
+                          type="button"
+                          className="w-10 h-10 mb-[5px] flex items-center justify-center rounded-full bg-gray-400 text-white text-xl"
+                          onClick={() => removeItemField(index)}
+                        >
+                          -
+                        </button>
+                      )}
+
+                      {index === 0 && (
+                        <button
+                          type="button"
+                          className="w-10 h-10 flex items-center justify-center rounded-full bg-black text-white text-xl"
+                          onClick={addItemField}
+                        >
+                          +
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-[20px] flex items-center space-x-2">
+                  <button
+                    type="submit"
+                    className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-none py-[8px] px-[20px] rounded"
+                  >
+                    Save
+                  </button>
+                  <button className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#1f9abd] hover:bg-gray-200 hover:border-none py-[8px] px-[20px] rounded">
+                    Watch demo
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </Dialog>
       </div>

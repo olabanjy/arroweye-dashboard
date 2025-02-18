@@ -116,7 +116,7 @@ const RadioData = () => {
       try {
         await AddAirplayData(payload, Number(id));
         console.log("Form submitted successfully!");
-        resetForm(); // Reset form after successful submission
+        resetForm();
       } catch (err) {
         console.error("Error submitting form:", err);
       }

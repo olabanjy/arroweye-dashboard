@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input";
 import { BsTelegram } from "react-icons/bs";
 import { usePDF } from "react-to-pdf";
 import getDarkerColor from "@/lib/getDarkerColor";
+import { toast } from "react-toastify";
 
 const selectOptions = [
   [
@@ -124,6 +125,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   useEffect(() => {
     if (!!id) {
       getDSPStats(Number(id)).then((fetchedContent) => {
+        console.log("DSP Stats", fetchedContent);
         setDspData(fetchedContent);
       });
     }
@@ -324,10 +326,28 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
       const embedRecapLinks = newRecapMedia.map((item: any) => item.embed_link);
       setMomentMediaData(embedMomentLinks);
       setRecapMediaData(embedRecapLinks);
-      console.log("THIS IS THE EMBED LINKS ARRAY:", embedMomentLinks);
-      console.log("THIS IS THE RECAP LINKS ARRAY:", embedRecapLinks);
     }
   }, [media]);
+
+  const onAddDataSuccess = () => {
+    if (!!id) {
+      getAirPlayStats(Number(id)).then((fetchedContent) => {
+        setAirPlayData(fetchedContent);
+        toast.success("AirPlay stats updated");
+      });
+    }
+  };
+  const onAddDataDspSuccess = () => {
+    if (!!id) {
+      getDSPStats(Number(id)).then((fetchedContent) => {
+        setDspData(fetchedContent);
+      });
+      geteDSPPerformanceStats(Number(id)).then((fetchedContent) => {
+        setDspPerformanceData(fetchedContent);
+        toast.success("DSP stats updated");
+      });
+    }
+  };
 
   return (
     <div className=" " ref={targetRef}>
@@ -522,7 +542,11 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
           </div>
         </div>
       </div>
-      <AddData visible={addDataModal} onHide={() => setAddDataModal(false)} />
+      <AddData
+        visible={addDataModal}
+        onHide={() => setAddDataModal(false)}
+        onAddDataSuccess={onAddDataSuccess}
+      />
       <AddDataSocials
         visible={addDataModalSocial}
         onHide={() => setAddDataModalSocial(false)}
@@ -533,7 +557,11 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
         initialTab={initialTab}
       />
 
-      <AddDataDsp visible={addDspModal} onHide={() => setAddDspModal(false)} />
+      <AddDataDsp
+        visible={addDspModal}
+        onHide={() => setAddDspModal(false)}
+        onAddDataSuccess={onAddDataDspSuccess}
+      />
 
       {openChatModal && (
         <div className="fixed bottom-[90px] lg:left-32 right-0 flex justify-center z-30 w-full">
