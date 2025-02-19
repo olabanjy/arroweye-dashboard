@@ -73,6 +73,7 @@ const DropsList = () => {
                   message={`New drop from ${drop.first_name} ${drop.last_name}: ${drop.folder_name}`}
                   onDownload={() => handleDownload(drop.link)}
                   onShare={() => handleShare(drop.link)}
+                  actions={[]}
                 />
               </div>
             ))

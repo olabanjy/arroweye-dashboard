@@ -6,11 +6,9 @@ import MileStonesNotification from "./milestones/MileStonesNotification";
 import SecurityNotification from "./security/SecurityNotification";
 import AssetsNotification from "./assets/AssetsNotification";
 import PaymentsNotification from "./payments/PaymentsNotification";
-import { getProjectNotifications } from "@/services/api";
-import { useRouter } from "next/router";
+import { getLoggedInUser } from "@/services/api";
 
 const TopNav: FC = () => {
-  const { id } = useRouter().query;
   const [notifications, setNotifications] = useState<any>({
     campaigns: [],
     milestones: [],
@@ -36,31 +34,28 @@ const TopNav: FC = () => {
   };
 
   useEffect(() => {
-    if (!!id) {
-      getProjectNotifications(Number(id)).then((fetchedContent) => {
-        // Group notifications by type
-        console.log("Notifs when fetched", fetchedContent);
-        const groupedNotifications = fetchedContent.reduce(
-          (acc: any, notification: any) => {
-            const type = notification.type.toLowerCase();
-            return {
-              ...acc,
-              [type]: [...(acc[type] || []), notification],
-            };
-          },
-          {
-            campaigns: [],
-            milestones: [],
-            security: [],
-            assets: [],
-            payments: [],
-          }
-        );
+    getLoggedInUser().then((user) => {
+      console.log("USER FETCHED", user);
+      const groupedNotifications = user.notifications.reduce(
+        (acc: any, notification: any) => {
+          const type = notification.type.toLowerCase();
+          return {
+            ...acc,
+            [type]: [...(acc[type] || []), notification],
+          };
+        },
+        {
+          campaigns: [],
+          milestones: [],
+          security: [],
+          assets: [],
+          payments: [],
+        }
+      );
 
-        setNotifications(groupedNotifications);
-      });
-    }
-  }, [id]);
+      setNotifications(groupedNotifications);
+    });
+  }, []);
 
   useEffect(() => {
     console.log("Notifications", notifications);
@@ -71,14 +66,12 @@ const TopNav: FC = () => {
       <div className="h-[10px]  text-white flex items-center justify-between px-[10px] lg:px-[40px] pt-[50px] relative">
         <div className="text-lg font-semibold opacity-0">Dashboard</div>
         <div className="relative">
-          {!!id && (
-            <div
-              className="text-black cursor-pointer mb-[40px] md:mb-0"
-              onClick={toggleSidebar}
-            >
-              <FaRegBell size={27} />
-            </div>
-          )}
+          <div
+            className="text-black cursor-pointer mb-[40px] md:mb-0"
+            onClick={toggleSidebar}
+          >
+            <FaRegBell size={27} />
+          </div>
 
           {isSidebarOpen && (
             <div className=" ">

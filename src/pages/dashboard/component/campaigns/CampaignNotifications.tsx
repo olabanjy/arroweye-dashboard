@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { formatDistanceToNow } from "date-fns";
 import FirstPlayNotificationCard from "../FirstPlayNotificationCard";
 
 const CampaignNotifications: React.FC<any> = ({ notification }) => {
@@ -10,9 +11,10 @@ const CampaignNotifications: React.FC<any> = ({ notification }) => {
     console.log("Share triggered");
   };
 
-  useEffect(() => {
-    console.log("notification", !!notification);
-  }, [notification]);
+  const formatRelativeDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
 
   return (
     <div>
@@ -22,10 +24,11 @@ const CampaignNotifications: React.FC<any> = ({ notification }) => {
             return (
               <FirstPlayNotificationCard
                 key={index}
-                timeAgo="2 DAYS AGO"
+                timeAgo={formatRelativeDate(item.created)}
                 message={item.content}
                 onDownload={handleDownload}
                 onShare={handleShare}
+                actions={item.actions}
               />
             );
           })

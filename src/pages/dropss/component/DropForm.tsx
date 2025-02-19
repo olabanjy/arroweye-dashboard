@@ -1,10 +1,11 @@
-import { Input } from '@/components/ui/input';
-import { createDropzone } from '@/services/api';
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-import { IoCloudUploadOutline } from 'react-icons/io5';
-import { toast } from 'react-toastify';
-import { ContentItem } from '@/types/contents';
+import { Input } from "@/components/ui/input";
+import { createDropzone } from "@/services/api";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { IoCloudUploadOutline } from "react-icons/io5";
+import { toast } from "react-toastify";
+import { ContentItem } from "@/types/contents";
+import { SelectInput } from "@/components/ui/selectinput";
 
 interface DropFormProps {
   setDropzoneData: React.Dispatch<React.SetStateAction<ContentItem | null>>;
@@ -12,31 +13,31 @@ interface DropFormProps {
 
 const DropForm: React.FC<DropFormProps> = ({ setDropzoneData }) => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    folderName: '',
-    link: '',
-    dropType: '',
+    firstName: "",
+    lastName: "",
+    folderName: "",
+    link: "",
+    dropType: "",
   });
 
   const [loading, setLoading] = useState(false);
   const { query } = useRouter();
-  const projectId = typeof query.id === 'string' ? query.id : '';
+  const projectId = typeof query.id === "string" ? query.id : "";
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => {
       const newData = { ...prev, [name]: value };
-      if (name === 'link') {
-        if (value.includes('drive.google.com'))
-          newData.dropType = 'GoogleDrive';
-        else if (value.includes('wetransfer.com'))
-          newData.dropType = 'WeTransfer';
-        else if (value.includes('onedrive.live.com'))
-          newData.dropType = 'OneDrive';
-        else if (value.includes('dropbox.com')) newData.dropType = 'Dropbox';
-        else if (value.includes('pcloud.com')) newData.dropType = 'PCloud';
-        else newData.dropType = '';
+      if (name === "link") {
+        if (value.includes("drive.google.com"))
+          newData.dropType = "GoogleDrive";
+        else if (value.includes("wetransfer.com"))
+          newData.dropType = "WeTransfer";
+        else if (value.includes("onedrive.live.com"))
+          newData.dropType = "OneDrive";
+        else if (value.includes("dropbox.com")) newData.dropType = "Dropbox";
+        else if (value.includes("pcloud.com")) newData.dropType = "PCloud";
+        else newData.dropType = "";
       }
       return newData;
     });
@@ -46,7 +47,7 @@ const DropForm: React.FC<DropFormProps> = ({ setDropzoneData }) => {
     e.preventDefault();
 
     if (!projectId) {
-      toast.error('Project ID is missing');
+      toast.error("Project ID is missing");
       return;
     }
 
@@ -56,7 +57,7 @@ const DropForm: React.FC<DropFormProps> = ({ setDropzoneData }) => {
       !formData.folderName ||
       !formData.link
     ) {
-      toast.error('Please fill in all fields.');
+      toast.error("Please fill in all fields.");
       return;
     }
 
@@ -74,17 +75,17 @@ const DropForm: React.FC<DropFormProps> = ({ setDropzoneData }) => {
 
     const response = await createDropzone(projectId, payload);
     if (response) {
-      toast.success('Dropzone created successfully');
+      toast.success("Dropzone created successfully");
       setDropzoneData((prevData) => ({
         ...prevData,
         dropzone: [...(prevData?.dropzone || []), payload],
       }));
       setFormData({
-        firstName: '',
-        lastName: '',
-        folderName: '',
-        link: '',
-        dropType: '',
+        firstName: "",
+        lastName: "",
+        folderName: "",
+        link: "",
+        dropType: "",
       });
     }
     setLoading(false);
@@ -131,18 +132,39 @@ const DropForm: React.FC<DropFormProps> = ({ setDropzoneData }) => {
           value={formData.link}
           onChange={handleInputChange}
         />
-        <Input
+        {/* <Input
           type="text"
           placeholder="Drop Type"
-          readOnly
+          name="dropType"
+          // readOnly
           className="w-full rounded-[8px]"
           value={formData.dropType}
+          onChange={handleInputChange}
+        />{" "} */}
+        <SelectInput
+          name="role"
+          value={formData.dropType}
+          onChange={(value) => {
+            setFormData((prev: any) => {
+              const newData = { ...prev, dropType: value };
+              return newData;
+            });
+          }}
+          placeholder="Drop Type"
+          options={[
+            { value: "GoogleDrive", label: "GoogleDrive" },
+            { value: "WeTransfer", label: "WeTransfer" },
+            { value: "OneDrive", label: "OneDrive" },
+            { value: "DropBox", label: "DropBox" },
+            { value: "PCloud", label: "PCloud" },
+          ]}
+          // error={formData.dropType}
         />
         <button
           type="submit"
           className="font-[600] text-[16px] gap-[10px] px-4 h-[50px] text-white bg-[#e4055a] rounded-[8px] hover:bg-[#000000] flex items-center"
         >
-          {loading ? 'Uploading...' : 'Upload'}
+          {loading ? "Uploading..." : "Upload"}
           {!loading && <IoCloudUploadOutline size={14} className="font-bold" />}
         </button>
       </div>

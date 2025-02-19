@@ -1,5 +1,6 @@
 import React from "react";
 import PaymentMomentNotificationCard from "./PaymentMomentNotificationCard";
+import { formatDistanceToNow } from "date-fns";
 
 const PaymentsNotification: React.FC<any> = ({ notification }) => {
   const handleDownload = () => {
@@ -9,6 +10,12 @@ const PaymentsNotification: React.FC<any> = ({ notification }) => {
   const handleShare = () => {
     console.log("Share triggered");
   };
+
+  const formatRelativeDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
+
   return (
     <div>
       <div className=" space-y-[20px]">
@@ -17,10 +24,11 @@ const PaymentsNotification: React.FC<any> = ({ notification }) => {
             return (
               <PaymentMomentNotificationCard
                 key={index}
-                timeAgo="2 DAYS AGO"
+                timeAgo={formatRelativeDate(item.created)}
                 message={item.content}
                 onDownload={handleDownload}
                 onShare={handleShare}
+                actions={item.actions}
               />
             );
           })
