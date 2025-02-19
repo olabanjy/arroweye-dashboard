@@ -30,6 +30,35 @@ interface SendEmailPayload {
   url: string;
 }
 
+export const getLoggedInUser = async (): Promise<any | null> => {
+  try {
+    const content: any = ls.get("Profile", { decrypt: true });
+    const token = content?.access;
+
+    const response = await apiRequest({
+      method: "GET",
+      url: `/api/v1/ums/me/`,
+      requireToken: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          "Content Retrieval failed. Please try again."
+      );
+    } else {
+      toast.error("Content Retrieval failed. Please try again.");
+    }
+
+    return null;
+  }
+};
+
 export const getGenreContents = async (): Promise<ContentItem[] | null> => {
   try {
     const response = await apiRequest({
@@ -527,17 +556,16 @@ export const Verify = async (payload: unknown): Promise<void> => {
 
 export const VerifyLogin = async (payload: unknown): Promise<void> => {
   try {
-    const { data: response } = await apiRequest<
-      ApiRequestResponse<ApiResponse>
-    >({
+    const response = await apiRequest<ApiRequestResponse<ApiResponse>>({
       method: "POST",
       url: `/verify-login/`,
       data: payload,
       requireToken: false,
     });
 
-    console.log(response);
-    ls.set("Profile", response, { encrypt: true });
+    console.log("VERIFY", response);
+    const contentItem = response;
+    ls.set("Profile", contentItem, { encrypt: true });
     toast.success("Verification successful! Redirecting...");
     window.location.href = "/campaigns";
   } catch (error: unknown) {
@@ -553,6 +581,35 @@ export const VerifyLogin = async (payload: unknown): Promise<void> => {
       toast.error("Request failed. Please try again.");
       console.error("Unexpected Error:", error);
     }
+  }
+};
+
+export const getDropZones = async (page: number = 1): Promise<any | null> => {
+  try {
+    const content: any = ls.get("Profile", { decrypt: true });
+    const token = content?.access;
+    const response = await apiRequest({
+      method: "GET",
+      url: `/api/v1/projects/general/dropzone/`,
+      params: { page },
+      requireToken: false,
+      headers: {
+        Authorization: `Bearer ${token}`, // Set the Content-Type to multipart/form-data
+      },
+    });
+
+    return response;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          "Content Retrieval failed. Please try again."
+      );
+    } else {
+      toast.error("Content Retrieval failed. Please try again.");
+    }
+
+    return null;
   }
 };
 

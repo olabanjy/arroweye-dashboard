@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ls from "localstorage-slim";
 import DashboardLayout from "../dashboard/layout";
 import { HiOutlineCube } from "react-icons/hi";
 import { IoFilter } from "react-icons/io5";
@@ -12,6 +13,9 @@ import { Dialog } from "primereact/dialog";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { LuCopy } from "react-icons/lu";
+import { ContentItem } from "@/types/contents";
+import { getDropZones } from "@/services/api";
+import Pagination from "./component/Pagination";
 
 const users = [
   {
@@ -75,12 +79,31 @@ export const Tooltip = ({ info }: { info: string }) => (
 const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
 
 const AssetsLibrary = () => {
+  const [content, setContent] = useState<any>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [filter, setFilter] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   useEffect(() => {
     setFilter(false);
   }, []);
+
+  const fetchDropZones = async (page: number) => {
+    const response = await getDropZones(page);
+    if (response) {
+      setContent(response.results || []);
+      setTotalPages(Math.ceil(response.count / 10));
+    }
+  };
+
+  useEffect(() => {
+    fetchDropZones(currentPage);
+  }, [currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const handleUserClick = (user: User) => {
     setSelectedUser(user);
@@ -176,30 +199,33 @@ const AssetsLibrary = () => {
       )}
       <div className="mt-[50px] mb-[100px]">
         <div className=" grid place-items-center md:grid-cols-2 lg:grid-cols-3 gap-2 h-full ">
-          {users.map((user) => {
+          {content?.map((item: any, index: number) => {
             const randomColor = getRandomColor();
             return (
-              <div key={user.email} className="group w-full">
+              <div key={index} className="group w-full">
                 <LibraryCard
-                  title={`${user.fullName}`}
+                  title={`${item.first_name}  ${item.last_name} ${item.drop_type}`}
                   mainIcon={
                     <FaGoogleDrive className="text-[#cbcbcb]" size={14} />
                   }
-                  userInitials={user.initials}
-                  userFullName={user.fullName}
-                  userEmail={user.email}
+                  userInitials={`${item.first_name.charAt(0)}${item.last_name.charAt(0)}`}
+                  userFullName={`${item.first_name}  ${item.last_name}`}
+                  userEmail={item.first_name}
                   userColor={randomColor}
                   buttons={[
                     {
                       element: (
-                        <div className="hidden group-hover:flex bg-blue-500 rounded-full h-[50px] w-[50px] items-center justify-center cursor-pointer">
+                        <div
+                          className="hidden group-hover:flex bg-blue-500 rounded-full h-[50px] w-[50px] items-center justify-center cursor-pointer"
+                          onClick={() => window.open(item.link, "_blank")}
+                        >
                           <IoIosArrowRoundDown
                             className="text-[#fff]"
                             size={24}
                           />
                         </div>
                       ),
-                      tooltip: "Download",
+                      tooltip: "Redirect",
                     },
                     {
                       element: (
@@ -213,7 +239,7 @@ const AssetsLibrary = () => {
                       element: (
                         <div
                           className="border border-[#000] text-[#000] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer"
-                          onClick={() => handleCopyLink(user.link)}
+                          onClick={() => handleCopyLink(item.link)}
                         >
                           <LuCopy size={14} />
                         </div>
@@ -224,14 +250,14 @@ const AssetsLibrary = () => {
                       element: (
                         <div
                           className={`${randomColor} rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer`}
-                          onClick={() => handleUserClick(user)}
+                          onClick={() => handleUserClick(item)}
                         >
                           <p className="text-[#fff] text-[16px] font-[600] tracking-[.1rem] font-Poppins ">
-                            {user.initials}
+                            {`${item.first_name.charAt(0)}${item.last_name.charAt(0)}`}
                           </p>
                         </div>
                       ),
-                      tooltip: user.fullName,
+                      tooltip: `${item.first_name}  ${item.last_name}`,
                     },
                   ]}
                 />
@@ -239,6 +265,11 @@ const AssetsLibrary = () => {
             );
           })}
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
       <div
         className={`custom-dialog-overlay ${
