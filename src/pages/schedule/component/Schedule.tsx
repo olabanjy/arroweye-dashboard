@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { GoArrowUpRight } from "react-icons/go";
 import { DateClickArg } from "@fullcalendar/interaction";
-import { CreateEvent, getEvents } from "@/services/api";
+import { CreateEvent, getBusiness, getEvents } from "@/services/api";
 import { ContentItem, EventsItem } from "@/types/contents";
 import { PiCalendarPlus } from "react-icons/pi";
 import { IoFilter } from "react-icons/io5";
@@ -22,15 +22,22 @@ interface FormErrors {
 
 interface ScheduleProps {
   filterIcon?: boolean;
+  isDateClickEnabled?: boolean;
 }
 
-const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
+const Schedule: React.FC<ScheduleProps> = ({
+  filterIcon = true,
+  isDateClickEnabled = false,
+}) => {
   const [content, setContent] = useState<ContentItem[]>([]);
   const [eventItem, setEventItem] = useState<EventsItem[]>([]);
+  const [vendorOptions, setVendorOptions] = useState<any>([]);
+  const [subvendorOptions, setSubvendorOptions] = useState<any>([]);
 
   useEffect(() => {
     getEvents()
       .then((fetchedContent) => {
+        console.log("Events", fetchedContent);
         setEventItem(fetchedContent || []);
       })
       .catch((err) => {
@@ -38,11 +45,38 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
       });
   }, []);
 
-  const events = eventItem.map((item) => ({
-    id: item?.code?.toString(),
+  useEffect(() => {
+    getBusiness()
+      .then((fetchedContent: any) => {
+        // Filter and map data for vendors
+        const vendors = fetchedContent
+          .filter((business: any) => business.type === "Vendor")
+          .map((business: any) => ({
+            value: business.id,
+            label: business.organization_name,
+          }));
+
+        // Filter and map data for subvendors
+        const subvendors = fetchedContent
+          .filter((business: any) => business.type === "SubVendor")
+          .map((business: any) => ({
+            value: business.id,
+            label: business.organization_name,
+          }));
+
+        setVendorOptions(vendors);
+        setSubvendorOptions(subvendors);
+      })
+      .catch((err) => {
+        console.error("Error fetching business data:", err);
+      });
+  }, []);
+
+  const events = eventItem.map((item, index) => ({
+    id: `${item?.code}-${index}`, // Make unique by adding index
     title: item.title,
-    start: item.start_dte,
-    end: item.end_dte,
+    start: item.created,
+    end: item.created,
   }));
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -50,7 +84,7 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
   const [formData, setFormData] = useState({
     title: "",
     vendor_id: "",
-    subvendor: "",
+    subvendor_id: "",
     location: "",
     start_dte: "",
     end_dte: "",
@@ -64,6 +98,8 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
   });
 
   const handleDateClick = (info: DateClickArg) => {
+    if (!isDateClickEnabled) return;
+    
     const selectedDate = info.dateStr;
     const currentDate = new Date().toISOString().split("T")[0];
 
@@ -79,179 +115,145 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
     setIsModalVisible(false);
   };
 
-  const handleFormChange = (value: React.ChangeEvent<HTMLInputElement>) => {
-    if ((value as React.ChangeEvent<HTMLInputElement>).target) {
-      const { name, value: inputValue } = (
-        value as React.ChangeEvent<HTMLInputElement>
-      ).target;
-
-      setFormData((prevData) => {
-        const updatedData = { ...prevData, [name]: inputValue };
-        console.log(updatedData);
-
-        const newErrors: { [key: string]: string } = { ...formErrors };
-
-        if (name === "title" && !inputValue) {
-          newErrors.title = "Event Title is required.";
-        } else {
-          newErrors.title = "";
-        }
-
-        if (name === "start_dte" && !inputValue) {
-          newErrors.start_dte = "Start Date is required.";
-        } else {
-          newErrors.start_dte = "";
-        }
-
-        if (name === "end_dte" && !inputValue) {
-          newErrors.end_dte = "End Date is required.";
-        } else {
-          newErrors.end_dte = "";
-        }
-
-        if (
-          name === "code" &&
-          value &&
-          (value as unknown as string).length > 6
-        ) {
-          newErrors.code = "Code must be less than or equal to 6 characters.";
-        } else if (name === "code") {
-          newErrors.code = "";
-        }
-
-        setFormErrors(newErrors);
-
-        return updatedData;
-      });
-    } else {
-      setFormData((prevData) => {
-        const updatedData = { ...prevData, subvendor: value.toString() };
-        console.log(updatedData);
-
-        const newErrors: { [key: string]: string } = { ...formErrors };
-
-        if (!formData.title) {
-          newErrors.title = "Event Title is required.";
-        } else {
-          newErrors.title = "";
-        }
-
-        if (!formData.start_dte) {
-          newErrors.start_dte = "Start Date is required.";
-        } else {
-          newErrors.start_dte = "";
-        }
-
-        if (!formData.end_dte) {
-          newErrors.end_dte = "End Date is required.";
-        } else {
-          newErrors.end_dte = "";
-        }
-
-        setFormErrors(newErrors);
-
-        return updatedData;
-      });
-    }
+  const formatDateToString = (dateStr: string) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return date.toISOString();
   };
 
-  const handleFormChange2 = (value: {
-    name: string;
-    value: string | number;
-  }) => {
-    const { name, value: inputValue } = value;
-    console.log("Updating field:", name, "with value:", inputValue);
+  const handleFormChange = (e: any) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => {
+      const newData = { ...prevData, [name]: value };
 
-    setFormData((prevState) => {
-      const updatedData = {
-        ...prevState,
-        [name]: inputValue,
-      };
+      // Clear end_dte error if start_dte is changed
+      if (name === "start_dte") {
+        setFormErrors((prev) => ({
+          ...prev,
+          end_dte: newData.end_dte ? validateDates(value, newData.end_dte) : "",
+        }));
+      }
 
-      console.log(updatedData);
+      // Validate end_dte when it's changed
+      if (name === "end_dte") {
+        setFormErrors((prev) => ({
+          ...prev,
+          end_dte: validateDates(newData.start_dte, value),
+        }));
+      }
 
-      return updatedData;
+      return newData;
     });
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const validateDates = (startDate: string, endDate: string): string => {
+    if (!startDate || !endDate) return "";
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (end < start) {
+      return "End date cannot be before start date";
+    }
+    return "";
+  };
+
+  const handleSelectChange = ({ name, value }: any) => {
+    console.log(`Updating select ${name} with value:`, value); // Debug log
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleFormSubmit = async (e: any) => {
     e.preventDefault();
 
-    const newErrors: FormErrors = {
+    const newErrors = {
       title: "",
       start_dte: "",
       end_dte: "",
+      code: "",
     };
 
-    if (!formData.title) {
+    // Validation
+    if (!formData.title.trim()) {
       newErrors.title = "Event Title is required.";
     }
 
     if (!formData.start_dte) {
       newErrors.start_dte = "Start Date is required.";
     }
-    if (!formData.code || formData.code.length > 6) {
-      newErrors.code = "Code must be less than or equal to 6 characters.";
-    } else {
-      newErrors.code = "";
+
+    if (!formData.start_dte) {
+      newErrors.start_dte = "Start Date is required.";
     }
+
+    if (!formData.code) {
+      newErrors.start_dte = "Product Code is required.";
+    }
+
     if (!formData.end_dte) {
       newErrors.end_dte = "End Date is required.";
+    } else {
+      const dateError = validateDates(formData.start_dte, formData.end_dte);
+      if (dateError) {
+        newErrors.end_dte = dateError;
+      }
     }
+
+    // if (formData.code) {
+    //   if (formData.code.length > 6) {
+    //     newErrors.code = "Code must be less than or equal to 6 characters.";
+    //   }
+    // }
 
     setFormErrors(newErrors);
 
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
-    console.log("Form submitted!", FormData);
 
     if (!hasErrors) {
-      const updatedFormData = {
-        ...formData,
-        vendor_id: formData.vendor_id ? parseInt(formData.vendor_id) : null,
-        subvendor: formData.subvendor ? parseInt(formData.subvendor) : null,
-      };
+      try {
+        // Format dates to ISO strings
+        const updatedFormData = {
+          ...formData,
+          vendor_id: formData.vendor_id ? parseInt(formData.vendor_id) : null,
+          subvendor_id: formData.subvendor_id
+            ? parseInt(formData.subvendor_id)
+            : null,
+          start_dte: formatDateToString(formData.start_dte),
+          end_dte: formatDateToString(formData.end_dte),
+        };
 
-      console.log("Form data is valid:", updatedFormData);
+        console.log("Submitting form data:", updatedFormData);
 
-      CreateEvent(updatedFormData)
-        .then(() => {
-          console.log("Form submitted successfully!");
-          const newEvent: ContentItem = {
-            id: (content.length + 1).toString(),
-            title: formData.title,
-            start_dte: formData.start_dte,
-            end_dte: formData.end_dte,
-          };
-          setContent((prevEvents) => [...prevEvents, newEvent]);
+        await CreateEvent(updatedFormData);
 
-          setFormData({
-            title: "",
-            vendor_id: "",
-            subvendor: "",
-            location: "",
-            start_dte: "",
-            end_dte: "",
-            code: "",
-          });
-          setIsModalVisible(false);
-        })
-        .catch((err) => {
-          console.error("Error submitting form:", err);
+        const newEvent = {
+          id: (content.length + 1).toString(),
+          title: formData.title,
+          start_dte: updatedFormData.start_dte,
+          end_dte: updatedFormData.end_dte,
+        };
+
+        setContent((prevEvents) => [...prevEvents, newEvent]);
+
+        // Reset form
+        setFormData({
+          title: "",
+          vendor_id: "",
+          subvendor_id: "",
+          location: "",
+          start_dte: "",
+          end_dte: "",
+          code: "",
         });
-    } else {
-      console.log("Form contains errors. Not submitting.");
+        setIsModalVisible(false);
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
     }
   };
-
-  const vendorOptions = [
-    { value: 1, label: "Ade" },
-    { value: 2, label: "VIVO" },
-  ];
-
-  const subVendorOptions = [
-    { value: 3, label: "SubAde" },
-    { value: 4, label: "tedXOAU" },
-  ];
 
   return (
     <div>
@@ -373,22 +375,22 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
                     name="vendor_id"
                     value={formData.vendor_id}
                     onChange={(value) =>
-                      handleFormChange2({ name: "vendor_id", value })
+                      handleSelectChange({ name: "vendor_id", value })
                     }
-                    // onChange={handleFormChange2}
                     options={vendorOptions}
+                    placeholder="Select Vendor"
                   />
                 </div>
 
                 <div className="max-w-[400px] w-full">
                   <SelectInput
-                    name="subvendor"
-                    value={formData.subvendor}
-                    // labelText="Subvendor"
+                    name="subvendor_id"
+                    value={formData.subvendor_id}
                     onChange={(value) =>
-                      handleFormChange2({ name: "subvendor", value })
+                      handleSelectChange({ name: "subvendor_id", value })
                     }
-                    options={subVendorOptions}
+                    options={subvendorOptions}
+                    placeholder="Select Subvendor"
                   />
                 </div>
 
@@ -402,16 +404,18 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
                   />
                 </div>
 
-                <div className="max-w-[400px] w-full">
+                {/* <div className="max-w-[400px] w-full">
+                  -{" "}
                   <SelectInput
                     name="eventType"
+                    value={formData.eventType}
                     onChange={(value) =>
-                      handleFormChange2({ name: "eventType", value })
+                      handleSelectChange({ name: "eventType", value })
                     }
-                    // labelText="Select Event Type"
                     options={[{ value: "Virtual", label: "Virtual" }]}
+                    placeholder="Select Event Type"
                   />
-                </div>
+                </div> */}
                 <div className="max-w-[400px] w-full">
                   <Input
                     type="text"
@@ -493,7 +497,7 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
                     name="vendor_id"
                     value={formData.vendor_id}
                     onChange={(value) =>
-                      handleFormChange2({ name: "vendor_id", value })
+                      handleSelectChange({ name: "vendor_id", value })
                     }
                     // onChange={handleFormChange2}
                     options={vendorOptions}
@@ -502,13 +506,13 @@ const Schedule: React.FC<ScheduleProps> = ({ filterIcon = true }) => {
 
                 <div className="max-w-[400px] w-full">
                   <SelectInput
-                    name="subvendor"
-                    value={formData.subvendor}
-                    // labelText="Subvendor"
+                    name="subvendor_id"
+                    value={formData.subvendor_id}
+                    // labelText="subvendor_id"
                     onChange={(value) =>
-                      handleFormChange2({ name: "subvendor", value })
+                      handleSelectChange({ name: "subvendor_id", value })
                     }
-                    options={subVendorOptions}
+                    options={subvendorOptions}
                   />
                 </div>
               </div>

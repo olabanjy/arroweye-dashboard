@@ -450,7 +450,7 @@ const Manage = () => {
           </div>
 
           <div className="mt-[20px] space-y-[20px]">
-            {items.map((item, index) => (
+            {items.map((item: any, index) => (
               <div className="flex items-end gap-[20px]" key={item.id}>
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 items-center gap-[20px]">
                   <div className=" flex items-center col-span-2  w-full">
