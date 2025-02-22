@@ -5,7 +5,7 @@ import Schedule from "./component/Schedule";
 const SchedulePage = () => {
   return (
     <DashboardLayout>
-      <Schedule />
+      <Schedule isDateClickEnabled={true} />
     </DashboardLayout>
   );
 };

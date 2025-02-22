@@ -492,7 +492,7 @@ const ProjectDetails = () => {
         <InsightChart editMode={toggleNotifications} />
 
         <div className="  ">
-          <Schedule filterIcon={false} />
+          <Schedule filterIcon={false} isDateClickEnabled={false} />
         </div>
 
         <div

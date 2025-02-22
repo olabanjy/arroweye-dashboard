@@ -8,7 +8,7 @@ const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
     <div className="absolute left-[25px] top-0 transform  ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-IBM">
-      <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black  border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
+      <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
       {info}
     </div>
   </div>
@@ -22,6 +22,8 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   info?: string;
   rounded?: boolean;
   placeholder?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const useValidation = (validate: InputProps["validate"]) => {
@@ -66,14 +68,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       info,
       rounded,
       placeholder,
+      value,
+      onChange,
+      name,
       ...props
     },
     ref
   ) => {
-    const [inputValue, setInputValue] = useState<string>("");
     const [validationError, setValidationError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     const { validateInput, getValidationError } = useValidation(validate);
 
@@ -86,8 +89,19 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       }
     };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setInputValue(event.target.value);
+    const handleDateChange = (date: Date | null) => {
+      if (date && onChange) {
+        // Create a synthetic event
+        const formattedDate = date.toISOString().slice(0, 16);
+        const syntheticEvent = {
+          target: {
+            name,
+            value: formattedDate,
+          },
+        } as React.ChangeEvent<HTMLInputElement>;
+
+        onChange(syntheticEvent);
+      }
     };
 
     const togglePasswordVisibility = () => {
@@ -114,17 +128,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         </div>
         {type === "datetime-local" ? (
           <DatePicker
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
+            selected={value ? new Date(value) : null}
+            onChange={handleDateChange}
             className={cn(
               "block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white",
               rounded ? "rounded-full" : "rounded-[8px]",
               (error || validationError) && "border-red-500 focus:ring-red-500",
               className
             )}
-            dateFormat="yyyy-MM-dd'T'HH:mm"
+            dateFormat="yyyy-MM-dd HH:mm"
             showTimeSelect
             timeFormat="HH:mm"
+            timeIntervals={15}
             placeholderText={placeholder}
           />
         ) : (
@@ -140,9 +155,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 className
               )}
               placeholder={placeholder}
-              value={inputValue}
+              value={value}
+              name={name}
               onBlur={handleBlur}
-              onChange={handleChange}
+              onChange={onChange}
               aria-invalid={!!(error || validationError)}
               aria-describedby={props.id ? `${props.id}-error` : undefined}
               {...props}
