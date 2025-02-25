@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { LuCopy } from "react-icons/lu";
 import { ContentItem } from "@/types/contents";
-import { getDropZones } from "@/services/api";
+import { getBusiness, getDropZones } from "@/services/api";
 import Pagination from "./component/Pagination";
 
 const users = [
@@ -89,17 +89,86 @@ const AssetsLibrary = () => {
     setFilter(false);
   }, []);
 
-  const fetchDropZones = async (page: number) => {
-    const response = await getDropZones(page);
+  const [filters, setFilters] = useState({
+    search: "",
+    year: "",
+    month: "",
+    vendor: "",
+    subvendor: "",
+    platform: "",
+  });
+  const [debouncedSearch, setDebouncedSearch] = useState(filters.search);
+  const [vendorOptions, setVendorOptions] = useState([]);
+  const [subVendorOptions, setSubvendorOptions] = useState([]);
+
+  const updateFilters = (key: string, value: string) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [key]: value,
+    }));
+  };
+
+  const fetchDropZones = async () => {
+    const response = await getDropZones({
+      page: currentPage,
+      ...filters,
+      search: debouncedSearch, // Use debounced search value
+    });
+
     if (response) {
       setContent(response.results || []);
       setTotalPages(Math.ceil(response.count / 10));
     }
   };
 
+  // Debounce effect for search
   useEffect(() => {
-    fetchDropZones(currentPage);
-  }, [currentPage]);
+    const handler = setTimeout(() => {
+      setDebouncedSearch(filters.search);
+    }, 2000); // 2 seconds debounce
+
+    return () => clearTimeout(handler);
+  }, [filters.search]);
+
+  // Trigger API call when filters (excluding search) or page changes
+  useEffect(() => {
+    fetchDropZones();
+  }, [
+    currentPage,
+    debouncedSearch,
+    filters.year,
+    filters.month,
+    filters.vendor,
+    filters.subvendor,
+    filters.platform,
+  ]);
+
+  useEffect(() => {
+    getBusiness()
+      .then((fetchedContent: any) => {
+        // Filter and map data for vendors
+        const vendors = fetchedContent
+          .filter((business: any) => business.type === "Vendor")
+          .map((business: any) => ({
+            value: business.id,
+            label: business.organization_name,
+          }));
+
+        // Filter and map data for subvendors
+        const subvendors = fetchedContent
+          .filter((business: any) => business.type === "SubVendor")
+          .map((business: any) => ({
+            value: business.id,
+            label: business.organization_name,
+          }));
+
+        setVendorOptions(vendors);
+        setSubvendorOptions(subvendors);
+      })
+      .catch((err) => {
+        console.error("Error fetching business data:", err);
+      });
+  }, []);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -135,6 +204,8 @@ const AssetsLibrary = () => {
               type="text"
               placeholder="Search..."
               className="w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
+              value={filters.search}
+              onChange={(e: any) => updateFilters("search", e.target.value)}
             />
           </div>
           <div className="flex items-center gap-[5px]">
@@ -155,9 +226,12 @@ const AssetsLibrary = () => {
                 placeholder="Year"
                 rounded={true}
                 options={[
+                  { value: "2025", label: "2025" },
                   { value: "2024", label: "2024" },
                   { value: "2023", label: "2023" },
                 ]}
+                value={filters.year}
+                onChange={(value: any) => updateFilters("year", value)}
               />
             </div>
             <div className="max-w-[150px] w-full rounded-full">
@@ -165,33 +239,70 @@ const AssetsLibrary = () => {
                 placeholder="Month"
                 rounded={true}
                 options={[
-                  { value: "january", label: "January" },
-                  { value: "february", label: "February" },
+                  { value: "1", label: "January" },
+                  { value: "2", label: "February" },
+                  { value: "3", label: "March" },
+                  { value: "4", label: "April" },
+                  { value: "5", label: "May" },
+                  { value: "6", label: "June" },
+                  { value: "7", label: "July" },
+                  { value: "8", label: "August" },
+                  { value: "8", label: "August" },
+                  { value: "9", label: "September" },
+                  { value: "10", label: "October" },
+                  { value: "11", label: "November" },
+                  { value: "12", label: "December" },
                 ]}
+                value={filters.month}
+                onChange={(value: any) => updateFilters("month", value)}
               />
             </div>
             <div className="max-w-[150px] w-full">
               <SelectInput
                 placeholder="Vendor"
                 rounded={true}
-                options={[{ value: "naville", label: "NAVILLE" }]}
+                options={vendorOptions}
+                value={filters.vendor}
+                onChange={(value: any) => updateFilters("vendor", value)}
               />
             </div>
             <div className="max-w-[150px] w-full">
               <SelectInput
                 placeholder="Sub-Vendor"
                 rounded={true}
-                options={[{ value: "naville", label: "NAVILLE" }]}
+                options={subVendorOptions}
+                value={filters.subvendor}
+                onChange={(value: any) => updateFilters("subvendor", value)}
               />
             </div>
             <div className="max-w-[150px] w-full">
               <SelectInput
                 placeholder="Platform"
                 rounded={true}
-                options={[{ value: "naville", label: "NAVILLE" }]}
+                options={[
+                  { value: "GoogleDrive", label: "GoogleDrive" },
+                  { value: "WeTransfer", label: "WeTransfer" },
+                  { value: "OneDrive", label: "OneDrive" },
+                  { value: "DropBox", label: "DropBox" },
+                  { value: "PCloud", label: "PCloud" },
+                ]}
+                value={filters.platform}
+                onChange={(value: any) => updateFilters("platform", value)}
               />
             </div>
-            <p className="cursor-pointer text-[14px] rounded-full px-[16px] py-[7px] hover:bg-orange-500 bg-[#000000] text-white inline">
+            <p
+              className="cursor-pointer text-[14px] rounded-full px-[16px] py-[7px] hover:bg-orange-500 bg-[#000000] text-white inline"
+              onClick={() =>
+                setFilters({
+                  search: "",
+                  year: "",
+                  month: "",
+                  vendor: "",
+                  subvendor: "",
+                  platform: "",
+                })
+              }
+            >
               Clear Filters
             </p>
           </div>

@@ -39,9 +39,6 @@ export const getLoggedInUser = async (): Promise<any | null> => {
       method: "GET",
       url: `/api/v1/ums/me/`,
       requireToken: true,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
 
     return response;
@@ -65,7 +62,7 @@ export const getGenreContents = async (): Promise<ContentItem[] | null> => {
       method: "GET",
       url: `/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     ls.set("Genre", response, { encrypt: true });
@@ -98,7 +95,7 @@ export const getSingleContent = async (
       method: "GET",
       url: `/content/contents/${id}`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     if (response && response.id && response.title) {
@@ -144,7 +141,7 @@ export const CreateBusiness = async (payload: unknown): Promise<void> => {
       method: "POST",
       url: `/api/v1/org/create-business/create/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log(response);
@@ -181,7 +178,7 @@ export const CreateMedia = async (
       method: "POST",
       url: `/api/v1/projects/${id}/media/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
       headers: {
         "Content-Type": "multipart/form-data", // Set the Content-Type to multipart/form-data
       },
@@ -217,7 +214,7 @@ export const CreateMetric = async (payload: unknown): Promise<void> => {
       method: "POST",
       url: `/api/v1/projects/general/metric/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log(response);
@@ -250,7 +247,7 @@ export const CreateChannel = async (payload: unknown): Promise<void> => {
       method: "POST",
       url: `/api/v1/projects/general/airplay/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log(response);
@@ -286,7 +283,7 @@ export const CreateSocialStats = async (
       method: "POST",
       url: `api/v1/projects/${id}/social-media/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log(response);
@@ -322,7 +319,7 @@ export const CreateDspStats = async (
       method: "POST",
       url: `api/v1/projects/${id}/dsp/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log(response);
@@ -355,7 +352,7 @@ export const CreateService = async (payload: unknown): Promise<void> => {
       method: "POST",
       url: `/api/v1/payments/service/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log(response);
@@ -391,7 +388,7 @@ export const CreateInvoice = async (payload: unknown): Promise<void> => {
       method: "POST",
       url: `/api/v1/payments/invoice/create/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log(response);
@@ -424,7 +421,7 @@ export const CreateEvent = async (payload: unknown): Promise<void> => {
       method: "POST",
       url: `/api/v1/projects/schedule/events/create/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log(response);
@@ -447,19 +444,17 @@ export const CreateEvent = async (payload: unknown): Promise<void> => {
     }
   }
 };
-export const AddStaff = async (payload: unknown): Promise<void> => {
+export const AddStaff = async (payload: unknown): Promise<any> => {
   try {
-    const { data: response } = await apiRequest<
-      ApiRequestResponse<ApiResponse>
-    >({
+    const response = await apiRequest<ApiRequestResponse<ApiResponse>>({
       method: "POST",
       url: `/api/v1/org/staff/add-user/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
-    console.log(response);
     toast.success("Adding Staff successful! Redirecting...");
+    return response;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
@@ -531,7 +526,7 @@ export const Verify = async (payload: unknown): Promise<void> => {
       method: "POST",
       url: `/verify/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log(response);
@@ -584,17 +579,43 @@ export const VerifyLogin = async (payload: unknown): Promise<void> => {
   }
 };
 
-export const getDropZones = async (page: number = 1): Promise<any | null> => {
+export const getDropZones = async ({
+  page = 1,
+  search = "",
+  year = "",
+  month = "",
+  vendor = "",
+  subvendor = "",
+  platform = "",
+}: {
+  page?: number;
+  search?: string;
+  year?: string;
+  month?: string;
+  vendor?: string;
+  subvendor?: string;
+  platform?: string;
+}): Promise<any | null> => {
   try {
     const content: any = ls.get("Profile", { decrypt: true });
     const token = content?.access;
+
+    // Construct query parameters dynamically
+    const params: Record<string, string | number> = { page };
+    if (search) params.search = search;
+    if (year) params.year = year;
+    if (month) params.month = month;
+    if (vendor) params.vendor = vendor;
+    if (subvendor) params.subvendor = subvendor;
+    if (platform) params.platform = platform;
+
     const response = await apiRequest({
       method: "GET",
       url: `/api/v1/projects/general/dropzone/`,
-      params: { page },
-      requireToken: false,
+      params,
+      requireToken: true,
       headers: {
-        Authorization: `Bearer ${token}`, // Set the Content-Type to multipart/form-data
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -619,7 +640,7 @@ export const getBusiness = async (): Promise<StaffItem[] | null> => {
       method: "GET",
       url: `/api/v1/org/business/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log("BUSINESS", response);
@@ -653,7 +674,7 @@ export const getStoredBusiness = (): StaffItem[] | null => {
 //       method: "GET",
 //       url: `/api/v1/projects/`,
 //       data: null,
-//       requireToken: false,
+//       requireToken: true,
 //     });
 
 //     ls.set("Projects", response, { encrypt: true });
@@ -679,7 +700,7 @@ export const getProjects = async (): Promise<ContentItem[] | null> => {
       method: "GET",
       url: `/api/v1/projects/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     ls.set("Projects", response, { encrypt: true });
@@ -718,7 +739,7 @@ export const getProjectNotifications = async (
       method: "GET",
       url: `/api/v1/projects/${id}/notifications/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     // Validate response structure before using
@@ -758,7 +779,7 @@ export const getAirPlayStats = async (id: number): Promise<any | null> => {
       method: "GET",
       url: `/api/v1/projects/${id}/get-airplay-stats/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     // Validate response structure before using
@@ -804,7 +825,7 @@ export const getSocialMediaStats = async (id: number): Promise<any | null> => {
       method: "GET",
       url: `/api/v1/projects/${id}/get-social-media-stats/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     // Validate response structure before using
@@ -850,7 +871,7 @@ export const getDSPStats = async (id: number): Promise<any | null> => {
       method: "GET",
       url: `/api/v1/projects/${id}/get-dsp-stats/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     // Validate response structure before using
@@ -896,7 +917,7 @@ export const getAudienceStats = async (id: number): Promise<any | null> => {
       method: "GET",
       url: `/api/v1/projects/${id}/audience-stats/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     // Validate response structure before using
@@ -942,7 +963,7 @@ export const geteSMActionStats = async (id: number): Promise<any | null> => {
       method: "GET",
       url: `/api/v1/projects/${id}/sm-actions-stats/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     // Validate response structure before using
@@ -990,7 +1011,7 @@ export const geteDSPPerformanceStats = async (
       method: "GET",
       url: `/api/v1/projects/${id}/dsp-performance-stats/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     // Validate response structure before using
@@ -1038,7 +1059,7 @@ export const getSingleProject = async (
       method: "GET",
       url: `/api/v1/projects/${id}/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     if (response && response.id && response.title) {
@@ -1082,7 +1103,7 @@ export const getInvoice = async (): Promise<ContentItem[] | null> => {
       method: "GET",
       url: `/api/v1/payments/invoice/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     ls.set("Invoice", response, { encrypt: true });
@@ -1114,7 +1135,7 @@ export const getService = async (): Promise<ContentItem[] | null> => {
       method: "GET",
       url: `/api/v1/payments/service/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     ls.set("Service", response, { encrypt: true });
@@ -1146,12 +1167,36 @@ export const getEvents = async (): Promise<EventsItem[] | null> => {
       method: "GET",
       url: `/api/v1/projects/schedule/events/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     ls.set("Events", response, { encrypt: true });
 
     return response as EventsItem[];
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          "Content Retrieval failed. Please try again."
+      );
+    } else {
+      toast.error("Content Retrieval failed. Please try again.");
+    }
+
+    return null;
+  }
+};
+
+export const getProjectsEvents = async (id: number): Promise<any | null> => {
+  try {
+    const response = await apiRequest({
+      method: "GET",
+      url: `/api/v1/projects/${id}/events/`,
+      data: null,
+      requireToken: true,
+    });
+
+    return response;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       toast.error(
@@ -1180,7 +1225,7 @@ export const getPaymentInvoice = async (
       method: "GET",
       url: `/api/v1/payments/invoice/${id}/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     if (response && response.total && response.currency) {
@@ -1218,7 +1263,7 @@ export const getChannel = async (): Promise<ContentItem[] | null> => {
       method: "GET",
       url: `/api/v1/projects/general/airplay/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     ls.set("Channel", response, { encrypt: true });
@@ -1244,7 +1289,7 @@ export const getMetric = async (): Promise<ContentItem[] | null> => {
       method: "GET",
       url: `/api/v1/projects/general/metric/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     ls.set("Channel", response, { encrypt: true });
@@ -1270,7 +1315,7 @@ export const getSocialMedia = async (): Promise<ContentItem[] | null> => {
       method: "GET",
       url: `/api/v1/projects/general/social-media/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     ls.set("SocialMedia", response, { encrypt: true });
@@ -1296,7 +1341,7 @@ export const getDsp = async (): Promise<ContentItem[] | null> => {
       method: "GET",
       url: `/api/v1/projects/general/dsp/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     ls.set("DspMedia", response, { encrypt: true });
@@ -1324,7 +1369,7 @@ export const getBusinessStaff = async (
       method: "GET",
       url: `/api/v1/org/business/${id}/staff/`,
       data: null,
-      requireToken: false,
+      requireToken: true,
     });
 
     const contentItem: ContentItem[] = response;
@@ -1362,7 +1407,7 @@ export const archiveProject = async (
       method: "PATCH",
       url: `/api/v1/projects/${id}/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log(response);
@@ -1396,7 +1441,7 @@ export const shareProject = async (
       method: "POST",
       url: `/api/v1/projects/${id}/share-project/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log(response);
@@ -1510,7 +1555,7 @@ export const AddAirplayData = async (
       method: "POST",
       url: `/api/v1/projects/${id}/air-plays/`,
       data: payload,
-      requireToken: false,
+      requireToken: true,
     });
 
     console.log(response);
