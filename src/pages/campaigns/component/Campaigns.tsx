@@ -32,6 +32,9 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const [content, setContent] = useState<ContentItem[] | null>(null);
   const [isArchiving, setIsArchiving] = useState<number | null>(null);
 
+  const [investmentFilter, setInvestmentFilter] = useState<any>("");
+  const [revenueFilter, setRevenueFilter] = useState<any>("");
+
   console.log(isArchiving);
   useEffect(() => {
     fetchProjects();
@@ -40,6 +43,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const fetchProjects = async () => {
     try {
       const fetchedContent = await getProjects();
+      console.log("Projects", fetchedContent);
       setContent(fetchedContent);
     } catch (error) {
       console.error("Error fetching projects:", error);
@@ -67,17 +71,34 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
     }
   };
 
-  const filteredContent = content?.filter(
-    (item) =>
-      !item.archived &&
-      (item.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item.vendor?.organization_name
-          ?.toLowerCase()
-          .includes(searchValue.toLowerCase()) ||
-        item.subvendor?.organization_name
-          ?.toLowerCase()
-          .includes(searchValue.toLowerCase()))
-  );
+  const filteredContent = content
+    ?.filter(
+      (item) =>
+        !item.archived &&
+        (item.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
+          item.vendor?.organization_name
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase()) ||
+          item.subvendor?.organization_name
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase()))
+    )
+    .sort((a: any, b: any) => {
+      if (investmentFilter === "htl") {
+        return b.total_investment - a.total_investment; // High to Low
+      } else if (investmentFilter === "lth") {
+        return a.total_investment - b.total_investment; // Low to High
+      }
+      return 0; // No sorting
+    })
+    .sort((a: any, b: any) => {
+      if (revenueFilter === "htl") {
+        return b.total_revenue - a.total_revenue; // High to Low
+      } else if (revenueFilter === "lth") {
+        return a.total_revenue - b.total_revenue; // Low to High
+      }
+      return 0; // No sorting
+    });
 
   return (
     <>
@@ -91,6 +112,8 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                 { value: "htl", label: "High to Low" },
                 { value: "lth", label: "Low to High" },
               ]}
+              value={investmentFilter}
+              onChange={(value) => setInvestmentFilter(value)}
             />
           </div>
           <div className="max-w-[150px] w-full">
@@ -101,9 +124,17 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                 { value: "htl", label: "High to Low" },
                 { value: "lth", label: "Low to High" },
               ]}
+              value={revenueFilter}
+              onChange={(value) => setRevenueFilter(value)}
             />
           </div>
-          <p className="max-w-[150px] w-full cursor-pointer text-[14px] rounded-full px-[10px] py-[5px] hover:bg-orange-500 bg-[#000000] text-white inline">
+          <p
+            className="max-w-[150px] w-full cursor-pointer text-[14px] rounded-full px-[10px] py-[5px] hover:bg-orange-500 bg-[#000000] text-white inline"
+            onClick={() => {
+              setInvestmentFilter("");
+              setRevenueFilter("");
+            }}
+          >
             Clear Filters
           </p>
         </div>

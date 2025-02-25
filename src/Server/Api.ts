@@ -1,4 +1,5 @@
 import { RootState, store } from "@/store/store";
+import ls from "localstorage-slim";
 import axios, {
   AxiosRequestConfig,
   AxiosResponse,
@@ -19,7 +20,8 @@ console.log("Base URL:", process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN);
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const state: RootState = store.getState();
-    const token = state.auth?.response?.access;
+    const content: any = ls.get("Profile", { decrypt: true });
+    const token = content?.access;
 
     if (token) {
       config.headers = new AxiosHeaders(config.headers);

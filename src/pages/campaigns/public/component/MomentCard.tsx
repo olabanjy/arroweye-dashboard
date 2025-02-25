@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface MomentCardProps {
   videoUrls: string[];
+  reportUrls: string[];
   videoTitle: string;
   watchButtonText?: string;
   downloadButtonText?: string;
@@ -19,6 +20,7 @@ interface MomentCardProps {
 
 const MomentCard: React.FC<MomentCardProps> = ({
   videoUrls = [],
+  reportUrls = [],
   videoTitle,
   watchButtonText,
   downloadButtonText = "Download Data",
@@ -135,15 +137,27 @@ const MomentCard: React.FC<MomentCardProps> = ({
       <div className="space-y-[5px] flex flex-col items-center justify-center">
         <div className="flex items-center gap-2 w-full">
           {watchButtonText && (
-            <p className="p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[16px] font-[500] flex-grow rounded bg-black text-white text-center">
+            <button
+              className="p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[16px] font-[500] flex-grow rounded bg-black text-white text-center"
+              onClick={() =>
+                window.open(videoUrls[currentVideoIndex], "_blank")
+              }
+              disabled={!videoUrls[currentVideoIndex]}
+            >
               {watchButtonText}
-            </p>
+            </button>
           )}
 
           {downloadIcon && watchButtonText && (
-            <div className="bg-black hover:bg-orange-500 font-IBM text-[16px] font-medium text-white p-[11px] rounded inline-flex">
+            <button
+              className="bg-black hover:bg-orange-500 font-IBM text-[16px] font-medium text-white p-[11px] rounded inline-flex"
+              onClick={() =>
+                window.open(videoUrls[currentVideoIndex], "_blank")
+              }
+              disabled={!videoUrls[currentVideoIndex]}
+            >
               <MdOutlineFileDownload className="text-[16px]" />
-            </div>
+            </button>
           )}
         </div>
         {assetsButton && (
@@ -151,12 +165,16 @@ const MomentCard: React.FC<MomentCardProps> = ({
             {assetsButton}
           </p>
         )}
-        <div className="p-2 font-IBM text-[16px] font-[500] w-full rounded text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center">
+        <button
+          className="p-2 font-IBM text-[16px] font-[500] w-full rounded text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
+          onClick={() => window.open(reportUrls[currentVideoIndex])}
+          disabled={!reportUrls[currentVideoIndex]}
+        >
           <p>{downloadButtonText}</p>
           <sup className="font-bold p-2 rounded-full bg-white text-black mt-1">
             CSV
           </sup>
-        </div>
+        </button>
 
         {radioButtonText && (
           <p

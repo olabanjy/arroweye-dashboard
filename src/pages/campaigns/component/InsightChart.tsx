@@ -28,6 +28,8 @@ import { BsTelegram } from "react-icons/bs";
 import { usePDF } from "react-to-pdf";
 import getDarkerColor from "@/lib/getDarkerColor";
 import { toast } from "react-toastify";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const selectOptions = [
   [
@@ -88,6 +90,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   const [smactionData, setSmactionData] = useState<any>({});
   const [dspPerformanceData, setDspPerformanceData] = useState<any>({});
   const [momentMediaData, setMomentMediaData] = useState<any>([]);
+  const [momentReportUrls, setMomentReportUrls] = useState<any>([]);
   const [recapMediaData, setRecapMediaData] = useState<any>([]);
   const [dspMediaData, setDspMediaData] = useState<any>([]);
 
@@ -314,6 +317,21 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
   const { toPDF, targetRef } = usePDF({ filename: "dashboard.pdf" });
 
+  const handleDownloadPDF = () => {
+    const input = document.getElementById("pdf-content");
+    if (input) {
+      html2canvas(input).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF("landscape");
+        const imgWidth = 297;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+        pdf.save("dashboard.pdf");
+        toast.success("PDF downloaded");
+      });
+    }
+  };
+
   useEffect(() => {
     if (media.length > 0) {
       const newMomentMedia = media.filter(
@@ -322,8 +340,12 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
       const embedMomentLinks = newMomentMedia.map(
         (item: any) => item.embed_link
       );
+      const momentReportUrl = newMomentMedia.map((item: any) => item.report);
       const newRecapMedia = media.filter((item: any) => item?.type === "Recap");
       const embedRecapLinks = newRecapMedia.map((item: any) => item.embed_link);
+
+      console.log("Moments", newMomentMedia);
+      setMomentReportUrls(momentReportUrl);
       setMomentMediaData(embedMomentLinks);
       setRecapMediaData(embedRecapLinks);
     }
@@ -350,7 +372,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   };
 
   return (
-    <div className=" " ref={targetRef}>
+    <div id="pdf-content" ref={targetRef}>
       <div className="mt-[20px] mb-[80px]">
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px] w-full">
           <div className="border p-[20px] w-full rounded-[8px] space-y-[20px]  hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
@@ -402,6 +424,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             <MomentCard
               MomentsTitle="MOMENTS"
               videoUrls={momentMediaData}
+              reportUrls={momentReportUrls}
               videoTitle="Moments"
               watchButtonText="Watch"
               downloadButtonText="Download Data"
@@ -454,6 +477,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             <MomentCard
               MomentsTitle="REWIND"
               videoUrls={recapMediaData}
+              reportUrls={momentReportUrls}
               videoTitle="Recap"
               watchButtonText="Watch"
               downloadButtonText="Download Data"

@@ -7,6 +7,7 @@ const Moments = () => {
     <div className=" grid md:grid-cols-3 gap-[20px] place-items-center">
       <MomentCard
         videoUrls={["https://www.youtube.com/embed/L_kVchHsCYM"]}
+        reportUrls={[]}
         videoTitle="How to use Chat GPT to generate social media captions"
         watchButtonText="Watch Now"
         downloadButtonText="Download Data"
@@ -14,6 +15,7 @@ const Moments = () => {
       />
       <MomentCard
         videoUrls={["https://www.youtube.com/embed/L_kVchHsCYM"]}
+        reportUrls={[]}
         videoTitle="How to use Chat GPT to generate social media captions"
         watchButtonText="Watch Now"
         downloadButtonText="Download Data"

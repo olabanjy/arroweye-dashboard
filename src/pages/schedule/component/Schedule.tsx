@@ -9,10 +9,16 @@ import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { GoArrowUpRight } from "react-icons/go";
 import { DateClickArg } from "@fullcalendar/interaction";
-import { CreateEvent, getBusiness, getEvents } from "@/services/api";
+import {
+  CreateEvent,
+  getBusiness,
+  getEvents,
+  getProjectsEvents,
+} from "@/services/api";
 import { ContentItem, EventsItem } from "@/types/contents";
 import { PiCalendarPlus } from "react-icons/pi";
 import { IoFilter } from "react-icons/io5";
+import { useRouter } from "next/router";
 interface FormErrors {
   title?: string;
   start_dte?: string;
@@ -23,27 +29,44 @@ interface FormErrors {
 interface ScheduleProps {
   filterIcon?: boolean;
   isDateClickEnabled?: boolean;
+  isProjectPage?: boolean;
+  isSchedulePage?: boolean;
 }
 
 const Schedule: React.FC<ScheduleProps> = ({
   filterIcon = true,
   isDateClickEnabled = false,
+  isProjectPage = false,
+  isSchedulePage = false,
 }) => {
+  const { query } = useRouter();
+  const { id } = query;
   const [content, setContent] = useState<ContentItem[]>([]);
   const [eventItem, setEventItem] = useState<EventsItem[]>([]);
   const [vendorOptions, setVendorOptions] = useState<any>([]);
   const [subvendorOptions, setSubvendorOptions] = useState<any>([]);
 
   useEffect(() => {
-    getEvents()
-      .then((fetchedContent) => {
+    const fetchEvents = async () => {
+      try {
+        let fetchedContent;
+        if (isProjectPage === true && !!id) {
+          console.log("Fetching events for project", id);
+          fetchedContent = await getProjectsEvents(Number(id));
+        }
+        if (isSchedulePage === true) {
+          console.log("Fetching all events");
+          fetchedContent = await getEvents();
+        }
         console.log("Events", fetchedContent);
         setEventItem(fetchedContent || []);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error fetching events:", err);
-      });
-  }, []);
+      }
+    };
+
+    fetchEvents();
+  }, [isProjectPage, isSchedulePage, id]);
 
   useEffect(() => {
     getBusiness()
@@ -99,7 +122,7 @@ const Schedule: React.FC<ScheduleProps> = ({
 
   const handleDateClick = (info: DateClickArg) => {
     if (!isDateClickEnabled) return;
-    
+
     const selectedDate = info.dateStr;
     const currentDate = new Date().toISOString().split("T")[0];
 

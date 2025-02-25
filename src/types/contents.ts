@@ -69,6 +69,7 @@ export interface ContentItem {
   type?: string;
   fullname?: string;
   email?: string;
+  staff_email?: string;
   role?: string;
   vendor?: {
     organization_name: string;
@@ -86,6 +87,7 @@ export interface ContentItem {
   created?: string;
   total?: number;
   status?: string;
+  watchers?: any;
 }
 
 export interface EventsItem {

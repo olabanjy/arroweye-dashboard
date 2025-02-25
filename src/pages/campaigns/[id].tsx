@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ls from "localstorage-slim";
 import DashboardLayout from "../dashboard/layout";
 import { HiOutlineUserAdd } from "react-icons/hi";
 import { Dialog } from "primereact/dialog";
@@ -18,11 +19,15 @@ import InsightChart from "./component/InsightChart";
 import { Tooltip } from "../drops";
 import DropsList from "../dropss/component/DropsList";
 import { GiCancel } from "react-icons/gi";
+import { format, parseISO } from "date-fns";
 
 interface User {
   initials: string;
   fullname: string;
-  email: string;
+  staff_email: string;
+  role: string;
+  last_login: any;
+  member_since: any;
 }
 
 // interface AddUserFormData = {
@@ -41,6 +46,7 @@ const ProjectDetails = () => {
   const { query } = useRouter();
   const { id } = query;
   const [visible, setVisible] = useState(false);
+  const [userRole, setUserRole] = useState("");
   const [nameDialogVisible, setNameDialogVisible] = useState(false);
   const [toggleNotifications, setToggleNotifications] = useState(false);
   const [broadcast, setBroadcast] = useState(false);
@@ -69,11 +75,13 @@ const ProjectDetails = () => {
     business_id: string;
     role: string | number;
     fullname: string;
+    project_id: any;
   }>({
     email: "",
     business_id: "",
     role: "",
     fullname: "",
+    project_id: id,
   });
   const [addUserErrors, setAddUserErrors] = useState({
     email: "",
@@ -144,7 +152,10 @@ const ProjectDetails = () => {
     const payload = {
       ...addUserFormData,
       business_id: content?.subvendor?.id,
+      project_id: Number(id),
     };
+    console.log("This is the id", id);
+    console.log("payload", payload);
 
     AddStaff(payload)
       .then((response) => {
@@ -158,18 +169,13 @@ const ProjectDetails = () => {
           business_id: "",
           role: "",
           fullname: "",
+          project_id: id,
         });
 
         getSingleProject(Number(id)).then((fetchedContent) => {
           setContent(fetchedContent);
+          setSubVendorStaff(fetchedContent?.watchers);
         });
-        if (content?.subvendor?.id) {
-          getBusinessStaff(content.subvendor.id).then(
-            (fetchedContent: ContentItem[] | null) => {
-              setSubVendorStaff(fetchedContent);
-            }
-          );
-        }
       })
       .catch((err) => {
         console.error("Error in AddStaff submission:");
@@ -201,11 +207,19 @@ const ProjectDetails = () => {
     setNameDialogVisible(true);
   };
 
-  const handleUserClick = (user: ContentItem) => {
+  const handleUserClick = (user: any) => {
+    console.log("User clicked", user);
     const mappedUser: User = {
-      initials: user.fullname?.slice(0, 2).toUpperCase() || "",
-      fullname: user.fullname || "",
-      email: user.email || "",
+      initials: user.user_profile.fullname?.slice(0, 2).toUpperCase() || "",
+      fullname: user.user_profile.fullname || "",
+      staff_email: user.user_profile.staff_email || "",
+      role: user.user_profile.role || "",
+      last_login: user.last_login
+        ? format(parseISO(user.last_login), "dd MMMM yyyy")
+        : "",
+      member_since: user.created
+        ? format(parseISO(user.created), "dd MMMM yyyy")
+        : "",
     };
     setSelectedUser(mappedUser);
   };
@@ -217,20 +231,17 @@ const ProjectDetails = () => {
   useEffect(() => {
     if (!!id) {
       getSingleProject(Number(id)).then((fetchedContent) => {
+        setSubVendorStaff(fetchedContent?.watchers);
         setContent(fetchedContent);
       });
     }
   }, [id]);
 
   useEffect(() => {
-    if (content?.subvendor?.id) {
-      getBusinessStaff(content.subvendor.id).then(
-        (fetchedContent: ContentItem[] | null) => {
-          setSubVendorStaff(fetchedContent);
-        }
-      );
-    }
-  }, [content?.subvendor?.id]);
+    const content: any = ls.get("Profile", { decrypt: true });
+    console.log("PROFILE", content?.user?.user_profile?.role);
+    setUserRole(content?.user?.user_profile?.role);
+  }, []);
 
   const predefinedColors = [
     "bg-blue-500",
@@ -303,54 +314,58 @@ const ProjectDetails = () => {
 
             <div className="my-[20px] gap-[20px] flex-wrap flex items-center justify-between">
               <div className=" flex space-x-[5px] ">
-                {subvendorStaff?.map((user, index) => (
+                {subvendorStaff?.map((user: any, index: any) => (
                   <div key={index} className="relative group">
                     <p
                       className={`${predefinedColors[index % predefinedColors.length]}  tracking-[.2rem]  text-[12px] font-[700] font-Poppins rounded-full h-[50px] w-[50px] flex items-center justify-center text-white text-center cursor-pointer`}
-                      onClick={() => handleUserClick(user as ContentItem)}
+                      onClick={() => handleUserClick(user)}
                     >
-                      {user.fullname?.slice(0, 2).toUpperCase()}
+                      {user?.user_profile?.fullname?.slice(0, 2).toUpperCase()}
                     </p>
 
                     <div className="font-IBM absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 bg-black text-white text-xs  px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 text-nowrap">
-                      {user?.fullname}
+                      {user?.user_profile?.fullname}
                     </div>
                   </div>
                 ))}
 
-                <div className="relative group">
-                  <p
-                    className="bg-[#ffdead] text-[#000000] rounded-full w-[50px] h-[50px] flex items-center justify-center  text-center cursor-pointer"
-                    onClick={showDialog}
-                  >
-                    <HiOutlineUserAdd size={14} />
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative">
-                {toggleNotifications && (
-                  <div className="fixed top-0 left-0 w-full h-[50px] flex items-center justify-center bg-blue-500 text-white text-[15px] font-[500] font-IBM z-[9999999]">
-                    Edit mode
+                {["Supervisor", "Manager"].includes(userRole) && (
+                  <div className="relative group">
+                    <p
+                      className="bg-[#ffdead] text-[#000000] rounded-full w-[50px] h-[50px] flex items-center justify-center  text-center cursor-pointer"
+                      onClick={showDialog}
+                    >
+                      <HiOutlineUserAdd size={14} />
+                    </p>
                   </div>
                 )}
-
-                <div className="flex items-center space-x-4">
-                  <p className="font-IBM font-[400] text-[16px]">Edit mode</p>
-                  <InputSwitch
-                    id="phone"
-                    checked={toggleNotifications}
-                    onChange={(e) => {
-                      if (e.value) {
-                        setEditMode(true);
-                      } else {
-                        setEditModeOff(true);
-                      }
-                    }}
-                    className="custom-switch"
-                  />
-                </div>
               </div>
+
+              {["Supervisor", "Manager"].includes(userRole) && (
+                <div className="relative">
+                  {toggleNotifications && (
+                    <div className="fixed top-0 left-0 w-full h-[50px] flex items-center justify-center bg-blue-500 text-white text-[15px] font-[500] font-IBM z-[9999999]">
+                      Edit mode
+                    </div>
+                  )}
+
+                  <div className="flex items-center space-x-4">
+                    <p className="font-IBM font-[400] text-[16px]">Edit mode</p>
+                    <InputSwitch
+                      id="phone"
+                      checked={toggleNotifications}
+                      onChange={(e) => {
+                        if (e.value) {
+                          setEditMode(true);
+                        } else {
+                          setEditModeOff(true);
+                        }
+                      }}
+                      className="custom-switch"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -424,7 +439,7 @@ const ProjectDetails = () => {
                   </div>
                   <button
                     onClick={handleAddUserSubmit}
-                    disabled={isAddUserLoading}
+                    // disabled={isAddUserLoading}
                     className=" text-[14px] bg-[#000] hover:bg-orange-500 w-full py-[15px] px-[12px] h-full rounded-[8px] flex items-center justify-center space-x-2"
                   >
                     <IoIosAdd className="text-white" />
@@ -492,7 +507,12 @@ const ProjectDetails = () => {
         <InsightChart editMode={toggleNotifications} />
 
         <div className="  ">
-          <Schedule filterIcon={false} isDateClickEnabled={false} />
+          <Schedule
+            filterIcon={false}
+            isDateClickEnabled={false}
+            isProjectPage={true}
+            isSchedulePage={false}
+          />
         </div>
 
         <div
@@ -505,7 +525,7 @@ const ProjectDetails = () => {
           <Dialog
             header={
               <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
-                <Tooltip info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted." />
+                <Tooltip info="Staff user information" />
 
                 <span>MEMBER INFORMATION</span>
               </div>
@@ -528,20 +548,22 @@ const ProjectDetails = () => {
                   </p>
                   <p className=" font-[600] text-[16px] text-[#212529]">
                     {" "}
-                    {selectedUser.email}
+                    {selectedUser.staff_email}
                   </p>
                 </div>
                 <div className=" text-[16px] font-[400] ">
                   <p className="text-[#212529]">Role </p>
-                  <p className=" text-[#01a733] font-[600]">Agent</p>
+                  <p className=" text-[#01a733] font-[600]">
+                    {selectedUser.role}
+                  </p>
                 </div>
                 <div className=" text-[16px] font-[400] text-[#212529]">
                   <p className=" text-[#212529]">Member since </p>
-                  <p className=" font-[600]">July 20, 2021</p>
+                  <p className=" font-[600]">{selectedUser.member_since}</p>
                 </div>
                 <div className=" text-[16px] font-[400] text-[#212529]">
                   <p className="text-[#212529]">Last Login</p>
-                  <p className=" font-[600]">May 2, 2024</p>
+                  <p className=" font-[600]">{selectedUser.last_login}</p>
                 </div>
 
                 <div className=" ">

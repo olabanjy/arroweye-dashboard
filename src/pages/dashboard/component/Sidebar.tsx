@@ -1,8 +1,9 @@
 import { clearLS } from "@/lib/utils";
+import ls from "localstorage-slim";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { MdArrowForward } from "react-icons/md";
 import { TfiMore } from "react-icons/tfi";
@@ -10,6 +11,7 @@ import { TfiMore } from "react-icons/tfi";
 const Sidebar: FC = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
+  const [userRole, setUserRole] = useState("");
   const router = useRouter();
 
   const isActive = (path: string) => router.pathname === path;
@@ -25,6 +27,12 @@ const Sidebar: FC = () => {
       window.location.reload();
     });
   };
+
+  useEffect(() => {
+    const content: any = ls.get("Profile", { decrypt: true });
+    console.log("PROFILE", content?.user?.user_profile?.role);
+    setUserRole(content?.user?.user_profile?.role);
+  }, []);
 
   return (
     <div>
@@ -122,26 +130,28 @@ const Sidebar: FC = () => {
                   </li>
                 </Link>
 
-                <Link href="/payments">
-                  <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
-                    <span className="flex items-center space-x-2">
-                      <span
-                        className={`${
-                          isActive("/payments")
-                            ? "bg-[#17954c] w-1 h-1"
-                            : "bg-transparent w-1 h-1"
-                        } rounded-full`}
-                      ></span>
-                      <span
-                        className={`${
-                          isActive("/payments") ? "font-[500]" : "font-[400]"
-                        }`}
-                      >
-                        Payments
+                {["Supervisor", "Manager"].includes(userRole) && (
+                  <Link href="/payments">
+                    <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
+                      <span className="flex items-center space-x-2">
+                        <span
+                          className={`${
+                            isActive("/payments")
+                              ? "bg-[#17954c] w-1 h-1"
+                              : "bg-transparent w-1 h-1"
+                          } rounded-full`}
+                        ></span>
+                        <span
+                          className={`${
+                            isActive("/payments") ? "font-[500]" : "font-[400]"
+                          }`}
+                        >
+                          Payments
+                        </span>
                       </span>
-                    </span>
-                  </li>
-                </Link>
+                    </li>
+                  </Link>
+                )}
 
                 <Link href="/schedule">
                   <li className="flex items-center justify-between space-x-2 p-2 rounded cursor-pointer">
