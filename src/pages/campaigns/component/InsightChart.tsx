@@ -71,9 +71,15 @@ const countryFlags = [
 
 interface InsightChartProps {
   editMode?: boolean;
+  handleDownloadPage?: () => void;
+  handleDownloadData?: () => void;
 }
 
-const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
+const InsightChart: React.FC<InsightChartProps> = ({
+  editMode = false,
+  handleDownloadPage,
+  handleDownloadData,
+}) => {
   const [initialTab, setInitialTab] = useState<any>("moments");
   const [addDataModal, setAddDataModal] = useState(false);
   const [openChatModal, setOpenChatModal] = useState(false);
@@ -317,21 +323,6 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
 
   const { toPDF, targetRef } = usePDF({ filename: "dashboard.pdf" });
 
-  const handleDownloadPDF = () => {
-    const input = document.getElementById("pdf-content");
-    if (input) {
-      html2canvas(input).then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("landscape");
-        const imgWidth = 297;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-        pdf.save("dashboard.pdf");
-        toast.success("PDF downloaded");
-      });
-    }
-  };
-
   useEffect(() => {
     if (media.length > 0) {
       const newMomentMedia = media.filter(
@@ -372,7 +363,7 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
   };
 
   return (
-    <div id="pdf-content" ref={targetRef}>
+    <div ref={targetRef}>
       <div className="mt-[20px] mb-[80px]">
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px] w-full">
           <div className="border p-[20px] w-full rounded-[8px] space-y-[20px]  hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
@@ -664,11 +655,14 @@ const InsightChart: React.FC<InsightChartProps> = ({ editMode = false }) => {
             <div className="grid grid-cols-2 gap-[10px] pb-5">
               <div
                 className="font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center"
-                onClick={() => toPDF()}
+                onClick={() => handleDownloadPage && handleDownloadPage()}
               >
                 PDF
               </div>
-              <div className="font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center">
+              <div
+                className="font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center"
+                onClick={() => handleDownloadData && handleDownloadData()}
+              >
                 CSV
               </div>
             </div>

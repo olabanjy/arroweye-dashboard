@@ -10,7 +10,12 @@ import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { SelectInput } from "@/components/ui/selectinput";
 import { FaCheckCircle, FaUserMinus } from "react-icons/fa";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
-import { AddStaff, getBusinessStaff, getSingleProject } from "@/services/api";
+import {
+  AddStaff,
+  campaignStaffAction,
+  getBusinessStaff,
+  getSingleProject,
+} from "@/services/api";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
 import ProjectSingleInsight from "./component/ProjectSingleInsight";
@@ -20,8 +25,12 @@ import { Tooltip } from "../drops";
 import DropsList from "../dropss/component/DropsList";
 import { GiCancel } from "react-icons/gi";
 import { format, parseISO } from "date-fns";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { toast } from "react-toastify";
 
 interface User {
+  id: string;
   initials: string;
   fullname: string;
   staff_email: string;
@@ -203,6 +212,55 @@ const ProjectDetails = () => {
       });
   };
 
+  const handleCampaignActionRemove = () => {
+    const payload = { action: "remove", user_id: selectedUser?.id };
+
+    console.log(payload);
+
+    campaignStaffAction(Number(id), payload)
+      .then((response) => {
+        console.log(response);
+        getSingleProject(Number(id)).then((fetchedContent) => {
+          setContent(fetchedContent);
+          setSubVendorStaff(fetchedContent?.watchers);
+        });
+        setDeleteModal(false);
+        setSelectedUser(null);
+        toast.success("User removed successfully!");
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleCampaignActionUpdate = () => {
+    const payload = {
+      action: "update",
+      user_id: selectedUser?.id,
+      role: addUserFormData.role,
+    };
+
+    console.log(payload);
+
+    campaignStaffAction(Number(id), payload)
+      .then((response) => {
+        console.log(response);
+        getSingleProject(Number(id)).then((fetchedContent) => {
+          setContent(fetchedContent);
+          setSubVendorStaff(fetchedContent?.watchers);
+        });
+        setAdjustmentModalVisible(false);
+        setSelectedUser(null);
+        toast.success("User role updated successfully!");
+        setAddUserFormData({
+          email: "",
+          business_id: "",
+          role: "",
+          fullname: "",
+          project_id: id,
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+
   const handleAddContactClick = () => {
     setNameDialogVisible(true);
   };
@@ -210,6 +268,7 @@ const ProjectDetails = () => {
   const handleUserClick = (user: any) => {
     console.log("User clicked", user);
     const mappedUser: User = {
+      id: user.id,
       initials: user.user_profile.fullname?.slice(0, 2).toUpperCase() || "",
       fullname: user.user_profile.fullname || "",
       staff_email: user.user_profile.staff_email || "",
@@ -259,9 +318,134 @@ const ProjectDetails = () => {
   const [showIcons, setShowIcons] = useState(false);
   const originalTitle = content?.title || "";
 
+  const handleDownloadPDF = () => {
+    const downloadToast = toast.loading("Downloading PDF...");
+    const input = document.getElementById("pdf-content");
+
+    if (input) {
+      // Temporarily set the body overflow to hidden to prevent scrolling during capture
+      document.body.style.overflow = "hidden";
+
+      // Get the full height of the content
+      const fullHeight = input.scrollHeight;
+
+      // Use html2canvas to capture the entire content
+      html2canvas(input, {
+        scale: 2, // Increase scale for better quality
+        height: fullHeight, // Set the height to the full content height
+        windowHeight: fullHeight, // Ensure the window height matches the content height
+        scrollY: -window.scrollY, // Adjust for current scroll position
+      })
+        .then((canvas) => {
+          const imgData = canvas.toDataURL("image/png");
+          const pdf = new jsPDF("landscape");
+
+          // PDF page dimensions in mm (A4 landscape: 297mm x 210mm)
+          const pageWidth = 297;
+          const pageHeight = 210;
+
+          // Calculate the total height of the content in mm
+          const imgWidth = pageWidth;
+          const imgHeight = (canvas.height * pageWidth) / canvas.width;
+
+          // Split the content into multiple pages if it exceeds the page height
+          let position = 0; // Track the position of the content
+          while (position < imgHeight) {
+            if (position > 0) {
+              pdf.addPage(); // Add a new page if not the first page
+            }
+
+            // Add the image to the current page
+            pdf.addImage(
+              imgData,
+              "PNG",
+              0, // X position
+              -position, // Y position (negative to shift the content up)
+              imgWidth,
+              imgHeight
+            );
+
+            // Move the position down by the page height
+            position += pageHeight;
+          }
+
+          // Save the PDF
+          pdf.save("dashboard.pdf");
+
+          // Update the toast notification
+          toast.update(downloadToast, {
+            render: "PDF Downloaded",
+            type: "success",
+            isLoading: false,
+            autoClose: 3000,
+          });
+        })
+        .catch((error) => {
+          console.error("Error generating PDF:", error);
+          toast.update(downloadToast, {
+            render: "Failed to download PDF",
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+          });
+        })
+        .finally(() => {
+          // Restore the body overflow
+          document.body.style.overflow = "";
+        });
+    }
+  };
+
+  const handleExportCSV = () => {
+    if (!content || Object.keys(content).length === 0) {
+      toast.error("No data available to export");
+      return;
+    }
+
+    // Define CSV headers
+    const headers = [
+      "Code",
+      "Description",
+      "Title",
+      "Total Audience Growth",
+      "Total Investment",
+      "Total Revenue",
+    ];
+
+    // Extract required fields from content
+    const row = [
+      content.code ?? "",
+      content.description ? content.description.replace(/,/g, ";") : "",
+      content.title ? content.title.replace(/,/g, ";") : "",
+      content.total_audience_growth ?? 0,
+      content.total_investment ?? 0,
+      content.total_revenue ?? 0,
+    ].join(",");
+
+    // Create CSV content (single row)
+    const csvContent = [headers.join(","), row].join("\n");
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "project_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast.success("CSV exported successfully");
+  };
+
   return (
     <DashboardLayout withBorder={false}>
-      <div className=" relative " style={{ marginBottom: "80px" }}>
+      <div
+        id="pdf-content"
+        className=" relative "
+        style={{ marginBottom: "80px" }}
+      >
         <div className="space-y-[5px] ">
           <div className="text-[#919393] flex items-center gap-[5px] text-[0.875rem]">
             <p className=" uppercase text-[#5e5e5e] tracking-[.1rem]">
@@ -428,7 +612,6 @@ const ProjectDetails = () => {
                       placeholder="Choose Role"
                       options={[
                         { value: "Manager", label: "Manager" },
-                        { value: "LeadAdmin", label: "LeadAdmin" },
                         { value: "Supervisor", label: "Supervisor" },
                         { value: "Agent", label: "Agent" },
                         { value: "Vendor", label: "Vendor" },
@@ -504,7 +687,11 @@ const ProjectDetails = () => {
           </div>
         </form>
 
-        <InsightChart editMode={toggleNotifications} />
+        <InsightChart
+          editMode={toggleNotifications}
+          handleDownloadPage={handleDownloadPDF}
+          handleDownloadData={handleExportCSV}
+        />
 
         <div className="  ">
           <Schedule
@@ -617,7 +804,6 @@ const ProjectDetails = () => {
                   // labelText="Choose Role"
                   options={[
                     { value: "Manager", label: "Manager" },
-                    { value: "LeadAdmin", label: "LeadAdmin" },
                     { value: "Supervisor", label: "Supervisor" },
                     { value: "Agent", label: "Agent" },
                     { value: "Vendor", label: "Vendor" },
@@ -628,7 +814,7 @@ const ProjectDetails = () => {
               <div className="flex justify-end space-x-2">
                 <Button
                   label="Save"
-                  onClick={() => setAdjustmentModalVisible(false)}
+                  onClick={() => handleCampaignActionUpdate()}
                   className=" px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
                 />
               </div>
@@ -657,7 +843,7 @@ const ProjectDetails = () => {
               <div className="flex justify-end space-x-2">
                 <Button
                   label="OK"
-                  onClick={() => setDeleteModal(false)}
+                  onClick={() => handleCampaignActionRemove()}
                   className=" px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
                 />
                 <Button

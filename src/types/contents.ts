@@ -66,6 +66,7 @@ export interface ContentItem {
   currency?: string;
   name?: string;
   title?: string;
+  description?: string;
   type?: string;
   fullname?: string;
   email?: string;

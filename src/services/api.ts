@@ -1518,6 +1518,33 @@ export const sendProjectEmail = async (
   }
 };
 
+export const campaignStaffAction = async (
+  id: number | string,
+  payload: any
+): Promise<any | null> => {
+  try {
+    const response = await apiRequest({
+      method: "POST",
+      url: `/api/v1/projects/${id}/watchers/`,
+      data: payload,
+      requireToken: true,
+    });
+
+    return response;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to send email. Please try again."
+      );
+    } else {
+      toast.error("Failed to send email. Please try again.");
+    }
+
+    return null;
+  }
+};
+
 export const createDropzone = async (
   projectId: string,
   data: DropzonePayload
