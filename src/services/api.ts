@@ -773,11 +773,32 @@ export const getProjectNotifications = async (
     return null;
   }
 };
-export const getAirPlayStats = async (id: number): Promise<any | null> => {
+
+export const getAirPlayStats = async ({
+  id,
+  weeks = "",
+  lifetime = "",
+  channels = "",
+  country = "",
+}: {
+  id: number;
+  weeks?: string;
+  lifetime?: string;
+  channels?: string;
+  country?: string;
+}): Promise<any | null> => {
   try {
+    // Construct query parameters dynamically
+    const params: Record<string, string | number> = { id };
+    if (weeks) params.weeks = weeks;
+    if (lifetime) params.lifetime = lifetime;
+    if (country) params.country = country;
+    if (channels) params.channels = channels;
+
     const response = await apiRequest<any>({
       method: "GET",
       url: `/api/v1/projects/${id}/get-airplay-stats/`,
+      params,
       data: null,
       requireToken: true,
     });
@@ -819,11 +840,30 @@ export const getAirPlayStats = async (id: number): Promise<any | null> => {
   }
 };
 
-export const getSocialMediaStats = async (id: number): Promise<any | null> => {
+export const getSocialMediaStats = async ({
+  id,
+  weeks = "",
+  lifetime = "",
+  channels = "",
+  country = "",
+}: {
+  id: number;
+  weeks?: string;
+  lifetime?: string;
+  channels?: string;
+  country?: string;
+}): Promise<any | null> => {
   try {
+    const params: Record<string, string | number> = { id };
+    if (weeks) params.weeks = weeks;
+    if (lifetime) params.lifetime = lifetime;
+    if (country) params.country = country;
+    if (channels) params.channels = channels;
+
     const response = await apiRequest<any>({
       method: "GET",
       url: `/api/v1/projects/${id}/get-social-media-stats/`,
+      params,
       data: null,
       requireToken: true,
     });
@@ -865,11 +905,30 @@ export const getSocialMediaStats = async (id: number): Promise<any | null> => {
   }
 };
 
-export const getDSPStats = async (id: number): Promise<any | null> => {
+export const getDSPStats = async ({
+  id,
+  weeks = "",
+  lifetime = "",
+  channels = "",
+  country = "",
+}: {
+  id: number;
+  weeks?: string;
+  lifetime?: string;
+  channels?: string;
+  country?: string;
+}): Promise<any | null> => {
   try {
+    const params: Record<string, string | number> = { id };
+    if (weeks) params.weeks = weeks;
+    if (lifetime) params.lifetime = lifetime;
+    if (country) params.country = country;
+    if (channels) params.channels = channels;
+
     const response = await apiRequest<any>({
       method: "GET",
       url: `/api/v1/projects/${id}/get-dsp-stats/`,
+      params,
       data: null,
       requireToken: true,
     });
@@ -911,11 +970,30 @@ export const getDSPStats = async (id: number): Promise<any | null> => {
   }
 };
 
-export const getAudienceStats = async (id: number): Promise<any | null> => {
+export const getAudienceStats = async ({
+  id,
+  weeks = "",
+  lifetime = "",
+  channels = "",
+  country = "",
+}: {
+  id: number;
+  weeks?: string;
+  lifetime?: string;
+  channels?: string;
+  country?: string;
+}): Promise<any | null> => {
   try {
+    const params: Record<string, string | number> = { id };
+    if (weeks) params.weeks = weeks;
+    if (lifetime) params.lifetime = lifetime;
+    if (country) params.country = country;
+    if (channels) params.channels = channels;
+
     const response = await apiRequest<any>({
       method: "GET",
       url: `/api/v1/projects/${id}/audience-stats/`,
+      params,
       data: null,
       requireToken: true,
     });
@@ -957,11 +1035,30 @@ export const getAudienceStats = async (id: number): Promise<any | null> => {
   }
 };
 
-export const geteSMActionStats = async (id: number): Promise<any | null> => {
+export const geteSMActionStats = async ({
+  id,
+  weeks = "",
+  lifetime = "",
+  channels = "",
+  country = "",
+}: {
+  id: number;
+  weeks?: string;
+  lifetime?: string;
+  channels?: string;
+  country?: string;
+}): Promise<any | null> => {
   try {
+    const params: Record<string, string | number> = { id };
+    if (weeks) params.weeks = weeks;
+    if (lifetime) params.lifetime = lifetime;
+    if (country) params.country = country;
+    if (channels) params.channels = channels;
+
     const response = await apiRequest<any>({
       method: "GET",
       url: `/api/v1/projects/${id}/sm-actions-stats/`,
+      params,
       data: null,
       requireToken: true,
     });
@@ -1003,13 +1100,30 @@ export const geteSMActionStats = async (id: number): Promise<any | null> => {
   }
 };
 
-export const geteDSPPerformanceStats = async (
-  id: number
-): Promise<any | null> => {
+export const geteDSPPerformanceStats = async ({
+  id,
+  weeks = "",
+  lifetime = "",
+  channels = "",
+  country = "",
+}: {
+  id: number;
+  weeks?: string;
+  lifetime?: string;
+  channels?: string;
+  country?: string;
+}): Promise<any | null> => {
   try {
+    const params: Record<string, string | number> = { id };
+    if (weeks) params.weeks = weeks;
+    if (lifetime) params.lifetime = lifetime;
+    if (country) params.country = country;
+    if (channels) params.channels = channels;
+
     const response = await apiRequest<any>({
       method: "GET",
       url: `/api/v1/projects/${id}/dsp-performance-stats/`,
+      params,
       data: null,
       requireToken: true,
     });
