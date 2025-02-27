@@ -41,6 +41,7 @@ const selectOptions = [
 ];
 const selectOptionsAirPlay = [
   [
+    { value: "", label: "All Countries" },
     { value: "Nigeria", label: "Nigeria" },
     { value: "Kenya", label: "Kenya" },
     { value: "SouthAfrica", label: "S.Africa" },
@@ -50,9 +51,11 @@ const selectOptionsAirPlay = [
 ];
 const selectOptionsAudience = [
   [
-    { value: "radio", label: "Radio" },
-    { value: "dj", label: "DJ" },
-    { value: "localTv", label: "Local TV" },
+    { value: "", label: "All Channels" },
+    { value: "Radio", label: "Radio" },
+    { value: "DJ", label: "DJ" },
+    { value: "TV", label: "Local TV" },
+    { value: "Cable", label: "Cable" },
   ],
 ];
 
@@ -106,6 +109,38 @@ const InsightChart: React.FC<InsightChartProps> = ({
   const [media, setMedia] = useState<any | null>([]);
   const { id } = query;
 
+  const [airplayChannelsFilters, setairplayChannelsFilters] = useState({
+    country: "",
+    weeks: "",
+    lifetime: "",
+  });
+
+  const [airplayAudienceFilters, setairplayAudienceFilters] = useState({
+    channels: "",
+    weeks: "",
+    lifetime: "",
+  });
+
+  const [socialMediaPlatformFilters, setSocialMediaPlatformFilters] = useState({
+    weeks: "",
+    lifetime: "",
+  });
+
+  const [socialMediaActionsFilters, setSocialMediaActionsFilters] = useState({
+    weeks: "",
+    lifetime: "",
+  });
+
+  const [dspFilters, setDspFilters] = useState({
+    weeks: "",
+    lifetime: "",
+  });
+
+  const [dspPerformanceFilters, setDspPerformanceFilters] = useState({
+    weeks: "",
+    lifetime: "",
+  });
+
   useEffect(() => {
     if (!!id) {
       getSingleProject(Number(id)).then((fetchedContent) => {
@@ -117,52 +152,78 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
   useEffect(() => {
     if (!!id) {
-      getAirPlayStats(Number(id)).then((fetchedContent) => {
-        setAirPlayData(fetchedContent);
-      });
+      getAirPlayStats({ id: Number(id), ...airplayChannelsFilters }).then(
+        (fetchedContent) => {
+          setAirPlayData(fetchedContent);
+        }
+      );
     }
-  }, [id]);
+  }, [
+    id,
+    airplayChannelsFilters.weeks,
+    airplayChannelsFilters.lifetime,
+    airplayChannelsFilters.country,
+  ]);
 
   useEffect(() => {
     if (!!id) {
-      getSocialMediaStats(Number(id)).then((fetchedContent) => {
+      getSocialMediaStats({
+        id: Number(id),
+        ...socialMediaPlatformFilters,
+      }).then((fetchedContent) => {
         setSocialMediaData(fetchedContent);
       });
     }
-  }, [id]);
+  }, [
+    id,
+    socialMediaPlatformFilters.weeks,
+    socialMediaPlatformFilters.lifetime,
+  ]);
 
   useEffect(() => {
     if (!!id) {
-      getDSPStats(Number(id)).then((fetchedContent) => {
+      getDSPStats({ id: Number(id), ...dspFilters }).then((fetchedContent) => {
         console.log("DSP Stats", fetchedContent);
         setDspData(fetchedContent);
       });
     }
-  }, [id]);
+  }, [id, dspFilters.weeks, dspFilters.lifetime]);
 
   useEffect(() => {
     if (!!id) {
-      getAudienceStats(Number(id)).then((fetchedContent) => {
-        setAudienceData(fetchedContent);
-      });
+      getAudienceStats({ id: Number(id), ...airplayAudienceFilters }).then(
+        (fetchedContent) => {
+          setAudienceData(fetchedContent);
+        }
+      );
     }
-  }, [id]);
+  }, [
+    id,
+    airplayAudienceFilters.weeks,
+    airplayAudienceFilters.lifetime,
+    airplayAudienceFilters.channels,
+  ]);
 
   useEffect(() => {
     if (!!id) {
-      geteSMActionStats(Number(id)).then((fetchedContent) => {
-        setSmactionData(fetchedContent);
-      });
+      geteSMActionStats({ id: Number(id), ...socialMediaActionsFilters }).then(
+        (fetchedContent) => {
+          setSmactionData(fetchedContent);
+        }
+      );
     }
-  }, [id]);
+  }, [id, socialMediaActionsFilters.weeks, socialMediaActionsFilters.lifetime]);
 
   useEffect(() => {
     if (!!id) {
-      geteDSPPerformanceStats(Number(id)).then((fetchedContent) => {
+      geteDSPPerformanceStats({
+        id: Number(id),
+        ...dspPerformanceFilters,
+      }).then((fetchedContent) => {
         setDspPerformanceData(fetchedContent);
       });
     }
-  }, [id]);
+  }, [id, dspPerformanceFilters.weeks, dspPerformanceFilters.lifetime]);
 
   const generateDoughnutChartData = (
     data: Record<string, number>
@@ -344,7 +405,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
   const onAddDataSuccess = () => {
     if (!!id) {
-      getAirPlayStats(Number(id)).then((fetchedContent) => {
+      getAirPlayStats({ id: Number(id) }).then((fetchedContent) => {
         setAirPlayData(fetchedContent);
         toast.success("AirPlay stats updated");
       });
@@ -352,10 +413,10 @@ const InsightChart: React.FC<InsightChartProps> = ({
   };
   const onAddDataDspSuccess = () => {
     if (!!id) {
-      getDSPStats(Number(id)).then((fetchedContent) => {
+      getDSPStats({ id: Number(id) }).then((fetchedContent) => {
         setDspData(fetchedContent);
       });
-      geteDSPPerformanceStats(Number(id)).then((fetchedContent) => {
+      geteDSPPerformanceStats({ id: Number(id) }).then((fetchedContent) => {
         setDspPerformanceData(fetchedContent);
         toast.success("DSP stats updated");
       });
@@ -395,6 +456,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 selectOptions={selectOptionsAirPlay}
                 selectOptionsBottom={selectOptionsAudience}
                 chartData={chartDataForDoughnutAirplay}
+                setFilters={setairplayChannelsFilters}
                 placeholder="Country"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
@@ -406,6 +468,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 value={audienceData?.total_count ?? 0}
                 selectOptions={selectOptionsAudience}
                 chartData={pieChartDataAudience}
+                setFilters={setairplayAudienceFilters}
                 selectOptionsBottom={selectOptionsAudience}
                 // maxWidth="500px"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
@@ -450,6 +513,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 valuePlaceHolder="TOP PLATFORMS"
                 value={socialMediaData?.total_count ?? 0}
                 chartData={chartDataForPie}
+                setFilters={setSocialMediaPlatformFilters}
                 selectOptionsBottom={selectOptionsAudience}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
@@ -460,6 +524,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 title="ACTIONS"
                 value={smactionData?.total_count ?? 0}
                 chartData={chartDataForDoughnutSMAction}
+                setFilters={setSocialMediaActionsFilters}
                 selectOptionsBottom={selectOptionsAudience}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
@@ -504,6 +569,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 valuePlaceholder="TOP DSPs"
                 value={dspData?.total_count ?? 0}
                 chartData={chartDataForBar}
+                setFilters={setDspFilters}
                 selectOptionsBottom={selectOptions}
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />
@@ -515,6 +581,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 value={dspPerformanceData?.total_count ?? 0}
                 selectOptionsBottom={selectOptions}
                 chartData={pieChartDataDSPPerformance}
+                setFilters={setDspPerformanceFilters}
                 // maxWidth="500px"
                 info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
               />

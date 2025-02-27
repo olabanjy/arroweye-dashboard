@@ -252,21 +252,17 @@
 
 // export default DoughnutChart;
 
-
-
-
-import React, { FC } from 'react';
-import { FiInfo } from 'react-icons/fi';
-import { SelectInput } from '@/components/ui/selectinput';
-import { Doughnut } from 'react-chartjs-2';
+import React, { FC } from "react";
+import { FiInfo } from "react-icons/fi";
+import { SelectInput } from "@/components/ui/selectinput";
+import { Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
   Tooltip as ChartTooltip,
   Legend,
   ChartData,
-} from 'chart.js';
-
+} from "chart.js";
 
 ChartJS.register(ArcElement, ChartTooltip, Legend);
 
@@ -276,11 +272,12 @@ interface InsightChartProps {
   percentageChange?: string;
   selectOptions?: Array<{ value: string; label: string }[]>;
   selectOptionsBottom?: Array<{ value: string; label: string }[]>;
-  chartData?: ChartData<'doughnut', number[], string>;
+  chartData?: ChartData<"doughnut", number[], string>;
   // maxWidth?: string;
   valuePlaceholder?: string;
   info?: string;
   placeholder?: string;
+  setFilters?: any;
 }
 
 const Tooltip = ({ info }: { info: string }) => (
@@ -303,29 +300,30 @@ const DoughnutChart: FC<InsightChartProps> = ({
   valuePlaceholder,
   // maxWidth = "400px",
   info,
+  setFilters,
 }) => {
- 
-
   const weeksOptions = [
-    { value: 'week1', label: 'Week 1' },
-    { value: 'week2', label: 'Week 2' },
-    { value: 'week3', label: 'Week 3' },
-    { value: 'week4', label: 'Week 4' },
+    { value: "", label: "All Weeks" },
+    { value: "1", label: "Week 1" },
+    { value: "2", label: "Week 2" },
+    { value: "3", label: "Week 3" },
+    { value: "4", label: "Week 4" },
   ];
 
   const months = [
-    { value: 'jan', label: 'January' },
-    { value: 'feb', label: 'February' },
-    { value: 'mar', label: 'March' },
-    { value: 'apr', label: 'April' },
-    { value: 'may', label: 'May' },
-    { value: 'jun', label: 'June' },
-    { value: 'jul', label: 'July' },
-    { value: 'aug', label: 'August' },
-    { value: 'sep', label: 'September' },
-    { value: 'oct', label: 'October' },
-    { value: 'nov', label: 'November' },
-    { value: 'dec', label: 'December' },
+    { value: "", label: "Lifetime" },
+    { value: "1", label: "January" },
+    { value: "2", label: "February" },
+    { value: "3", label: "March" },
+    { value: "4", label: "April" },
+    { value: "5", label: "May" },
+    { value: "6", label: "June" },
+    { value: "7", label: "July" },
+    { value: "8", label: "August" },
+    { value: "9", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
   ];
 
   return (
@@ -345,6 +343,12 @@ const DoughnutChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={options}
                 placeholder={placeholder}
+                onChange={(value: any) => {
+                  setFilters((prevFilters: any) => ({
+                    ...prevFilters,
+                    country: value,
+                  }));
+                }}
               />
             </div>
           ))}
@@ -371,7 +375,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
                 maintainAspectRatio: false,
                 plugins: {
                   legend: {
-                    position: 'top',
+                    position: "top",
                     labels: {
                       boxWidth: 15,
                       font: { size: 12 },
@@ -388,11 +392,17 @@ const DoughnutChart: FC<InsightChartProps> = ({
       <div className="flex items-center justify-between">
         <div className="">
           {selectOptionsBottom?.map((options, index) => (
-            <div key={index} className="max-w-[200px] w-full">
+            <div key={index} className="min-w-[80px] max-w-[200px] w-full">
               <SelectInput
                 rounded={true}
                 options={weeksOptions}
                 placeholder="Weeks"
+                onChange={(value: any) => {
+                  setFilters((prevFilters: any) => ({
+                    ...prevFilters,
+                    weeks: value,
+                  }));
+                }}
               />
             </div>
           ))}
@@ -404,6 +414,12 @@ const DoughnutChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={months}
                 placeholder="Lifetime"
+                onChange={(value: any) => {
+                  setFilters((prevFilters: any) => ({
+                    ...prevFilters,
+                    lifetime: value,
+                  }));
+                }}
               />
             </div>
           ))}
@@ -414,4 +430,3 @@ const DoughnutChart: FC<InsightChartProps> = ({
 };
 
 export default DoughnutChart;
-

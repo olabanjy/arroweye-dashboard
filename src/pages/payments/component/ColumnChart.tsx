@@ -23,6 +23,7 @@ interface InsightChartProps {
   valuePlaceholder?: string;
   info?: string;
   placeholder?: string;
+  setFilters?: any;
 }
 
 interface ChartDataItem {
@@ -56,6 +57,7 @@ const ColumnChart: FC<InsightChartProps> = ({
   placeholder,
   valuePlaceholder,
   info,
+  setFilters,
 }) => {
   const formatDataForRecharts = (): ChartDataItem[] => {
     if (!chartData?.labels || !chartData.datasets[0].data) return [];
@@ -74,25 +76,27 @@ const ColumnChart: FC<InsightChartProps> = ({
   const data = formatDataForRecharts();
 
   const weeksOptions = [
-    { value: "week1", label: "Week 1" },
-    { value: "week2", label: "Week 2" },
-    { value: "week3", label: "Week 3" },
-    { value: "week4", label: "Week 4" },
+    { value: "", label: "All Weeks" },
+    { value: "1", label: "Week 1" },
+    { value: "2", label: "Week 2" },
+    { value: "3", label: "Week 3" },
+    { value: "4", label: "Week 4" },
   ];
 
   const months = [
-    { value: "jan", label: "January" },
-    { value: "feb", label: "February" },
-    { value: "mar", label: "March" },
-    { value: "apr", label: "April" },
-    { value: "may", label: "May" },
-    { value: "jun", label: "June" },
-    { value: "jul", label: "July" },
-    { value: "aug", label: "August" },
-    { value: "sep", label: "September" },
-    { value: "oct", label: "October" },
-    { value: "nov", label: "November" },
-    { value: "dec", label: "December" },
+    { value: "", label: "Lifetime" },
+    { value: "1", label: "January" },
+    { value: "2", label: "February" },
+    { value: "3", label: "March" },
+    { value: "4", label: "April" },
+    { value: "5", label: "May" },
+    { value: "6", label: "June" },
+    { value: "7", label: "July" },
+    { value: "8", label: "August" },
+    { value: "9", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
   ];
 
   return (
@@ -193,11 +197,17 @@ const ColumnChart: FC<InsightChartProps> = ({
       <div className="flex items-center justify-between">
         <div>
           {selectOptionsBottom?.map((options, index) => (
-            <div key={index} className="max-w-[110px] w-full">
+            <div key={index} className="max-w-[200px] w-full">
               <SelectInput
                 rounded={true}
                 options={weeksOptions}
                 placeholder="Weeks"
+                onChange={(value: any) => {
+                  setFilters((prevFilters: any) => ({
+                    ...prevFilters,
+                    weeks: value,
+                  }));
+                }}
               />
             </div>
           ))}
@@ -209,6 +219,12 @@ const ColumnChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={months}
                 placeholder="Lifetime"
+                onChange={(value: any) => {
+                  setFilters((prevFilters: any) => ({
+                    ...prevFilters,
+                    lifetime: value,
+                  }));
+                }}
               />
             </div>
           ))}

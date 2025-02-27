@@ -1,14 +1,14 @@
-import React, { FC } from 'react';
-import { FiInfo } from 'react-icons/fi';
-import { SelectInput } from '@/components/ui/selectinput';
-import { Pie } from 'react-chartjs-2';
+import React, { FC } from "react";
+import { FiInfo } from "react-icons/fi";
+import { SelectInput } from "@/components/ui/selectinput";
+import { Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
   Tooltip,
   Legend,
   ChartData,
-} from 'chart.js';
+} from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -18,9 +18,10 @@ interface InsightChartProps {
   percentageChange?: string;
   selectOptions?: Array<{ value: string; label: string }[]>;
   selectOptionsBottom?: Array<{ value: string; label: string }[]>;
-  chartData?: ChartData<'pie', number[], string>;
+  chartData?: ChartData<"pie", number[], string>;
   valuePlaceHolder?: string;
   info?: string;
+  setFilters?: any;
 }
 
 const TooltipComponent = ({ info }: { info: string }) => (
@@ -41,15 +42,16 @@ const PieChart: FC<InsightChartProps> = ({
   chartData,
   info,
   valuePlaceHolder,
+  setFilters,
 }) => {
-  const defaultChartData: ChartData<'pie', number[], string> = chartData || {
-    labels: ['Radio', 'Cable', 'TV', 'DJ'],
+  const defaultChartData: ChartData<"pie", number[], string> = chartData || {
+    labels: ["Radio", "Cable", "TV", "DJ"],
     datasets: [
       {
-        label: 'AIRPLAY',
+        label: "AIRPLAY",
         data: [300, 50, 100, 22],
-        backgroundColor: ['#f8e0e1', '#d7ecfb', '#f8f5d8', '#d4f2ed'],
-        borderColor: ['#e0a1a2', '#a1c4e8', '#e0d8a1', '#a1e0d8'],
+        backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
+        borderColor: ["#e0a1a2", "#a1c4e8", "#e0d8a1", "#a1e0d8"],
         borderWidth: 3,
       },
     ],
@@ -58,25 +60,27 @@ const PieChart: FC<InsightChartProps> = ({
   console.log(defaultChartData);
 
   const weeksOptions = [
-    { value: 'week1', label: 'Week 1' },
-    { value: 'week2', label: 'Week 2' },
-    { value: 'week3', label: 'Week 3' },
-    { value: 'week4', label: 'Week 4' },
+    { value: "", label: "All Weeks" },
+    { value: "1", label: "Week 1" },
+    { value: "2", label: "Week 2" },
+    { value: "3", label: "Week 3" },
+    { value: "4", label: "Week 4" },
   ];
 
   const months = [
-    { value: 'jan', label: 'January' },
-    { value: 'feb', label: 'February' },
-    { value: 'mar', label: 'March' },
-    { value: 'apr', label: 'April' },
-    { value: 'may', label: 'May' },
-    { value: 'jun', label: 'June' },
-    { value: 'jul', label: 'July' },
-    { value: 'aug', label: 'August' },
-    { value: 'sep', label: 'September' },
-    { value: 'oct', label: 'October' },
-    { value: 'nov', label: 'November' },
-    { value: 'dec', label: 'December' },
+    { value: "", label: "Lifetime" },
+    { value: "1", label: "January" },
+    { value: "2", label: "February" },
+    { value: "3", label: "March" },
+    { value: "4", label: "April" },
+    { value: "5", label: "May" },
+    { value: "6", label: "June" },
+    { value: "7", label: "July" },
+    { value: "8", label: "August" },
+    { value: "9", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
   ];
 
   return (
@@ -93,6 +97,12 @@ const PieChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={options}
                 placeholder="Channels"
+                onChange={(value: any) => {
+                  setFilters((prevFilters: any) => ({
+                    ...prevFilters,
+                    channels: value,
+                  }));
+                }}
               />
             </div>
           ))}
@@ -119,7 +129,7 @@ const PieChart: FC<InsightChartProps> = ({
                 maintainAspectRatio: false,
                 plugins: {
                   legend: {
-                    position: 'top',
+                    position: "top",
                     labels: {
                       boxWidth: 15,
                       font: { size: 12 },
@@ -135,7 +145,7 @@ const PieChart: FC<InsightChartProps> = ({
                           dataset.data[tooltipItem.dataIndex];
                         const label = defaultChartData.labels
                           ? defaultChartData.labels[tooltipItem.dataIndex]
-                          : '';
+                          : "";
                         return `${label}: ${currentValue}`;
                       },
                     },
@@ -150,11 +160,17 @@ const PieChart: FC<InsightChartProps> = ({
       <div className="flex items-center justify-between">
         <div>
           {selectOptionsBottom?.map((options, index) => (
-            <div key={index} className="max-w-[110px] w-full">
+            <div key={index} className="max-w-[200px] w-full">
               <SelectInput
                 rounded={true}
                 options={weeksOptions}
                 placeholder="Weeks"
+                onChange={(value: any) => {
+                  setFilters((prevFilters: any) => ({
+                    ...prevFilters,
+                    weeks: value,
+                  }));
+                }}
               />
             </div>
           ))}
@@ -166,6 +182,12 @@ const PieChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={months}
                 placeholder="Lifetime"
+                onChange={(value: any) => {
+                  setFilters((prevFilters: any) => ({
+                    ...prevFilters,
+                    lifetime: value,
+                  }));
+                }}
               />
             </div>
           ))}

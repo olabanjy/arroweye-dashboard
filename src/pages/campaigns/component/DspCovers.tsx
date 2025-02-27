@@ -45,15 +45,23 @@ const DspCovers = () => {
       return;
     }
 
-    console.log("ITEMS", mediaItems);
-
     // Convert the array to JSON
-    const requestData = new FormData();
-    requestData.append("files", JSON.stringify(mediaItems));
-    requestData.append("type", "DSP_Covers");
+
+    const formData = new FormData();
+    formData.append("type", "DSP_Covers");
+
+    // Append all files with the same key name
+    mediaItems.forEach((file: any, index) => {
+      formData.append("files", file);
+    });
+
+    // Debug FormData
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
 
     try {
-      CreateMedia(id, requestData)
+      CreateMedia(id, formData)
         .then((response) => {
           console.log("RESPONSE", response);
           setMediaItems([]); // Clear the form
