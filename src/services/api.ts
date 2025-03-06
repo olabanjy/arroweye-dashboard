@@ -179,9 +179,6 @@ export const CreateMedia = async (
       url: `/api/v1/projects/${id}/media/`,
       data: payload,
       requireToken: true,
-      headers: {
-        "Content-Type": "multipart/form-data", // Set the Content-Type to multipart/form-data
-      },
     });
 
     console.log(`create media response: ${response}`);

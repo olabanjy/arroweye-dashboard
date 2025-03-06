@@ -47,7 +47,7 @@ interface User {
 // };
 
 const ProjectDetails = () => {
-  const [content, setContent] = useState<ContentItem | null>(null);
+  const [content, setContent] = useState<any | null>(null);
   const [subvendorStaff, setSubVendorStaff] = useState<ContentItem[] | null>(
     null
   );

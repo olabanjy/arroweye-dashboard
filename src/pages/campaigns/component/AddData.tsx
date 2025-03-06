@@ -15,6 +15,7 @@ interface CompanyDetailsFormProps {
   visible: boolean;
   onHide: () => void;
   onAddDataSuccess: () => void;
+  existingAirPlayData: any;
 }
 
 const Tooltip = ({ info }: { info: string }) => (
@@ -49,12 +50,14 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
   visible,
   onHide,
   onAddDataSuccess,
+  existingAirPlayData,
 }) => {
   const { query } = useRouter();
   const { id } = query;
   const [activeDetailsTab, setActiveDetailsTab] = useState("Radio");
   const [stations, setStations] = useState<ContentItem[]>([]);
   const [isAddNewService, setIsAddNewService] = useState(false);
+  const [processedData, setProcessedData] = useState<any>([]);
 
   const [airPlayData, setAirPlayData] = useState<AirPlayData[]>([
     { ...initialAirPlayData },
@@ -167,6 +170,57 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
     );
   };
 
+  console.log("existing", existingAirPlayData);
+
+  const placeholder = activeDetailsTab === "Radio" ? "Spins" : "Plays";
+
+  useEffect(() => {
+    const processAirplayData = (items: any[]) => {
+      // Filter items where airplay.channel matches activeDetailsTab
+      const filteredItems = items.filter(
+        (item) => item?.airplay?.channel === activeDetailsTab
+      );
+
+      if (filteredItems.length === 0) return [];
+
+      // Map each filtered item to create the station data
+      return filteredItems.map((item) => {
+        // Initialize aggregated weeks
+        const aggregatedWeeks = {
+          week_1: 0,
+          week_2: 0,
+          week_3: 0,
+          week_4: 0,
+        };
+
+        // Sum up all metrics data for each week
+        item.airplay_data?.forEach((metricItem: any) => {
+          aggregatedWeeks.week_1 += metricItem.week_1 || 0;
+          aggregatedWeeks.week_2 += metricItem.week_2 || 0;
+          aggregatedWeeks.week_3 += metricItem.week_3 || 0;
+          aggregatedWeeks.week_4 += metricItem.week_4 || 0;
+        });
+
+        // Return a combined object with station info and aggregated weeks
+        return {
+          id: item.airplay.id,
+          name: item.airplay.name,
+          channel: item.airplay.channel,
+          ...aggregatedWeeks,
+        };
+      });
+    };
+
+    if (!!existingAirPlayData) {
+      const processedData = processAirplayData(existingAirPlayData);
+      setProcessedData(processedData);
+    }
+  }, [existingAirPlayData, activeDetailsTab]);
+
+  useEffect(() => {
+    console.log("PROCESSED", processedData);
+  }, [processedData]);
+
   return (
     <>
       <div
@@ -208,7 +262,7 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
                 }`}
                 onClick={() => {
                   updateAllAirPlayIds(1);
-                  setActiveDetailsTab("radio");
+                  setActiveDetailsTab("Radio");
                 }}
               >
                 Radio
@@ -229,6 +283,31 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
             </div>
 
             <div>
+              <div className="mt-5 space-y-1 max-h-[400px] overflow-auto">
+                {processedData.map((metricData: any, idx: any) => (
+                  <div className="flex flex-col md:flex-row item-center gap-5">
+                    <div className="max-w-[200px] w-full">
+                      <div className="bg-gray-300 border border-black rounded-xl p-3">
+                        {metricData.name}
+                      </div>
+                    </div>
+
+                    <div key={idx} className="flex flex-row items-center gap-2">
+                      {["week_1", "week_2", "week_3", "week_4"].map((week) => (
+                        <WeekInput
+                          key={`${metricData.id}-${week}`}
+                          type="number"
+                          name={`${metricData.id}-${week}`}
+                          label={`WEEK ${week.slice(-1)}`}
+                          placeholder={placeholder}
+                          value={metricData[week]}
+                          disabled={true}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
               <form onSubmit={handleSubmit} className="scrollbar-hide">
                 <div className="mt-5 space-y-5 max-h-[400px] overflow-auto">
                   {airPlayData.map((item, index) => (

@@ -66,6 +66,7 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
 
   useEffect(() => {
     getDsp().then((fetchedContent) => {
+      console.log(fetchedContent);
       setContent(fetchedContent);
 
       if (fetchedContent && fetchedContent.length > 0) {

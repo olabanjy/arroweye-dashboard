@@ -17,6 +17,7 @@ const DspCovers = () => {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("FIles", e.target.files);
     const uploadedFiles = e.target.files ? Array.from(e.target.files) : [];
     const validFiles = uploadedFiles.filter((file) =>
       file.type.startsWith("image/")
@@ -37,6 +38,15 @@ const DspCovers = () => {
     setMediaItems((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const convertFileToBase64 = (file: any) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -47,21 +57,21 @@ const DspCovers = () => {
 
     // Convert the array to JSON
 
-    const formData = new FormData();
-    formData.append("type", "DSP_Covers");
+    const base64Files: any = await Promise.all(
+      mediaItems.map(async (item: any) => {
+        console.log(item.file);
+        const base64 = await convertFileToBase64(item.file);
+        return base64;
+      })
+    );
 
-    // Append all files with the same key name
-    mediaItems.forEach((file: any, index) => {
-      formData.append("files", file);
-    });
-
-    // Debug FormData
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
-
+    const payload = {
+      type: "DSP_Covers",
+      files: base64Files,
+    };
+    console.log("Payload", payload);
     try {
-      CreateMedia(id, formData)
+      CreateMedia(id, payload)
         .then((response) => {
           console.log("RESPONSE", response);
           setMediaItems([]); // Clear the form
