@@ -26,7 +26,7 @@ const ProjectSingleInsight = () => {
         <div className="w-full">
           <InsightCard
             title="TOTAL INVESTMENT "
-            value={`$${content?.total_investment?.toLocaleString() || 0}`}
+            value={`${content?.total_investment?.toLocaleString() || 0}`}
             percentageChange="↑ 5%"
             extraClass="h-[220px]"
             percentageColor="#11cc48"
@@ -36,7 +36,8 @@ const ProjectSingleInsight = () => {
         <div className=" w-full">
           <InsightCard
             title="TOTAL REVENUE"
-            value={`$${content?.total_revenue?.toLocaleString() || 0}`}
+            value={`${content?.total_revenue?.mininum?.toLocaleString() || 0}`}
+            maxValue={`${content?.total_revenue?.maximum?.toLocaleString() || 0}`}
             extraClass="h-[220px]"
             percentageChange="↓ -3%"
             percentageColor="#ff4d4f"
@@ -47,7 +48,7 @@ const ProjectSingleInsight = () => {
         <div className="w-full">
           <InsightCard
             title="AUDIENCE GROWTH"
-            value={`$${content?.total_audience_growth?.toLocaleString() || 0}`}
+            value={`${content?.total_audience_growth?.toLocaleString() || 0}`}
             extraClass="h-[220px]"
             percentageChange="↓ -3%"
             percentageColor="#ff4d4f"

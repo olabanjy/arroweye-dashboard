@@ -32,7 +32,7 @@ export interface ContentItem {
   airplay_count?: number;
   social_media_count?: number;
   dsp_count?: number;
-  total_revenue?: number;
+  total_revenue?: any;
   total_audience_growth?: number;
   start_dte?: string;
   cost?: number;

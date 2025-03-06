@@ -76,7 +76,7 @@ const DropForm: React.FC<DropFormProps> = ({ setDropzoneData }) => {
     const response = await createDropzone(projectId, payload);
     if (response) {
       toast.success("Dropzone created successfully");
-      setDropzoneData((prevData) => ({
+      setDropzoneData((prevData: any) => ({
         ...prevData,
         dropzone: [...(prevData?.dropzone || []), payload],
       }));

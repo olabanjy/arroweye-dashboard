@@ -112,7 +112,7 @@ const Manage = () => {
   }, []);
 
   useEffect(() => {
-    getBusiness().then((fetchedContent) => {
+    getBusiness().then((fetchedContent: any) => {
       setBusiness(fetchedContent);
     });
   }, []);

@@ -12,6 +12,7 @@ interface InsightCardProps {
   height?: string;
   info?: string;
   extraClass?: string;
+  maxValue?: number | string;
 }
 
 const Tooltip = ({ info }: { info: string }) => (
@@ -33,10 +34,11 @@ const InsightCard: FC<InsightCardProps> = ({
   info,
   // height = "220px",
   extraClass = "",
+  maxValue,
 }) => {
   return (
     <div
-      className={`relative border px-[20px] py-[34px] rounded-[8px] space-y-[40px] w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500 ${extraClass}`}
+      className={`relative h-max border px-[20px] pt-[34px] rounded-[8px] space-y-[20px] w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500 ${extraClass}`}
       // style={{ height }}
     >
       <div className="flex items-center gap-[5px] text-[#7a8081]">
@@ -44,7 +46,17 @@ const InsightCard: FC<InsightCardProps> = ({
         {info && <Tooltip info={info} />}
       </div>
 
-      <p className="text-2xl lg:text-[56px] font-[600]">{value}</p>
+      <div className="flex flex-row items-center h-[6rem] overflow-x-auto overflow-y-hidden">
+        <p className="text-2xl lg:text-[56px] font-[600]">&#8358;{value}</p>
+        {maxValue && (
+          <>
+            <p className="mx-4">—</p>
+            <p className="text-2xl lg:text-[56px] font-[600]">
+              &#8358;{maxValue}
+            </p>
+          </>
+        )}
+      </div>
 
       {percentageChange && (
         <p

@@ -105,7 +105,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
   const { query } = useRouter();
 
-  const [content, setContent] = useState<ContentItem | null>(null);
+  const [content, setContent] = useState<any | null>(null);
   const [media, setMedia] = useState<any | null>([]);
   const { id } = query;
 
@@ -395,11 +395,20 @@ const InsightChart: React.FC<InsightChartProps> = ({
       const momentReportUrl = newMomentMedia.map((item: any) => item.report);
       const newRecapMedia = media.filter((item: any) => item?.type === "Recap");
       const embedRecapLinks = newRecapMedia.map((item: any) => item.embed_link);
+      const dspCoversWithFiles = media.filter(
+        (item: any) =>
+          item?.type === "DSP_Covers" && item?.files && item.files.length > 0
+      );
+      const dspfileUrls = dspCoversWithFiles.flatMap((item: any) =>
+        item.files.map(
+          (file: any) => `https://studio-api.arroweye.pro${file.file}`
+        )
+      );
 
-      console.log("Moments", newMomentMedia);
       setMomentReportUrls(momentReportUrl);
       setMomentMediaData(embedMomentLinks);
       setRecapMediaData(embedRecapLinks);
+      setDspMediaData(dspfileUrls);
     }
   }, [media]);
 
@@ -408,6 +417,11 @@ const InsightChart: React.FC<InsightChartProps> = ({
       getAirPlayStats({ id: Number(id) }).then((fetchedContent) => {
         setAirPlayData(fetchedContent);
         toast.success("AirPlay stats updated");
+      });
+    }
+    if (!!id) {
+      getSingleProject(Number(id)).then((fetchedContent) => {
+        setContent(fetchedContent);
       });
     }
   };
@@ -588,11 +602,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
             </div>
 
             <MomentSliderCard
-              images={[
-                "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg",
-                "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg",
-                "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg",
-              ]}
+              images={dspMediaData}
               downloadButtonText="Download Data"
               downloadIcon={true}
               MomentsTitle="DSP EDITORIAL"
@@ -628,6 +638,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
         visible={addDataModal}
         onHide={() => setAddDataModal(false)}
         onAddDataSuccess={onAddDataSuccess}
+        existingAirPlayData={content?.project_airplay}
       />
       <AddDataSocials
         visible={addDataModalSocial}
