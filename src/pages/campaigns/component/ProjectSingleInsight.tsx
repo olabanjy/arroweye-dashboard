@@ -25,7 +25,8 @@ const ProjectSingleInsight = () => {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[10px] 2xl:gap-[20px] relative">
         <div className="w-full">
           <InsightCard
-            title="TOTAL INVESTMENT "
+            title="TOTAL INVESTMENT"
+            currency={<>&#8358;</>}
             value={`${content?.total_investment?.toLocaleString() || 0}`}
             percentageChange="↑ 5%"
             extraClass="h-[220px]"
@@ -36,6 +37,7 @@ const ProjectSingleInsight = () => {
         <div className=" w-full">
           <InsightCard
             title="TOTAL REVENUE"
+            currency={<>&#8358;</>}
             value={`${content?.total_revenue?.mininum?.toLocaleString() || 0}`}
             maxValue={`${content?.total_revenue?.maximum?.toLocaleString() || 0}`}
             extraClass="h-[220px]"

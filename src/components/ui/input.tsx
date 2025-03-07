@@ -23,6 +23,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   rounded?: boolean;
   placeholder?: string;
   value?: string;
+  disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -69,6 +70,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       rounded,
       placeholder,
       value,
+      disabled,
       onChange,
       name,
       ...props
@@ -136,6 +138,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               (error || validationError) && "border-red-500 focus:ring-red-500",
               className
             )}
+            disabled={disabled}
             dateFormat="yyyy-MM-dd HH:mm"
             showTimeSelect
             timeFormat="HH:mm"
@@ -159,6 +162,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               name={name}
               onBlur={handleBlur}
               onChange={onChange}
+              disabled={disabled}
               aria-invalid={!!(error || validationError)}
               aria-describedby={props.id ? `${props.id}-error` : undefined}
               {...props}

@@ -99,6 +99,7 @@ export interface EventsItem {
   subvendor: number;
   code: number;
   pin: number;
+  location: string;
   currency: string;
   name: string;
   title: string;

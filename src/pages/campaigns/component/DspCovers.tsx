@@ -71,7 +71,7 @@ const DspCovers = () => {
     };
     console.log("Payload", payload);
     try {
-      CreateMedia(id, payload)
+      CreateMedia(id, payload, "application/json")
         .then((response) => {
           console.log("RESPONSE", response);
           setMediaItems([]); // Clear the form

@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { LuCopy } from "react-icons/lu";
 import { ContentItem } from "@/types/contents";
-import { getBusiness, getDropZones } from "@/services/api";
+import { deleteDropZones, getBusiness, getDropZones } from "@/services/api";
 import Pagination from "./component/Pagination";
 
 const users = [
@@ -100,6 +100,7 @@ const AssetsLibrary = () => {
   const [debouncedSearch, setDebouncedSearch] = useState(filters.search);
   const [vendorOptions, setVendorOptions] = useState([]);
   const [subVendorOptions, setSubvendorOptions] = useState([]);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const updateFilters = (key: string, value: string) => {
     setFilters((prevFilters) => ({
@@ -189,6 +190,19 @@ const AssetsLibrary = () => {
         draggable: true,
       });
     });
+  };
+
+  const handleDelete = (id: number) => {
+    setDeleteLoading(true);
+    deleteDropZones(id)
+      .then((fetchedContent: any) => {
+        setDeleteLoading(false);
+        fetchDropZones();
+      })
+      .catch((err) => {
+        setDeleteLoading(false);
+        console.error("Error fetching business data:", err);
+      });
   };
 
   return (
@@ -315,7 +329,7 @@ const AssetsLibrary = () => {
             return (
               <div key={index} className="group w-full">
                 <LibraryCard
-                  title={`${item.first_name}  ${item.last_name} ${item.drop_type}`}
+                  title={`${item.first_name}  ${item.last_name} ${item.folder_name}`}
                   mainIcon={
                     <FaGoogleDrive className="text-[#cbcbcb]" size={14} />
                   }
@@ -340,9 +354,13 @@ const AssetsLibrary = () => {
                     },
                     {
                       element: (
-                        <div className="border border-[#000] text-[#000] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer">
+                        <button
+                          disabled={deleteLoading}
+                          onClick={() => handleDelete(item.id)}
+                          className="border border-[#000] text-[#000] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer"
+                        >
                           <FiMinus size={14} />
-                        </div>
+                        </button>
                       ),
                       tooltip: "Remove",
                     },
