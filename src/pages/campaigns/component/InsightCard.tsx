@@ -13,6 +13,7 @@ interface InsightCardProps {
   info?: string;
   extraClass?: string;
   maxValue?: number | string;
+  currency?: any;
 }
 
 const Tooltip = ({ info }: { info: string }) => (
@@ -35,6 +36,7 @@ const InsightCard: FC<InsightCardProps> = ({
   // height = "220px",
   extraClass = "",
   maxValue,
+  currency,
 }) => {
   return (
     <div
@@ -47,12 +49,16 @@ const InsightCard: FC<InsightCardProps> = ({
       </div>
 
       <div className="flex flex-row items-center h-[6rem] overflow-x-auto overflow-y-hidden">
-        <p className="text-2xl lg:text-[56px] font-[600]">&#8358;{value}</p>
+        <p className="text-2xl lg:text-[56px] font-[600]">
+          {currency}
+          {value}
+        </p>
         {maxValue && (
           <>
             <p className="mx-4">—</p>
             <p className="text-2xl lg:text-[56px] font-[600]">
-              &#8358;{maxValue}
+              {currency}
+              {maxValue}
             </p>
           </>
         )}

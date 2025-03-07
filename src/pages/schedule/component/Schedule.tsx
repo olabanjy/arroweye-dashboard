@@ -19,6 +19,8 @@ import { ContentItem, EventsItem } from "@/types/contents";
 import { PiCalendarPlus } from "react-icons/pi";
 import { IoFilter } from "react-icons/io5";
 import { useRouter } from "next/router";
+import AutocompleteInput from "./Autocomplete";
+
 interface FormErrors {
   title?: string;
   start_dte?: string;
@@ -98,11 +100,16 @@ const Schedule: React.FC<ScheduleProps> = ({
   const events = eventItem.map((item, index) => ({
     id: `${item?.code}-${index}`, // Make unique by adding index
     title: item.title,
-    start: item.created,
-    end: item.created,
+    start: item.start_dte,
+    end: item.start_dte,
+    end_date: item.end_dte,
+    vendor: item.vendor,
+    subvendor: item.subvendor,
+    location: item.location,
   }));
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [viewOnly, setViewOnly] = useState(false);
   const [filter, setisFilter] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -135,7 +142,17 @@ const Schedule: React.FC<ScheduleProps> = ({
   };
 
   const handleCloseModal = () => {
+    setViewOnly(false);
     setIsModalVisible(false);
+    setFormData({
+      title: "",
+      vendor_id: "",
+      subvendor_id: "",
+      location: "",
+      start_dte: "",
+      end_dte: "",
+      code: "",
+    });
   };
 
   const formatDateToString = (dateStr: string) => {
@@ -332,7 +349,10 @@ const Schedule: React.FC<ScheduleProps> = ({
               }}
               events={events}
               eventClick={(info) => {
-                alert(`Event: ${info.event.title}`);
+                // alert(`Event: ${info.event.title}`);
+                console.log("INFO", info.event);
+                setViewOnly(true);
+                setIsModalVisible(true);
               }}
               dateClick={handleDateClick}
               editable={true}
@@ -354,8 +374,20 @@ const Schedule: React.FC<ScheduleProps> = ({
                 right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
               }}
               events={events}
-              eventClick={(info) => {
-                alert(`Event: ${info.event.title}`);
+              eventClick={(info: any) => {
+                // alert(`Event: ${info.event.title}`);
+                console.log("INFO", info.event);
+                setFormData({
+                  title: info.event.title,
+                  vendor_id: info?.event?._def?.extendedProps?.vendor,
+                  subvendor_id: info?.event?._def?.extendedProps?.subvendor,
+                  location: info?.event?._def?.extendedProps?.location,
+                  start_dte: info?.event?.start,
+                  end_dte: info?.event?._def?.extendedProps?.end_date,
+                  code: "",
+                });
+                setViewOnly(true);
+                setIsModalVisible(true);
               }}
               dateClick={handleDateClick}
               editable={true}
@@ -384,43 +416,75 @@ const Schedule: React.FC<ScheduleProps> = ({
             <div className="space-y-4 text-[#000]">
               <div className="grid md:grid-cols-2 gap-[20px] items-center">
                 <div className="max-w-[400px] w-full">
-                  <Input
-                    type="text"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleFormChange}
-                    placeholder="Event Title"
-                    error={formErrors.title}
-                  />
+                  {viewOnly === true ? (
+                    <Input
+                      type="text"
+                      name="title"
+                      disabled={viewOnly === true}
+                      value={formData.title}
+                      onChange={handleFormChange}
+                      placeholder="Event Title"
+                      error={formErrors.title}
+                    />
+                  ) : (
+                    <AutocompleteInput
+                      name="title"
+                      disabled={viewOnly}
+                      value={formData.title}
+                      onChange={handleFormChange}
+                    />
+                  )}
                 </div>
                 <div className="max-w-[400px] w-full">
-                  <SelectInput
-                    name="vendor_id"
-                    value={formData.vendor_id}
-                    onChange={(value) =>
-                      handleSelectChange({ name: "vendor_id", value })
-                    }
-                    options={vendorOptions}
-                    placeholder="Select Vendor"
-                  />
+                  {viewOnly === true ? (
+                    <div className="bg-white border border-black text-sm rounded-[8px] p-4">
+                      {
+                        vendorOptions.find(
+                          (option: any) => option.value === formData.vendor_id
+                        )?.label
+                      }
+                    </div>
+                  ) : (
+                    <SelectInput
+                      name="vendor_id"
+                      value={formData.vendor_id}
+                      onChange={(value) =>
+                        handleSelectChange({ name: "vendor_id", value })
+                      }
+                      options={vendorOptions}
+                      placeholder="Select Vendor"
+                    />
+                  )}
                 </div>
 
                 <div className="max-w-[400px] w-full">
-                  <SelectInput
-                    name="subvendor_id"
-                    value={formData.subvendor_id}
-                    onChange={(value) =>
-                      handleSelectChange({ name: "subvendor_id", value })
-                    }
-                    options={subvendorOptions}
-                    placeholder="Select Subvendor"
-                  />
+                  {viewOnly === true ? (
+                    <div className="bg-white border border-black text-sm rounded-[8px] p-4">
+                      {
+                        subvendorOptions.find(
+                          (option: any) =>
+                            option.value === formData.subvendor_id
+                        )?.label
+                      }
+                    </div>
+                  ) : (
+                    <SelectInput
+                      name="subvendor_id"
+                      value={formData.subvendor_id}
+                      onChange={(value) =>
+                        handleSelectChange({ name: "subvendor_id", value })
+                      }
+                      options={subvendorOptions}
+                      placeholder="Select Subvendor"
+                    />
+                  )}
                 </div>
 
                 <div className="max-w-[400px] w-full">
                   <Input
                     type="text"
                     name="location"
+                    disabled={viewOnly}
                     value={formData.location}
                     onChange={handleFormChange}
                     placeholder="Location (or Link for virtual meetings)"
@@ -443,6 +507,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                   <Input
                     type="text"
                     name="code"
+                    disabled={viewOnly}
                     value={formData.code}
                     onChange={handleFormChange}
                     placeholder="Enter Code"
@@ -453,6 +518,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                   <Input
                     type="datetime-local"
                     name="start_dte"
+                    disabled={viewOnly === true}
                     value={formData.start_dte}
                     onChange={handleFormChange}
                     placeholder="Start Date & Time"
@@ -463,6 +529,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                   <Input
                     type="datetime-local"
                     name="end_dte"
+                    disabled={viewOnly === true}
                     value={formData.end_dte}
                     onChange={handleFormChange}
                     placeholder="End Date & Time"

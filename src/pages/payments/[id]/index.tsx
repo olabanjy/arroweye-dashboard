@@ -4,17 +4,21 @@ import Image from "next/image";
 import { getPaymentInvoice } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
+import { format, parseISO } from "date-fns";
 
 const Invoice = () => {
-  const [content, setContent] = useState<ContentItem | null>(null);
+  const [content, setContent] = useState<any | null>(null);
 
   const { query } = useRouter();
   const { id } = query;
 
   useEffect(() => {
-    getPaymentInvoice(Number(id)).then((fetchedContent) => {
-      setContent(fetchedContent);
-    });
+    if (!!id) {
+      getPaymentInvoice(Number(id)).then((fetchedContent) => {
+        console.log("INV", fetchedContent);
+        setContent(fetchedContent);
+      });
+    }
   }, [id]);
 
   const handlePrint = () => {
@@ -77,7 +81,9 @@ const Invoice = () => {
         <div className="mb-4 mt-4 space-y-[10px]">
           <div className="flex justify-between text-[16px]">
             <p className="font-[600]">Date Issued</p>
-            <p className="font-[400]">{content?.created?.slice(0, 10)}</p>
+            <p className="font-[400]">
+              {content?.created && format(content?.created, "dd MMM yyyy")}
+            </p>
           </div>
           <div className="flex justify-between text-[16px]">
             <p className="font-[600]">P.O Number</p>
@@ -85,15 +91,19 @@ const Invoice = () => {
           </div>
           <div className="flex justify-between text-[16px]">
             <p className="font-[600]">Invoice Number</p>
-            <p className="font-[400]">INV-20240506-001</p>
+            <p className="font-[400]">{content?.invoice_number}</p>
           </div>
           <div className="flex justify-between text-[16px]">
             <p className="font-[600]">Customer</p>
-            <p className="font-[400]">Neville Records Limited</p>
+            <p className="font-[400]">
+              {content?.project?.subvendor?.organization_name}
+            </p>
           </div>
           <div className="flex justify-between text-[16px]">
             <p className="font-[600]">Email</p>
-            <p className="font-[400]">johndoe@example.com</p>
+            <p className="font-[400]">
+              {content?.project?.subvendor?.owner_email}
+            </p>
           </div>
         </div>
 
@@ -104,7 +114,7 @@ const Invoice = () => {
             className="text-[#212529]  space-y-2 pr-2"
             style={{ scrollbarWidth: "thin" }}
           >
-            {content?.items?.map((item, index) => (
+            {content?.items?.map((item: any, index: number) => (
               <div className="flex justify-between text-[16px]" key={index}>
                 <p className="font-[400]">{item.service.name}</p>
                 <p className="font-[400]">{item.service.cost}</p>
@@ -117,7 +127,7 @@ const Invoice = () => {
           <div className="flex justify-between text-[16px]">
             <p className=" font-[600]">Taxes</p>
             <p className=" font-[400]">
-              {content?.currency === "USD"
+              {content?.currency === "USD" || content?.currency === "Dollars"
                 ? "$"
                 : content?.currency === "Naira"
                   ? "₦"
@@ -128,7 +138,7 @@ const Invoice = () => {
           <div className="flex justify-between text-[16px]">
             <p className=" font-[600]">Total Amount (+ Tax) </p>
             <p className=" font-[400]">
-              {content?.currency === "USD"
+              {content?.currency === "USD" || content?.currency === "Dollars"
                 ? "$"
                 : content?.currency === "Naira"
                   ? "₦"
@@ -138,26 +148,26 @@ const Invoice = () => {
           </div>
           <div className="flex justify-between text-[16px]">
             <p className=" font-[600]">Payment Method </p>
-            <p className=" font-[400]">Credit Card</p>
+            <p className=" font-[400]">Bank Transfer</p>
           </div>
         </div>
 
         <div className="text-center text-xs text-gray-400">
-          <p>Receipt ID: #123456789</p>
+          <p>Receipt ID: #{content?.id}</p>
         </div>
 
         {content?.status !== "Unpaid" ? (
           <button
             onClick={handlePrint}
             disabled
-            className=" w-full p-[10px] text-center font-[600] text-[16px] mt-2 rounded text-[#ffffff] bg-[#c4c3c3] transition-all duration-700 ease-in-out transform "
+            className="print:hidden w-full p-[10px] text-center font-[600] text-[16px] mt-2 rounded text-[#ffffff] bg-[#c4c3c3] transition-all duration-700 ease-in-out transform "
           >
             UnPaid
           </button>
         ) : (
           <button
             onClick={handlePrint}
-            className="w-full p-[10px] text-center font-[600] text-[16px] mt-2 rounded text-[#ffffff] bg-[#000000] hover:bg-orange-500 transition-all duration-700 ease-in-out transform "
+            className="print:hidden w-full p-[10px] text-center font-[600] text-[16px] mt-2 rounded text-[#ffffff] bg-[#000000] hover:bg-orange-500 transition-all duration-700 ease-in-out transform "
           >
             Download Receipt
           </button>

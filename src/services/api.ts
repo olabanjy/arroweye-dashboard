@@ -169,7 +169,8 @@ export const CreateBusiness = async (payload: unknown): Promise<void> => {
 
 export const CreateMedia = async (
   id: number,
-  payload: unknown
+  payload: unknown,
+  contentType?: string
 ): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
@@ -179,6 +180,9 @@ export const CreateMedia = async (
       url: `/api/v1/projects/${id}/media/`,
       data: payload,
       requireToken: true,
+      headers: {
+        "Content-Type": contentType || "multipart/form-data", // Use provided content type or default
+      },
     });
 
     console.log(`create media response: ${response}`);
@@ -618,6 +622,47 @@ export const getDropZones = async ({
 
     return response;
   } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          "Content Retrieval failed. Please try again."
+      );
+    } else {
+      toast.error("Content Retrieval failed. Please try again.");
+    }
+
+    return null;
+  }
+};
+
+export const deleteDropZones = async (id: number): Promise<any | null> => {
+  const loadingDelete = toast.loading("Deleting dropzone");
+  try {
+    const content: any = ls.get("Profile", { decrypt: true });
+    const token = content?.access;
+
+    const response = await apiRequest({
+      method: "DELETE",
+      url: `/api/v1/projects/general/dropzone/${id}`,
+      requireToken: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    toast.update(loadingDelete, {
+      render: "DropZone Deleted",
+      type: "info",
+      isLoading: false,
+      autoClose: 3000,
+    });
+    return response;
+  } catch (error: unknown) {
+    toast.update(loadingDelete, {
+      render: "Error occured",
+      type: "error",
+      isLoading: false,
+      autoClose: 3000,
+    });
     if (axios.isAxiosError(error)) {
       toast.error(
         error.response?.data?.message ||

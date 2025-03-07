@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
-import { createDropzone } from "@/services/api";
+import { createDropzone, getLoggedInUser } from "@/services/api";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { ContentItem } from "@/types/contents";
@@ -90,6 +90,19 @@ const DropForm: React.FC<DropFormProps> = ({ setDropzoneData }) => {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    getLoggedInUser().then((user) => {
+      console.log("NA HERE", user.user_profile);
+      setFormData({
+        firstName: user.user_profile.fullname.split(" ")[0],
+        lastName: user.user_profile.fullname.split(" ")[1],
+        folderName: "",
+        link: "",
+        dropType: "",
+      });
+    });
+  }, []);
 
   return (
     <form onSubmit={handleSubmit}>

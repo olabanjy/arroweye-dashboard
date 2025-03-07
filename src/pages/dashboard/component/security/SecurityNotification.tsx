@@ -29,6 +29,7 @@ const SecurityNotification: React.FC<any> = ({ notification }) => {
                 onDownload={handleDownload}
                 onShare={handleShare}
                 actions={item.actions}
+                iconClass={item.icon}
               />
             );
           })

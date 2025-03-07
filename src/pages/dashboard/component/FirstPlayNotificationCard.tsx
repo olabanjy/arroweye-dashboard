@@ -10,6 +10,7 @@ interface FirstPlayNotificationCardProps {
   onDownload: () => void;
   onShare: () => void;
   actions: any;
+  iconClass?: string;
 }
 
 const FirstPlayNotificationCard: FC<FirstPlayNotificationCardProps> = ({
@@ -19,6 +20,7 @@ const FirstPlayNotificationCard: FC<FirstPlayNotificationCardProps> = ({
   onDownload,
   onShare,
   actions,
+  iconClass,
 }) => {
   const handleCopyLink = (link: string) => {
     navigator.clipboard.writeText(link).then(() => {
@@ -32,11 +34,32 @@ const FirstPlayNotificationCard: FC<FirstPlayNotificationCardProps> = ({
       });
     });
   };
+  const getRandomBgColor = () => {
+    const colors = [
+      "bg-red-200",
+      "bg-blue-200",
+      "bg-green-200",
+      "bg-yellow-200",
+      "bg-purple-200",
+      "bg-pink-200",
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
   return (
     <div className="flex items-start gap-[10px] pb-[20px] border-b">
-      <div className="mt-[15px] w-8 h-8 rounded px-[10px] py-[4px] bg-amber-200  flex items-center justify-center">
-        <FaPlayCircle className="text-[#947c01]  text-[21px]" size={24} />
-      </div>
+      {!!iconClass ? (
+        <div
+          className={`w-8 h-8 rounded px-[10px] py-[4px] flex items-center justify-center ${getRandomBgColor()}`}
+        >
+          <i className={`${iconClass} text-[#947c01] text-[21px]`} />
+        </div>
+      ) : (
+        <div className="mt-[15px] w-8 h-8 rounded px-[10px] py-[4px] bg-amber-200 flex items-center justify-center">
+          <FaPlayCircle className="text-[#947c01] text-[21px]" size={24} />
+        </div>
+      )}
+
       <div>
         <p className="font-[600] text-[8px]  text-[#7f7f7f] tracking-[.1rem]">
           {timeAgo}
