@@ -170,8 +170,6 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
     );
   };
 
-  console.log("existing", existingAirPlayData);
-
   const placeholder = activeDetailsTab === "Radio" ? "Spins" : "Plays";
 
   useEffect(() => {
@@ -211,15 +209,13 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
       });
     };
 
+   
+
     if (!!existingAirPlayData) {
       const processedData = processAirplayData(existingAirPlayData);
       setProcessedData(processedData);
     }
   }, [existingAirPlayData, activeDetailsTab]);
-
-  useEffect(() => {
-    console.log("PROCESSED", processedData);
-  }, [processedData]);
 
   return (
     <>
@@ -283,9 +279,9 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
             </div>
 
             <div>
-              <div className="mt-5 space-y-1 max-h-[400px] overflow-auto">
+              <div className="mt-5 space-y-5 md:space-y-1 max-h-[400px] overflow-auto">
                 {processedData.map((metricData: any, idx: any) => (
-                  <div className="flex flex-col md:flex-row item-center gap-5">
+                  <div className="flex flex-col md:flex-row item-center gap-2 md:gap-5">
                     <div className="max-w-[200px] w-full">
                       <div className="bg-gray-300 border border-black rounded-xl p-3">
                         {metricData.name}

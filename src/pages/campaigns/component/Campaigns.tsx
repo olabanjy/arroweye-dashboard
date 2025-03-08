@@ -35,7 +35,6 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const [investmentFilter, setInvestmentFilter] = useState<any>("");
   const [revenueFilter, setRevenueFilter] = useState<any>("");
 
-  console.log(isArchiving);
   useEffect(() => {
     fetchProjects();
   }, []);

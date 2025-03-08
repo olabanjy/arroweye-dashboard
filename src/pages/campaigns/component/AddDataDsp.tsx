@@ -16,6 +16,7 @@ interface CompanyDetailsFormProps {
   visible: boolean;
   onHide: () => void;
   onAddDataSuccess: () => void;
+  existingDSPData: any;
 }
 
 const Tooltip = ({ info }: { info: string }) => (
@@ -48,11 +49,12 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
   visible,
   onHide,
   onAddDataSuccess,
+  existingDSPData,
 }) => {
   const { query } = useRouter();
   const { id } = query;
   const [activeDetailsTab, setActiveDetailsTab] = useState<string>("");
-  const [content, setContent] = useState<ContentItem[] | null>(null);
+  const [content, setContent] = useState<any[] | null>(null);
   const [metric, setMetric] = useState<any>(null);
   const [isAddNewService, setIsAddNewService] = useState(false);
   const [addDspData, setAddDspData] = useState<AddDspData[]>([
@@ -63,10 +65,10 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
   const [errors, setErrors] = useState<{
     [key: string]: { metric_id?: string; weeks?: string };
   }>({});
+  const [processedData, setProcessedData] = useState<any[]>([]);
 
   useEffect(() => {
     getDsp().then((fetchedContent) => {
-      console.log(fetchedContent);
       setContent(fetchedContent);
 
       if (fetchedContent && fetchedContent.length > 0) {
@@ -79,6 +81,10 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
     });
   }, []);
 
+  const dspMetrics = content?.find(
+    (dsp: any) => dsp.name === activeDetailsTab
+  )?.metrics;
+
   const customOptions = [
     {
       value: 99999,
@@ -86,7 +92,7 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
       impressions: 0,
       audience: 0,
     },
-    ...(metric?.map((item: any) => ({
+    ...(dspMetrics?.map((item: any) => ({
       value: item.id ?? 0,
       label: item.name ?? "",
       impressions: item.impressions ?? 0,
@@ -172,6 +178,63 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
     );
   };
 
+  const processDSPData = (items: any[]) => {
+    const filteredItems = items.filter(
+      (item) => item?.dsp?.name === activeDetailsTab
+    );
+
+    if (filteredItems.length === 0) return [];
+
+    // Create an object to store aggregated metrics
+    const metricAggregates: {
+      [key: string]: {
+        metric_id: number;
+        metric_name: string;
+        week_1: number;
+        week_2: number;
+        week_3: number;
+        week_4: number;
+      };
+    } = {};
+
+    // Process each filtered item
+    filteredItems.forEach((item) => {
+      // Use sm_data instead of airplay_data based on your JSON structure
+      item.dsp_data?.forEach((metricItem: any) => {
+        const metricName = metricItem.metric_name;
+        const metricId = metricItem.metric;
+
+        // Initialize the metric in our aggregates if it doesn't exist
+        if (!metricAggregates[metricName]) {
+          metricAggregates[metricName] = {
+            metric_id: metricId,
+            metric_name: metricName,
+            week_1: 0,
+            week_2: 0,
+            week_3: 0,
+            week_4: 0,
+          };
+        }
+
+        // Add this item's weekly data to the aggregated totals
+        metricAggregates[metricName].week_1 += metricItem.week_1 || 0;
+        metricAggregates[metricName].week_2 += metricItem.week_2 || 0;
+        metricAggregates[metricName].week_3 += metricItem.week_3 || 0;
+        metricAggregates[metricName].week_4 += metricItem.week_4 || 0;
+      });
+    });
+
+    // Convert the aggregates object to an array
+    return Object.values(metricAggregates);
+  };
+
+  useEffect(() => {
+    if (!!existingDSPData) {
+      const processedData = processDSPData(existingDSPData);
+      setProcessedData(processedData);
+    }
+  }, [existingDSPData, activeDetailsTab]);
+
   return (
     <>
       <div
@@ -222,6 +285,32 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
                     {item.name}
                   </button>
                 ))}
+            </div>
+
+            <div className="mt-5 space-y-5 md:space-y-1 max-h-[400px] overflow-auto">
+              {processedData.map((metricData: any, idx: any) => (
+                <div className="flex flex-col md:flex-row item-center gap-2 md:gap-5">
+                  <div className="max-w-[200px] w-full">
+                    <div className="bg-gray-300 border border-black rounded-xl p-3">
+                      {metricData.metric_name}
+                    </div>
+                  </div>
+
+                  <div key={idx} className="flex flex-row items-center gap-2">
+                    {["week_1", "week_2", "week_3", "week_4"].map((week) => (
+                      <WeekInput
+                        key={`${metricData.id}-${week}`}
+                        type="number"
+                        name={`${metricData.id}-${week}`}
+                        label={`WEEK ${week.slice(-1)}`}
+                        placeholder={"Metric Value"}
+                        value={metricData[week]}
+                        disabled={true}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div>
