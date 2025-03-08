@@ -117,6 +117,7 @@ const AssetsLibrary = () => {
     });
 
     if (response) {
+      console.log(response);
       setContent(response.results || []);
       setTotalPages(Math.ceil(response.count / 10));
     }

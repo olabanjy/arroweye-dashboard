@@ -163,9 +163,7 @@ const ProjectDetails = () => {
       business_id: content?.subvendor?.id,
       project_id: Number(id),
     };
-    console.log("This is the id", id);
-    console.log("payload", payload);
-
+   
     AddStaff(payload)
       .then((response) => {
         console.log("AddStaff response:", response);
@@ -266,7 +264,6 @@ const ProjectDetails = () => {
   };
 
   const handleUserClick = (user: any) => {
-    console.log("User clicked", user);
     const mappedUser: User = {
       id: user.id,
       initials: user.user_profile.fullname?.slice(0, 2).toUpperCase() || "",
@@ -298,7 +295,6 @@ const ProjectDetails = () => {
 
   useEffect(() => {
     const content: any = ls.get("Profile", { decrypt: true });
-    console.log("PROFILE", content?.user?.user_profile?.role);
     setUserRole(content?.user?.user_profile?.role);
   }, []);
 

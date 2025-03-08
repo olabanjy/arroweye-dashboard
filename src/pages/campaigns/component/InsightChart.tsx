@@ -412,12 +412,39 @@ const InsightChart: React.FC<InsightChartProps> = ({
     }
   }, [media]);
 
+  const onAddSocialMediaDataSuccess = () => {
+    if (!!id) {
+      getSocialMediaStats({
+        id: Number(id),
+        ...socialMediaPlatformFilters,
+      }).then((fetchedContent) => {
+        setSocialMediaData(fetchedContent);
+        toast.info("Social Media Stats Updated")
+      });
+      geteSMActionStats({ id: Number(id), ...socialMediaActionsFilters }).then(
+        (fetchedContent) => {
+          setSmactionData(fetchedContent);
+        }
+      );
+    }
+    if (!!id) {
+      getSingleProject(Number(id)).then((fetchedContent) => {
+        setContent(fetchedContent);
+      });
+    }
+  };
+
   const onAddDataSuccess = () => {
     if (!!id) {
       getAirPlayStats({ id: Number(id) }).then((fetchedContent) => {
         setAirPlayData(fetchedContent);
-        toast.success("AirPlay stats updated");
+        toast.info("AirPlay stats updated");
       });
+      getAudienceStats({ id: Number(id), ...airplayAudienceFilters }).then(
+        (fetchedContent) => {
+          setAudienceData(fetchedContent);
+        }
+      );
     }
     if (!!id) {
       getSingleProject(Number(id)).then((fetchedContent) => {
@@ -432,7 +459,12 @@ const InsightChart: React.FC<InsightChartProps> = ({
       });
       geteDSPPerformanceStats({ id: Number(id) }).then((fetchedContent) => {
         setDspPerformanceData(fetchedContent);
-        toast.success("DSP stats updated");
+        toast.info("DSP stats updated");
+      });
+    }
+    if (!!id) {
+      getSingleProject(Number(id)).then((fetchedContent) => {
+        setContent(fetchedContent);
       });
     }
   };
@@ -643,6 +675,8 @@ const InsightChart: React.FC<InsightChartProps> = ({
       <AddDataSocials
         visible={addDataModalSocial}
         onHide={() => setAddDataModalSocial(false)}
+        onAddDataSuccess={onAddSocialMediaDataSuccess}
+        existingSocialMediaData={content?.project_sm}
       />
       <AddMedia
         visible={addMediaModal}
@@ -654,6 +688,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
         visible={addDspModal}
         onHide={() => setAddDspModal(false)}
         onAddDataSuccess={onAddDataDspSuccess}
+        existingDSPData={content?.project_dsp}
       />
 
       {openChatModal && (

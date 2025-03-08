@@ -48,10 +48,9 @@ interface ProjectFormData {
   }[];
 }
 
-const InstagramData = () => {
+const InstagramData = ({ metrics }: any) => {
   const { query } = useRouter();
   const { id } = query;
-  const [content, setContent] = useState<ContentItem[] | null>(null);
   const [socials, setSocials] = useState<ContentItem[] | null>(null);
   const [totalImpressions, setTotalImpressions] = useState(0);
   const [totalAudience, setTotalAudience] = useState(0);
@@ -60,15 +59,14 @@ const InstagramData = () => {
   const [items, setItems] = useState<Item[]>([]);
 
   useEffect(() => {
-    getMetric().then((fetchedContent) => {
-      setContent(fetchedContent);
-    });
     getSocialMedia().then((fetchedContent) => {
       setSocials(fetchedContent);
     });
   }, []);
 
-  const InstagramID = socials?.find((social) => social.name === "Instagram")?.id;
+  const InstagramID = socials?.find(
+    (social) => social.name === "Instagram"
+  )?.id;
 
   const hideDialog = () => {
     setIsAddNewService(false);
@@ -197,7 +195,7 @@ const InstagramData = () => {
       impressions: 0,
       audience: 0,
     },
-    ...(content?.map((item) => ({
+    ...(metrics?.map((item: any) => ({
       value: item.id ?? 0,
       label: item.name ?? "",
       impressions: item.impressions ?? 0,
@@ -277,9 +275,7 @@ const InstagramData = () => {
             name: "",
           });
 
-          getMetric().then((fetchedContent) => {
-            setContent(fetchedContent);
-          });
+          getMetric().then((fetchedContent) => {});
         })
         .catch((err) => {
           console.error("Error submitting form:", err);

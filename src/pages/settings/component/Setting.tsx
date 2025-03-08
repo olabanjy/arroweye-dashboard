@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import ls from "localstorage-slim";
 import { Input } from "@/components/ui/input";
 import { Toast } from "primereact/toast";
 import { InputSwitch } from "primereact/inputswitch";
@@ -6,9 +7,9 @@ import { LuCopy } from "react-icons/lu";
 
 const Setting = () => {
   const [email, setEmail] = useState("example@mail.com");
-  const [vendorName, setVendorName] = useState("David Jones");
-  const [labelName, setLabelName] = useState("Mavins");
-  const [phone, setPhone] = useState("+234 4567 898");
+  const [userName, setUserName] = useState("David Jones");
+  const [labelName, setLabelName] = useState("");
+  const [phone, setPhone] = useState("");
   const [toggleNotifications, setToggleNotifications] = useState(false);
   const toast = useRef<Toast>(null);
 
@@ -75,6 +76,13 @@ const Setting = () => {
     </div>
   );
 
+  useEffect(() => {
+    const userProfile: any = ls.get("Profile", { decrypt: true });
+    setUserName(userProfile?.user?.user_profile?.fullname);
+    setEmail(userProfile?.user?.user_profile?.staff_email);
+    setLabelName(userProfile?.user?.user_profile?.business_name);
+  }, []);
+
   return (
     <div>
       <Toast ref={toast} className=" font-IBM" />
@@ -118,10 +126,10 @@ const Setting = () => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-end ">
           {renderCopyInput(
             "USER DETAILS",
-            vendorName,
+            userName,
             toggleNotifications,
             "text",
-            (e) => setVendorName(e.target.value),
+            (e) => setUserName(e.target.value),
             "User Details"
           )}
           {renderCopyInput(
@@ -147,7 +155,7 @@ const Setting = () => {
             ""
           )}
 
-          <div className="flex gap-[10px] items-end flex-1">
+          {/* <div className="flex gap-[10px] items-end flex-1">
             <div className="mb-[4px]">
               <InputSwitch
                 id="phone"
@@ -156,7 +164,7 @@ const Setting = () => {
                 className="custom-switch"
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
