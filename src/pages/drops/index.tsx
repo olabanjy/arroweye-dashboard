@@ -16,6 +16,7 @@ import { LuCopy } from "react-icons/lu";
 import { ContentItem } from "@/types/contents";
 import { deleteDropZones, getBusiness, getDropZones } from "@/services/api";
 import Pagination from "./component/Pagination";
+import { format, parseISO } from "date-fns";
 
 const users = [
   {
@@ -61,9 +62,14 @@ const colors = [
 
 interface User {
   initials: string;
-  fullName: string;
-  email: string;
-  uploader: string;
+  user_profile: {
+    fullname: string;
+    staff_email: string;
+    role: string;
+    business_name: string;
+  };
+  created: any;
+  last_login: any;
 }
 
 export const Tooltip = ({ info }: { info: string }) => (
@@ -330,7 +336,7 @@ const AssetsLibrary = () => {
             return (
               <div key={index} className="group w-full">
                 <LibraryCard
-                  title={`${item.first_name}  ${item.last_name} ${item.folder_name}`}
+                  title={`${item.folder_name} - ${item.first_name}  ${item.last_name}`}
                   mainIcon={
                     <FaGoogleDrive className="text-[#cbcbcb]" size={14} />
                   }
@@ -380,7 +386,7 @@ const AssetsLibrary = () => {
                       element: (
                         <div
                           className={`${randomColor} rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer`}
-                          onClick={() => handleUserClick(item)}
+                          onClick={() => handleUserClick(item.user)}
                         >
                           <p className="text-[#fff] text-[16px] font-[600] tracking-[.1rem] font-Poppins ">
                             {`${item.first_name.charAt(0)}${item.last_name.charAt(0)}`}
@@ -425,26 +431,38 @@ const AssetsLibrary = () => {
         >
           {selectedUser && (
             <div className="space-y-4 text-[#000] font-IBM">
-              <p className="text-[30px] font-[600]">{selectedUser.uploader}</p>
+              <p className="text-[30px] font-[600]">
+                {selectedUser.user_profile.fullname}
+              </p>
               <div className="text-[16px]">
                 <p className="font-[400] text-[#7c7e81]">Email: </p>
-                <p className="font-[600]">{selectedUser.email}</p>
+                <p className="font-[600]">
+                  {selectedUser.user_profile.staff_email}
+                </p>
               </div>
               <div className="text-[16px]">
                 <p className="font-[400] text-[#7c7e81]">Role</p>
-                <p className="font-[600] text-[#01a733]">Agent</p>
+                <p className="font-[600] text-[#01a733]">
+                  {selectedUser.user_profile.role}
+                </p>
               </div>
               <div className="text-[16px]">
                 <p className="font-[400] text-[#7c7e81]">Project</p>
-                <p className="font-[600]">Jolie</p>
+                <p className="font-[600]">
+                  {selectedUser.user_profile.business_name}
+                </p>
               </div>
               <div className="text-[16px]">
                 <p className="font-[400] text-[#7c7e81]">Member since</p>
-                <p className="font-[600]">July 20, 2021</p>
+                <p className="font-[600]">
+                  {format(parseISO(selectedUser.created), "dd MMM yyyy")}
+                </p>
               </div>
               <div className="text-[16px]">
                 <p className="font-[400] text-[#7c7e81]">Last login</p>
-                <p className="font-[600]">May 2, 2024</p>
+                <p className="font-[600]">
+                  {format(parseISO(selectedUser.last_login), "dd MMM yyyy")}
+                </p>
               </div>
             </div>
           )}

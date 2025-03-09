@@ -237,7 +237,6 @@ const InsightChart: React.FC<InsightChartProps> = ({
         labels: ["Total Count"],
         datasets: [
           {
-            label: "Airplay",
             data: [data.total_count],
             backgroundColor: ["#d4d4d4"],
             borderWidth: 1,
@@ -259,7 +258,6 @@ const InsightChart: React.FC<InsightChartProps> = ({
       labels,
       datasets: [
         {
-          label: "Airplay",
           data: values,
           backgroundColor: backgroundColors,
           borderWidth: 1,
@@ -325,6 +323,11 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
   const pieChartDataAudience =
     audienceData && generatePieChartData(audienceData);
+
+  useEffect(() => {
+    console.log("DONUT DATA", chartDataForDoughnutSMAction);
+    console.log("DONUT DATA BEFORE", smactionData);
+  }, [pieChartDataAudience]);
 
   const pieChartDataDSPPerformance =
     dspPerformanceData && generatePieChartData(dspPerformanceData);
@@ -419,7 +422,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
         ...socialMediaPlatformFilters,
       }).then((fetchedContent) => {
         setSocialMediaData(fetchedContent);
-        toast.info("Social Media Stats Updated")
+        toast.info("Social Media Stats Updated");
       });
       geteSMActionStats({ id: Number(id), ...socialMediaActionsFilters }).then(
         (fetchedContent) => {
