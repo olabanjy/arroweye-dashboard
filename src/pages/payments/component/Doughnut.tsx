@@ -381,7 +381,15 @@ const DoughnutChart: FC<InsightChartProps> = ({
                       font: { size: 12 },
                     },
                   },
-                  tooltip: { enabled: true },
+                  tooltip: {
+                    callbacks: {
+                      label: function (context) {
+                        const label = context.label || "";
+                        const value = context.raw || 0;
+                        return `${label}: ${value}`;
+                      },
+                    },
+                  },
                 },
               }}
             />
