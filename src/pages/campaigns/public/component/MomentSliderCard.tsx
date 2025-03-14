@@ -21,6 +21,7 @@ interface MomentSliderCardProps {
   MomentsTitle?: string;
   assetsButton?: string;
   additionalContent?: React.ReactNode;
+  csvData?: any;
 }
 
 const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
@@ -35,6 +36,7 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
   MomentsTitle,
   assetsButton,
   additionalContent,
+  csvData,
 }) => {
   const sliderRef = useRef<Slider | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -101,6 +103,23 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
 
     setError(null);
     return true;
+  };
+
+  const downloadCSV = (data: any, filename = "DSPData.csv") => {
+    const headers = Object.keys(data).join(",") + "\n";
+    const values = Object.values(data).join(",") + "\n";
+
+    const csvContent = headers + values;
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -189,7 +208,10 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
           </button>
         )}
 
-        <div className="p-2 font-IBM text-[16px] font-[500] w-full rounded text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center">
+        <div
+          className="p-2 font-IBM text-[16px] font-[500] w-full rounded text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
+          onClick={() => downloadCSV(csvData)}
+        >
           <p>{downloadButtonText}</p>
           <sup className="font-bold p-2 rounded-full bg-white text-black mt-1">
             CSV

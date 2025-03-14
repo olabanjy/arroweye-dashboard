@@ -76,7 +76,7 @@ const ColumnChart: FC<InsightChartProps> = ({
   const data = formatDataForRecharts();
 
   const weeksOptions = [
-    { value: "", label: "All Weeks" },
+    { value: "", label: "Weeks" },
     { value: "1", label: "Week 1" },
     { value: "2", label: "Week 2" },
     { value: "3", label: "Week 3" },
