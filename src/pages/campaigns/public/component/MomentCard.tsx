@@ -16,6 +16,7 @@ interface MomentCardProps {
   subText?: string;
   MomentsTitle?: string;
   assetsButton?: string;
+  csvData?: any;
 }
 
 const MomentCard: React.FC<MomentCardProps> = ({
@@ -30,6 +31,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
   subText,
   MomentsTitle,
   assetsButton,
+  csvData,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
@@ -74,6 +76,23 @@ const MomentCard: React.FC<MomentCardProps> = ({
       );
       setIsPlaying(false);
     }
+  };
+
+  const downloadCSV = (data: any, filename = "Data.csv") => {
+    const headers = Object.keys(data).join(",") + "\n";
+    const values = Object.values(data).join(",") + "\n";
+
+    const csvContent = headers + values;
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -167,7 +186,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
         )}
         <button
           className="p-2 font-IBM text-[16px] font-[500] w-full rounded text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
-          onClick={() => window.open(reportUrls[currentVideoIndex])}
+          onClick={() => downloadCSV(csvData)}
           disabled={!reportUrls[currentVideoIndex]}
         >
           <p>{downloadButtonText}</p>

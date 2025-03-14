@@ -41,7 +41,7 @@ const selectOptions = [
 ];
 const selectOptionsAirPlay = [
   [
-    { value: "", label: "All Countries" },
+    { value: "", label: "Countries" },
     { value: "Nigeria", label: "Nigeria" },
     { value: "Kenya", label: "Kenya" },
     { value: "SouthAfrica", label: "S.Africa" },
@@ -51,7 +51,7 @@ const selectOptionsAirPlay = [
 ];
 const selectOptionsAudience = [
   [
-    { value: "", label: "All Channels" },
+    { value: "", label: "Channels" },
     { value: "Radio", label: "Radio" },
     { value: "DJ", label: "DJ" },
     { value: "TV", label: "Local TV" },
@@ -472,6 +472,11 @@ const InsightChart: React.FC<InsightChartProps> = ({
     }
   };
 
+  useEffect(() => {
+    console.log("AIR PLAY DEEETSSS", airPlayData);
+    console.log("AUDIENCE PLAY DEEETSSS", audienceData);
+  }, [airPlayData]);
+
   return (
     <div ref={targetRef}>
       <div className="mt-[20px] mb-[80px]">
@@ -526,6 +531,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
             <MomentCard
               MomentsTitle="MOMENTS"
+              csvData={{ ...airPlayData, ...audienceData }}
               videoUrls={momentMediaData}
               reportUrls={momentReportUrls}
               videoTitle="Moments"
@@ -581,6 +587,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
             <MomentCard
               MomentsTitle="REWIND"
+              csvData={{ ...socialMediaData, ...smactionData }}
               videoUrls={recapMediaData}
               reportUrls={momentReportUrls}
               videoTitle="Recap"
@@ -638,6 +645,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
             <MomentSliderCard
               images={dspMediaData}
+              csvData={{ ...dspData, ...dspPerformanceData }}
               downloadButtonText="Download Data"
               downloadIcon={true}
               MomentsTitle="DSP EDITORIAL"
