@@ -250,21 +250,9 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
           className="font-IBM !overflow-y-auto"
         >
           <div className="">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 mb-7">
               <p className="text-[32px] font-[500] text-[#212529]">DSP</p>
               <Tooltip info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted." />
-            </div>
-
-            <div className="grid md:flex items-center space-x-4">
-              <div className="cursor-pointer inline-flex items-center space-x-2 py-[8px] px-[16px] border border-[#000000] text-[400] text-[16px] text-[#000000] hover:text-[#ffffff] hover:bg-[#000000] hover:border-none rounded-full">
-                <PiCalendarPlus />
-                <p>add report (.xls, .csv)</p>
-              </div>
-              <p className="font-[400] text-[16px] text-[#212529]">or</p>
-              <div className="cursor-pointer inline-flex items-center space-x-2 py-[8px] px-[16px] border border-[#000000] text-[400] text-[16px] text-[#000000] hover:text-[#ffffff] hover:bg-[#000000] hover:border-none rounded-full">
-                <PiCalendarPlus />
-                <p>Automate</p>
-              </div>
             </div>
 
             <div className="text-[16px] font-[400] flex gap-[20px] items-center mt-[10px]">
@@ -353,7 +341,7 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
                                 type="number"
                                 name={week}
                                 label={`WEEK ${week.slice(-1)}`}
-                                placeholder="Spins"
+                                placeholder="Metric Value"
                                 value={item[week as keyof AddDspData] || ""}
                                 onChange={(e) =>
                                   updateAddDspData(

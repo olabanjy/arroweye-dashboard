@@ -87,18 +87,9 @@ const AddMedia: React.FC<CompanyDetailsFormProps> = ({
                 }`}
                 onClick={() => setActiveDetailsTab("Dsp")}
               >
-                DSP COVERS
+                DSP Covers
               </button>
-              <button
-                className={`text-center py-2 px-[16px] ${
-                  activeDetailsTab === "Shazam"
-                    ? "  border-b border-[#212529] text-[#000000]"
-                    : ""
-                }`}
-                onClick={() => setActiveDetailsTab("Shazam")}
-              >
-                SHAZAM
-              </button>
+
               <button
                 className={`text-center py-2 px-[16px] ${
                   activeDetailsTab === "Editorial"
@@ -107,7 +98,7 @@ const AddMedia: React.FC<CompanyDetailsFormProps> = ({
                 }`}
                 onClick={() => setActiveDetailsTab("Editorial")}
               >
-                EDITORIAL
+                Editorial
               </button>
               <button
                 className={`text-center py-2 px-[16px] ${
@@ -117,14 +108,13 @@ const AddMedia: React.FC<CompanyDetailsFormProps> = ({
                 }`}
                 onClick={() => setActiveDetailsTab("Gifting")}
               >
-                GIFTING
+                Gifting
               </button>
             </div>
 
             {activeDetailsTab === "moments" && <Moments />}
             {activeDetailsTab === "Recap" && <Recap />}
             {activeDetailsTab === "Dsp" && <DspCovers />}
-            {activeDetailsTab === "Shazam" && <ShazamAddMedia />}
             {activeDetailsTab === "Editorial" && <EditorialAddMedia />}
             {activeDetailsTab === "Gifting" && <GiftingAddMedia />}
           </div>

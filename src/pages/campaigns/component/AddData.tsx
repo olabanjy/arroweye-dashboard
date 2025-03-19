@@ -170,7 +170,7 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
     );
   };
 
-  const placeholder = activeDetailsTab === "Radio" ? "Spins" : "Plays";
+  const placeholder = "Metric Value";
 
   useEffect(() => {
     const processAirplayData = (items: any[]) => {
@@ -209,8 +209,6 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
       });
     };
 
-   
-
     if (!!existingAirPlayData) {
       const processedData = processAirplayData(existingAirPlayData);
       setProcessedData(processedData);
@@ -232,23 +230,11 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
           className="font-IBM !overflow-y-auto"
         >
           <div className="">
-            <div className=" flex items-center space-x-2 ">
-              <p className=" text-[32px] font-[500] text-[#212529]">Airplay</p>{" "}
+            <div className="flex items-center space-x-2 mb-7">
+              <p className="text-[32px] font-[500] text-[#212529]">Airplay</p>{" "}
               <Tooltip info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted." />
             </div>
 
-            <div className=" grid md:flex items-center space-x-4">
-              <div className=" cursor-pointer inline-flex items-center space-x-2 py-[8px] px-[16px] border border-[#000000] text-[400] text-[16px] text-[#000000] hover:text-[#ffffff] hover:bg-[#000000] hover:border-none rounded-full">
-                <PiCalendarPlus />
-                <p>add report (.xls, .csv)</p>
-              </div>
-              <p className=" font-[400] text-[16px] text-[#212529]">or</p>
-              <div className="cursor-pointer inline-flex items-center space-x-2 py-[8px] px-[16px] border border-[#000000] text-[400] text-[16px] text-[#000000] hover:text-[#ffffff] hover:bg-[#000000] hover:border-none rounded-full">
-                <PiCalendarPlus />
-
-                <p>Automate</p>
-              </div>
-            </div>
             <div className="text-[16px] font-[400] flex gap-[20px] items-center mt-[10px]">
               <button
                 className={`text-center py-2 px-[16px] ${
@@ -343,11 +329,7 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
                                 type="number"
                                 name={week}
                                 label={`WEEK ${week.slice(-1)}`}
-                                placeholder={
-                                  activeDetailsTab === "Radio"
-                                    ? "Spins"
-                                    : "Plays"
-                                }
+                                placeholder={placeholder}
                                 value={item[week as keyof AirPlayData] || ""}
                                 onChange={(e) =>
                                   updateAirPlayData(

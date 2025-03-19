@@ -187,7 +187,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
         <button
           className="p-2 font-IBM text-[16px] font-[500] w-full rounded text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
           onClick={() => downloadCSV(csvData)}
-          disabled={!reportUrls[currentVideoIndex]}
+          // disabled={!reportUrls[currentVideoIndex]}
         >
           <p>{downloadButtonText}</p>
           <sup className="font-bold p-2 rounded-full bg-white text-black mt-1">
@@ -196,15 +196,21 @@ const MomentCard: React.FC<MomentCardProps> = ({
         </button>
 
         {radioButtonText && (
-          <p
+          <button
             className={`p-2 mt-[20px] cursor-pointer text-[16px] font-[500] font-IBM w-full rounded text-center ${
               outline
                 ? "border border-black text-black hover:bg-black hover:text-white"
                 : "hover:bg-orange-500 bg-black text-white"
             }`}
+            onClick={() =>
+              window.open(
+                `https://studio-api.arroweye.pro${reportUrls[currentVideoIndex]}`
+              )
+            }
+            disabled={!reportUrls[currentVideoIndex]}
           >
             {radioButtonText}
-          </p>
+          </button>
         )}
 
         {subText && (
