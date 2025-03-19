@@ -20,6 +20,16 @@ const ProjectSingleInsight = () => {
     }
   }, [id]);
 
+  function formatNumber(num: any) {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
+    }
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K";
+    }
+    return num.toString();
+  }
+
   return (
     <div className="mt-[20px] relative ">
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[10px] 2xl:gap-[20px] relative">
@@ -27,7 +37,7 @@ const ProjectSingleInsight = () => {
           <InsightCard
             title="TOTAL INVESTMENT"
             currency={<>&#8358;</>}
-            value={`${content?.total_investment?.toLocaleString() || 0}`}
+            value={formatNumber(content?.total_investment || 0)}
             percentageChange="↑ 5%"
             extraClass="h-[220px]"
             percentageColor="#11cc48"
@@ -38,8 +48,8 @@ const ProjectSingleInsight = () => {
           <InsightCard
             title="TOTAL REVENUE"
             currency={<>&#8358;</>}
-            value={`${content?.total_revenue?.mininum?.toLocaleString() || 0}`}
-            maxValue={`${content?.total_revenue?.maximum?.toLocaleString() || 0}`}
+            value={`${formatNumber(content?.total_revenue?.mininum || 0)}`}
+            maxValue={`${formatNumber(content?.total_revenue?.maximum || 0)}`}
             extraClass="h-[220px]"
             percentageChange="↓ -3%"
             percentageColor="#ff4d4f"
@@ -50,7 +60,7 @@ const ProjectSingleInsight = () => {
         <div className="w-full">
           <InsightCard
             title="AUDIENCE GROWTH"
-            value={`${content?.total_audience_growth?.toLocaleString() || 0}`}
+            value={`${formatNumber(content?.total_audience_growth || 0)}`}
             extraClass="h-[220px]"
             percentageChange="↓ -3%"
             percentageColor="#ff4d4f"

@@ -163,7 +163,7 @@ const ProjectDetails = () => {
       business_id: content?.subvendor?.id,
       project_id: Number(id),
     };
-   
+
     AddStaff(payload)
       .then((response) => {
         console.log("AddStaff response:", response);
@@ -451,7 +451,6 @@ const ProjectDetails = () => {
               {content?.subvendor?.organization_name}
             </p>
           </div>
-
           <div className="pr-[40px]">
             {toggleNotifications ? (
               <div className="flex items-center">
@@ -509,7 +508,7 @@ const ProjectDetails = () => {
                   </div>
                 ))}
 
-                {["Supervisor", "Manager"].includes(userRole) && (
+                {["Manager"].includes(userRole) && (
                   <div className="relative group">
                     <p
                       className="bg-[#ffdead] text-[#000000] rounded-full w-[50px] h-[50px] flex items-center justify-center  text-center cursor-pointer"
@@ -549,9 +548,11 @@ const ProjectDetails = () => {
             </div>
           </div>
 
-          <div className=" ">
-            <ProjectSingleInsight />
-          </div>
+          {["Manager"].includes(userRole) && (
+            <div className=" ">
+              <ProjectSingleInsight />
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleAddUserSubmit}>
@@ -610,8 +611,6 @@ const ProjectDetails = () => {
                         { value: "Manager", label: "Manager" },
                         { value: "Supervisor", label: "Supervisor" },
                         { value: "Agent", label: "Agent" },
-                        { value: "Vendor", label: "Vendor" },
-                        { value: "Subvendor", label: "Subvendor" },
                       ]}
                       error={addUserErrors.role}
                     />
@@ -682,21 +681,23 @@ const ProjectDetails = () => {
             </Dialog>
           </div>
         </form>
-
-        <InsightChart
-          editMode={toggleNotifications}
-          handleDownloadPage={handleDownloadPDF}
-          handleDownloadData={handleExportCSV}
-        />
-
-        <div className="  ">
-          <Schedule
-            filterIcon={false}
-            isDateClickEnabled={false}
-            isProjectPage={true}
-            isSchedulePage={false}
-          />
-        </div>
+        {["Manager", "Supervisor"].includes(userRole) && (
+          <>
+            <InsightChart
+              editMode={toggleNotifications}
+              handleDownloadPage={handleDownloadPDF}
+              handleDownloadData={handleExportCSV}
+            />
+            <div className="  ">
+              <Schedule
+                filterIcon={false}
+                isDateClickEnabled={false}
+                isProjectPage={true}
+                isSchedulePage={false}
+              />
+            </div>
+          </>
+        )}
 
         <div
           className={`custom-dialog-overlay ${
