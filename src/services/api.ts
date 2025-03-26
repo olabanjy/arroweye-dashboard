@@ -650,7 +650,7 @@ export const deleteDropZones = async (id: number): Promise<any | null> => {
       },
     });
     toast.update(loadingDelete, {
-      render: "DropZone Deleted",
+      render: "Deleted successfully",
       type: "info",
       isLoading: false,
       autoClose: 3000,
@@ -1337,6 +1337,42 @@ export const getEvents = async (): Promise<EventsItem[] | null> => {
       );
     } else {
       toast.error("Content Retrieval failed. Please try again.");
+    }
+
+    return null;
+  }
+};
+
+export const deleteEvents = async (id: number): Promise<any | null> => {
+  const deleteToast = toast.loading("deleteing event...");
+  try {
+    const response = await apiRequest({
+      method: "DELETE",
+      url: `/api/v1/projects/schedule/events/${id}`,
+      data: null,
+      requireToken: true,
+    });
+
+    toast.update(deleteToast, {
+      render: "Event Deleted",
+      type: "success",
+      autoClose: 3000,
+    });
+
+    return response;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.update(deleteToast, {
+        render: "Content Retrieval failed. Please try again.",
+        type: "error",
+        autoClose: 3000,
+      });
+    } else {
+      toast.update(deleteToast, {
+        render: "Error deleting event",
+        type: "error",
+        autoClose: 3000,
+      });
     }
 
     return null;

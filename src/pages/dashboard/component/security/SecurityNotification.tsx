@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SecurityNotificationCard from "../SecurityNotificationCard";
 import { formatDistanceToNow } from "date-fns";
 
@@ -15,7 +15,9 @@ const SecurityNotification: React.FC<any> = ({ notification }) => {
     const date = new Date(dateString);
     return formatDistanceToNow(date, { addSuffix: true });
   };
-
+  useEffect(() => {
+    console.log("Notifications are here oooo", notification);
+  }, [notification]);
   return (
     <div>
       <div className=" space-y-[20px]">

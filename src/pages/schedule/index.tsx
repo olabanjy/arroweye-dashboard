@@ -7,7 +7,6 @@ const SchedulePage = () => {
     <DashboardLayout>
       <Schedule
         isDateClickEnabled={true}
-        isProjectPage={false}
         isSchedulePage={true}
       />
     </DashboardLayout>

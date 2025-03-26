@@ -28,6 +28,7 @@ import { format, parseISO } from "date-fns";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { toast } from "react-toastify";
+import ScheduleProject from "../schedule/component/ScheduleProject";
 
 interface User {
   id: string;
@@ -689,11 +690,10 @@ const ProjectDetails = () => {
               handleDownloadData={handleExportCSV}
             />
             <div className="  ">
-              <Schedule
+              <ScheduleProject
                 filterIcon={false}
                 isDateClickEnabled={false}
                 isProjectPage={true}
-                isSchedulePage={false}
               />
             </div>
           </>

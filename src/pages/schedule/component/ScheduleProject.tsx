@@ -14,6 +14,7 @@ import {
   deleteEvents,
   getBusiness,
   getEvents,
+  getProjectsEvents,
 } from "@/services/api";
 import { ContentItem, EventsItem } from "@/types/contents";
 import { PiCalendarPlus } from "react-icons/pi";
@@ -38,13 +39,13 @@ interface FormErrors {
 interface ScheduleProps {
   filterIcon?: boolean;
   isDateClickEnabled?: boolean;
-  isSchedulePage?: boolean;
+  isProjectPage?: boolean;
 }
 
-const Schedule: React.FC<ScheduleProps> = ({
+const ScheduleProject: React.FC<ScheduleProps> = ({
   filterIcon = true,
   isDateClickEnabled = false,
-  isSchedulePage = false,
+  isProjectPage = true,
 }) => {
   const { query } = useRouter();
   const { id } = query;
@@ -54,16 +55,12 @@ const Schedule: React.FC<ScheduleProps> = ({
   const [subvendorOptions, setSubvendorOptions] = useState<any>([]);
 
   useEffect(() => {
-    console.log("VENDORRRRRRS", vendorOptions);
-  }, [vendorOptions]);
-
-  useEffect(() => {
     const fetchEvents = async () => {
       try {
         let fetchedContent;
-        if (isSchedulePage === true) {
-          console.log("Fetching all events");
-          fetchedContent = await getEvents();
+        if (isProjectPage === true && !!id) {
+          console.log("Fetching events for project", id);
+          fetchedContent = await getProjectsEvents(Number(id));
         }
         console.log("Events Fetched", fetchedContent);
         setEventItem(fetchedContent || []);
@@ -73,7 +70,7 @@ const Schedule: React.FC<ScheduleProps> = ({
     };
 
     fetchEvents();
-  }, [isSchedulePage]);
+  }, [isProjectPage, id]);
 
   useEffect(() => {
     getBusiness()
@@ -114,39 +111,11 @@ const Schedule: React.FC<ScheduleProps> = ({
     project: item.project,
   }));
 
-  const downloadFormDataAsCSV = (
-    formData: any,
-    vendorOptions: { value: number; label: string }[],
-    subvendorOptions: { value: number; label: string }[],
-    filename = "event.csv"
-  ) => {
-    const findLabelByValue = (
-      options: { value: number; label: string }[],
-      value: number
-    ) => {
-      const found = options.find((option) => option.value === value);
-      return found ? found.label : value.toString();
-    };
+  const downloadFormDataAsCSV = (formData: any, filename = "event.csv") => {
+    const keys = Object.keys(formData);
+    const values = Object.values(formData);
 
-    const processedFormData = { ...formData };
-
-    // Remove original vendor and subvendor keys
-    delete processedFormData.vendor_id;
-    delete processedFormData.subvendor_id;
-
-    // Add new Vendor and Subvendor keys with labels
-    processedFormData.Vendor = formData.vendor_id
-      ? findLabelByValue(vendorOptions, formData.vendor_id)
-      : "";
-
-    processedFormData.Subvendor = formData.subvendor_id
-      ? findLabelByValue(subvendorOptions, formData.subvendor_id)
-      : "";
-
-    const keys = Object.keys(processedFormData);
-    const values = Object.values(processedFormData);
-
-    const hasValue = values.some(
+    const hasValue = Object.values(formData).some(
       (value) => value !== null && value !== undefined && value !== ""
     );
 
@@ -211,7 +180,7 @@ const Schedule: React.FC<ScheduleProps> = ({
     deleteEvents(eventID)
       .then(() => {
         setDeleteLoading(false);
-        getEvents();
+        getProjectsEvents(Number(id));
         setDeleteDialog(false);
       })
       .catch((err) => {
@@ -678,36 +647,33 @@ const Schedule: React.FC<ScheduleProps> = ({
                     )}
                   <p
                     className="text-[14px] px-[20px] py-[8px] bg-[#000] rounded-full text-[#fff] inline-flex cursor-pointer"
-                    onClick={() =>
-                      downloadFormDataAsCSV(
-                        formData,
-                        vendorOptions,
-                        subvendorOptions
-                      )
-                    }
+                    onClick={() => downloadFormDataAsCSV(formData)}
                   >
                     Share
                   </p>
                 </div>
 
-                <button
-                  className="relative group"
-                  type="button"
-                  onClick={() => {
-                    if (!formData.project) {
-                      toast.info("No project code");
-                    }
-                    window.open(`/campaigns/${formData?.project}`);
-                  }}
-                >
-                  <p className="bg-[#000] hover:bg-orange-500 text-[#fff] rounded-full h-[40px] w-[40px] flex items-center justify-center cursor-pointer font-IBM">
-                    <GoArrowUpRight size={24} />
-                  </p>
+                {!isProjectPage && (
+                  <button
+                    className="relative group"
+                    disabled={isProjectPage}
+                    type="button"
+                    onClick={() => {
+                      if (!formData.project) {
+                        toast.info("No project code");
+                      }
+                      window.open(`/campaigns/${formData?.project}`);
+                    }}
+                  >
+                    <p className="bg-[#000] hover:bg-orange-500 text-[#fff] rounded-full h-[40px] w-[40px] flex items-center justify-center cursor-pointer font-IBM">
+                      <GoArrowUpRight size={24} />
+                    </p>
 
-                  <p className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-max px-3 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-100">
-                    View Project
-                  </p>
-                </button>
+                    <p className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-max px-3 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-100">
+                      View Project
+                    </p>
+                  </button>
+                )}
               </div>
             </div>
           </form>
@@ -800,4 +766,4 @@ const Schedule: React.FC<ScheduleProps> = ({
   );
 };
 
-export default Schedule;
+export default ScheduleProject;

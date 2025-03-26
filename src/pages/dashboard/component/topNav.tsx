@@ -57,10 +57,6 @@ const TopNav: FC = () => {
     });
   }, []);
 
-  useEffect(() => {
-    console.log("Notifications", notifications);
-  }, [notifications]);
-
   return (
     <div className="relative">
       <div className="h-[10px]  text-white flex items-center justify-between px-[10px] lg:px-[40px] pt-[50px] relative">
