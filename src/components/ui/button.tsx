@@ -18,6 +18,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       isLoading,
       loadingText,
       className,
+      disabled,
       ...props
     },
     ref
@@ -26,7 +27,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       "flex items-center justify-center font-medium text-white rounded-md focus:outline-none transition duration-200 ease-in-out";
 
     const variantStyles = {
-      primary: "bg-[#020d2a]  focus:ring-2 focus:ring-blue-500",
+      primary: "bg-[#020d2a] focus:ring-2 focus:ring-blue-500",
       secondary: " ",
       danger: " ",
     };
@@ -37,6 +38,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       large: "px-8 py-4 text-lg",
     };
 
+    // Combine isLoading and the passed disabled prop
+    const isDisabled = isLoading || disabled;
+
     return (
       <button
         ref={ref}
@@ -44,14 +48,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           baseStyles,
           variantStyles[variant],
           sizeStyles[size],
-          isLoading && "opacity-50 cursor-not-allowed",
+          isDisabled && "opacity-50 cursor-not-allowed",
           className
         )}
         {...props}
-        disabled={isLoading}
+        disabled={isDisabled}
       >
         {isLoading ? (
-          <span className="animate-spin hidden">...</span>
+          <span className="animate-spin">...</span>
         ) : (
           label || "Button"
         )}

@@ -93,8 +93,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     const handleDateChange = (date: Date | null) => {
       if (date && onChange) {
-        // Create a synthetic event
-        const formattedDate = date.toISOString().slice(0, 16);
+        let finalDate = new Date(date);
+
+        // Only add a day if the value is not already set (initially null)
+        if (!value) {
+          finalDate.setDate(finalDate.getDate() + 1);
+        }
+
+        const formattedDate = finalDate.toISOString().slice(0, 16);
+
         const syntheticEvent = {
           target: {
             name,

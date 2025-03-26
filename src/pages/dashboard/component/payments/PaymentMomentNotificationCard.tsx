@@ -35,23 +35,11 @@ const PaymentMomentNotificationCard: FC<PaymentMomentNotificationCardProps> = ({
     });
   };
 
-  const getRandomBgColor = () => {
-    const colors = [
-      "bg-purple-200",
-      "bg-green-200",
-      "bg-gray-200",
-      "bg-yellow-200",
-      "bg-blue-200",
-      "bg-pink-200",
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
-
   return (
     <div className="flex items-start gap-[10px] pb-[20px] border-b font-IBM">
       {!!iconClass ? (
         <div
-          className={`w-8 h-8 rounded px-[10px] py-[4px] flex items-center justify-center ${getRandomBgColor()}`}
+          className={`w-8 h-8 rounded px-[10px] py-[4px] flex items-center justify-center bg-${iconClass.split(" ")[2]}-500`}
         >
           <i className={`${iconClass} text-[#947c01] text-[21px]`} />
         </div>

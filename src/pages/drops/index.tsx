@@ -17,6 +17,8 @@ import { ContentItem } from "@/types/contents";
 import { deleteDropZones, getBusiness, getDropZones } from "@/services/api";
 import Pagination from "./component/Pagination";
 import { format, parseISO } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const users = [
   {
@@ -107,6 +109,11 @@ const AssetsLibrary = () => {
   const [vendorOptions, setVendorOptions] = useState([]);
   const [subVendorOptions, setSubvendorOptions] = useState([]);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [projectPin, setProjectPin] = useState("");
+  const [pinEntered, setPinEntered] = useState("");
+  const [pinError, setPinError] = useState(false);
+  const [dropIdToBeDeleted, setDropIdToBeDeleted] = useState<any>("");
 
   const updateFilters = (key: string, value: string) => {
     setFilters((prevFilters) => ({
@@ -123,7 +130,7 @@ const AssetsLibrary = () => {
     });
 
     if (response) {
-      console.log(response);
+      console.log("ALL DROPZONES", response);
       setContent(response.results || []);
       setTotalPages(Math.ceil(response.count / 10));
     }
@@ -205,6 +212,8 @@ const AssetsLibrary = () => {
       .then((fetchedContent: any) => {
         setDeleteLoading(false);
         fetchDropZones();
+        setDeleteDialog(false);
+        setPinEntered("");
       })
       .catch((err) => {
         setDeleteLoading(false);
@@ -336,7 +345,7 @@ const AssetsLibrary = () => {
             return (
               <div key={index} className="group w-full">
                 <LibraryCard
-                  title={`${item.folder_name} - ${item.first_name}  ${item.last_name}`}
+                  title={`${item.folder_name}`}
                   mainIcon={
                     <FaGoogleDrive className="text-[#cbcbcb]" size={14} />
                   }
@@ -363,7 +372,11 @@ const AssetsLibrary = () => {
                       element: (
                         <button
                           disabled={deleteLoading}
-                          onClick={() => handleDelete(item.id)}
+                          onClick={() => {
+                            setDropIdToBeDeleted(item.id);
+                            setProjectPin(item.project_pin);
+                            setDeleteDialog(true);
+                          }}
                           className="border border-[#000] text-[#000] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer"
                         >
                           <FiMinus size={14} />
@@ -466,6 +479,57 @@ const AssetsLibrary = () => {
               </div>
             </div>
           )}
+        </Dialog>
+        <Dialog
+          header={
+            <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
+              <Tooltip info="Delete the dropzone selected" />
+              <span>DELETE DROPZONE</span>
+            </div>
+          }
+          visible={deleteDialog !== false}
+          onHide={() => setDeleteDialog(false)}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "25vw" }}
+          className="custom-dialog-overlay"
+          headerClassName=" tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400]"
+        >
+          <label>Enter Pin to Delete</label>
+          <input
+            type="password"
+            name="projectPin"
+            autoComplete="new-password"
+            className={cn(
+              "mt-1 block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-[8px]",
+              pinError && "border-red-500 focus:ring-red-500"
+            )}
+            placeholder={"Enter Pin"}
+            value={pinEntered}
+            onChange={(e) => {
+              const newPin = e.target.value;
+              setPinEntered(newPin);
+              if (newPin.length >= 6) {
+                setPinError(newPin !== projectPin);
+              } else {
+                setPinError(false);
+              }
+            }}
+          />
+          {pinError && (
+            <span className="text-red-500 text-sm mt-1">
+              Wrong password entered
+            </span>
+          )}
+
+          <div className="flex gap-5 items-center mt-5">
+            <Button label="Cancel" onClick={() => setDeleteDialog(false)} />
+            <Button
+              disabled={pinEntered.length < 6 || pinError}
+              label="Delete Drop"
+              className={`bg-red-600 ${pinEntered.length < 6 || pinError ? "opacity-50 cursor-not-allowed" : ""}`}
+              onClick={() => handleDelete(dropIdToBeDeleted)}
+            />
+          </div>
         </Dialog>
       </div>
     </DashboardLayout>
