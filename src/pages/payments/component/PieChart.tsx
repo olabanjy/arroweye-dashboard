@@ -9,6 +9,7 @@ import {
   Legend,
   ChartData,
 } from "chart.js";
+import { formatNumber } from "@/lib/utils";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -114,7 +115,14 @@ const PieChart: FC<InsightChartProps> = ({
         </div>
       </div>
 
-      <p className="text-2xl lg:text-[56px] font-[600] font-IBM">{value}</p>
+      <div className="flex items-center gap-2">
+        <p className="text-2xl lg:text-[56px] font-[600] font-IBM">
+          {!!value && formatNumber(value)}
+        </p>
+        {Number(value) > 1000 && (
+          <TooltipComponent info={value.toLocaleString()} />
+        )}
+      </div>
       <div>
         <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-IBM">
           {valuePlaceHolder}

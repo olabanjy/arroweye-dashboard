@@ -456,9 +456,21 @@ const Schedule: React.FC<ScheduleProps> = ({
                 right: "",
               }}
               events={events}
-              eventClick={(info) => {
+              eventClick={(info: any) => {
                 // alert(`Event: ${info.event.title}`);
-                console.log("INFO", info.event);
+                setFormErrors({});
+                console.log("INFO", info.event.id.split("-")[0]);
+                setFormData({
+                  id: info?.event?.id?.split("-")[0],
+                  title: info.event.title,
+                  vendor_id: info?.event?._def?.extendedProps?.vendor,
+                  subvendor_id: info?.event?._def?.extendedProps?.subvendor,
+                  location: info?.event?._def?.extendedProps?.location,
+                  start_dte: info?.event?.start,
+                  end_dte: info?.event?._def?.extendedProps?.end_date,
+                  code: "",
+                  project: info?.event?._def?.extendedProps?.project,
+                });
                 setViewOnly(true);
                 setIsModalVisible(true);
               }}

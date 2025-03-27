@@ -12,6 +12,7 @@ import {
   Tooltip as RechartsTooltip,
 } from "recharts";
 import { ChartData } from "chart.js";
+import { formatNumber } from "@/lib/utils";
 
 interface InsightChartProps {
   title: string;
@@ -120,7 +121,12 @@ const ColumnChart: FC<InsightChartProps> = ({
         </div>
       </div>
 
-      <p className="text-2xl lg:text-[56px] font-[600] font-IBM">{value}</p>
+      <div className="flex items-center gap-2">
+        <p className="text-2xl lg:text-[56px] font-[600] font-IBM">
+          {!!value && formatNumber(value)}
+        </p>
+        {Number(value) > 1000 && <Tooltip info={value.toLocaleString()} />}
+      </div>
       <div>
         <p className="!text-[12px] font-[400] tracking-[.1rem] text-black">
           {valuePlaceholder}
