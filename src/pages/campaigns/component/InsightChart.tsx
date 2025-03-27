@@ -513,20 +513,20 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={chartDataForDoughnutAirplay}
                 setFilters={setairplayChannelsFilters}
                 placeholder="Country"
-                info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+                info="AirPlay Statistics"
               />
             </div>
 
             <div className="border-b pb-[20px]">
               <PieChart
-                title="AUDIENCE "
+                title="AUDIENCE"
                 value={audienceData?.total_count ?? 0}
                 selectOptions={selectOptionsAudience}
                 chartData={pieChartDataAudience}
                 setFilters={setairplayAudienceFilters}
                 selectOptionsBottom={selectOptionsAudience}
                 // maxWidth="500px"
-                info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+                info="Audience Statistics"
               />
             </div>
 
@@ -571,7 +571,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={chartDataForPie}
                 setFilters={setSocialMediaPlatformFilters}
                 selectOptionsBottom={selectOptionsAudience}
-                info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+                info="Social Media Statistics"
               />
             </div>
 
@@ -582,7 +582,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={chartDataForDoughnutSMAction}
                 setFilters={setSocialMediaActionsFilters}
                 selectOptionsBottom={selectOptionsAudience}
-                info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+                info="Social Media Actions Statistics"
               />
             </div>
 
@@ -628,7 +628,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={chartDataForBar}
                 setFilters={setDspFilters}
                 selectOptionsBottom={selectOptions}
-                info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+                info="Digital Streaming Platforms Statistics"
               />
             </div>
 
@@ -640,7 +640,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={pieChartDataDSPPerformance}
                 setFilters={setDspPerformanceFilters}
                 // maxWidth="500px"
-                info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+                info="Digital Streaming Platforms Performance Statistics"
               />
             </div>
 

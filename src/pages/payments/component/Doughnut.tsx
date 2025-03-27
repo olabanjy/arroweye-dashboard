@@ -263,6 +263,7 @@ import {
   Legend,
   ChartData,
 } from "chart.js";
+import { formatNumber } from "@/lib/utils";
 
 ChartJS.register(ArcElement, ChartTooltip, Legend);
 
@@ -280,7 +281,7 @@ interface InsightChartProps {
   setFilters?: any;
 }
 
-const Tooltip = ({ info }: { info: string }) => (
+const Tooltip = ({ info }: { info: any }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
     <div className="absolute left-full top-0 transform  ml-1 hidden w-60 p-2 text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-IBM">
@@ -360,7 +361,12 @@ const DoughnutChart: FC<InsightChartProps> = ({
         </div>
       </div>
 
-      <p className="text-2xl lg:text-[56px] font-[600] font-IBM">{value}</p>
+      <div className="flex items-center gap-2">
+        <p className="text-2xl lg:text-[56px] font-[600] font-IBM">
+          {!!value && formatNumber(value)}
+        </p>
+        {Number(value) > 1000 && <Tooltip info={value.toLocaleString()} />}
+      </div>
       <div className="">
         <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000]">
           {valuePlaceholder}
