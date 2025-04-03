@@ -33,7 +33,7 @@ export interface ContentItem {
   social_media_count?: number;
   dsp_count?: number;
   total_revenue?: any;
-  total_audience_growth?: number;
+  total_audience_growth?: any;
   start_dte?: string;
   cost?: number;
   tax_amount?: number;

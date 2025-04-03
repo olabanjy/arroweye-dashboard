@@ -7,6 +7,7 @@ interface InsightCardProps {
   value: number | string;
   percentageChange?: string;
   percentageColor?: string;
+  increaseType?: any;
   selectOptions?: Array<{ value: string; label: string }[]>;
   maxWidth?: string;
   height?: string;
@@ -31,6 +32,7 @@ const InsightCard: FC<InsightCardProps> = ({
   value,
   percentageChange,
   percentageColor = "#11cc48",
+  increaseType,
   selectOptions,
   info,
   // height = "220px",
@@ -64,12 +66,15 @@ const InsightCard: FC<InsightCardProps> = ({
         )}
       </div>
 
+      {!percentageChange && <p className="min-h-[25px]"></p>}
       {percentageChange && (
         <p
           className="text-[14px] lg:text-[16px] font-[500]"
           style={{ color: percentageColor }}
         >
+          {increaseType === "increase" ? "↑ " : "↓ "}
           {percentageChange}
+          {"%"}
         </p>
       )}
 

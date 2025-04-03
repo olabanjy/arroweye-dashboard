@@ -211,8 +211,11 @@ const Schedule: React.FC<ScheduleProps> = ({
     deleteEvents(eventID)
       .then(() => {
         setDeleteLoading(false);
-        getEvents();
+        getEvents().then((fetchedNewEvents: any) => {
+          setEventItem(fetchedNewEvents || []);
+        });
         setDeleteDialog(false);
+        setIsModalVisible(false);
       })
       .catch((err) => {
         setDeleteLoading(false);
@@ -614,6 +617,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                     value={formData.location}
                     onChange={handleFormChange}
                     placeholder="Location (or Link for virtual meetings)"
+                    error={formErrors?.location}
                   />
                 </div>
 

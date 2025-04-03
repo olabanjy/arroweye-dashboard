@@ -30,15 +30,18 @@ const ProjectSingleInsight = () => {
     return num.toString();
   }
 
+  useEffect(() => {
+    console.log("THIS IS THE CONTENT", content);
+  }, [content]);
+
   return (
     <div className="mt-[20px] relative ">
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[10px] 2xl:gap-[20px] relative">
         <div className="w-full">
           <InsightCard
             title="TOTAL INVESTMENT"
-            currency={<>&#8358;</>}
+            currency={<>$</>}
             value={formatNumber(content?.total_investment || 0)}
-            percentageChange="↑ 5%"
             extraClass="h-[220px]"
             percentageColor="#11cc48"
             info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
@@ -47,12 +50,17 @@ const ProjectSingleInsight = () => {
         <div className=" w-full">
           <InsightCard
             title="TOTAL REVENUE"
-            currency={<>&#8358;</>}
+            currency={<>$</>}
             value={`${formatNumber(content?.total_revenue?.mininum || 0)}`}
             maxValue={`${formatNumber(content?.total_revenue?.maximum || 0)}`}
             extraClass="h-[220px]"
-            percentageChange="↓ -3%"
-            percentageColor="#ff4d4f"
+            percentageChange={content?.total_revenue?.percentage}
+            percentageColor={
+              content?.total_revenue?.change === "increase"
+                ? "#11cc48"
+                : "#ff4d4f"
+            }
+            increaseType={content?.total_revenue?.change}
             info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
           />
         </div>
@@ -60,10 +68,15 @@ const ProjectSingleInsight = () => {
         <div className="w-full">
           <InsightCard
             title="AUDIENCE GROWTH"
-            value={`${formatNumber(content?.total_audience_growth || 0)}`}
+            value={`${formatNumber(content?.total_audience_growth?.value || 0)}`}
             extraClass="h-[220px]"
-            percentageChange="↓ -3%"
-            percentageColor="#ff4d4f"
+            percentageChange={content?.total_audience_growth?.percentage}
+            percentageColor={
+              content?.total_audience_growth?.change === "increase"
+                ? "#11cc48"
+                : "#ff4d4f"
+            }
+            increaseType={content?.total_audience_growth?.change}
             info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
           />
         </div>
