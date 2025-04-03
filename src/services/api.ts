@@ -415,6 +415,7 @@ export const CreateInvoice = async (payload: unknown): Promise<void> => {
 };
 
 export const CreateEvent = async (payload: unknown): Promise<void> => {
+  const createToast = toast.loading("creating event...");
   try {
     const { data: response } = await apiRequest<
       ApiRequestResponse<ApiResponse>
@@ -426,21 +427,46 @@ export const CreateEvent = async (payload: unknown): Promise<void> => {
     });
 
     console.log(response);
-    toast.success("Event Created Successful!");
+    toast.update(createToast, {
+      render: "Event Created Successfully",
+      type: "info",
+      isLoading: false,
+      autoClose: 3000,
+    });
     window.location.reload();
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || error.response?.data[0]);
+        toast.update(createToast, {
+          render: error.response?.data?.message || error.response?.data[0],
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
       } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
+        toast.update(createToast, {
+          render: error.response?.data?.message || "Access denied.",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
       } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
+        toast.update(createToast, {
+          render:
+            error.response?.data?.message ||
+            "Request failed. Please try again.",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
       }
     } else {
-      toast.error("Request failed. Please try again.");
+      toast.update(createToast, {
+        render: "Request failed. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
       console.error("Unexpected Error:", error);
     }
   }
@@ -1357,6 +1383,7 @@ export const deleteEvents = async (id: number): Promise<any | null> => {
       render: "Event Deleted",
       type: "success",
       autoClose: 3000,
+      isLoading: false,
     });
 
     return response;
@@ -1366,12 +1393,14 @@ export const deleteEvents = async (id: number): Promise<any | null> => {
         render: "Content Retrieval failed. Please try again.",
         type: "error",
         autoClose: 3000,
+        isLoading: false,
       });
     } else {
       toast.update(deleteToast, {
         render: "Error deleting event",
         type: "error",
         autoClose: 3000,
+        isLoading: false,
       });
     }
 
