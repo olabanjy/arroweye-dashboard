@@ -186,10 +186,6 @@ const FacebookData = ({ metrics }: any) => {
     }
   };
 
-  useEffect(() => {
-    console.log("METRICS", metrics);
-  }, [metrics]);
-
   const customOptions = [
     {
       value: 99999,

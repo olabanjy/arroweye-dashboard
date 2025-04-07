@@ -67,8 +67,8 @@ const Users = () => {
               key={`status-${item.id}`}
               className="flex justify-center gap-2"
             >
-              <div className="p-[16px] hover:bg-green-500 hover:text-white border border-green-500 text-green-500 rounded-full">
-                <IoMdCheckmark size={20} />
+              <div className="p-[16px] text-green-500 rounded-full">
+                Active
               </div>
             </div>
           ),
