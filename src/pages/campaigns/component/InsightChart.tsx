@@ -183,7 +183,6 @@ const InsightChart: React.FC<InsightChartProps> = ({
   useEffect(() => {
     if (!!id) {
       getDSPStats({ id: Number(id), ...dspFilters }).then((fetchedContent) => {
-        console.log("DSP Stats", fetchedContent);
         setDspData(fetchedContent);
       });
     }
@@ -324,11 +323,6 @@ const InsightChart: React.FC<InsightChartProps> = ({
   const pieChartDataAudience =
     audienceData && generatePieChartData(audienceData);
 
-  useEffect(() => {
-    console.log("DONUT DATA", chartDataForDoughnutSMAction);
-    console.log("DONUT DATA BEFORE", smactionData);
-  }, [pieChartDataAudience]);
-
   const pieChartDataDSPPerformance =
     dspPerformanceData && generatePieChartData(dspPerformanceData);
 
@@ -389,7 +383,6 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
   useEffect(() => {
     if (media.length > 0) {
-      console.log("THIS IS THE MEDIA OOOO", media);
       const newMomentMedia = media.filter(
         (item: any) => item?.type === "Moment"
       );
@@ -473,11 +466,6 @@ const InsightChart: React.FC<InsightChartProps> = ({
     }
   };
 
-  useEffect(() => {
-    console.log("AIR PLAY DEEETSSS", airPlayData);
-    console.log("AUDIENCE PLAY DEEETSSS", audienceData);
-  }, [airPlayData]);
-
   return (
     <div ref={targetRef}>
       <div className="mt-[20px] mb-[80px]">
@@ -513,7 +501,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={chartDataForDoughnutAirplay}
                 setFilters={setairplayChannelsFilters}
                 placeholder="Country"
-                info="AirPlay Statistics"
+                info="The total number of airplay instances this campaign received across radio, television, and DJ/club activations."
               />
             </div>
 
@@ -526,7 +514,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 setFilters={setairplayAudienceFilters}
                 selectOptionsBottom={selectOptionsAudience}
                 // maxWidth="500px"
-                info="Audience Statistics"
+                info="The total number of listeners and viewers reached on radio and television. This data is based on the audience size of the channels where your music was featured."
               />
             </div>
 
@@ -571,7 +559,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={chartDataForPie}
                 setFilters={setSocialMediaPlatformFilters}
                 selectOptionsBottom={selectOptionsAudience}
-                info="Social Media Statistics"
+                info="The total recorded actions and engagements across individual social media platforms."
               />
             </div>
 
@@ -582,7 +570,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={chartDataForDoughnutSMAction}
                 setFilters={setSocialMediaActionsFilters}
                 selectOptionsBottom={selectOptionsAudience}
-                info="Social Media Actions Statistics"
+                info="A breakdown of engagement and interactions recorded across social media platforms."
               />
             </div>
 
@@ -628,7 +616,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={chartDataForBar}
                 setFilters={setDspFilters}
                 selectOptionsBottom={selectOptions}
-                info="Digital Streaming Platforms Statistics"
+                info="The total number of streams and views recorded during this campaign across DSPs. These figures are estimates; please confirm the actual numbers with your distributor."
               />
             </div>
 
@@ -640,7 +628,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={pieChartDataDSPPerformance}
                 setFilters={setDspPerformanceFilters}
                 // maxWidth="500px"
-                info="Digital Streaming Platforms Performance Statistics"
+                info="A breakdown of activities and engagement metrics recorded across all DSPs. These figures are estimates; please verify the actual data with your distributor."
               />
             </div>
 

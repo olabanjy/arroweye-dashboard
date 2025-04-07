@@ -29,6 +29,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { toast } from "react-toastify";
 import ScheduleProject from "../schedule/component/ScheduleProject";
+import EmailInputWithSuggestions from "./component/EmailInputWithSuggestions";
 
 interface User {
   id: string;
@@ -52,6 +53,7 @@ const ProjectDetails = () => {
   const [subvendorStaff, setSubVendorStaff] = useState<ContentItem[] | null>(
     null
   );
+  const [staffSuggestions, setStaffSuggestions] = useState<any[]>([]);
 
   const { query } = useRouter();
   const { id } = query;
@@ -298,6 +300,26 @@ const ProjectDetails = () => {
     const content: any = ls.get("Profile", { decrypt: true });
     setUserRole(content?.user?.user_profile?.role);
   }, []);
+
+  useEffect(() => {
+    if (!!content?.subvendor?.id) {
+      getBusinessStaff(Number(!!content?.subvendor?.id)).then(
+        (fetchedStaffs: any) => {
+          console.log("FETCHED STAFFS", fetchedStaffs);
+          setStaffSuggestions(fetchedStaffs);
+        }
+      );
+    }
+  }, [content]);
+
+  const handleStaffSelect = (staff: any) => {
+    // Update form with selected staff member's details
+    setAddUserFormData((prevData) => ({
+      ...prevData,
+      fullname: staff.fullname,
+      role: staff.role,
+    }));
+  };
 
   const predefinedColors = [
     "bg-blue-500",
@@ -579,14 +601,15 @@ const ProjectDetails = () => {
               <div className="space-y-4">
                 <p className="text-4xl font-bold text-[#000]">Collaborate</p>
                 <div>
-                  <Input
-                    type="email"
-                    placeholder="Add email"
-                    name="email"
-                    required
+                  <EmailInputWithSuggestions
+                    staffDetails={staffSuggestions}
                     value={addUserFormData.email}
+                    name="email"
                     onChange={handleAddUserInputChange}
+                    onStaffSelect={handleStaffSelect}
                     error={addUserErrors.email}
+                    placeholder="Add email"
+                    required
                   />
                 </div>
                 <div

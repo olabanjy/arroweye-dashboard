@@ -39,7 +39,12 @@ const FirstPlayNotificationCard: FC<FirstPlayNotificationCardProps> = ({
     <div className="flex items-start gap-[10px] pb-[20px] border-b">
       {!!iconClass ? (
         <div
-          className={`w-8 h-8 rounded px-[10px] py-[4px] flex items-center justify-center bg-${iconClass.split(" ")[2]}-500`}
+          className={`w-9 h-9 px-[10px] py-[4px] flex items-center justify-center`}
+          style={{
+            backgroundColor: `${iconClass.split(" ")[2]}`,
+            color: "white",
+            borderRadius: "10px",
+          }}
         >
           <i className={`${iconClass} text-[21px]`} />
         </div>
@@ -51,7 +56,7 @@ const FirstPlayNotificationCard: FC<FirstPlayNotificationCardProps> = ({
 
       <div>
         <p className="font-[600] text-[8px]  text-[#7f7f7f] tracking-[.1rem]">
-          {timeAgo}
+          {timeAgo?.toUpperCase()}
         </p>
         <p className="font-[400] text-[16px] text-[#000000] leading-[25px]">
           {message} <span className="font-[600]">{highlight}</span>{" "}

@@ -30,10 +30,6 @@ const ProjectSingleInsight = () => {
     return num.toString();
   }
 
-  useEffect(() => {
-    console.log("THIS IS THE CONTENT", content);
-  }, [content]);
-
   return (
     <div className="mt-[20px] relative ">
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[10px] 2xl:gap-[20px] relative">
@@ -44,7 +40,7 @@ const ProjectSingleInsight = () => {
             value={formatNumber(content?.total_investment || 0)}
             extraClass="h-[220px]"
             percentageColor="#11cc48"
-            info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+            info="This represents the total amount invoiced for executing this campaign. You can download the invoice under the 'Payments' section."
           />
         </div>
         <div className=" w-full">
@@ -61,7 +57,7 @@ const ProjectSingleInsight = () => {
                 : "#ff4d4f"
             }
             increaseType={content?.total_revenue?.change}
-            info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+            info="This is the estimated revenue range generated from streams, purchases, and views for this campaign. These figures are estimates; please confirm the actual revenue with your distributor."
           />
         </div>
 
@@ -77,7 +73,7 @@ const ProjectSingleInsight = () => {
                 : "#ff4d4f"
             }
             increaseType={content?.total_audience_growth?.change}
-            info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+            info="The total number of followers, subscribers, and audience members who engaged with your channels during this campaign."
           />
         </div>
       </div>

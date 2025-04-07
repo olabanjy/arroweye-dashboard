@@ -15,7 +15,6 @@ const Invoice = () => {
   useEffect(() => {
     if (!!id) {
       getPaymentInvoice(Number(id)).then((fetchedContent) => {
-        console.log("INV", fetchedContent);
         setContent(fetchedContent);
       });
     }

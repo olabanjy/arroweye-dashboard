@@ -93,7 +93,6 @@ const DropForm: React.FC<DropFormProps> = ({ setDropzoneData }) => {
 
   useEffect(() => {
     getLoggedInUser().then((user) => {
-      console.log("NA HERE", user.user_profile);
       setFormData({
         firstName: user.user_profile.fullname.split(" ")[0],
         lastName: user.user_profile.fullname.split(" ")[1],

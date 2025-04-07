@@ -54,10 +54,6 @@ const Schedule: React.FC<ScheduleProps> = ({
   const [subvendorOptions, setSubvendorOptions] = useState<any>([]);
 
   useEffect(() => {
-    console.log("VENDORRRRRRS", vendorOptions);
-  }, [vendorOptions]);
-
-  useEffect(() => {
     const fetchEvents = async () => {
       try {
         let fetchedContent;

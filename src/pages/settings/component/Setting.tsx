@@ -130,21 +130,23 @@ const Setting = () => {
             toggleNotifications,
             "text",
             (e) => setUserName(e.target.value),
-            "User Details"
+            "This is the full name of the user and will appear across all campaigns as such. Please contact your admin for any required changes."
           )}
           {renderCopyInput(
             "USER EMAIL",
             email,
             toggleNotifications,
             "email",
-            (e) => setEmail(e.target.value)
+            (e) => setEmail(e.target.value),
+            "This is the email that will receive all notifications concerning your campaign and account security. Please contact your admin for any required changes."
           )}
           {renderCopyInput(
             "VENDOR",
             labelName,
             toggleNotifications,
             "text",
-            (e) => setLabelName(e.target.value)
+            (e) => setLabelName(e.target.value),
+            "This is the name of the organization your account belongs to. Please contact your admin for any required changes.sss"
           )}
           {renderCopyInput(
             "PHONE NUMBER",

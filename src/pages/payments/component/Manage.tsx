@@ -361,7 +361,7 @@ const Manage = () => {
                 type="text"
                 name="project_title"
                 placeholder=""
-                info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+                info="This is the title of the campaign, preferably the project name such as the song or album title."
                 value={projectFormData.project_title}
                 onChange={handleInputChange}
               />
@@ -378,7 +378,7 @@ const Manage = () => {
                 type="number"
                 name="po_code"
                 placeholder=""
-                info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted."
+                info="This is the purchase order code provided by the vendor. If none is provided, leave it blank."
                 value={projectFormData.po_code}
                 onChange={handleInputChange}
               />
@@ -394,7 +394,7 @@ const Manage = () => {
                   name="currency"
                   // labelText="Select Currency"
                   options={currencyOptions}
-                  info="Select the currency for the project."
+                  info="This is the currency in which the invoice is issued, and it will be the same amount reflected on the invoice."
                   value={projectFormData.currency}
                   onChange={handleCurrencyChange}
                 />

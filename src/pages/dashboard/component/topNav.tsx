@@ -35,7 +35,6 @@ const TopNav: FC = () => {
 
   useEffect(() => {
     getLoggedInUser().then((user) => {
-      console.log("USER FETCHED", user);
       const groupedNotifications = user.notifications.reduce(
         (acc: any, notification: any) => {
           const type = notification.type.toLowerCase();
