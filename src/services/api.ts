@@ -472,6 +472,7 @@ export const CreateEvent = async (payload: unknown): Promise<void> => {
   }
 };
 export const AddStaff = async (payload: unknown): Promise<any> => {
+  const addUserToast = toast.loading("adding user...");
   try {
     const response = await apiRequest<ApiRequestResponse<ApiResponse>>({
       method: "POST",
@@ -480,18 +481,38 @@ export const AddStaff = async (payload: unknown): Promise<any> => {
       requireToken: true,
     });
 
-    toast.success("Adding Staff successful! Redirecting...");
+    toast.update(addUserToast, {
+      render: "Adding Staff successful! Redirecting...",
+      type: "success",
+      autoClose: 3000,
+      isLoading: false,
+    });
     return response;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || error.response?.data[0]);
+        toast.update(addUserToast, {
+          render: error.response?.data?.message || error.response?.data[0],
+          type: "error",
+          autoClose: 3000,
+          isLoading: false,
+        });
       } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
+        toast.update(addUserToast, {
+          render: error.response?.data?.message || "Access denied.",
+          type: "error",
+          autoClose: 3000,
+          isLoading: false,
+        });
       } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
+        toast.update(addUserToast, {
+          render:
+            error.response?.data?.message ||
+            "Request failed. Please try again.",
+          type: "error",
+          autoClose: 3000,
+          isLoading: false,
+        });
       }
     } else {
       toast.error("Request failed. Please try again.");
@@ -1756,10 +1777,10 @@ export const campaignStaffAction = async (
     if (axios.isAxiosError(error)) {
       toast.error(
         error.response?.data?.message ||
-          "Failed to send email. Please try again."
+          "Failed to perform action. Please try again."
       );
     } else {
-      toast.error("Failed to send email. Please try again.");
+      toast.error("Failed to perform action. Please try again.");
     }
 
     return null;

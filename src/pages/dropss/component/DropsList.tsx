@@ -5,6 +5,8 @@ import DropForm from "./DropForm";
 import { ContentItem } from "@/types/contents";
 import { getSingleProject } from "@/services/api";
 import { useRouter } from "next/router";
+import { formatDistanceToNow } from "date-fns";
+import { toast } from "react-toastify";
 
 const calculateTimeAgo = (dateString: string): string => {
   const createdDate = new Date(dateString);
@@ -39,7 +41,7 @@ const DropsList = () => {
 
   const handleShare = (link: string) => {
     navigator.clipboard.writeText(link);
-    alert("Link copied to clipboard!");
+    toast.info("Link copied to clipboard!");
   };
 
   const handleUnlock = () => {};
@@ -53,7 +55,12 @@ const DropsList = () => {
     }
   }, [id]);
 
-  console.log(dropzoneData);
+  const formatRelativeDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
+
+  console.log("DROPZONES DATA ARE HERE", dropzoneData);
 
   return (
     <div className="mt-[50px] grid lg:grid-cols-2 items-start gap-[20px]">
@@ -66,14 +73,19 @@ const DropsList = () => {
         </div>
         <div className="h-[600px] overflow-y-auto scrollbar-hide">
           {dropzoneData?.dropzone?.length ? (
-            dropzoneData.dropzone.map((drop, index) => (
+            dropzoneData.dropzone.map((drop: any, index) => (
               <div key={index} className="p-[20px]">
                 <AssetsNotificationCard
-                  timeAgo={calculateTimeAgo(drop.created)}
+                  key={index}
+                  timeAgo={formatRelativeDate(drop.created)}
                   message={`New drop from ${drop.first_name} ${drop.last_name}: ${drop.folder_name}`}
                   onDownload={() => handleDownload(drop.link)}
                   onShare={() => handleShare(drop.link)}
-                  actions={[]}
+                  actions={[
+                    { type: "Download", url: drop.link },
+                    { type: "Share", url: drop.link },
+                  ]}
+                  iconClass={drop.icon}
                 />
               </div>
             ))

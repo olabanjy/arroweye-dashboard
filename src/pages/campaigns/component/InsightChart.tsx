@@ -24,7 +24,7 @@ import {
 import ColumnChart from "@/pages/payments/component/ColumnChart";
 import { Dialog } from "primereact/dialog";
 import { Input } from "@/components/ui/input";
-import { BsTelegram } from "react-icons/bs";
+import { VscSend } from "react-icons/vsc";
 import { usePDF } from "react-to-pdf";
 import getDarkerColor from "@/lib/getDarkerColor";
 import { toast } from "react-toastify";
@@ -700,24 +700,28 @@ const InsightChart: React.FC<InsightChartProps> = ({
             >
               &times;
             </button>
-            <div className="p-inputgroup grid space-y-[10px] py-[10px] mb-2">
+            <div className="p-inputgroup py-[10px] mt-5 mb-2 flex justify-between items-center">
               <Input
                 placeholder="hello@arroweye.pro"
-                className="border-none focus:ring-0 focus:outline-none focus:border-transparent placeholder:font-IBM"
+                className="w-full lg:min-w-[400px] border-none focus:ring-0 focus:outline-none focus:border-transparent placeholder:font-IBM"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <BsTelegram
-                size={44}
-                className="text-blue-500 cursor-pointer"
-                onClick={() => {
-                  if (content?.id) {
-                    const currentUrl =
-                      typeof window !== "undefined" ? window.location.href : "";
-                    sendProjectEmail(content.id, { email, url: currentUrl });
-                  }
-                }}
-              />
+              <div className="flex justify-center items-center bg-blue-500 rounded-full p-5">
+                <VscSend
+                  size={20}
+                  className="text-white cursor-pointer"
+                  onClick={() => {
+                    if (content?.id) {
+                      const currentUrl =
+                        typeof window !== "undefined"
+                          ? window.location.href
+                          : "";
+                      sendProjectEmail(content.id, { email, url: currentUrl });
+                    }
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

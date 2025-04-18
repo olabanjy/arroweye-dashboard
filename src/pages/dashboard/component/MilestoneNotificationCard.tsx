@@ -61,15 +61,7 @@ const MilestoneNotificationCard: FC<MilestoneNotificationCardProps> = ({
         {!!actions && actions.length > 0 && (
           <div className="flex items-center gap-[10px] mt-[14px] text-[16px]">
             {actions.map((action: any) =>
-              action.type === "Download" ? (
-                <div
-                  key={action.type} // Add a key for each item
-                  className="w-10 h-[30px] rounded px-[10px] py-[4px] bg-[#000000] flex items-center justify-center cursor-pointer"
-                  onClick={() => window.open(action.url, "_blank")}
-                >
-                  <MdOutlineFileDownload className="text-white" size={24} />
-                </div>
-              ) : action.type === "Share" ? (
+              action.type === "Share" ? (
                 <div
                   key={action.type}
                   className="h-8 rounded px-[10px] py-[8px] border bg-white flex items-center justify-center cursor-pointer"
