@@ -63,6 +63,9 @@ const ProjectDetails = () => {
   const [toggleNotifications, setToggleNotifications] = useState(false);
   const [broadcast, setBroadcast] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [useWatchersEndpoint, setUseWatchersEndpoint] =
+    useState<boolean>(false);
+  const [selectedWatcher, setSelectedWatcher] = useState<any>(null);
   const [adjustmentModalVisible, setAdjustmentModalVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editModeOff, setEditModeOff] = useState(false);
@@ -161,56 +164,91 @@ const ProjectDetails = () => {
       return;
     }
 
-    const payload = {
-      ...addUserFormData,
-      business_id: content?.subvendor?.id,
-      project_id: Number(id),
-    };
+    if (!!useWatchersEndpoint) {
+      // Call campaignStaffAction if useWatchersEndpoint is true
+      console.log("user", selectedWatcher);
+      const payload = { action: "add", user_id: selectedWatcher?.user };
 
-    AddStaff(payload)
-      .then((response) => {
-        console.log("AddStaff response:", response);
+      console.log("PAYLOAD", payload);
 
-        setVisible(false);
-        setNameDialogVisible(false);
-
-        setAddUserFormData({
-          email: "",
-          business_id: "",
-          role: "",
-          fullname: "",
-          project_id: id,
+      campaignStaffAction(Number(id), payload)
+        .then((response) => {
+          if (response) {
+            getSingleProject(Number(id)).then((fetchedContent) => {
+              setContent(fetchedContent);
+              setSubVendorStaff(fetchedContent?.watchers);
+            });
+            setVisible(false);
+            setNameDialogVisible(false);
+            setAddUserFormData({
+              email: "",
+              business_id: "",
+              role: "",
+              fullname: "",
+              project_id: id,
+            });
+            setSelectedUser(null);
+            toast.success("Adding Staff successful! Redirecting...");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          setIsAddUserLoading(false);
         });
+    } else {
+      // Original AddStaff logic
+      const payload = {
+        ...addUserFormData,
+        business_id: content?.subvendor?.id,
+        project_id: Number(id),
+      };
 
-        getSingleProject(Number(id)).then((fetchedContent) => {
-          setContent(fetchedContent);
-          setSubVendorStaff(fetchedContent?.watchers);
-        });
-      })
-      .catch((err) => {
-        console.error("Error in AddStaff submission:");
-        if (err.response) {
-          console.error("Server Response Error:", {
-            data: err.response.data,
-            status: err.response.status,
-            headers: err.response.headers,
+      AddStaff(payload)
+        .then((response) => {
+          console.log("AddStaff response:", response);
+
+          setVisible(false);
+          setNameDialogVisible(false);
+
+          setAddUserFormData({
+            email: "",
+            business_id: "",
+            role: "",
+            fullname: "",
+            project_id: id,
           });
-          const serverErrors = err.response.data;
-          setAddUserErrors((prev) => ({
-            ...prev,
-            email: serverErrors?.email || prev.email,
-            role: serverErrors?.role || prev.role,
-            fullname: serverErrors?.fullname || prev.fullname,
-          }));
-        } else if (err.request) {
-          console.error("Request Error:", err.request);
-        } else {
-          console.error("Error Details:", err.message);
-        }
-      })
-      .finally(() => {
-        setIsAddUserLoading(false);
-      });
+
+          getSingleProject(Number(id)).then((fetchedContent) => {
+            setContent(fetchedContent);
+            setSubVendorStaff(fetchedContent?.watchers);
+          });
+        })
+        .catch((err) => {
+          if (err.response) {
+            console.error("Server Response Error:", {
+              data: err.response.data,
+              status: err.response.status,
+              headers: err.response.headers,
+            });
+            const serverErrors = err.response.data;
+            setAddUserErrors((prev) => ({
+              ...prev,
+              email: serverErrors?.email || prev.email,
+              role: serverErrors?.role || prev.role,
+              fullname: serverErrors?.fullname || prev.fullname,
+            }));
+          } else if (err.request) {
+            console.error("Request Error:", err.request);
+          } else {
+            console.error("Error Details:", err.message);
+          }
+        })
+        .finally(() => {
+          setIsAddUserLoading(false);
+        });
+    }
   };
 
   const handleCampaignActionRemove = () => {
@@ -305,7 +343,6 @@ const ProjectDetails = () => {
     if (!!content?.subvendor?.id) {
       getBusinessStaff(Number(!!content?.subvendor?.id)).then(
         (fetchedStaffs: any) => {
-          console.log("FETCHED STAFFS", fetchedStaffs);
           setStaffSuggestions(fetchedStaffs);
         }
       );
@@ -313,6 +350,8 @@ const ProjectDetails = () => {
   }, [content]);
 
   const handleStaffSelect = (staff: any) => {
+    setSelectedWatcher(staff);
+    setUseWatchersEndpoint(true);
     // Update form with selected staff member's details
     setAddUserFormData((prevData) => ({
       ...prevData,
@@ -605,7 +644,17 @@ const ProjectDetails = () => {
                     staffDetails={staffSuggestions}
                     value={addUserFormData.email}
                     name="email"
-                    onChange={handleAddUserInputChange}
+                    onChange={(e) => {
+                      setUseWatchersEndpoint(false);
+                      const modifiedEvent = {
+                        ...e,
+                        target: {
+                          ...e.target,
+                          name: "email",
+                        },
+                      };
+                      handleAddUserInputChange(modifiedEvent);
+                    }}
                     onStaffSelect={handleStaffSelect}
                     error={addUserErrors.email}
                     placeholder="Add email"
