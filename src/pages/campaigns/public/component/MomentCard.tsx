@@ -371,12 +371,12 @@ const MomentCard: React.FC<MomentCardProps> = ({
                       </span>{" "}
                     </p>
                     <p className="mt-5">
-                      Redeemed by
+                      Redeemed by{" "}
                       <span className="font-bold">
                         {mostRecentClaimedGift &&
                           mostRecentClaimedGift.claimed_by &&
                           mostRecentClaimedGift.claimed_by}
-                      </span>
+                      </span>{" "}
                       Thank you for your participation in the campaign!
                     </p>
                     <button

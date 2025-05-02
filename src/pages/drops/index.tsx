@@ -19,6 +19,7 @@ import Pagination from "./component/Pagination";
 import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import Head from "next/head";
 
 const users = [
   {
@@ -222,317 +223,322 @@ const AssetsLibrary = () => {
   };
 
   return (
-    <DashboardLayout>
-      <div className="flex items-center gap-[10px]">
-        <HiOutlineCube className="text-[#7e7e7e]" size={24} />
-        <p className="font-[900] text-[30px] text-[#000000]">Asset Library</p>
-      </div>
-      <div className="flex-grow mt-[50px]">
-        <div className="flex items-center justify-end gap-[10px]">
-          <div className="flex-grow">
-            <Input
-              type="text"
-              placeholder="Search..."
-              className="w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
-              value={filters.search}
-              onChange={(e: any) => updateFilters("search", e.target.value)}
-            />
-          </div>
-          <div className="flex items-center gap-[5px]">
-            <div
-              className="cursor-pointer p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
-              onClick={() => setFilter(!filter)}
-            >
-              <IoFilter />
+    <>
+      <Head>
+        <title>Drops - Arroweye</title>
+      </Head>
+      <DashboardLayout>
+        <div className="flex items-center gap-[10px]">
+          <HiOutlineCube className="text-[#7e7e7e]" size={24} />
+          <p className="font-[900] text-[30px] text-[#000000]">Asset Library</p>
+        </div>
+        <div className="flex-grow mt-[50px]">
+          <div className="flex items-center justify-end gap-[10px]">
+            <div className="flex-grow">
+              <Input
+                type="text"
+                placeholder="Search..."
+                className="w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
+                value={filters.search}
+                onChange={(e: any) => updateFilters("search", e.target.value)}
+              />
+            </div>
+            <div className="flex items-center gap-[5px]">
+              <div
+                className="cursor-pointer p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
+                onClick={() => setFilter(!filter)}
+              >
+                <IoFilter />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      {filter && (
-        <div className="my-[10px]">
-          <div className="flex items-center flex-wrap gap-[10px] mb-[20px]">
-            <div className="max-w-[150px] w-full rounded-full">
-              <SelectInput
-                placeholder="Year"
-                rounded={true}
-                options={[
-                  { value: "2025", label: "2025" },
-                  { value: "2024", label: "2024" },
-                  { value: "2023", label: "2023" },
-                ]}
-                value={filters.year}
-                onChange={(value: any) => updateFilters("year", value)}
-              />
-            </div>
-            <div className="max-w-[150px] w-full rounded-full">
-              <SelectInput
-                placeholder="Month"
-                rounded={true}
-                options={[
-                  { value: "1", label: "January" },
-                  { value: "2", label: "February" },
-                  { value: "3", label: "March" },
-                  { value: "4", label: "April" },
-                  { value: "5", label: "May" },
-                  { value: "6", label: "June" },
-                  { value: "7", label: "July" },
-                  { value: "8", label: "August" },
-                  { value: "8", label: "August" },
-                  { value: "9", label: "September" },
-                  { value: "10", label: "October" },
-                  { value: "11", label: "November" },
-                  { value: "12", label: "December" },
-                ]}
-                value={filters.month}
-                onChange={(value: any) => updateFilters("month", value)}
-              />
-            </div>
-            <div className="max-w-[150px] w-full">
-              <SelectInput
-                placeholder="Vendor"
-                rounded={true}
-                options={vendorOptions}
-                value={filters.vendor}
-                onChange={(value: any) => updateFilters("vendor", value)}
-              />
-            </div>
-            <div className="max-w-[150px] w-full">
-              <SelectInput
-                placeholder="Sub-Vendor"
-                rounded={true}
-                options={subVendorOptions}
-                value={filters.subvendor}
-                onChange={(value: any) => updateFilters("subvendor", value)}
-              />
-            </div>
-            <div className="max-w-[150px] w-full">
-              <SelectInput
-                placeholder="Platform"
-                rounded={true}
-                options={[
-                  { value: "GoogleDrive", label: "GoogleDrive" },
-                  { value: "WeTransfer", label: "WeTransfer" },
-                  { value: "OneDrive", label: "OneDrive" },
-                  { value: "DropBox", label: "DropBox" },
-                  { value: "PCloud", label: "PCloud" },
-                ]}
-                value={filters.platform}
-                onChange={(value: any) => updateFilters("platform", value)}
-              />
-            </div>
-            <p
-              className="cursor-pointer text-[14px] rounded-full px-[16px] py-[7px] hover:bg-orange-500 bg-[#000000] text-white inline"
-              onClick={() =>
-                setFilters({
-                  search: "",
-                  year: "",
-                  month: "",
-                  vendor: "",
-                  subvendor: "",
-                  platform: "",
-                })
-              }
-            >
-              Clear Filters
-            </p>
-          </div>
-        </div>
-      )}
-      <div className="mt-[50px] mb-[100px]">
-        <div className=" grid place-items-center md:grid-cols-2 lg:grid-cols-3 gap-2 h-full ">
-          {content?.map((item: any, index: number) => {
-            const randomColor = getRandomColor();
-            return (
-              <div key={index} className="group w-full">
-                <LibraryCard
-                  title={`${item.folder_name}`}
-                  mainIcon={
-                    <FaGoogleDrive className="text-[#cbcbcb]" size={14} />
-                  }
-                  userInitials={`${item.first_name.charAt(0)}${item.last_name.charAt(0)}`}
-                  userFullName={`${item.first_name}  ${item.last_name}`}
-                  userEmail={item.first_name}
-                  userColor={randomColor}
-                  buttons={[
-                    {
-                      element: (
-                        <div
-                          className="hidden group-hover:flex bg-blue-500 rounded-full h-[50px] w-[50px] items-center justify-center cursor-pointer"
-                          onClick={() => window.open(item.link, "_blank")}
-                        >
-                          <IoIosArrowRoundDown
-                            className="text-[#fff]"
-                            size={24}
-                          />
-                        </div>
-                      ),
-                      tooltip: "Redirect",
-                    },
-                    {
-                      element: (
-                        <button
-                          disabled={deleteLoading}
-                          onClick={() => {
-                            setDropIdToBeDeleted(item.id);
-                            setProjectPin(item.project_pin);
-                            setDeleteDialog(true);
-                          }}
-                          className="border border-[#000] text-[#000] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer"
-                        >
-                          <FiMinus size={14} />
-                        </button>
-                      ),
-                      tooltip: "Remove",
-                    },
-                    {
-                      element: (
-                        <div
-                          className="border border-[#000] text-[#000] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer"
-                          onClick={() => handleCopyLink(item.link)}
-                        >
-                          <LuCopy size={14} />
-                        </div>
-                      ),
-                      tooltip: "Copy Link",
-                    },
-                    {
-                      element: (
-                        <div
-                          className={`${randomColor} rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer`}
-                          onClick={() => handleUserClick(item.user)}
-                        >
-                          <p className="text-[#fff] text-[16px] font-[600] tracking-[.1rem] font-Poppins ">
-                            {`${item.first_name.charAt(0)}${item.last_name.charAt(0)}`}
-                          </p>
-                        </div>
-                      ),
-                      tooltip: `${item.first_name}  ${item.last_name}`,
-                    },
+        {filter && (
+          <div className="my-[10px]">
+            <div className="flex items-center flex-wrap gap-[10px] mb-[20px]">
+              <div className="max-w-[150px] w-full rounded-full">
+                <SelectInput
+                  placeholder="Year"
+                  rounded={true}
+                  options={[
+                    { value: "2025", label: "2025" },
+                    { value: "2024", label: "2024" },
+                    { value: "2023", label: "2023" },
                   ]}
+                  value={filters.year}
+                  onChange={(value: any) => updateFilters("year", value)}
                 />
               </div>
-            );
-          })}
-        </div>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </div>
-      <div
-        className={`custom-dialog-overlay ${
-          selectedUser
-            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
-            : "hidden"
-        }`}
-      >
-        <Dialog
-          header={
-            <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
-              <Tooltip info="This modal contains details about the user who created the drop, including their profile information and other relevant metadata." />
-
-              <span>INFORMATION</span>
-            </div>
-          }
-          visible={selectedUser !== null}
-          onHide={() => setSelectedUser(null)}
-          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "25vw" }}
-          className="custom-dialog-overlay"
-          headerClassName=" tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400]"
-        >
-          {selectedUser && (
-            <div className="space-y-4 text-[#000] font-IBM">
-              <p className="text-[30px] font-[600]">
-                {selectedUser.user_profile.fullname}
+              <div className="max-w-[150px] w-full rounded-full">
+                <SelectInput
+                  placeholder="Month"
+                  rounded={true}
+                  options={[
+                    { value: "1", label: "January" },
+                    { value: "2", label: "February" },
+                    { value: "3", label: "March" },
+                    { value: "4", label: "April" },
+                    { value: "5", label: "May" },
+                    { value: "6", label: "June" },
+                    { value: "7", label: "July" },
+                    { value: "8", label: "August" },
+                    { value: "8", label: "August" },
+                    { value: "9", label: "September" },
+                    { value: "10", label: "October" },
+                    { value: "11", label: "November" },
+                    { value: "12", label: "December" },
+                  ]}
+                  value={filters.month}
+                  onChange={(value: any) => updateFilters("month", value)}
+                />
+              </div>
+              <div className="max-w-[150px] w-full">
+                <SelectInput
+                  placeholder="Vendor"
+                  rounded={true}
+                  options={vendorOptions}
+                  value={filters.vendor}
+                  onChange={(value: any) => updateFilters("vendor", value)}
+                />
+              </div>
+              <div className="max-w-[150px] w-full">
+                <SelectInput
+                  placeholder="Sub-Vendor"
+                  rounded={true}
+                  options={subVendorOptions}
+                  value={filters.subvendor}
+                  onChange={(value: any) => updateFilters("subvendor", value)}
+                />
+              </div>
+              <div className="max-w-[150px] w-full">
+                <SelectInput
+                  placeholder="Platform"
+                  rounded={true}
+                  options={[
+                    { value: "GoogleDrive", label: "GoogleDrive" },
+                    { value: "WeTransfer", label: "WeTransfer" },
+                    { value: "OneDrive", label: "OneDrive" },
+                    { value: "DropBox", label: "DropBox" },
+                    { value: "PCloud", label: "PCloud" },
+                  ]}
+                  value={filters.platform}
+                  onChange={(value: any) => updateFilters("platform", value)}
+                />
+              </div>
+              <p
+                className="cursor-pointer text-[14px] rounded-full px-[16px] py-[7px] hover:bg-orange-500 bg-[#000000] text-white inline"
+                onClick={() =>
+                  setFilters({
+                    search: "",
+                    year: "",
+                    month: "",
+                    vendor: "",
+                    subvendor: "",
+                    platform: "",
+                  })
+                }
+              >
+                Clear Filters
               </p>
-              <div className="text-[16px]">
-                <p className="font-[400] text-[#7c7e81]">Email: </p>
-                <p className="font-[600]">
-                  {selectedUser.user_profile.staff_email}
-                </p>
-              </div>
-              <div className="text-[16px]">
-                <p className="font-[400] text-[#7c7e81]">Role</p>
-                <p className="font-[600] text-[#01a733]">
-                  {selectedUser.user_profile.role}
-                </p>
-              </div>
-              <div className="text-[16px]">
-                <p className="font-[400] text-[#7c7e81]">Project</p>
-                <p className="font-[600]">
-                  {selectedUser.user_profile.business_name}
-                </p>
-              </div>
-              <div className="text-[16px]">
-                <p className="font-[400] text-[#7c7e81]">Member since</p>
-                <p className="font-[600]">
-                  {format(parseISO(selectedUser.created), "dd MMM yyyy")}
-                </p>
-              </div>
-              <div className="text-[16px]">
-                <p className="font-[400] text-[#7c7e81]">Last login</p>
-                <p className="font-[600]">
-                  {format(parseISO(selectedUser.last_login), "dd MMM yyyy")}
-                </p>
-              </div>
             </div>
-          )}
-        </Dialog>
-        <Dialog
-          header={
-            <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
-              <Tooltip info="Delete the dropzone selected" />
-              <span>DELETE DROPZONE</span>
-            </div>
-          }
-          visible={deleteDialog !== false}
-          onHide={() => setDeleteDialog(false)}
-          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "25vw" }}
-          className="custom-dialog-overlay"
-          headerClassName=" tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400]"
-        >
-          <label>Enter Pin to Delete</label>
-          <input
-            type="password"
-            name="projectPin"
-            autoComplete="new-password"
-            className={cn(
-              "mt-1 block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-[8px]",
-              pinError && "border-red-500 focus:ring-red-500"
-            )}
-            placeholder={"Enter Pin"}
-            value={pinEntered}
-            onChange={(e) => {
-              const newPin = e.target.value;
-              setPinEntered(newPin);
-              if (newPin.length >= 6) {
-                setPinError(newPin !== projectPin);
-              } else {
-                setPinError(false);
-              }
-            }}
-          />
-          {pinError && (
-            <span className="text-red-500 text-sm mt-1">
-              Wrong password entered
-            </span>
-          )}
-
-          <div className="flex gap-5 items-center mt-5">
-            <Button label="Cancel" onClick={() => setDeleteDialog(false)} />
-            <Button
-              disabled={pinEntered.length < 6 || pinError}
-              label="Delete Drop"
-              className={`bg-red-600 ${pinEntered.length < 6 || pinError ? "opacity-50 cursor-not-allowed" : ""}`}
-              onClick={() => handleDelete(dropIdToBeDeleted)}
-            />
           </div>
-        </Dialog>
-      </div>
-    </DashboardLayout>
+        )}
+        <div className="mt-[50px] mb-[100px]">
+          <div className=" grid place-items-center md:grid-cols-2 lg:grid-cols-3 gap-2 h-full ">
+            {content?.map((item: any, index: number) => {
+              const randomColor = getRandomColor();
+              return (
+                <div key={index} className="group w-full">
+                  <LibraryCard
+                    title={`${item.folder_name}`}
+                    mainIcon={
+                      <FaGoogleDrive className="text-[#cbcbcb]" size={14} />
+                    }
+                    userInitials={`${item.first_name.charAt(0)}${item.last_name.charAt(0)}`}
+                    userFullName={`${item.first_name}  ${item.last_name}`}
+                    userEmail={item.first_name}
+                    userColor={randomColor}
+                    buttons={[
+                      {
+                        element: (
+                          <div
+                            className="hidden group-hover:flex bg-blue-500 rounded-full h-[50px] w-[50px] items-center justify-center cursor-pointer"
+                            onClick={() => window.open(item.link, "_blank")}
+                          >
+                            <IoIosArrowRoundDown
+                              className="text-[#fff]"
+                              size={24}
+                            />
+                          </div>
+                        ),
+                        tooltip: "Redirect",
+                      },
+                      {
+                        element: (
+                          <button
+                            disabled={deleteLoading}
+                            onClick={() => {
+                              setDropIdToBeDeleted(item.id);
+                              setProjectPin(item.project_pin);
+                              setDeleteDialog(true);
+                            }}
+                            className="border border-[#000] text-[#000] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer"
+                          >
+                            <FiMinus size={14} />
+                          </button>
+                        ),
+                        tooltip: "Remove",
+                      },
+                      {
+                        element: (
+                          <div
+                            className="border border-[#000] text-[#000] rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer"
+                            onClick={() => handleCopyLink(item.link)}
+                          >
+                            <LuCopy size={14} />
+                          </div>
+                        ),
+                        tooltip: "Copy Link",
+                      },
+                      {
+                        element: (
+                          <div
+                            className={`${randomColor} rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer`}
+                            onClick={() => handleUserClick(item.user)}
+                          >
+                            <p className="text-[#fff] text-[16px] font-[600] tracking-[.1rem] font-Poppins ">
+                              {`${item.first_name.charAt(0)}${item.last_name.charAt(0)}`}
+                            </p>
+                          </div>
+                        ),
+                        tooltip: `${item.first_name}  ${item.last_name}`,
+                      },
+                    ]}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
+        <div
+          className={`custom-dialog-overlay ${
+            selectedUser
+              ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+              : "hidden"
+          }`}
+        >
+          <Dialog
+            header={
+              <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
+                <Tooltip info="This modal contains details about the user who created the drop, including their profile information and other relevant metadata." />
+
+                <span>INFORMATION</span>
+              </div>
+            }
+            visible={selectedUser !== null}
+            onHide={() => setSelectedUser(null)}
+            breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+            style={{ width: "25vw" }}
+            className="custom-dialog-overlay"
+            headerClassName=" tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400]"
+          >
+            {selectedUser && (
+              <div className="space-y-4 text-[#000] font-IBM">
+                <p className="text-[30px] font-[600]">
+                  {selectedUser.user_profile.fullname}
+                </p>
+                <div className="text-[16px]">
+                  <p className="font-[400] text-[#7c7e81]">Email: </p>
+                  <p className="font-[600]">
+                    {selectedUser.user_profile.staff_email}
+                  </p>
+                </div>
+                <div className="text-[16px]">
+                  <p className="font-[400] text-[#7c7e81]">Role</p>
+                  <p className="font-[600] text-[#01a733]">
+                    {selectedUser.user_profile.role}
+                  </p>
+                </div>
+                <div className="text-[16px]">
+                  <p className="font-[400] text-[#7c7e81]">Project</p>
+                  <p className="font-[600]">
+                    {selectedUser.user_profile.business_name}
+                  </p>
+                </div>
+                <div className="text-[16px]">
+                  <p className="font-[400] text-[#7c7e81]">Member since</p>
+                  <p className="font-[600]">
+                    {format(parseISO(selectedUser.created), "dd MMM yyyy")}
+                  </p>
+                </div>
+                <div className="text-[16px]">
+                  <p className="font-[400] text-[#7c7e81]">Last login</p>
+                  <p className="font-[600]">
+                    {format(parseISO(selectedUser.last_login), "dd MMM yyyy")}
+                  </p>
+                </div>
+              </div>
+            )}
+          </Dialog>
+          <Dialog
+            header={
+              <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
+                <Tooltip info="Delete the dropzone selected" />
+                <span>DELETE DROPZONE</span>
+              </div>
+            }
+            visible={deleteDialog !== false}
+            onHide={() => setDeleteDialog(false)}
+            breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+            style={{ width: "25vw" }}
+            className="custom-dialog-overlay"
+            headerClassName=" tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400]"
+          >
+            <label>Enter Pin to Delete</label>
+            <input
+              type="password"
+              name="projectPin"
+              autoComplete="new-password"
+              className={cn(
+                "mt-1 block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-[8px]",
+                pinError && "border-red-500 focus:ring-red-500"
+              )}
+              placeholder={"Enter Pin"}
+              value={pinEntered}
+              onChange={(e) => {
+                const newPin = e.target.value;
+                setPinEntered(newPin);
+                if (newPin.length >= 6) {
+                  setPinError(newPin !== projectPin);
+                } else {
+                  setPinError(false);
+                }
+              }}
+            />
+            {pinError && (
+              <span className="text-red-500 text-sm mt-1">
+                Wrong password entered
+              </span>
+            )}
+
+            <div className="flex gap-5 items-center mt-5">
+              <Button label="Cancel" onClick={() => setDeleteDialog(false)} />
+              <Button
+                disabled={pinEntered.length < 6 || pinError}
+                label="Delete Drop"
+                className={`bg-red-600 ${pinEntered.length < 6 || pinError ? "opacity-50 cursor-not-allowed" : ""}`}
+                onClick={() => handleDelete(dropIdToBeDeleted)}
+              />
+            </div>
+          </Dialog>
+        </div>
+      </DashboardLayout>
+    </>
   );
 };
 
