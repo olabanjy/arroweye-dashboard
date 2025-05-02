@@ -30,6 +30,7 @@ import jsPDF from "jspdf";
 import { toast } from "react-toastify";
 import ScheduleProject from "../schedule/component/ScheduleProject";
 import EmailInputWithSuggestions from "./component/EmailInputWithSuggestions";
+import { hasAccess } from "@/lib/utils";
 
 interface User {
   id: string;
@@ -58,7 +59,7 @@ const ProjectDetails = () => {
   const { query } = useRouter();
   const { id } = query;
   const [visible, setVisible] = useState(false);
-  const [userRole, setUserRole] = useState("");
+  const [userLoggedInProfile, setUserLoggedInProfile] = useState<any>({});
   const [nameDialogVisible, setNameDialogVisible] = useState(false);
   const [toggleNotifications, setToggleNotifications] = useState(false);
   const [broadcast, setBroadcast] = useState(false);
@@ -336,7 +337,8 @@ const ProjectDetails = () => {
 
   useEffect(() => {
     const content: any = ls.get("Profile", { decrypt: true });
-    setUserRole(content?.user?.user_profile?.role);
+    setUserLoggedInProfile(content?.user?.user_profile);
+    console.log("THIS IS THE LOGGED IN G", content?.user?.user_profile);
   }, []);
 
   useEffect(() => {
@@ -570,7 +572,7 @@ const ProjectDetails = () => {
                   </div>
                 ))}
 
-                {["Manager"].includes(userRole) && (
+                {hasAccess(userLoggedInProfile, ["Manager"]) && (
                   <div className="relative group">
                     <p
                       className="bg-[#ffdead] text-[#000000] rounded-full w-[50px] h-[50px] flex items-center justify-center  text-center cursor-pointer"
@@ -582,7 +584,7 @@ const ProjectDetails = () => {
                 )}
               </div>
 
-              {["Supervisor", "Manager"].includes(userRole) && (
+              {hasAccess(userLoggedInProfile, [""]) && (
                 <div className="relative">
                   {toggleNotifications && (
                     <div className="fixed top-0 left-0 w-full h-[50px] flex items-center justify-center bg-blue-500 text-white text-[15px] font-[500] font-IBM z-[9999999]">
@@ -610,7 +612,7 @@ const ProjectDetails = () => {
             </div>
           </div>
 
-          {["Manager"].includes(userRole) && (
+          {hasAccess(userLoggedInProfile, ["Manager"]) && (
             <div className=" ">
               <ProjectSingleInsight />
             </div>
@@ -754,7 +756,7 @@ const ProjectDetails = () => {
             </Dialog>
           </div>
         </form>
-        {["Manager", "Supervisor"].includes(userRole) && (
+        {hasAccess(userLoggedInProfile, ["Manager", "Supervisor"]) && (
           <>
             <InsightChart
               editMode={toggleNotifications}

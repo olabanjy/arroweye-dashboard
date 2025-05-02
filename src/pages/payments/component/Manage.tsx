@@ -28,6 +28,7 @@ type ProjectErrors = {
   project_title: string;
   vendor_id: string | null;
   subvendor_id: string | number | null;
+  artist_name: string | null;
   po_code: string;
   currency: string;
   cost: string;
@@ -38,6 +39,7 @@ interface ProjectFormData {
   project_title: string;
   vendor_id: string | number;
   subvendor_id: string | number;
+  artist_name: string;
   po_code: string;
   currency: string | number;
   services: { service_id: number; quantity: number; cost: number | string }[];
@@ -210,6 +212,7 @@ const Manage = () => {
     project_title: "",
     vendor_id: "",
     subvendor_id: "",
+    artist_name: "",
     po_code: "",
     currency: "",
     services: [
@@ -225,6 +228,7 @@ const Manage = () => {
     project_title: "",
     vendor_id: "",
     subvendor_id: "",
+    artist_name: "",
     po_code: "",
     currency: "",
     cost: "",
@@ -250,6 +254,7 @@ const Manage = () => {
       project_title: "",
       vendor_id: null,
       subvendor_id: null,
+      artist_name: "",
       po_code: "",
       currency: "",
       cost: "",
@@ -354,8 +359,9 @@ const Manage = () => {
     <div className="my-[20px]">
       <form onSubmit={handleProjectSubmit}>
         <div className="space-y-[20px]">
-          <div className="grid md:grid-cols-2  lg:grid-cols-4 items-center gap-[20px] ">
-            <div className="md:max-w-[350px] w-full">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 pr-10 items-start gap-[20px] relative">
+            {/* Project Title */}
+            <div className="w-full">
               <Input
                 label="PROJECT TITLE"
                 type="text"
@@ -372,7 +378,8 @@ const Manage = () => {
               )}
             </div>
 
-            <div className="md:max-w-[350px] w-full">
+            {/* P.O Code */}
+            <div className="w-full">
               <Input
                 label="P.O CODE"
                 type="number"
@@ -386,66 +393,78 @@ const Manage = () => {
                 <p className="text-red-500 text-xs">{projectErrors.po_code}</p>
               )}
             </div>
-            <div className="flex items-end gap-[20px] md:col-span-2 ">
-              <div className="max-w-[350px] w-full ">
-                <SelectInput
-                  icon={true}
-                  label="CURRENCY"
-                  name="currency"
-                  // labelText="Select Currency"
-                  options={currencyOptions}
-                  info="This is the currency in which the invoice is issued, and it will be the same amount reflected on the invoice."
-                  value={projectFormData.currency}
-                  onChange={handleCurrencyChange}
-                />
-                {projectErrors.currency && (
-                  <p className="text-red-500 text-xs">
-                    {projectErrors.currency}
-                  </p>
-                )}
-              </div>
 
+            {/* Currency with Add Button */}
+            <div className="w-full relative">
+              <SelectInput
+                icon={true}
+                label="CURRENCY"
+                name="currency"
+                options={currencyOptions}
+                info="This is the currency in which the invoice is issued, and it will be the same amount reflected on the invoice."
+                value={projectFormData.currency}
+                onChange={handleCurrencyChange}
+              />
+              {projectErrors.currency && (
+                <p className="text-red-500 text-xs">{projectErrors.currency}</p>
+              )}
               <div
-                className="w-[40px] h-[40px] mb-[5px] flex items-center justify-center rounded-full bg-black cursor-pointer "
+                className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-black cursor-pointer absolute bottom-0 -right-14"
                 onClick={addItemField}
               >
-                <p className="text-white text-xl ">+</p>
+                <p className="text-white text-xl">+</p>
               </div>
             </div>
 
-            <div className="flex items-end gap-[20px] ">
-              <div className="md:max-w-[350px] w-full">
-                <SelectInput
-                  icon={true}
-                  label="SELECT VENDOR"
-                  name="vendor"
-                  options={vendorOptions}
-                  onChange={handleVendorChange}
-                  value={projectFormData.vendor_id}
-                />
-                {projectErrors.vendor_id && (
-                  <p className="text-red-500 text-xs">
-                    {projectErrors.vendor_id}
-                  </p>
-                )}
-              </div>
+            {/* Select Vendor */}
+            <div className="w-full">
+              <SelectInput
+                icon={true}
+                label="SELECT VENDOR"
+                name="vendor"
+                options={vendorOptions}
+                onChange={handleVendorChange}
+                value={projectFormData.vendor_id}
+              />
+              {projectErrors.vendor_id && (
+                <p className="text-red-500 text-xs">
+                  {projectErrors.vendor_id}
+                </p>
+              )}
             </div>
-            <div className="flex items-end gap-[20px]">
-              <div className="max-w-[350px] w-full">
-                <SelectInput
-                  icon={true}
-                  name="subVendor"
-                  label="SELECT SUBVENDOR"
-                  options={subVendorOptions}
-                  onChange={handleSubVendorChange}
-                  value={projectFormData.subvendor_id}
-                />
-                {projectErrors.subvendor_id && (
-                  <p className="text-red-500 text-xs">
-                    {projectErrors.subvendor_id}
-                  </p>
-                )}
-              </div>
+
+            {/* Select Subvendor */}
+            <div className="w-full">
+              <SelectInput
+                icon={true}
+                name="subVendor"
+                label="SELECT SUBVENDOR"
+                options={subVendorOptions}
+                onChange={handleSubVendorChange}
+                value={projectFormData.subvendor_id}
+              />
+              {projectErrors.subvendor_id && (
+                <p className="text-red-500 text-xs">
+                  {projectErrors.subvendor_id}
+                </p>
+              )}
+            </div>
+
+            <div className="w-full">
+              <Input
+                label="ARTIST NAME"
+                type="text"
+                name="artist_name"
+                placeholder=""
+                info="Description for your new input field."
+                value={projectFormData.artist_name || ""}
+                onChange={handleInputChange}
+              />
+              {projectErrors.artist_name && (
+                <p className="text-red-500 text-xs">
+                  {projectErrors.artist_name}
+                </p>
+              )}
             </div>
           </div>
 

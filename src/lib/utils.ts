@@ -35,3 +35,11 @@ export function formatNumber(num: any) {
   }
   return num.toString();
 }
+
+export const hasAccess = (userProfile: any, allowedRoles: any = []) => {
+  if (userProfile?.business_type === "Vendor") {
+    return true;
+  }
+
+  return allowedRoles.includes(userProfile?.role);
+};
