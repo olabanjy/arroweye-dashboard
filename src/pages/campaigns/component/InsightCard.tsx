@@ -43,7 +43,6 @@ const InsightCard: FC<InsightCardProps> = ({
   return (
     <div
       className={`relative h-max border px-[20px] pt-[34px] rounded-[8px] space-y-[20px] w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500 ${extraClass}`}
-      // style={{ height }}
     >
       <div className="flex items-center gap-[5px] text-[#7a8081]">
         <p className="text-[12px] font-[400] tracking-[.1rem]">{title}</p>
@@ -51,14 +50,22 @@ const InsightCard: FC<InsightCardProps> = ({
       </div>
 
       <div className="flex flex-row items-center h-[6rem] overflow-x-auto overflow-y-hidden">
-        <p className="text-2xl lg:text-[56px] font-[600]">
+        <p
+          className="text-2xl lg:text-[56px] font-[600]"
+          style={{ fontSize: !!maxValue ? "35px" : "" }}
+        >
           {currency}
           {value}
         </p>
         {maxValue && (
           <>
-            <p className="mx-4">—</p>
-            <p className="text-2xl lg:text-[56px] font-[600]">
+            <p className="mx-4" style={{ fontSize: !!maxValue ? "35px" : "" }}>
+              —
+            </p>
+            <p
+              className="text-2xl lg:text-[56px] font-[600]"
+              style={{ fontSize: !!maxValue ? "35px" : "" }}
+            >
               {currency}
               {maxValue}
             </p>

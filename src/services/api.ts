@@ -471,6 +471,65 @@ export const CreateEvent = async (payload: unknown): Promise<void> => {
     }
   }
 };
+
+export const ClaimReward = async (payload: unknown): Promise<void> => {
+  const createToast = toast.loading("claiming reward...");
+  try {
+    const { data: response } = await apiRequest<
+      ApiRequestResponse<ApiResponse>
+    >({
+      method: "POST",
+      url: `/api/v1/ums/claim-reward/`,
+      data: payload,
+      requireToken: true,
+    });
+
+    console.log(response);
+    toast.update(createToast, {
+      render: "Claim Reward Successful",
+      type: "info",
+      isLoading: false,
+      autoClose: 3000,
+    });
+    window.location.reload();
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400) {
+        toast.update(createToast, {
+          render: error.response?.data?.message || error.response?.data[0],
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      } else if (error.response?.status === 403) {
+        toast.update(createToast, {
+          render: error.response?.data?.message || "Access denied.",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      } else {
+        toast.update(createToast, {
+          render:
+            error.response?.data?.message ||
+            "Request failed. Please try again.",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      }
+    } else {
+      toast.update(createToast, {
+        render: "Request failed. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      console.error("Unexpected Error:", error);
+    }
+  }
+};
+
 export const AddStaff = async (payload: unknown): Promise<any> => {
   const addUserToast = toast.loading("adding user...");
   try {

@@ -205,7 +205,7 @@ const MilestonesNotification: React.FC<any> = ({
         ) : (
           <div className="flex flex-col gap-10">
             <p className="lg:text-lg">
-              You do not have security notifications currently
+              You do not have milestone notifications currently
             </p>
           </div>
         )}
