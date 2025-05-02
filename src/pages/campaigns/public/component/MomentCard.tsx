@@ -3,8 +3,12 @@ import React, { useState, useEffect } from "react";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Dialog } from "primereact/dialog";
+import { Button } from "@/components/ui/button";
 
 interface MomentCardProps {
+  giftingPin?: string;
+  giftings?: any[];
   videoUrls: string[];
   reportUrls: string[];
   videoTitle: string;
@@ -20,6 +24,8 @@ interface MomentCardProps {
 }
 
 const MomentCard: React.FC<MomentCardProps> = ({
+  giftingPin,
+  giftings,
   videoUrls = [],
   reportUrls = [],
   videoTitle,
@@ -36,6 +42,8 @@ const MomentCard: React.FC<MomentCardProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
+
+  const [claimRewardDialog, setClaimRewardDialog] = useState(false);
 
   // Validate video URLs on component mount and when URLs change
   useEffect(() => {
@@ -94,6 +102,11 @@ const MomentCard: React.FC<MomentCardProps> = ({
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
+
+  useEffect(() => {
+    console.log("NA THE GIFTS BE THIS", giftings);
+    console.log("NA THE PIN COME BE THIS", giftingPin);
+  }, [giftings]);
 
   return (
     <div className="w-full max-h-[600px] space-y-[20px]">
@@ -202,11 +215,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
                 ? "border border-black text-black hover:bg-black hover:text-white"
                 : "hover:bg-orange-500 bg-black text-white"
             }`}
-            onClick={() =>
-              window.open(
-                `https://studio-api.arroweye.pro${reportUrls[currentVideoIndex]}`
-              )
-            }
+            onClick={() => setClaimRewardDialog(true)}
             disabled={!reportUrls[currentVideoIndex]}
           >
             {radioButtonText}
@@ -216,6 +225,45 @@ const MomentCard: React.FC<MomentCardProps> = ({
         {subText && (
           <p className="text-[12px] font-[400] text-center">{subText}</p>
         )}
+      </div>
+
+      <div
+        className={`custom-dialog-overlay ${
+          claimRewardDialog
+            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+            : "hidden"
+        }`}
+      >
+        <Dialog
+          visible={claimRewardDialog}
+          onHide={() => setClaimRewardDialog(false)}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "30vw" }}
+          className="custom-dialog-overlay"
+        >
+          <div className="space-y-4 font-IBM">
+            <p className="font-semibold text-lg">Congrats! 🎉</p>
+            <p className="mb-0">
+              <span id="thankYouMessage">
+                Thank you for making beautiful music with us during your
+                campaign. Our collaboration was pitch-perfect 👌🏽, and we look
+                forward to many more harmonious projects 🤝🏽.
+              </span>{" "}
+              <span id="message">
+                Throughout this campaign, we’ve gotten to know you well, and we
+                hope you’ve learned more about us too. Your milestones are truly
+                remarkable and as a sincere thank you, we’re thrilled to present
+                you with a gift 🎁 to share with your team. See you soon. 🧡
+              </span>{" "}
+            </p>
+            <button
+              className="p-2 font-IBM text-[16px] font-[500] w-full rounded text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
+              // onClick={() => }
+            >
+              Reedem Gift
+            </button>
+          </div>
+        </Dialog>
       </div>
     </div>
   );

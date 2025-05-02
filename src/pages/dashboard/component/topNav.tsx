@@ -16,6 +16,8 @@ const TopNav: FC = () => {
     assets: [],
     payments: [],
   });
+  const [notificationScrolled, setNotificationScrolled] = useState(false);
+  const [allNotificationsRead, setAllNotificationsRead] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeMainTab, setActiveMainTab] = useState("updates");
   const [activeInnerTab, setActiveInnerTab] = useState("campaign");
@@ -54,7 +56,46 @@ const TopNav: FC = () => {
 
       setNotifications(groupedNotifications);
     });
-  }, []);
+  }, [notificationScrolled]);
+
+  const areAllItemsReadInAllArrays = (notification: any): boolean => {
+    if (!notification) {
+      return true;
+    }
+
+    const arrayKeys = Object.keys(notification).filter(
+      (key) => Array.isArray(notification[key]) && notification[key].length > 0
+    );
+
+    if (arrayKeys.length === 0) {
+      return true;
+    }
+
+    for (const key of arrayKeys) {
+      const array = notification[key];
+
+      const hasReadableItems = array.some((item: any) => "read" in item);
+
+      if (hasReadableItems) {
+        const allRead = array.every((item: any) => {
+          return !("read" in item) || item.read === true;
+        });
+
+        if (!allRead) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
+  useEffect(() => {
+    console.log("NOTIFFS", notifications);
+    const allRead = areAllItemsReadInAllArrays(notifications);
+    setAllNotificationsRead(allRead);
+    console.log("ALL READ", allRead);
+  }, [notifications]);
 
   return (
     <div className="relative">
@@ -62,10 +103,13 @@ const TopNav: FC = () => {
         <div className="text-lg font-semibold opacity-0">Dashboard</div>
         <div className="relative">
           <div
-            className="text-black cursor-pointer mb-[40px] md:mb-0"
+            className="text-black cursor-pointer mb-[40px] md:mb-0 relative"
             onClick={toggleSidebar}
           >
             <FaRegBell size={27} />
+            {!allNotificationsRead && (
+              <div className="w-2 h-2 bg-[#ffa500] absolute top-0 right-0 rounded-full" />
+            )}
           </div>
 
           {isSidebarOpen && (
@@ -171,6 +215,8 @@ const TopNav: FC = () => {
                       <div>
                         <CampaignNotifications
                           notification={notifications.campaigns}
+                          notificationScrolled={notificationScrolled}
+                          setNotificationScrolled={setNotificationScrolled}
                         />
                       </div>
                     )}
@@ -179,6 +225,8 @@ const TopNav: FC = () => {
                       <div>
                         <MileStonesNotification
                           notification={notifications.milestones}
+                          notificationScrolled={notificationScrolled}
+                          setNotificationScrolled={setNotificationScrolled}
                         />
                       </div>
                     )}
@@ -187,12 +235,18 @@ const TopNav: FC = () => {
                       <div>
                         <SecurityNotification
                           notification={notifications.security}
+                          notificationScrolled={notificationScrolled}
+                          setNotificationScrolled={setNotificationScrolled}
                         />
                       </div>
                     )}
                   {activeMainTab === "drops" && activeInnerTab === "assets" && (
                     <div>
-                      <AssetsNotification notification={notifications.assets} />
+                      <AssetsNotification
+                        notification={notifications.assets}
+                        notificationScrolled={notificationScrolled}
+                        setNotificationScrolled={setNotificationScrolled}
+                      />
                     </div>
                   )}
                   {activeMainTab === "drops" &&
@@ -200,6 +254,8 @@ const TopNav: FC = () => {
                       <div>
                         <PaymentsNotification
                           notification={notifications.payments}
+                          notificationScrolled={notificationScrolled}
+                          setNotificationScrolled={setNotificationScrolled}
                         />
                       </div>
                     )}

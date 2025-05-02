@@ -100,6 +100,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
   const [dspPerformanceData, setDspPerformanceData] = useState<any>({});
   const [momentMediaData, setMomentMediaData] = useState<any>([]);
   const [momentReportUrls, setMomentReportUrls] = useState<any>([]);
+  const [giftingsReportUrls, setGiftingsReportUrls] = useState<any>([]);
   const [recapMediaData, setRecapMediaData] = useState<any>([]);
   const [dspMediaData, setDspMediaData] = useState<any>([]);
 
@@ -383,6 +384,9 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
   useEffect(() => {
     if (media.length > 0) {
+      const giftings = media.filter((item: any) => item?.type === "Gifting");
+      setGiftingsReportUrls(giftings);
+
       const newMomentMedia = media.filter(
         (item: any) => item?.type === "Moment"
       );
@@ -576,6 +580,8 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
             <MomentCard
               MomentsTitle="REWIND"
+              giftingPin={content?.pin}
+              giftings={giftingsReportUrls}
               csvData={{ ...socialMediaData, ...smactionData }}
               videoUrls={recapMediaData}
               reportUrls={momentReportUrls}

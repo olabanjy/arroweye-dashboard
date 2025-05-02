@@ -1787,6 +1787,32 @@ export const campaignStaffAction = async (
   }
 };
 
+export const markNotificationsAsRead = async (
+  payload: any
+): Promise<any | null> => {
+  try {
+    const response = await apiRequest({
+      method: "POST",
+      url: `/api/v1/notification/notification/update-notifications/`,
+      data: payload,
+      requireToken: true,
+    });
+
+    return response;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to perform action. Please try again."
+      );
+    } else {
+      toast.error("Failed to perform action. Please try again.");
+    }
+
+    return null;
+  }
+};
+
 export const createDropzone = async (
   projectId: string,
   data: DropzonePayload
