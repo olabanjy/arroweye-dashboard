@@ -85,7 +85,7 @@ const Invoice = () => {
     content
       ?.slice()
       .reverse()
-      .map((item, index) => ({
+      .map((item: any, index) => ({
         data: [
           {
             content: (
@@ -109,7 +109,8 @@ const Invoice = () => {
           {
             content: (
               <div className=" text-start">
-                {item?.project?.subvendor?.organization_name}
+                {item?.project?.artist_name ||
+                  item?.project?.subvendor?.organization_name}
               </div>
             ),
           },

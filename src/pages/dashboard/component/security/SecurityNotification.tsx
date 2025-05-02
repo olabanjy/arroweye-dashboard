@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { markNotificationsAsRead } from "@/services/api";
-import FirstPlayNotificationCard from "../FirstPlayNotificationCard";
+import SecurityNotificationCard from "../SecurityNotificationCard";
 
 const SecurityNotification: React.FC<any> = ({
   notification,
@@ -191,7 +191,7 @@ const SecurityNotification: React.FC<any> = ({
                 ref={(element) => setNotificationRef(element, item.id)}
                 data-notification-id={item.id}
               >
-                <FirstPlayNotificationCard
+                <SecurityNotificationCard
                   timeAgo={formatRelativeDate(item.created)}
                   message={item.content}
                   onDownload={handleDownload}

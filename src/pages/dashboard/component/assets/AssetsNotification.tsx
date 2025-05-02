@@ -205,7 +205,7 @@ const AssetsNotification: React.FC<any> = ({
         ) : (
           <div className="flex flex-col gap-10">
             <p className="lg:text-lg">
-              You do not have security notifications currently
+              You do not have assets notifications currently
             </p>
           </div>
         )}

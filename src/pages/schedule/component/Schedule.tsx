@@ -23,6 +23,7 @@ import AutocompleteInput from "./Autocomplete";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/pages/drops";
+import { createEvent, EventAttributes } from "ics";
 
 interface FormErrors {
   title?: string;
@@ -110,11 +111,11 @@ const Schedule: React.FC<ScheduleProps> = ({
     project: item.project,
   }));
 
-  const downloadFormDataAsCSV = (
+  const downloadFormDataAsICS = (
     formData: any,
     vendorOptions: { value: number; label: string }[],
     subvendorOptions: { value: number; label: string }[],
-    filename = "event.csv"
+    filename = "event.ics"
   ) => {
     const findLabelByValue = (
       options: { value: number; label: string }[],
@@ -124,58 +125,71 @@ const Schedule: React.FC<ScheduleProps> = ({
       return found ? found.label : value.toString();
     };
 
-    const processedFormData = { ...formData };
-
-    // Remove original vendor and subvendor keys
-    delete processedFormData.vendor_id;
-    delete processedFormData.subvendor_id;
-
-    // Add new Vendor and Subvendor keys with labels
-    processedFormData.Vendor = formData.vendor_id
+    const Vendor = formData.vendor_id
       ? findLabelByValue(vendorOptions, formData.vendor_id)
       : "";
 
-    processedFormData.Subvendor = formData.subvendor_id
+    const Subvendor = formData.subvendor_id
       ? findLabelByValue(subvendorOptions, formData.subvendor_id)
       : "";
 
-    const keys = Object.keys(processedFormData);
-    const values = Object.values(processedFormData);
-
-    const hasValue = values.some(
-      (value) => value !== null && value !== undefined && value !== ""
+    const eventTitle = String(formData.title || "Untitled Event");
+    const eventDescription = String(
+      formData.description || `Vendor: ${Vendor}, Subvendor: ${Subvendor}`
     );
+    const eventLocation = String(formData.location || "Online");
+    const organizerEmail = String(formData.email || "noreply@example.com");
 
-    if (!hasValue) {
-      toast.info("No data to download");
-      console.error("Form data contains no values");
-      return false;
-    }
+    const startDateTime = formData.start
+      ? new Date(formData.start)
+      : new Date();
 
-    let csvContent = keys.join(",") + "\n";
+    const startArray: [number, number, number, number, number] = [
+      startDateTime.getFullYear(),
+      startDateTime.getMonth() + 1,
+      startDateTime.getDate(),
+      startDateTime.getHours(),
+      startDateTime.getMinutes(),
+    ];
 
-    const csvValues = values.map((value) => {
-      if (value === null || value === undefined) return "";
-      return typeof value === "string"
-        ? `"${value.replace(/"/g, '""')}"`
-        : value;
+    const event: EventAttributes = {
+      start: startArray,
+      startInputType: "local",
+      startOutputType: "utc",
+      duration: { hours: 1 },
+      title: eventTitle,
+      description: eventDescription,
+      location: eventLocation,
+      status: "CONFIRMED",
+      uid: `event-${Date.now()}`,
+      url: "https://example.com/event/123",
+      categories: ["Tech", "Virtual"],
+      htmlContent: `<strong>${eventTitle}</strong><br/>Vendor: ${Vendor}<br/>Subvendor: ${Subvendor}`,
+      organizer: {
+        name: Vendor,
+        email: organizerEmail,
+      },
+    };
+
+    createEvent(event, (error, value) => {
+      if (error) {
+        console.error(error);
+        toast.error("Failed to generate calendar file");
+        return;
+      }
+
+      const blob = new Blob([value], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.setAttribute("href", url);
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      toast.success("Calendar invite downloaded");
     });
-
-    csvContent += csvValues.join(",");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.setAttribute("href", url);
-    link.setAttribute("download", filename);
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    toast.success("Event exported");
   };
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -550,6 +564,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                     />
                   ) : (
                     <AutocompleteInput
+                      placeholder="Event Title"
                       name="title"
                       disabled={viewOnly}
                       value={formData.title}
@@ -688,18 +703,20 @@ const Schedule: React.FC<ScheduleProps> = ({
                         Delete
                       </p>
                     )}
-                  <p
-                    className="text-[14px] px-[20px] py-[8px] bg-[#000] rounded-full text-[#fff] inline-flex cursor-pointer"
-                    onClick={() =>
-                      downloadFormDataAsCSV(
-                        formData,
-                        vendorOptions,
-                        subvendorOptions
-                      )
-                    }
-                  >
-                    Share
-                  </p>
+                  {viewOnly && (
+                    <p
+                      className="text-[14px] px-[20px] py-[8px] bg-[#000] rounded-full text-[#fff] inline-flex cursor-pointer"
+                      onClick={() =>
+                        downloadFormDataAsICS(
+                          formData,
+                          vendorOptions,
+                          subvendorOptions
+                        )
+                      }
+                    >
+                      Share
+                    </p>
+                  )}
                 </div>
 
                 <button

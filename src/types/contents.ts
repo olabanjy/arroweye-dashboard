@@ -59,6 +59,7 @@ export interface ContentItem {
     organization_name: string;
     id?: number;
   };
+  artist_name?: string;
   organization_name?: string;
   items?: { service: { name: string; cost: number } }[];
   code?: number;
