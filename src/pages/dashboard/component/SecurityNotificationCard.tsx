@@ -87,14 +87,6 @@ const SecurityNotificationCard: FC<SecurityNotificationCardProps> = ({
                 >
                   Track
                 </div>
-              ) : action.type === "Manage" ? (
-                <div
-                  key={action.type} // Add a key for each item
-                  className="w-max h-[30px] rounded px-[10px] py-[4px] bg-[#000000] text-white flex items-center justify-center cursor-pointer"
-                  // onClick={() => window.open(action.url, "_blank")}
-                >
-                  Manage
-                </div>
               ) : action.type === "View" ? (
                 <div
                   key={action.type} // Add a key for each item

@@ -203,17 +203,6 @@ const InvoicesTab = () => {
               ]}
             />
           </div>
-          <div className="max-w-[100px] w-full">
-            <SelectInput
-              rounded={true}
-              options={[
-                { value: "", label: "Currency" },
-                { value: "usd", label: "$USD" },
-                { value: "ngn", label: "₦NGN" },
-                { value: "eth", label: "ΞETH" },
-              ]}
-            />
-          </div>
           <p className=" max-w-[120px] w-full cursor-pointer text-[14px] rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
             Clear Filters
           </p>

@@ -21,37 +21,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Head from "next/head";
 
-const users = [
-  {
-    initials: "JJ",
-    fullName: "John Jerome Video",
-    email: "john@example.com",
-    link: "https://example.com/john",
-    uploader: "John Jerome",
-  },
-  {
-    initials: "EO",
-    fullName: "Emily O'Connor Video",
-    email: "emily@example.com",
-    link: "https://example.com/emily",
-    uploader: "Emily O'Connor",
-  },
-  {
-    initials: "MD",
-    fullName: "Michael Douglas Video",
-    email: "michael@example.com",
-    link: "https://example.com/michael",
-    uploader: "Michael Douglas",
-  },
-  {
-    initials: "SO",
-    fullName: "Sarah O'Neil Video",
-    email: "sarah@example.com",
-    link: "https://example.com/sarah",
-    uploader: "Sarah O'Neil",
-  },
-];
-
 const colors = [
   "bg-red-500",
   "bg-blue-500",
@@ -92,7 +61,7 @@ const AssetsLibrary = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [filter, setFilter] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
 
   useEffect(() => {
     setFilter(false);
@@ -190,8 +159,8 @@ const AssetsLibrary = () => {
     setCurrentPage(page);
   };
 
-  const handleUserClick = (user: User) => {
-    setSelectedUser(user);
+  const handleUserClick = (item: any) => {
+    setSelectedUser(item);
   };
 
   const handleCopyLink = (link: string) => {
@@ -351,19 +320,27 @@ const AssetsLibrary = () => {
                 <div key={index} className="group w-full">
                   <LibraryCard
                     title={`${item.folder_name}`}
-                    mainIcon={
-                      <FaGoogleDrive className="text-[#cbcbcb]" size={14} />
-                    }
+                    mainIcon={item.drop_type || "N/A"}
                     userInitials={`${item.first_name.charAt(0)}${item.last_name.charAt(0)}`}
                     userFullName={`${item.first_name}  ${item.last_name}`}
                     userEmail={item.first_name}
-                    userColor={randomColor}
+                    userColor={"bg-blue-500"}
                     buttons={[
                       {
                         element: (
                           <div
                             className="hidden group-hover:flex bg-blue-500 rounded-full h-[50px] w-[50px] items-center justify-center cursor-pointer"
-                            onClick={() => window.open(item.link, "_blank")}
+                            onClick={() => {
+                              const ensureHttps = (url: any) => {
+                                // Check if URL is already absolute (starts with http:// or https://)
+                                if (url.match(/^https?:\/\//)) {
+                                  return url;
+                                }
+                                return `https://${url}`;
+                              };
+
+                              window.open(ensureHttps(item.link), "_blank");
+                            }}
                           >
                             <IoIosArrowRoundDown
                               className="text-[#fff]"
@@ -403,8 +380,8 @@ const AssetsLibrary = () => {
                       {
                         element: (
                           <div
-                            className={`${randomColor} rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer`}
-                            onClick={() => handleUserClick(item.user)}
+                            className={`bg-blue-500 rounded-full h-[50px] w-[50px] flex items-center justify-center cursor-pointer`}
+                            onClick={() => handleUserClick(item)}
                           >
                             <p className="text-[#fff] text-[16px] font-[600] tracking-[.1rem] font-Poppins ">
                               {`${item.first_name.charAt(0)}${item.last_name.charAt(0)}`}
@@ -450,36 +427,48 @@ const AssetsLibrary = () => {
             {selectedUser && (
               <div className="space-y-4 text-[#000] font-IBM">
                 <p className="text-[30px] font-[600]">
-                  {selectedUser.user_profile.fullname}
+                  {selectedUser.user.user_profile.fullname}
                 </p>
                 <div className="text-[16px]">
                   <p className="font-[400] text-[#7c7e81]">Email: </p>
                   <p className="font-[600]">
-                    {selectedUser.user_profile.staff_email}
+                    {selectedUser.user.user_profile.staff_email}
                   </p>
                 </div>
                 <div className="text-[16px]">
                   <p className="font-[400] text-[#7c7e81]">Role</p>
                   <p className="font-[600] text-[#01a733]">
-                    {selectedUser.user_profile.role}
+                    {selectedUser.user.user_profile.role}
                   </p>
                 </div>
                 <div className="text-[16px]">
                   <p className="font-[400] text-[#7c7e81]">Project</p>
-                  <p className="font-[600]">
-                    {selectedUser.user_profile.business_name}
+                  <p
+                    className="font-[600] cursor-pointer"
+                    onClick={() => {
+                      const baseDomain = window.location.origin;
+
+                      const campaignUrl = `${baseDomain}/campaigns/${selectedUser.project}`;
+                      // Open the URL in a new tab
+                      window.open(campaignUrl, "_blank");
+                    }}
+                  >
+                    {selectedUser.project_title}
                   </p>
                 </div>
                 <div className="text-[16px]">
                   <p className="font-[400] text-[#7c7e81]">Member since</p>
                   <p className="font-[600]">
-                    {format(parseISO(selectedUser.created), "dd MMM yyyy")}
+                    {format(parseISO(selectedUser.user.created), "dd MMM yyyy")}
                   </p>
                 </div>
                 <div className="text-[16px]">
                   <p className="font-[400] text-[#7c7e81]">Last login</p>
                   <p className="font-[600]">
-                    {format(parseISO(selectedUser.last_login), "dd MMM yyyy")}
+                    {format(
+                      parseISO(selectedUser.user.last_login),
+                      "dd MMM yyyy"
+                    )}
                   </p>
                 </div>
               </div>

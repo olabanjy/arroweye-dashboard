@@ -24,7 +24,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      "flex items-center justify-center font-medium text-white rounded-md focus:outline-none transition duration-200 ease-in-out";
+      "flex items-center justify-center font-medium text-white focus:outline-none transition duration-200 ease-in-out rounded-full";
 
     const variantStyles = {
       primary: "bg-[#020d2a] focus:ring-2 focus:ring-blue-500",
@@ -54,11 +54,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
         disabled={isDisabled}
       >
-        {isLoading ? (
-          <span className="animate-spin">...</span>
-        ) : (
-          label || "Button"
-        )}
+        {!isLoading && (label || "Button")}
         {isLoading && loadingText && (
           <span className="ml-2">{loadingText}</span>
         )}

@@ -511,7 +511,7 @@ const ProjectDetails = () => {
           className=" relative "
           style={{ marginBottom: "80px" }}
         >
-          <div className="space-y-[5px] ">
+          <div className="flex flex-col gap-2">
             <div className="text-[#919393] flex items-center gap-[5px] text-[0.875rem]">
               <p className=" uppercase text-[#5e5e5e] tracking-[.1rem]">
                 {content?.vendor?.organization_name}
@@ -520,7 +520,7 @@ const ProjectDetails = () => {
                 {content?.subvendor?.organization_name}
               </p>
             </div>
-            <div className="pr-[40px]">
+            <div className="pr-[40px] mb-5">
               {toggleNotifications ? (
                 <div className="flex items-center">
                   <div className="">
@@ -561,7 +561,7 @@ const ProjectDetails = () => {
               )}
 
               <div className="my-[20px] gap-[20px] flex-wrap flex items-center justify-between">
-                <div className=" flex space-x-[5px] ">
+                <div className="flex space-x-[15px] ">
                   {subvendorStaff?.map((user: any, index: any) => (
                     <div key={index} className="relative group">
                       <p
@@ -622,7 +622,7 @@ const ProjectDetails = () => {
             </div>
 
             {hasAccess(userLoggedInProfile, ["Manager"]) && (
-              <div className=" ">
+              <div className="">
                 <ProjectSingleInsight />
               </div>
             )}
@@ -833,20 +833,24 @@ const ProjectDetails = () => {
                     <p className=" font-[600]">{selectedUser.last_login}</p>
                   </div>
 
-                  <div className=" ">
-                    <div
-                      className=" px-[16px] py-[8px] rounded bg-black text-white inline-block cursor-pointer mt-[10px]"
-                      onClick={() => setDeleteModal(true)}
-                    >
-                      <FaUserMinus />
+                  {hasAccess(userLoggedInProfile, ["Manager"]) && (
+                    <div className=" ">
+                      <div
+                        className=" px-[16px] py-[8px] rounded bg-black text-white inline-block cursor-pointer mt-[10px]"
+                        onClick={() => setDeleteModal(true)}
+                      >
+                        <FaUserMinus />
+                      </div>
+
+                      <div
+                        className=" px-[16px] py-[8px] text-black inline-block cursor-pointer"
+                        onClick={handleAdjustmentClick}
+                      >
+                        <HiAdjustmentsHorizontal />
+                      </div>
                     </div>
-                    <div
-                      className=" px-[16px] py-[8px] text-black inline-block cursor-pointer"
-                      onClick={handleAdjustmentClick}
-                    >
-                      <HiAdjustmentsHorizontal />
-                    </div>
-                  </div>
+                  )}
+
                   <div className=" hidden">
                     <div className="flex justify-end space-x-2">
                       <Button
@@ -868,6 +872,13 @@ const ProjectDetails = () => {
             }`}
           >
             <Dialog
+              header={
+                <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
+                  <Tooltip info="Staff user Access" />
+
+                  <span>MEMBER ACCESS</span>
+                </div>
+              }
               visible={adjustmentModalVisible}
               onHide={() => setAdjustmentModalVisible(false)}
               breakpoints={{ "960px": "75vw", "640px": "100vw" }}
@@ -875,8 +886,7 @@ const ProjectDetails = () => {
               className="custom-dialog-overlay"
             >
               <div className="space-y-4 font-IBM">
-                <p className="text-[16px] font-[400]">MANAGE ACCESS</p>
-                <div className=" w-full">
+                <div className="w-full">
                   <SelectInput
                     name="role"
                     value={addUserFormData.role}

@@ -299,7 +299,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
                 : "hover:bg-orange-500 bg-black text-white"
             }`}
             onClick={() => setClaimRewardDialog(true)}
-            disabled={!reportUrls[currentVideoIndex]}
+            // disabled={!reportUrls[currentVideoIndex]}
           >
             {radioButtonText}
           </button>
@@ -318,7 +318,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
         }`}
       >
         <Dialog
-          header={"CLAIM REWARD"}
+          // header={"CLAIM REWARD"}
           visible={claimRewardDialog}
           onHide={() => setClaimRewardDialog(false)}
           breakpoints={{ "960px": "75vw", "640px": "100vw" }}
