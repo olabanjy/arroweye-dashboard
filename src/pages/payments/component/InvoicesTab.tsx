@@ -313,7 +313,7 @@ const InvoicesTab = () => {
                     name="type"
                     options={[
                       { value: "Vendor", label: "Vendor" },
-                      { value: "Subvendor", label: "Subvendor" },
+                      { value: "SubVendor", label: "SubVendor" },
                     ]}
                     value={formData.type}
                     onChange={(value) =>
