@@ -182,7 +182,7 @@ const Login = () => {
 
   return (
     <div className="h-screen flex items-center justify-center relative">
-      <Toast ref={toast} className=" font-IBM" />
+      <Toast ref={toast} className="font-IBM" />
       {randomBgImage && (
         <Image
           src={randomBgImage}
@@ -241,7 +241,7 @@ const Login = () => {
                       isLoading={isLoginLoading}
                       disabled={isLoginLoading}
                       variant="primary"
-                      loadingText="Sending..."
+                      loadingText="Sending"
                       type="submit"
                       className="rounded-full bg-[#000000] font-bold text-[14px]"
                     />
@@ -278,7 +278,7 @@ const Login = () => {
                       isLoading={isOtpLoading}
                       disabled={isOtpLoading}
                       variant="primary"
-                      loadingText="Please wait..."
+                      loadingText="Verifying"
                       type="submit"
                       className="rounded-full  bg-[#000000] font-bold text-[14px]  "
                     />

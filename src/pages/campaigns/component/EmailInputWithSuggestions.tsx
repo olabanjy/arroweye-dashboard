@@ -103,7 +103,7 @@ const EmailInputWithSuggestions: React.FC<EmailInputWithSuggestionsProps> = ({
                   className="px-4 py-2 cursor-pointer hover:bg-gray-100 flex flex-col"
                   onClick={() => handleSuggestionClick(staff)}
                 >
-                  <span className="font-medium text-blue-600">
+                  <span className="font-medium text-black">
                     {staff.staff_email}
                   </span>
                   <span className="text-sm text-gray-600">
