@@ -897,7 +897,7 @@ const ProjectDetails = () => {
                       { value: "Supervisor", label: "Supervisor" },
                       { value: "Agent", label: "Agent" },
                       { value: "Vendor", label: "Vendor" },
-                      { value: "Subvendor", label: "Subvendor" },
+                      { value: "SubVendor", label: "SubVendor" },
                     ]}
                   />
                 </div>
