@@ -280,7 +280,7 @@ const Login = () => {
                       variant="primary"
                       loadingText="Verifying"
                       type="submit"
-                      className="rounded-full  bg-[#000000] font-bold text-[14px]  "
+                      className="rounded-full bg-[#000000] font-bold text-[14px]  "
                     />
                   </div>
                 </form>

@@ -201,7 +201,7 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
 
         {assetsButton && (
           <button
-            className="w-full p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[16px] font-[500] flex-grow rounded bg-black text-white text-center"
+            className="w-full p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[16px] font-[500] flex-grow rounded-full bg-black text-white text-center"
             onClick={() => downloadAllDspFiles(images)}
           >
             {assetsButton}

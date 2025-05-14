@@ -6,16 +6,12 @@ import { getInvoice } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 import Link from "next/link";
 
-const Invoice = () => {
+const Invoice = ({ amountFilter, statusFilter }: any) => {
   const headers = [
     <div key="project-header" className=" text-start">
       {" "}
       Campaign
     </div>,
-    // <div key="project-Code" className=" text-start">
-    //   {" "}
-    //   Code
-    // </div>,
     <div key="project-PoCode" className=" text-start">
       {" "}
       P.O Code
@@ -47,6 +43,9 @@ const Invoice = () => {
   ];
 
   const [content, setContent] = useState<ContentItem[] | null>(null);
+  const [filteredContent, setFilteredContent] = useState<ContentItem[] | null>(
+    null
+  );
 
   const getCurrencySymbol = (currency: string) => {
     switch (currency) {
@@ -67,100 +66,124 @@ const Invoice = () => {
     });
   }, []);
 
+  // Apply filters whenever content, amountFilter, or statusFilter changes
+  useEffect(() => {
+    if (!content) return;
+
+    let result = [...content];
+
+    // Apply status filter if it exists
+    if (
+      statusFilter &&
+      (statusFilter === "Paid" || statusFilter === "Unpaid")
+    ) {
+      result = result.filter((item) => item.status === statusFilter);
+    }
+
+    // Apply amount filter if it exists
+    if (amountFilter) {
+      if (amountFilter === "htl") {
+        // High to low sorting
+        result.sort((a, b) => (a.total || 0) - (b.total || 0));
+      } else if (amountFilter === "lth") {
+        // Low to high sorting
+        result.sort((a, b) => (b.total || 0) - (a.total || 0));
+      }
+    }
+
+    setFilteredContent(result);
+  }, [content, amountFilter, statusFilter]);
+
   const toggleStatus = (id: unknown) => {
-    setContent(
-      (prevContent) =>
-        prevContent?.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                status: item.status === "Unpaid" ? "Paid" : "Unpaid",
-              }
-            : item
-        ) || []
-    );
+    const updateContent = (prevContent: ContentItem[] | null) =>
+      prevContent?.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              status: item.status === "Unpaid" ? "Paid" : "Unpaid",
+            }
+          : item
+      ) || [];
+
+    setContent((prevContent) => updateContent(prevContent));
   };
 
-  const rows =
-    content
-      ?.slice()
-      .reverse()
-      .map((item: any, index) => ({
-        data: [
-          {
-            content: (
-              <div key={`manage-button-${index}`} className=" text-start">
-                <Link href={`/payments/${item.id}`}>
-                  {item?.project?.title}
-                </Link>
-              </div>
-            ),
-            className: "bg-[#2ea879] text-white text-center ",
-          },
-          // { content: item?.project?.code },
-          { content: <div className=" text-start">{item?.po_code} </div> },
-          {
-            content: (
-              <div className=" text-start">
-                {item?.project?.vendor?.organization_name}
-              </div>
-            ),
-          },
-          {
-            content: (
-              <div className=" text-start">
-                {item?.project?.artist_name ||
-                  item?.project?.subvendor?.organization_name}
-              </div>
-            ),
-          },
-          {
-            content: (
-              <div className=" text-start">{item?.created?.slice(0, 10)}</div>
-            ),
-          },
-          {
-            content: (
-              <div className=" text-start">{`${getCurrencySymbol(item?.currency ?? "")}${item.total?.toLocaleString()}`}</div>
-            ),
-          },
-          {
-            content: (
-              <div
-                onClick={() => item.id && toggleStatus(item.id)}
-                className={`cursor-pointer text-center ${item.status !== "Unpaid" && "text-[#000000]"}`}
-              >
-                {item.status}
-              </div>
-            ),
-            className: ` text-white text-center border-none ${item.status === "Unpaid" ? "bg-[#ff0000]" : " bg-[#90ee90] text-[#000000]"}`,
-          },
-          {
-            content: (
-              <div
-                key={`action-buttons-${index}`}
-                className="flex justify-center gap-2"
-              >
-                {item.status === "Unpaid" ? (
-                  <div
-                    onClick={() => item.id && toggleStatus(item.id)}
-                    className="p-[12px]  border border-[#2ea879] bg-[#ffffff] text-[#2ea879] rounded-full cursor-pointer"
-                  >
-                    <TbCurrencyDollar size={16} />
-                  </div>
-                ) : (
-                  <div
-                    onClick={() => item.id && toggleStatus(item.id)}
-                    className="p-[16px] text-[#000000] cursor-pointer"
-                  >
-                    <BsTrash size={16} />
-                  </div>
-                )}
-              </div>
-            ),
-          },
-        ],
-      })) || [];
+  const rows = (filteredContent || [])
+    .slice()
+    .reverse()
+    .map((item: any, index) => ({
+      data: [
+        {
+          content: (
+            <div key={`manage-button-${index}`} className=" text-start">
+              <Link href={`/payments/${item.id}`}>{item?.project?.title}</Link>
+            </div>
+          ),
+          className: "bg-[#2ea879] text-white text-center ",
+        },
+        { content: <div className=" text-start">{item?.po_code} </div> },
+        {
+          content: (
+            <div className=" text-start">
+              {item?.project?.subvendor?.organization_name}
+            </div>
+          ),
+        },
+        {
+          content: (
+            <div className="text-start">
+              {item?.project?.artist_name ||
+                item?.project?.subvendor?.organization_name}
+            </div>
+          ),
+        },
+        {
+          content: (
+            <div className=" text-start">{item?.created?.slice(0, 10)}</div>
+          ),
+        },
+        {
+          content: (
+            <div className=" text-start">{`${getCurrencySymbol(item?.currency ?? "")}${item.total?.toLocaleString()}`}</div>
+          ),
+        },
+        {
+          content: (
+            <div
+              onClick={() => item.id && toggleStatus(item.id)}
+              className={`cursor-pointer text-center ${item.status !== "Unpaid" && "text-[#000000]"}`}
+            >
+              {item.status}
+            </div>
+          ),
+          className: ` text-white text-center border-none ${item.status === "Unpaid" ? "bg-[#ff0000]" : " bg-[#90ee90] text-[#000000]"}`,
+        },
+        {
+          content: (
+            <div
+              key={`action-buttons-${index}`}
+              className="flex justify-center gap-2"
+            >
+              {item.status === "Unpaid" ? (
+                <div
+                  onClick={() => item.id && toggleStatus(item.id)}
+                  className="p-[12px]  border border-[#2ea879] bg-[#ffffff] text-[#2ea879] rounded-full cursor-pointer"
+                >
+                  <TbCurrencyDollar size={16} />
+                </div>
+              ) : (
+                <div
+                  onClick={() => item.id && toggleStatus(item.id)}
+                  className="p-[16px] text-[#000000] cursor-pointer"
+                >
+                  <BsTrash size={16} />
+                </div>
+              )}
+            </div>
+          ),
+        },
+      ],
+    }));
 
   return (
     <div className="">

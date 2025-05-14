@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import apiRequest from "@/Server/Api";
 import { ContentItem, EventsItem, StaffItem } from "@/types/contents";
 import { DropzonePayload } from "@/types/dropzone";
+import { handleApiError } from "@/lib/utils";
 
 if (typeof window !== "undefined" && window?.sessionStorage)
   ls.config.storage = sessionStorage;
@@ -43,15 +44,6 @@ export const getLoggedInUser = async (): Promise<any | null> => {
 
     return response;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -69,15 +61,6 @@ export const getGenreContents = async (): Promise<ContentItem[] | null> => {
 
     return response as ContentItem[];
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -109,20 +92,6 @@ export const getSingleContent = async (
       return null;
     }
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 403) {
-        const redirectUrl = error.response?.data?.redirect_url;
-
-        console.error("403 Forbidden:", error.response?.data);
-
-        if (redirectUrl) {
-          window.location.href = redirectUrl;
-        }
-      }
-    } else {
-      console.error("Unexpected Error:", error);
-    }
-
     return null;
   }
 };
@@ -133,7 +102,7 @@ export const getStoredSingleContent = (): ContentItem | null => {
   return content as ContentItem;
 };
 
-export const CreateBusiness = async (payload: unknown): Promise<void> => {
+export const CreateBusiness = async (payload: unknown): Promise<any> => {
   try {
     const { data: response } = await apiRequest<
       ApiRequestResponse<ApiResponse>
@@ -148,22 +117,7 @@ export const CreateBusiness = async (payload: unknown): Promise<void> => {
     toast.success("Creation successful!");
     window.location.reload();
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        console.log(error.response);
-
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
+    return null;
   }
 };
 
@@ -171,7 +125,7 @@ export const CreateMedia = async (
   id: number,
   payload: unknown,
   contentType?: string
-): Promise<void> => {
+): Promise<any> => {
   try {
     const { data: response } = await apiRequest<
       ApiRequestResponse<ApiResponse>
@@ -188,22 +142,7 @@ export const CreateMedia = async (
     console.log(`create media response: ${response}`);
     toast.success("Creation successful!");
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        console.log(error.response);
-
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
+    return null;
   }
 };
 
@@ -221,22 +160,7 @@ export const CreateMetric = async (payload: unknown): Promise<void> => {
     console.log(response);
     toast.success("Creation successful!");
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        console.log(error.response);
-
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
+    return;
   }
 };
 
@@ -254,22 +178,7 @@ export const CreateChannel = async (payload: unknown): Promise<void> => {
     console.log(response);
     toast.success("Creation successful!");
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        console.log(error.response);
-
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
+    return;
   }
 };
 
@@ -290,22 +199,7 @@ export const CreateSocialStats = async (
     console.log(response);
     toast.success("Creation successful!");
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        console.log(error.response);
-
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
+    return;
   }
 };
 
@@ -326,22 +220,7 @@ export const CreateDspStats = async (
     console.log(response);
     toast.success("Creation successful!");
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        console.log(error.response);
-
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
+    return;
   }
 };
 
@@ -359,25 +238,7 @@ export const CreateService = async (payload: unknown): Promise<void> => {
     console.log(response);
     toast.success("Service Created Successful!");
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        toast.error(
-          error.response?.data?.message ||
-            error.response?.data[0] ||
-            error.response?.data.name[0]
-        );
-        console.log(error.response);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
+    return;
   }
 };
 
@@ -397,20 +258,7 @@ export const CreateInvoice = async (payload: unknown): Promise<void> => {
 
     window.location.reload();
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
+    return;
   }
 };
 
@@ -424,6 +272,8 @@ export const CreateEvent = async (payload: unknown): Promise<void> => {
       url: `/api/v1/projects/schedule/events/create/`,
       data: payload,
       requireToken: true,
+      skipErrorHandling: true,
+      loadingToastId: createToast,
     });
 
     console.log(response);
@@ -435,45 +285,12 @@ export const CreateEvent = async (payload: unknown): Promise<void> => {
     });
     window.location.reload();
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        toast.update(createToast, {
-          render: error.response?.data?.message || error.response?.data[0],
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      } else if (error.response?.status === 403) {
-        toast.update(createToast, {
-          render: error.response?.data?.message || "Access denied.",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      } else {
-        toast.update(createToast, {
-          render:
-            error.response?.data?.message ||
-            "Request failed. Please try again.",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      }
-    } else {
-      toast.update(createToast, {
-        render: "Request failed. Please try again.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      console.error("Unexpected Error:", error);
-    }
+    return;
   }
 };
 
 export const ClaimReward = async (payload: unknown): Promise<void> => {
-  const createToast = toast.loading("claiming reward...");
+  const claimRewardToast = toast.loading("claiming reward...");
   try {
     const { data: response } = await apiRequest<
       ApiRequestResponse<ApiResponse>
@@ -482,10 +299,12 @@ export const ClaimReward = async (payload: unknown): Promise<void> => {
       url: `/api/v1/ums/claim-reward/`,
       data: payload,
       requireToken: true,
+      skipErrorHandling: true,
+      loadingToastId: claimRewardToast,
     });
 
     console.log(response);
-    toast.update(createToast, {
+    toast.update(claimRewardToast, {
       render: "Claim Reward Successful",
       type: "info",
       isLoading: false,
@@ -493,40 +312,7 @@ export const ClaimReward = async (payload: unknown): Promise<void> => {
     });
     window.location.reload();
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        toast.update(createToast, {
-          render: error.response?.data?.message || error.response?.data[0],
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      } else if (error.response?.status === 403) {
-        toast.update(createToast, {
-          render: error.response?.data?.message || "Access denied.",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      } else {
-        toast.update(createToast, {
-          render:
-            error.response?.data?.message ||
-            "Request failed. Please try again.",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      }
-    } else {
-      toast.update(createToast, {
-        render: "Request failed. Please try again.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      console.error("Unexpected Error:", error);
-    }
+    return;
   }
 };
 
@@ -538,6 +324,8 @@ export const AddStaff = async (payload: unknown): Promise<any> => {
       url: `/api/v1/org/staff/add-user/`,
       data: payload,
       requireToken: true,
+      skipErrorHandling: true,
+      loadingToastId: addUserToast,
     });
 
     toast.update(addUserToast, {
@@ -548,35 +336,7 @@ export const AddStaff = async (payload: unknown): Promise<any> => {
     });
     return response;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        toast.update(addUserToast, {
-          render: error.response?.data?.message || error.response?.data[0],
-          type: "error",
-          autoClose: 3000,
-          isLoading: false,
-        });
-      } else if (error.response?.status === 403) {
-        toast.update(addUserToast, {
-          render: error.response?.data?.message || "Access denied.",
-          type: "error",
-          autoClose: 3000,
-          isLoading: false,
-        });
-      } else {
-        toast.update(addUserToast, {
-          render:
-            error.response?.data?.message ||
-            "Request failed. Please try again.",
-          type: "error",
-          autoClose: 3000,
-          isLoading: false,
-        });
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
+    return;
   }
 };
 
@@ -595,33 +355,7 @@ export const LoginEP = async (
     // toast.success(response.message);
     return { status: Number(response.status), message: response.message };
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      const errorResponse = error.response;
-
-      console.log("Error response:", errorResponse);
-
-      if (errorResponse?.status === 400) {
-        // toast.error(errorResponse?.data?.message || errorResponse?.data[0]);
-      } else if (errorResponse?.status === 403) {
-        toast.error(errorResponse?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          errorResponse?.data?.message || "Request failed. Please try again."
-        );
-      }
-
-      return {
-        status: errorResponse?.status || 500,
-        message:
-          errorResponse?.data?.message || "Request failed. Please try again.",
-        errorResponse,
-      };
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-
-      return { status: 500, message: "Unexpected error occurred." };
-    }
+    return { status: 500, message: "Unexpected error occurred." };
   }
 };
 
@@ -639,20 +373,7 @@ export const Verify = async (payload: unknown): Promise<void> => {
     console.log(response);
     toast.success("Verification successful! Redirecting...");
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
+    return;
   }
 };
 
@@ -671,18 +392,7 @@ export const VerifyLogin = async (payload: unknown): Promise<void> => {
     toast.success("Verification successful! Redirecting...");
     window.location.href = "/campaigns";
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else {
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
+    return;
   }
 };
 
@@ -728,15 +438,6 @@ export const getDropZones = async ({
 
     return response;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -751,6 +452,8 @@ export const deleteDropZones = async (id: number): Promise<any | null> => {
       method: "DELETE",
       url: `/api/v1/projects/general/dropzone/${id}`,
       requireToken: true,
+      skipErrorHandling: true,
+      loadingToastId: loadingDelete,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -763,21 +466,6 @@ export const deleteDropZones = async (id: number): Promise<any | null> => {
     });
     return response;
   } catch (error: unknown) {
-    toast.update(loadingDelete, {
-      render: "Error occured",
-      type: "error",
-      isLoading: false,
-      autoClose: 3000,
-    });
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -797,15 +485,6 @@ export const getBusiness = async (): Promise<StaffItem[] | null> => {
 
     return response as StaffItem[];
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -855,21 +534,6 @@ export const getProjects = async (): Promise<ContentItem[] | null> => {
 
     return response as ContentItem[];
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 404) {
-        toast.error(
-          "Projects not found. Please check the URL or try again later."
-        );
-      } else {
-        toast.error(
-          error.response?.data?.message ||
-            "Content Retrieval failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -898,26 +562,6 @@ export const getProjectNotifications = async (
       return null;
     }
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.message);
-
-      if (error.response) {
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
-
-        if (error.response.status === 403) {
-          const redirectUrl = error.response.data?.redirect_url;
-          if (redirectUrl) {
-            window.location.href = redirectUrl;
-          }
-        }
-      } else if (error.request) {
-        console.error("No response received from server.");
-      }
-    } else {
-      console.error("Unexpected error:", error);
-    }
-
     return null;
   }
 };
@@ -964,26 +608,6 @@ export const getAirPlayStats = async ({
       return null;
     }
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.message);
-
-      if (error.response) {
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
-
-        if (error.response.status === 403) {
-          const redirectUrl = error.response.data?.redirect_url;
-          if (redirectUrl) {
-            window.location.href = redirectUrl;
-          }
-        }
-      } else if (error.request) {
-        console.error("No response received from server.");
-      }
-    } else {
-      console.error("Unexpected error:", error);
-    }
-
     return null;
   }
 };
@@ -1029,26 +653,6 @@ export const getSocialMediaStats = async ({
       return null;
     }
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.message);
-
-      if (error.response) {
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
-
-        if (error.response.status === 403) {
-          const redirectUrl = error.response.data?.redirect_url;
-          if (redirectUrl) {
-            window.location.href = redirectUrl;
-          }
-        }
-      } else if (error.request) {
-        console.error("No response received from server.");
-      }
-    } else {
-      console.error("Unexpected error:", error);
-    }
-
     return null;
   }
 };
@@ -1094,26 +698,6 @@ export const getDSPStats = async ({
       return null;
     }
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.message);
-
-      if (error.response) {
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
-
-        if (error.response.status === 403) {
-          const redirectUrl = error.response.data?.redirect_url;
-          if (redirectUrl) {
-            window.location.href = redirectUrl;
-          }
-        }
-      } else if (error.request) {
-        console.error("No response received from server.");
-      }
-    } else {
-      console.error("Unexpected error:", error);
-    }
-
     return null;
   }
 };
@@ -1159,26 +743,6 @@ export const getAudienceStats = async ({
       return null;
     }
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.message);
-
-      if (error.response) {
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
-
-        if (error.response.status === 403) {
-          const redirectUrl = error.response.data?.redirect_url;
-          if (redirectUrl) {
-            window.location.href = redirectUrl;
-          }
-        }
-      } else if (error.request) {
-        console.error("No response received from server.");
-      }
-    } else {
-      console.error("Unexpected error:", error);
-    }
-
     return null;
   }
 };
@@ -1224,26 +788,6 @@ export const geteSMActionStats = async ({
       return null;
     }
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.message);
-
-      if (error.response) {
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
-
-        if (error.response.status === 403) {
-          const redirectUrl = error.response.data?.redirect_url;
-          if (redirectUrl) {
-            window.location.href = redirectUrl;
-          }
-        }
-      } else if (error.request) {
-        console.error("No response received from server.");
-      }
-    } else {
-      console.error("Unexpected error:", error);
-    }
-
     return null;
   }
 };
@@ -1289,26 +833,6 @@ export const geteDSPPerformanceStats = async ({
       return null;
     }
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.message);
-
-      if (error.response) {
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
-
-        if (error.response.status === 403) {
-          const redirectUrl = error.response.data?.redirect_url;
-          if (redirectUrl) {
-            window.location.href = redirectUrl;
-          }
-        }
-      } else if (error.request) {
-        console.error("No response received from server.");
-      }
-    } else {
-      console.error("Unexpected error:", error);
-    }
-
     return null;
   }
 };
@@ -1335,20 +859,6 @@ export const getSingleProject = async (
       return null;
     }
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 403) {
-        const redirectUrl = error.response?.data?.redirect_url;
-
-        console.error("403 Forbidden:", error.response?.data);
-
-        if (redirectUrl) {
-          window.location.href = redirectUrl;
-        }
-      }
-    } else {
-      console.error("Unexpected Error:", error);
-    }
-
     return null;
   }
 };
@@ -1372,15 +882,6 @@ export const getInvoice = async (): Promise<ContentItem[] | null> => {
 
     return response as ContentItem[];
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -1404,15 +905,6 @@ export const getService = async (): Promise<ContentItem[] | null> => {
 
     return response as ContentItem[];
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -1436,15 +928,6 @@ export const getEvents = async (): Promise<EventsItem[] | null> => {
 
     return response as EventsItem[];
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -1457,6 +940,8 @@ export const deleteEvents = async (id: number): Promise<any | null> => {
       url: `/api/v1/projects/schedule/events/${id}`,
       data: null,
       requireToken: true,
+      skipErrorHandling: true,
+      loadingToastId: deleteToast,
     });
 
     toast.update(deleteToast, {
@@ -1468,22 +953,6 @@ export const deleteEvents = async (id: number): Promise<any | null> => {
 
     return response;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.update(deleteToast, {
-        render: "Content Retrieval failed. Please try again.",
-        type: "error",
-        autoClose: 3000,
-        isLoading: false,
-      });
-    } else {
-      toast.update(deleteToast, {
-        render: "Error deleting event",
-        type: "error",
-        autoClose: 3000,
-        isLoading: false,
-      });
-    }
-
     return null;
   }
 };
@@ -1499,15 +968,6 @@ export const getProjectsEvents = async (id: number): Promise<any | null> => {
 
     return response;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -1540,20 +1000,6 @@ export const getPaymentInvoice = async (
       return null;
     }
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 403) {
-        const redirectUrl = error.response?.data?.redirect_url;
-
-        console.error("403 Forbidden:", error.response?.data);
-
-        if (redirectUrl) {
-          window.location.href = redirectUrl;
-        }
-      }
-    } else {
-      console.error("Unexpected Error:", error);
-    }
-
     return null;
   }
 };
@@ -1571,15 +1017,6 @@ export const getChannel = async (): Promise<ContentItem[] | null> => {
 
     return response as ContentItem[];
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -1597,15 +1034,6 @@ export const getMetric = async (): Promise<ContentItem[] | null> => {
 
     return response as ContentItem[];
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -1623,15 +1051,6 @@ export const getSocialMedia = async (): Promise<ContentItem[] | null> => {
 
     return response as ContentItem[];
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -1649,15 +1068,6 @@ export const getDsp = async (): Promise<ContentItem[] | null> => {
 
     return response as ContentItem[];
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -1679,20 +1089,6 @@ export const getBusinessStaff = async (
 
     return contentItem;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 403) {
-        const redirectUrl = error.response?.data?.redirect_url;
-
-        console.error("403 Forbidden:", error.response?.data);
-
-        if (redirectUrl) {
-          window.location.href = redirectUrl;
-        }
-      }
-    } else {
-      console.error("Unexpected Error:", error);
-    }
-
     return null;
   }
 };
@@ -1713,22 +1109,7 @@ export const archiveProject = async (
 
     console.log(response);
     toast.success("Action successful!");
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
-  }
+  } catch (error: unknown) {}
 };
 
 export const shareProject = async (
@@ -1747,22 +1128,7 @@ export const shareProject = async (
 
     console.log(response);
     toast.success("Action successful!");
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
-  }
+  } catch (error: unknown) {}
 };
 
 export const getNotification = async (): Promise<ContentItem[] | null> => {
@@ -1778,15 +1144,6 @@ export const getNotification = async (): Promise<ContentItem[] | null> => {
 
     return response as ContentItem[];
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Content Retrieval failed. Please try again."
-      );
-    } else {
-      toast.error("Content Retrieval failed. Please try again.");
-    }
-
     return null;
   }
 };
@@ -1806,15 +1163,6 @@ export const sendProjectEmail = async (
     toast.success("Email sent successfully!");
     return response as SendEmailResponse;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to send email. Please try again."
-      );
-    } else {
-      toast.error("Failed to send email. Please try again.");
-    }
-
     return null;
   }
 };
@@ -1833,15 +1181,7 @@ export const campaignStaffAction = async (
 
     return response;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to perform action. Please try again."
-      );
-    } else {
-      toast.error("Failed to perform action. Please try again.");
-    }
-
+    // handleApiError(error, "Failed to perform staff action. Please try again.");
     return null;
   }
 };
@@ -1859,15 +1199,6 @@ export const markNotificationsAsRead = async (
 
     return response;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to perform action. Please try again."
-      );
-    } else {
-      toast.error("Failed to perform action. Please try again.");
-    }
-
     return null;
   }
 };
@@ -1886,14 +1217,6 @@ export const createDropzone = async (
 
     return response as DropzonePayload;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to create dropzone. Please try again."
-      );
-    } else {
-      toast.error("Failed to create dropzone. Please try again.");
-    }
     return null;
   }
 };
@@ -1915,21 +1238,6 @@ export const AddAirplayData = async (
     console.log(response);
     toast.success("Creation successful!");
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 400) {
-        console.log(error.response);
-
-        toast.error(error.response?.data?.message || error.response?.data[0]);
-      } else if (error.response?.status === 403) {
-        toast.error(error.response?.data?.message || "Access denied.");
-      } else {
-        toast.error(
-          error.response?.data?.message || "Request failed. Please try again."
-        );
-      }
-    } else {
-      toast.error("Request failed. Please try again.");
-      console.error("Unexpected Error:", error);
-    }
+    return;
   }
 };

@@ -247,7 +247,7 @@ const EditorialAddMedia = () => {
             <button
               type="submit"
               disabled={isUploading}
-              className="font-IBM text-sm text-white hover:text-white bg-black border border-black hover:bg-orange-500 hover:border-none py-2 px-5 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              className="font-IBM text-sm text-white hover:text-white bg-black border border-black hover:bg-orange-500 hover:border-none py-2 px-5 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isUploading ? "Uploading..." : "Submit"}
             </button>
@@ -284,7 +284,7 @@ const EditorialAddMedia = () => {
           <button
             onClick={handleExportCSV}
             disabled={tableData.length === 0}
-            className="font-IBM text-sm text-white hover:text-white bg-black border border-black hover:bg-orange-500 hover:border-none py-2 px-5 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="font-IBM text-sm text-white hover:text-white bg-black border border-black hover:bg-orange-500 hover:border-none py-2 px-5 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Export CSV
           </button>

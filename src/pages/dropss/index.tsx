@@ -122,6 +122,7 @@ const Drops = () => {
                   <Button
                     label="Close"
                     icon="pi pi-times"
+                    className="rounded-full"
                     onClick={() => setSelectedUser(null)}
                   />
                 </div>

@@ -8,7 +8,11 @@ interface DropZoneInputProps {
   setIsUnlocked: (value: boolean) => void;
 }
 
-const DropZoneInput: React.FC<DropZoneInputProps> = ({ onUnlock, pin, setIsUnlocked }) => {
+const DropZoneInput: React.FC<DropZoneInputProps> = ({
+  onUnlock,
+  pin,
+  setIsUnlocked,
+}) => {
   const [inputPin, setInputPin] = useState("");
   const [isValid, setIsValid] = useState(false);
 
@@ -40,8 +44,8 @@ const DropZoneInput: React.FC<DropZoneInputProps> = ({ onUnlock, pin, setIsUnloc
       </div>
       <button
         className={`font-[600] text-[16px] gap-[10px] px-4 h-[50px] text-white 
-          ${isValid ? 'bg-[#e4055a] hover:bg-[#000000]' : 'bg-gray-400'} 
-          rounded-[8px] flex items-center`}
+          ${isValid ? "bg-[#e4055a] hover:bg-[#000000]" : "bg-gray-400"} 
+          rounded-full flex items-center`}
         onClick={handleUnlock}
         disabled={!isValid}
       >

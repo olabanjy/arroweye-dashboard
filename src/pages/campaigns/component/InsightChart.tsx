@@ -736,19 +736,19 @@ const InsightChart: React.FC<InsightChartProps> = ({
       <div className="fixed bottom-[30px] lg:left-32 right-0 flex justify-center z-30 w-full">
         <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px]">
           <p
-            className="rounded p-[8px] bg-black text-white !w-[70px] text-center cursor-pointer"
+            className="rounded-full p-[8px] bg-black text-white !w-[70px] text-center cursor-pointer"
             onClick={() => setExportModal(true)}
           >
             Export
           </p>
           <p
-            className=" cursor-pointer rounded p-[8px] bg-[#007bff] text-white w-[70px] text-center"
+            className=" cursor-pointer rounded-full p-[8px] bg-[#007bff] text-white w-[70px] text-center"
             onClick={() => setOpenChatModal(!openChatModal)}
           >
             Send
           </p>
           <p
-            className="rounded border p-[8px] text-black bg-white w-[70px] text-center cursor-pointer"
+            className="rounded-full border p-[8px] text-black bg-white w-[70px] text-center cursor-pointer"
             onClick={handleShareClick}
           >
             {shareButtonText}

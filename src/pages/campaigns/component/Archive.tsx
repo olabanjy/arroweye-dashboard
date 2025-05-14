@@ -176,7 +176,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                     await handleArchiveSubmit(isArchiving, false);
                   }
                 }}
-                className="px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
+                className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
               />
 
               <Button
@@ -185,7 +185,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                   setEditMode(false);
                   setIsArchiving(null);
                 }}
-                className="px-[16px] py-[8px] text-[#000000] rounded-[8px] bg-slate-100"
+                className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
               />
             </div>
           </div>

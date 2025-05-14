@@ -174,7 +174,7 @@ const DropForm: React.FC<DropFormProps> = ({ setDropzoneData }) => {
         />
         <button
           type="submit"
-          className="font-[600] text-[16px] gap-[10px] px-4 h-[50px] text-white bg-[#e4055a] rounded-[8px] hover:bg-[#000000] flex items-center"
+          className="font-[600] text-[16px] gap-[10px] px-4 h-[50px] text-white bg-[#e4055a] rounded-full hover:bg-[#000000] flex items-center"
         >
           {loading ? "Uploading..." : "Upload"}
           {!loading && <IoCloudUploadOutline size={14} className="font-bold" />}

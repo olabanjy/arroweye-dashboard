@@ -165,7 +165,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                   key={`manage-button-${index}`}
                 >
                   <div className="flex justify-center">
-                    <button className="text-[#000000]">
+                    <button className="text-[#000000] rounded-full">
                       <MdOutlineModeEditOutline size={20} />
                     </button>
                   </div>
@@ -175,7 +175,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                   className="flex justify-center gap-2"
                 >
                   <button
-                    className={`text-[#000000] ${isArchiving === item.id ? "opacity-50" : ""}`}
+                    className={`text-[#000000] rounded-full ${isArchiving === item.id ? "opacity-50" : ""}`}
                     onClick={() => {
                       setEditMode(true);
                       setIsArchiving(
@@ -241,7 +241,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                     await handleArchiveSubmit(isArchiving);
                   }
                 }}
-                className="px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
+                className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
               />
 
               <Button
@@ -250,7 +250,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                   setEditMode(false);
                   setIsArchiving(null);
                 }}
-                className="px-[16px] py-[8px] text-[#000000] rounded-[8px] bg-slate-100"
+                className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
               />
             </div>
           </div>

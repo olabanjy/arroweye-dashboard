@@ -5,7 +5,6 @@ import InvoicesTab from "./InvoicesTab";
 
 const PaymentTab = () => {
   const [activeTab, setActiveTab] = useState("Manage");
-
   return (
     <div className=" lg:p-[20px]">
       <div className="flex gap-[10px] items-center mb-[50px] ">
