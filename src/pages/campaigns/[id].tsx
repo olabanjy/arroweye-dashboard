@@ -169,7 +169,7 @@ const ProjectDetails = () => {
     if (!!useWatchersEndpoint) {
       // Call campaignStaffAction if useWatchersEndpoint is true
       console.log("user", selectedWatcher);
-      const payload = { action: "add", user_id: selectedWatcher?.user };
+      const payload = { action: "addition", user_id: selectedWatcher?.user };
 
       console.log("PAYLOAD", payload);
 
@@ -591,7 +591,7 @@ const ProjectDetails = () => {
                   )}
                 </div>
 
-                {hasAccess(userLoggedInProfile, [""]) && (
+                {hasAccess(userLoggedInProfile, ["Manager"]) && (
                   <div className="relative">
                     {toggleNotifications && (
                       <div className="fixed top-0 left-0 w-full h-[50px] flex items-center justify-center bg-blue-500 text-white text-[15px] font-[500] font-IBM z-[9999999]">
@@ -702,7 +702,7 @@ const ProjectDetails = () => {
                     <button
                       onClick={handleAddUserSubmit}
                       // disabled={isAddUserLoading}
-                      className=" text-[14px] bg-[#000] hover:bg-orange-500 w-full py-[15px] px-[12px] h-full rounded-[8px] flex items-center justify-center space-x-2"
+                      className=" text-[14px] bg-[#000] hover:bg-orange-500 w-full py-[15px] px-[12px] h-full rounded-full flex items-center justify-center space-x-2"
                     >
                       <IoIosAdd className="text-white" />
                       <span className="text-white">Add </span>
@@ -743,11 +743,13 @@ const ProjectDetails = () => {
                     <Button
                       label="Cancel"
                       icon="pi pi-times"
+                      className="rounded-full"
                       onClick={hideNameDialog}
                     />
                     <Button
                       label="Submit"
                       icon="pi pi-check"
+                      className="rounded-full"
                       onClick={hideNameDialog}
                       disabled={!addUserFormData.fullname}
                     />
@@ -856,6 +858,7 @@ const ProjectDetails = () => {
                       <Button
                         label="Close"
                         icon="pi pi-times"
+                        className="rounded-full"
                         onClick={() => setSelectedUser(null)}
                       />
                     </div>
@@ -905,7 +908,7 @@ const ProjectDetails = () => {
                   <Button
                     label="Save"
                     onClick={() => handleCampaignActionUpdate()}
-                    className=" px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
+                    className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
                   />
                 </div>
               </div>
@@ -935,12 +938,12 @@ const ProjectDetails = () => {
                   <Button
                     label="OK"
                     onClick={() => handleCampaignActionRemove()}
-                    className=" px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
+                    className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
                   />
                   <Button
                     label="Cancel"
                     onClick={() => setDeleteModal(false)}
-                    className=" px-[16px] py-[8px] text-white rounded-[8px] bg-slate-500"
+                    className="px-[16px] py-[8px] text-white rounded-full bg-slate-500"
                   />
                 </div>
               </div>
@@ -973,7 +976,7 @@ const ProjectDetails = () => {
                       setEditMode(false);
                       setToggleNotifications(true);
                     }}
-                    className=" px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
+                    className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
                   />
 
                   <Button
@@ -982,7 +985,7 @@ const ProjectDetails = () => {
                       setEditMode(false);
                       setToggleNotifications(false);
                     }}
-                    className=" px-[16px] py-[8px] text-[#000000] rounded-[8px] bg-slate-100"
+                    className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
                   />
                 </div>
               </div>
@@ -1016,7 +1019,7 @@ const ProjectDetails = () => {
                       setEditModeOff(false);
                       setToggleNotifications(false);
                     }}
-                    className=" px-[16px] py-[8px] text-white rounded-[8px] bg-blue-500"
+                    className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
                   />
 
                   <Button
@@ -1025,7 +1028,7 @@ const ProjectDetails = () => {
                       setEditModeOff(false);
                       setToggleNotifications(true);
                     }}
-                    className=" px-[16px] py-[8px] text-[#000000] rounded-[8px] bg-slate-100"
+                    className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
                   />
                 </div>
               </div>

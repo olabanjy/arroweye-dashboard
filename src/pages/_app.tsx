@@ -161,7 +161,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
             <button
               type="submit"
-              className="font-bold gap-[10px] px-4 py-2 text-white bg-[#e4055a] rounded-[8px] hover:bg-[#000000] flex items-center"
+              className="font-bold gap-[10px] px-4 py-2 text-white bg-[#e4055a] rounded-full hover:bg-[#000000] flex items-center"
             >
               Unlock <MdLockOutline size={14} />
             </button>

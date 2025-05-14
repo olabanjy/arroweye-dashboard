@@ -28,7 +28,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={handlePrev}
         disabled={currentPage === 1}
-        className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+        className="px-4 py-2 bg-gray-300 rounded-full disabled:opacity-50"
       >
         Prev
       </button>
@@ -38,7 +38,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={handleNext}
         disabled={currentPage === totalPages}
-        className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+        className="px-4 py-2 bg-gray-300 rounded-full disabled:opacity-50"
       >
         Next
       </button>

@@ -521,11 +521,11 @@ const FacebookData = ({ metrics }: any) => {
         <div className=" mt-[20px] flex items-center space-x-2">
           <button
             type="submit"
-            className="font-IBM  text-[14px] text-white hover:text-[#ffffff] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-none py-[8px] px-[20px] rounded "
+            className="font-IBM  text-[14px] text-white hover:text-[#ffffff] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-none py-[8px] px-[20px] rounded-full"
           >
             Save
           </button>
-          <button className="font-IBM  text-[14px] text-white hover:text-[#ffffff] bg-[#1f9abd]  hover:bg-gray-200 hover:border-none py-[8px] px-[20px] rounded ">
+          <button className="font-IBM  text-[14px] text-white hover:text-[#ffffff] bg-[#1f9abd]  hover:bg-gray-200 hover:border-none py-[8px] px-[20px] rounded-full">
             Watch demo
           </button>
         </div>
@@ -592,7 +592,7 @@ const FacebookData = ({ metrics }: any) => {
                 <div className="flex justify-end space-x-2">
                   <button
                     type="submit"
-                    className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
+                    className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded-full flex items-center justify-center space-x-2"
                   >
                     <IoIosAdd className="text-white" />
                     <span className="text-white">Add Metric</span>

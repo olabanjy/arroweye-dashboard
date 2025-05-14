@@ -6,6 +6,8 @@ import axios, {
   InternalAxiosRequestConfig,
   AxiosHeaders,
 } from "axios";
+import { handleApiError } from "@/lib/utils";
+import { Id as ToastId } from "react-toastify";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN as string,
@@ -52,7 +54,9 @@ interface ApiRequestParams {
   data?: unknown;
   params?: Record<string, unknown>;
   requireToken?: boolean;
-  headers?: Record<string, string>; // Add this line
+  headers?: Record<string, string>;
+  skipErrorHandling?: boolean;
+  loadingToastId?: ToastId | null;
 }
 
 const apiRequest = async <T>({
@@ -61,7 +65,9 @@ const apiRequest = async <T>({
   data = null,
   params = {},
   requireToken = true,
-  headers = {}, // Add this line
+  headers = {},
+  skipErrorHandling = false, // Add a flag to skip automatic error handling
+  loadingToastId = null, // Optional ID for a loading toast to update on error
 }: ApiRequestParams): Promise<T> => {
   try {
     if (!requireToken) {
@@ -73,11 +79,24 @@ const apiRequest = async <T>({
       url,
       data,
       params,
-      headers: { ...axiosInstance.defaults.headers, ...headers }, // Merge default headers with custom headers
+      headers: { ...axiosInstance.defaults.headers, ...headers },
     } as AxiosRequestConfig);
+
     return response.data;
   } catch (error) {
     console.error("API request error:", error);
+
+    if (skipErrorHandling === true) {
+      if (loadingToastId) {
+        handleApiError(error, `Request failed. Please try again.`, {
+          toastId: loadingToastId,
+          autoClose: 3000,
+        });
+      }
+    } else {
+      handleApiError(error, `Request failed. Please try again.`);
+    }
+
     throw error;
   }
 };

@@ -16,6 +16,8 @@ import { TbBuildingBank } from "react-icons/tb";
 const InvoicesTab = () => {
   const [activeTab, setActiveTab] = useState("Invoice");
   const [filter, setFilter] = useState(false);
+  const [amountFilter, setAmountFilter] = useState<any>("");
+  const [statusFilter, setStatusFilter] = useState<any>("");
   const [visible, setVisible] = useState(false);
   const [detailsModal, setDetailsModal] = useState(false);
 
@@ -33,9 +35,6 @@ const InvoicesTab = () => {
     type: "",
   });
 
-  const showDetailsDialog = () => {
-    setDetailsModal(true);
-  };
   // const handleInputChange = (
   //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   // ) => {
@@ -170,12 +169,6 @@ const InvoicesTab = () => {
               >
                 <MdOutlineGroupAdd />
               </div>
-              <div
-                className=" cursor-pointer p-[16px] hover:bg-[#000000] hover:text-white border border-[#000000] text-[#000000] rounded-full"
-                onClick={showDetailsDialog}
-              >
-                <TbBuildingBank />
-              </div>
             </div>
           </div>
         </div>
@@ -191,6 +184,7 @@ const InvoicesTab = () => {
                 { value: "htl", label: "High to Low" },
                 { value: "lth", label: "Low to High" },
               ]}
+              onChange={(value) => setAmountFilter(value)}
             />
           </div>
           <div className="max-w-[100px] w-full rounded-full">
@@ -198,19 +192,28 @@ const InvoicesTab = () => {
               rounded={true}
               options={[
                 { value: "", label: "Status" },
-                { value: "paid", label: "Paid" },
-                { value: "unpaid", label: "Unpaid" },
+                { value: "Paid", label: "Paid" },
+                { value: "Unpaid", label: "Unpaid" },
               ]}
+              onChange={(value) => setStatusFilter(value)}
             />
           </div>
-          <p className=" max-w-[120px] w-full cursor-pointer text-[14px] rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline">
+          <p
+            className=" max-w-[120px] w-full cursor-pointer text-[14px] rounded-full px-[16px] py-[4px] hover:bg-orange-500 bg-[#000000] text-white inline"
+            onClick={() => {
+              setAmountFilter("");
+              setStatusFilter("");
+            }}
+          >
             Clear Filters
           </p>
         </div>
       )}
 
       <div>
-        {activeTab === "Invoice" && <Invoice />}
+        {activeTab === "Invoice" && (
+          <Invoice amountFilter={amountFilter} statusFilter={statusFilter} />
+        )}
         {activeTab === "Users" && <Users />}
       </div>
 
@@ -331,7 +334,7 @@ const InvoicesTab = () => {
                   <div className="flex justify-end space-x-2">
                     <button
                       type="submit"
-                      className=" font-IBM h-[50px] text-[14px] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-orange-500 w-full py-[12px] px-[12px]  rounded-[8px] flex items-center justify-center space-x-2"
+                      className=" font-IBM h-[50px] text-[14px] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-orange-500 w-full py-[12px] px-[12px] rounded-full flex items-center justify-center space-x-2"
                     >
                       <IoIosAdd className="text-white" />
                       <span className="text-white">Add User</span>

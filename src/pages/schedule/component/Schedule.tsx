@@ -720,7 +720,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                 </div>
 
                 <button
-                  className="relative group"
+                  className="relative group rounded-full"
                   type="button"
                   onClick={() => {
                     if (!formData.project) {
@@ -786,7 +786,7 @@ const Schedule: React.FC<ScheduleProps> = ({
 
               <div className="text-center flex items-center justify-center">
                 <button
-                  className="cursor-pointer w-full text-center px-[20px] py-[8px] bg-[#000000] hover:bg-orange-600 rounded-[4px] text-[#fff] flex items-center justify-center"
+                  className="cursor-pointer w-full text-center px-[20px] py-[8px] bg-[#000000] hover:bg-orange-600 rounded-full text-[#fff] flex items-center justify-center"
                   type="submit"
                 >
                   Generate
@@ -816,7 +816,11 @@ const Schedule: React.FC<ScheduleProps> = ({
         </p>
 
         <div className="flex gap-5 items-center mt-5">
-          <Button label="Cancel" onClick={() => setDeleteDialog(false)} />
+          <Button
+            label="Cancel"
+            className="rounded-full"
+            onClick={() => setDeleteDialog(false)}
+          />
           <Button
             disabled={deleteLoading}
             label="Delete Event"

@@ -516,7 +516,11 @@ const AssetsLibrary = () => {
             )}
 
             <div className="flex gap-5 items-center mt-5">
-              <Button label="Cancel" onClick={() => setDeleteDialog(false)} />
+              <Button
+                label="Cancel"
+                className="rounded-full"
+                onClick={() => setDeleteDialog(false)}
+              />
               <Button
                 disabled={pinEntered.length < 6 || pinError}
                 label="Delete Drop"

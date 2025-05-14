@@ -382,11 +382,11 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
                 <div className="mt-[20px] flex items-center space-x-2">
                   <button
                     type="submit"
-                    className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-none py-[8px] px-[20px] rounded"
+                    className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-none py-[8px] px-[20px] rounded-full"
                   >
                     Save
                   </button>
-                  <button className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#1f9abd] hover:bg-gray-200 hover:border-none py-[8px] px-[20px] rounded">
+                  <button className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#1f9abd] hover:bg-gray-200 hover:border-none py-[8px] px-[20px] rounded-full">
                     Watch demo
                   </button>
                 </div>

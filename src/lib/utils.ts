@@ -2,6 +2,8 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 import ls from "localstorage-slim";
+import { toast, Id as ToastId } from "react-toastify";
+import axios from "axios";
 
 if (typeof window !== "undefined" && window?.sessionStorage)
   ls.config.storage = sessionStorage;
@@ -42,4 +44,80 @@ export const hasAccess = (userProfile: any, allowedRoles: any = []) => {
   }
 
   return allowedRoles.includes(userProfile?.role);
+};
+
+export const extractErrorMessage = (errorData: any): string => {
+  // Case 1: String error
+  if (typeof errorData === "string") {
+    return errorData;
+  }
+
+  // Case 2: Array of strings
+  if (Array.isArray(errorData)) {
+    return errorData.filter(Boolean).join(", ");
+  }
+
+  // Case 3: Object with field errors
+  if (errorData && typeof errorData === "object") {
+    const messages: string[] = [];
+
+    Object.entries(errorData).forEach(([field, errors]) => {
+      if (Array.isArray(errors)) {
+        errors.forEach((error) => {
+          if (error) {
+            messages.push(`${field}: ${error}`);
+          }
+        });
+      } else if (typeof errors === "string") {
+        messages.push(`${field}: ${errors}`);
+      }
+    });
+
+    return messages.join(", ");
+  }
+
+  // Default case if no matching format
+  return "An error occurred";
+};
+
+interface ToastUpdateOptions {
+  toastId: ToastId;
+  autoClose?: number;
+}
+
+export const handleApiError = (
+  error: unknown,
+  defaultMessage = "Request failed. Please try again.",
+  toastUpdateOptions?: ToastUpdateOptions
+): string => {
+  let errorMessage = defaultMessage;
+
+  // Handle Axios errors
+  if (axios.isAxiosError(error)) {
+    const errorData = error.response?.data;
+
+    if (errorData) {
+      errorMessage = extractErrorMessage(errorData);
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.response?.status === 403) {
+      errorMessage =
+        "Access denied. You don't have permission for this action.";
+    } else if (error.response?.status === 401) {
+      errorMessage = "Authentication required. Please log in again.";
+    }
+  }
+
+  if (toastUpdateOptions) {
+    toast.update(toastUpdateOptions.toastId, {
+      render: errorMessage,
+      type: "error",
+      isLoading: false,
+      autoClose: toastUpdateOptions.autoClose || 3000,
+    });
+  } else {
+    toast.error(errorMessage);
+  }
+
+  return errorMessage;
 };

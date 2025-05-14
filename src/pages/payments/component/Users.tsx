@@ -135,7 +135,7 @@ const Users = () => {
           </div>
           <button
             onClick={() => setIsModalOpen(false)}
-            className="mt-4 px-4 py-2 text-white bg-[#000] rounded hover:bg-red-600"
+            className="mt-4 px-4 py-2 text-white bg-[#000] rounded-full hover:bg-red-600"
           >
             <LuUserMinus size={14} />
           </button>

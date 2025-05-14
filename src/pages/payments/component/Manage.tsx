@@ -610,11 +610,11 @@ const Manage = () => {
             <div className="flex items-center gap-[10px] my-[40px]">
               <button
                 type="submit"
-                className="cursor-pointer rounded-[4px] px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline"
+                className="cursor-pointer rounded-full px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline"
               >
                 Save
               </button>
-              <div className="cursor-pointer rounded-[4px] px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline-flex items-start gap-[4px]">
+              <div className="cursor-pointer rounded-full px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline-flex items-start gap-[4px]">
                 <p>Download</p>
                 <sup className="font-bold p-[8px] rounded-full bg-white text-black">
                   PDF
@@ -724,7 +724,7 @@ const Manage = () => {
                 <div className="flex justify-end space-x-2">
                   <button
                     type="submit"
-                    className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
+                    className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded-full flex items-center justify-center space-x-2"
                   >
                     <IoIosAdd className="text-white" />
                     <span className="text-white">Add Service</span>
