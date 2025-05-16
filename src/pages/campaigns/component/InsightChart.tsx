@@ -30,6 +30,7 @@ import getDarkerColor from "@/lib/getDarkerColor";
 import { toast } from "react-toastify";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import MomentCardRewards from "../public/component/MomentCardRewards";
 
 const selectOptions = [
   [
@@ -578,7 +579,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
               />
             </div>
 
-            <MomentCard
+            <MomentCardRewards
               MomentsTitle="REWIND"
               giftingPin={content?.pin}
               giftings={giftingsReportUrls}

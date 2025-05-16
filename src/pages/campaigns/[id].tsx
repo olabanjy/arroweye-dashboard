@@ -339,13 +339,13 @@ const ProjectDetails = () => {
   useEffect(() => {
     const content: any = ls.get("Profile", { decrypt: true });
     setUserLoggedInProfile(content?.user?.user_profile);
-    console.log("THIS IS THE LOGGED IN G", content?.user?.user_profile);
   }, []);
 
   useEffect(() => {
     if (!!content?.subvendor?.id) {
       getBusinessStaff(Number(!!content?.subvendor?.id)).then(
         (fetchedStaffs: any) => {
+          console.log("STAFFS", fetchedStaffs);
           setStaffSuggestions(fetchedStaffs);
         }
       );
