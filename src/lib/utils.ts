@@ -80,6 +80,12 @@ export const extractErrorMessage = (errorData: any): string => {
   return "An error occurred";
 };
 
+export const redirectToLogin = () => {
+  if (typeof window !== "undefined") {
+    window.location.href = "/login";
+  }
+};
+
 interface ToastUpdateOptions {
   toastId: ToastId;
   autoClose?: number;
@@ -103,8 +109,10 @@ export const handleApiError = (
     } else if (error.response?.status === 403) {
       errorMessage =
         "Access denied. You don't have permission for this action.";
+      redirectToLogin();
     } else if (error.response?.status === 401) {
       errorMessage = "Authentication required. Please log in again.";
+      redirectToLogin();
     }
   }
 

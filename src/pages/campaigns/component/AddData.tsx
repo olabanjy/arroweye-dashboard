@@ -7,9 +7,11 @@ import RadioData from "./RadioData";
 import TVData from "./TvData";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
-import { AddAirplayData, getChannel } from "@/services/api";
+import { AddAirplayData, CreateChannel, getChannel } from "@/services/api";
 import { WeekInput } from "@/components/ui/weekInput";
 import { SelectInput } from "@/components/ui/selectinput";
+import { Input } from "@/components/ui/input";
+import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 
 interface CompanyDetailsFormProps {
   visible: boolean;
@@ -181,7 +183,6 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
 
       if (filteredItems.length === 0) return [];
 
-      // Map each filtered item to create the station data
       return filteredItems.map((item) => {
         // Initialize aggregated weeks
         const aggregatedWeeks = {
@@ -191,7 +192,6 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
           week_4: 0,
         };
 
-        // Sum up all metrics data for each week
         item.airplay_data?.forEach((metricItem: any) => {
           aggregatedWeeks.week_1 += metricItem.week_1 || 0;
           aggregatedWeeks.week_2 += metricItem.week_2 || 0;
@@ -199,7 +199,6 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
           aggregatedWeeks.week_4 += metricItem.week_4 || 0;
         });
 
-        // Return a combined object with station info and aggregated weeks
         return {
           id: item.airplay.id,
           name: item.airplay.name,
@@ -214,6 +213,92 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
       setProcessedData(processedData);
     }
   }, [existingAirPlayData, activeDetailsTab]);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    impressions: 0,
+    channel: "Radio",
+    audience: 0,
+    metric_ids: [1],
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    name: "",
+    impressions: "",
+    audience: "",
+  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChangeNumber = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    const numericValue = value === "" ? 0 : Number(value);
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: numericValue,
+    }));
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newErrors = {
+      name: "",
+      impressions: "",
+      audience: "",
+    };
+
+    if (!formData.name) {
+      newErrors.name = "Please enter a valid name.";
+    }
+    if (!formData.impressions) {
+      newErrors.impressions = "Please enter impressions.";
+    }
+    if (!formData.audience) {
+      newErrors.audience = "Please enter audience.";
+    }
+
+    setFormErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some((error) => error !== "");
+    if (!hasErrors) {
+      CreateChannel(formData)
+        .then(() => {
+          console.log("Form submitted successfully!");
+          setIsAddNewService(false);
+
+          setFormData({
+            name: "",
+            impressions: 0,
+            audience: 0,
+            channel: "Radio",
+            metric_ids: [1],
+          });
+
+          getChannel().then((fetchedContent: any) => {
+            const radioContent = fetchedContent.filter(
+              (item: any) => item.channel === activeDetailsTab
+            );
+            setStations(radioContent);
+          });
+        })
+        .catch((err) => {
+          console.error("Error submitting form:", err);
+        });
+    }
+  };
 
   return (
     <>
@@ -381,6 +466,79 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
               </form>
             </div>
           </div>
+        </Dialog>
+      </div>
+      <div
+        className={`custom-dialog-overlay ${
+          isAddNewService
+            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+            : "hidden"
+        }`}
+      >
+        <Dialog
+          header={`Add ${activeDetailsTab} Channel`}
+          visible={isAddNewService}
+          onHide={() => setIsAddNewService(false)}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "35vw" }}
+          className="custom-dialog-overlay"
+        >
+          <form onSubmit={handleFormSubmit}>
+            <div className="space-y-4">
+              <div>
+                <Input
+                  type="text"
+                  name="name"
+                  placeholder={`${activeDetailsTab} Name`}
+                  value={formData.name}
+                  onChange={handleInputChange}
+                />
+                {formErrors.name && (
+                  <p className="text-red-500 text-xs">{formErrors.name}</p>
+                )}
+              </div>
+              <div>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  name="audience"
+                  placeholder="Audience"
+                  value={formData.audience === 0 ? "" : formData.audience}
+                  onChange={handleInputChangeNumber}
+                />
+                {formErrors.audience && (
+                  <p className="text-red-500 text-xs">{formErrors.audience}</p>
+                )}
+              </div>
+              <div>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  name="impressions"
+                  placeholder="Impression"
+                  value={formData.impressions === 0 ? "" : formData.impressions}
+                  onChange={handleInputChangeNumber}
+                />
+                {formErrors.impressions && (
+                  <p className="text-red-500 text-xs">
+                    {formErrors.impressions}
+                  </p>
+                )}
+              </div>
+
+              <div className="w-full">
+                <div className="flex justify-end space-x-2">
+                  <button
+                    type="submit"
+                    className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
+                  >
+                    <IoIosAdd className="text-white" />
+                    <span className="text-white">Add Channel</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
         </Dialog>
       </div>
     </>

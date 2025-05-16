@@ -4,13 +4,20 @@ import { Dialog } from "primereact/dialog";
 import { FiInfo } from "react-icons/fi";
 import { PiCalendarPlus } from "react-icons/pi";
 import { ContentItem } from "@/types/contents";
-import { CreateDspStats, getDsp, getMetric } from "@/services/api";
+import {
+  CreateDspStats,
+  CreateMetric,
+  getDsp,
+  getMetric,
+} from "@/services/api";
 import AppleMusicData from "./AppleMusicData";
 import SpotifyData from "./SpotifyData";
 import YoutubeData from "./YoutubeData";
 import { WeekInput } from "@/components/ui/weekInput";
 import { SelectInput } from "@/components/ui/selectinput";
 import { useRouter } from "next/router";
+import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
+import { Input } from "@/components/ui/input";
 
 interface CompanyDetailsFormProps {
   visible: boolean;
@@ -235,6 +242,56 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
     }
   }, [existingDSPData, activeDetailsTab]);
 
+  const [formErrors, setFormErrors] = useState({
+    name: "",
+  });
+  const [formData, setFormData] = useState({
+    name: "",
+  });
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newErrors = {
+      name: "",
+    };
+
+    if (!formData.name) {
+      newErrors.name = "Please enter a valid name.";
+    }
+
+    setFormErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some((error) => error !== "");
+    if (!hasErrors) {
+      CreateMetric(formData)
+        .then(() => {
+          setIsAddNewService(false);
+
+          setFormData({
+            name: "",
+          });
+
+          getMetric().then((fetchedContent) => {
+            setContent(fetchedContent);
+          });
+        })
+        .catch((err) => {
+          console.error("Error submitting form:", err);
+        });
+    }
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <>
       <div
@@ -398,6 +455,51 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
             {activeDetailsTab === "YouTube" && <YoutubeData />} */}
           </div>
         </Dialog>
+        <div
+          className={`custom-dialog-overlay ${
+            isAddNewService
+              ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+              : "hidden"
+          }`}
+        >
+          <Dialog
+            header="Add DSP Metric"
+            visible={isAddNewService}
+            onHide={() => setIsAddNewService(false)}
+            breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+            style={{ width: "35vw" }}
+            className="custom-dialog-overlay"
+          >
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-4">
+                <div>
+                  <Input
+                    type="text"
+                    name="name"
+                    placeholder="Name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                  />
+                  {formErrors.name && (
+                    <p className="text-red-500 text-xs">{formErrors.name}</p>
+                  )}
+                </div>
+
+                <div className="w-full">
+                  <div className="flex justify-end space-x-2">
+                    <button
+                      type="submit"
+                      className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded-full flex items-center justify-center space-x-2"
+                    >
+                      <IoIosAdd className="text-white" />
+                      <span className="text-white">Add Metric</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </Dialog>
+        </div>
       </div>
     </>
   );

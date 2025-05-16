@@ -22,7 +22,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   info?: string;
   rounded?: boolean;
   placeholder?: string;
-  value?: string;
+  value?: string | number;
   disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
