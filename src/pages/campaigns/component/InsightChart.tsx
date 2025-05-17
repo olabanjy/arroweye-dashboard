@@ -702,21 +702,21 @@ const InsightChart: React.FC<InsightChartProps> = ({
         <div className="fixed bottom-[90px] lg:left-32 right-0 flex justify-center z-30 w-full">
           <div className="bg-none p-[8px] flex items-center gap-[10px] max-w-[500px] w-full relative">
             <button
-              className="font-IBM text-[28px] z-10 absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              className="font-IBM text-[28px] z-10 absolute top-0 right-2 text-gray-500 hover:text-gray-700"
               onClick={() => setOpenChatModal(false)}
             >
               &times;
             </button>
-            <div className="bg-white border border-gray-300  p-inputgroup py-[10px] mt-8 mb-2 flex flex-col justify-between items-start">
+            <div className="bg-white border border-gray-300  p-inputgroup py-[10px] mt-8 mb-2 flex flex-row justify-between items-center">
               <Input
                 placeholder="hello@arroweye.pro"
-                className="w-full lg:min-w-[400px] border-none focus:ring-0 focus:outline-none focus:border-transparent placeholder:font-IBM"
+                className="w-full lg:min-w-[400px] border-none shadow-none focus:ring-0 focus:outline-none placeholder:font-IBM"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <div className="ml-3 flex justify-center items-center bg-blue-500 rounded-full p-4">
+              <div className="mx-3 flex justify-center items-center bg-blue-500 rounded-full p-4">
                 <VscSend
-                  size={20}
+                  size={16}
                   className="text-white cursor-pointer"
                   onClick={() => {
                     if (content?.id) {
