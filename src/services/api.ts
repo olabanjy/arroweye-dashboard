@@ -389,7 +389,7 @@ export const VerifyLogin = async (payload: unknown): Promise<void> => {
     console.log("VERIFY", response);
     const contentItem = response;
     ls.set("Profile", contentItem, { encrypt: true });
-    toast.success("Verification successful! Redirecting...");
+    toast.success("Verification successful!");
     window.location.href = "/campaigns";
   } catch (error: unknown) {
     return;

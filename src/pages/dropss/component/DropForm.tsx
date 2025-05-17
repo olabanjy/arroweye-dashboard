@@ -164,10 +164,10 @@ const DropForm: React.FC<DropFormProps> = ({ setDropzoneData }) => {
           }}
           placeholder="Drop Type"
           options={[
-            { value: "GoogleDrive", label: "GoogleDrive" },
+            { value: "GoogleDrive", label: "Google Drive" },
             { value: "WeTransfer", label: "WeTransfer" },
             { value: "OneDrive", label: "OneDrive" },
-            { value: "DropBox", label: "DropBox" },
+            { value: "DropBox", label: "Drop Box" },
             { value: "PCloud", label: "PCloud" },
           ]}
           // error={formData.dropType}

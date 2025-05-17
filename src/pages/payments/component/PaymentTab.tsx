@@ -18,16 +18,6 @@ const PaymentTab = () => {
         >
           Manage
         </button>
-        <button
-          className={`px-[16px] py-[4px] rounded-full text-[18px]  ${
-            activeTab === "Insights"
-              ? "bg-[#e6ff99] text-black font-[500]"
-              : " font-[400]"
-          }`}
-          onClick={() => setActiveTab("Insights")}
-        >
-          Insights
-        </button>
       </div>
 
       <div>

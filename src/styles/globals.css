@@ -164,3 +164,15 @@ img.animate__animated.animate__slideInUp {
   z-index: 9999;
   /* Set your desired z-index */
 }
+
+body {
+  font-family: 'IBM Plex Sans' !important
+}
+
+html {
+  font-family: 'IBM Plex Sans' !important
+}
+
+.Toastify__toast {
+  font-family: 'IBM Plex Sans' !important
+}

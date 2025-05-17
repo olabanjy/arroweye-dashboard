@@ -5,6 +5,7 @@ import { getPaymentInvoice } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
 import { format, parseISO } from "date-fns";
+import { useParams } from "next/navigation";
 
 const Invoice = () => {
   const [content, setContent] = useState<any | null>(null);
@@ -67,7 +68,7 @@ const Invoice = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-full bg-[#ffffff] font-IBM">
+    <div className="mt-20 flex items-center justify-center h-full bg-[#ffffff] font-IBM">
       <div
         id="invoice"
         className="w-[400px] px-6 py-[20px] bg-white rounded-2xl shadow-custom shadow-slate-400"
@@ -90,7 +91,7 @@ const Invoice = () => {
           </div>
           <div className="flex justify-between text-[16px]">
             <p className="font-[600]">Invoice Number</p>
-            <p className="font-[400]">{content?.invoice_number}</p>
+            <p className="font-[400]">{id}</p>
           </div>
           <div className="flex justify-between text-[16px]">
             <p className="font-[600]">Customer</p>
@@ -116,7 +117,9 @@ const Invoice = () => {
             {content?.items?.map((item: any, index: number) => (
               <div className="flex justify-between text-[16px]" key={index}>
                 <p className="font-[400]">{item.service.name}</p>
-                <p className="font-[400]">{item.service.cost}</p>
+                <p className="font-[400]">
+                  {item.service.cost} X {item.quantity}
+                </p>
               </div>
             ))}
           </div>
@@ -132,6 +135,17 @@ const Invoice = () => {
                   ? "₦"
                   : content?.currency}
               {content?.tax_amount?.toLocaleString()}
+            </p>
+          </div>
+          <div className="flex justify-between text-[16px]">
+            <p className=" font-[600]">Service Charge</p>
+            <p className=" font-[400]">
+              {content?.currency === "USD" || content?.currency === "Dollars"
+                ? "$"
+                : content?.currency === "Naira"
+                  ? "₦"
+                  : content?.currency}
+              {content?.service_charge?.toLocaleString()}
             </p>
           </div>
           <div className="flex justify-between text-[16px]">

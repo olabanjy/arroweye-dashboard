@@ -9,7 +9,7 @@ const Setting = () => {
   const [email, setEmail] = useState("example@mail.com");
   const [userName, setUserName] = useState("David Jones");
   const [labelName, setLabelName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("aE!st9023");
   const [toggleNotifications, setToggleNotifications] = useState(false);
   const toast = useRef<Toast>(null);
 
@@ -149,7 +149,7 @@ const Setting = () => {
             "This is the name of the organization your account belongs to. Please contact your admin for any required changes.sss"
           )}
           {renderCopyInput(
-            "PHONE NUMBER",
+            "UNIQUE ID",
             phone,
             toggleNotifications,
             "text",

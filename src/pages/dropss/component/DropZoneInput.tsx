@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/input";
+import { InputDrops } from "@/components/ui/inputdrops";
 import { LucideLockKeyhole } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
@@ -32,7 +32,7 @@ const DropZoneInput: React.FC<DropZoneInputProps> = ({
   return (
     <div className="flex items-end gap-[10px] w-full">
       <div className="flex-grow">
-        <Input
+        <InputDrops
           label="Unlock Dropzone"
           type="text"
           value={inputPin}

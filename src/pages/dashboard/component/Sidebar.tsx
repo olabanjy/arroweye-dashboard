@@ -224,19 +224,40 @@ const Sidebar: FC = () => {
             }`}
           >
             <div
-              className="p-4 flex gap-[8px] items-center text-[#03a835] text-[12px] font-semibold cursor-pointer"
+              className="p-4 pl-6 flex gap-[8px] items-center text-[#03a835] text-[12px] font-semibold cursor-pointer"
               onClick={toggleResourcesSidebar}
             >
               <p>MENU</p>
               <div className="text-[#000000]">
-                <MdArrowForward size={24} />
+                <MdArrowForward size={12} />
               </div>
               <p>RESOURCES</p>
             </div>
             <ul className="space-y-4 p-4">
-              <li className="p-2 hover:bg-gray-200 rounded">FAQs</li>
-              <li className="p-2 hover:bg-gray-200 rounded">Learn</li>
-              <li className="p-2 hover:bg-gray-200 rounded">Legal</li>
+              <li
+                className="p-2 hover:bg-gray-200 rounded cursor-pointer"
+                onClick={() =>
+                  window.open("https://arroweye.substack.com/", "_blank")
+                }
+              >
+                FAQs
+              </li>
+              <li
+                className="p-2 hover:bg-gray-200 rounded cursor-pointer"
+                onClick={() =>
+                  window.open("https://butta.cocoa.house/", "_blank")
+                }
+              >
+                Learn
+              </li>
+              <li
+                className="p-2 hover:bg-gray-200 rounded cursor-pointer"
+                onClick={() =>
+                  window.open("http://arroweye.pro/legal", "_blank")
+                }
+              >
+                Legal
+              </li>
             </ul>
           </div>
         </div>

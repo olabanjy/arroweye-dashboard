@@ -313,7 +313,7 @@ const AssetsLibrary = () => {
           </div>
         )}
         <div className="mt-[50px] mb-[100px]">
-          <div className=" grid place-items-center md:grid-cols-2 lg:grid-cols-3 gap-2 h-full ">
+          <div className="grid place-items-center md:grid-cols-2 lg:grid-cols-3 gap-2 h-full mb-10">
             {content?.map((item: any, index: number) => {
               const randomColor = getRandomColor();
               return (
@@ -488,7 +488,6 @@ const AssetsLibrary = () => {
             className="custom-dialog-overlay"
             headerClassName=" tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400]"
           >
-            <label>Enter Pin to Delete</label>
             <input
               type="password"
               name="projectPin"
