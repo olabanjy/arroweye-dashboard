@@ -561,7 +561,7 @@ const ProjectDetails = () => {
               )}
 
               <div className="my-[20px] gap-[20px] flex-wrap flex items-center justify-between">
-                <div className="flex space-x-[15px] ">
+                <div className="flex space-x-[5px]">
                   {subvendorStaff?.map((user: any, index: any) => (
                     <div key={index} className="relative group">
                       <p

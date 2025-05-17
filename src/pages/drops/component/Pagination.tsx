@@ -1,4 +1,5 @@
 import React from "react";
+import { GrFormPreviousLink, GrFormNextLink } from "react-icons/gr";
 
 interface PaginationProps {
   currentPage: number;
@@ -30,7 +31,7 @@ const Pagination: React.FC<PaginationProps> = ({
         disabled={currentPage === 1}
         className="px-4 py-2 bg-gray-300 rounded-full disabled:opacity-50"
       >
-        Prev
+        <GrFormPreviousLink />
       </button>
       <p className="text-sm">
         Page {currentPage} of {totalPages}
@@ -40,7 +41,7 @@ const Pagination: React.FC<PaginationProps> = ({
         disabled={currentPage === totalPages}
         className="px-4 py-2 bg-gray-300 rounded-full disabled:opacity-50"
       >
-        Next
+        <GrFormNextLink />
       </button>
     </div>
   );

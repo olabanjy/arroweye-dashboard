@@ -34,22 +34,23 @@ const LibraryCard: React.FC<CardProps> = ({
   const renderIcon = () => {
     if (!mainIcon) return null;
 
-    const iconSize = 24;
+    const iconSize = 20;
+    const opacity = "30%";
     const iconColor = "#555555";
 
     switch (mainIcon) {
       case "GoogleDrive":
-        return <FaGoogleDrive size={iconSize} color={iconColor} />;
+        return <FaGoogleDrive size={20} color={iconColor} opacity={opacity} />;
       case "WeTransfer":
-        return <SiWetransfer size={iconSize} color={iconColor} />;
+        return <SiWetransfer size={27} color={iconColor} opacity={opacity} />;
       case "OneDrive":
-        return <GrOnedrive size={iconSize} color={iconColor} />;
+        return <GrOnedrive size={25} color={iconColor} opacity={opacity} />;
       case "DropBox":
-        return <FaDropbox size={iconSize} color={iconColor} />;
+        return <FaDropbox size={22} color={iconColor} opacity={opacity} />;
       case "PCloud":
-        return <FaCloudArrowUp size={iconSize} color={iconColor} />;
+        return <FaCloudArrowUp size={25} color={iconColor} opacity={opacity} />;
       default:
-        return <FaGoogleDrive size={iconSize} color={iconColor} />;
+        return <FaGoogleDrive size={20} color={iconColor} opacity={opacity} />;
     }
   };
 

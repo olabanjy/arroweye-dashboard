@@ -150,8 +150,8 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                 <div key={`manage-button-${index}`}>
                   <Link href={`/campaigns/${item.id}`}>{item?.title}</Link>
                 </div>,
-                item?.vendor?.organization_name,
                 item?.subvendor?.organization_name,
+                item?.artist_name,
                 item?.created?.slice(0, 10) || "2025-01-13",
                 <div
                   className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500] w-[150px] md:w-full whitespace-nowrap"

@@ -506,7 +506,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={chartDataForDoughnutAirplay}
                 setFilters={setairplayChannelsFilters}
                 placeholder="Country"
-                info="The total number of airplay instances this campaign received across radio, television, and DJ/club activations."
+                info="Estimated total number of airplay instances this campaign received across radio, television, and DJ/club activations."
               />
             </div>
 
@@ -519,7 +519,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 setFilters={setairplayAudienceFilters}
                 selectOptionsBottom={selectOptionsAudience}
                 // maxWidth="500px"
-                info="The total number of listeners and viewers reached on radio and television. This data is based on the audience size of the channels where your music was featured."
+                info="Estimated total number of listeners and viewers reached on radio and television. This data is based on the audience size of the channels where your music was featured."
               />
             </div>
 
@@ -564,7 +564,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={chartDataForPie}
                 setFilters={setSocialMediaPlatformFilters}
                 selectOptionsBottom={selectOptionsAudience}
-                info="The total recorded actions and engagements across individual social media platforms."
+                info="Estimated total recorded actions and engagements across individual social media platforms."
               />
             </div>
 
@@ -575,7 +575,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={chartDataForDoughnutSMAction}
                 setFilters={setSocialMediaActionsFilters}
                 selectOptionsBottom={selectOptionsAudience}
-                info="A breakdown of engagement and interactions recorded across social media platforms."
+                info="Estimated breakdown of engagement and interactions recorded across social media platforms."
               />
             </div>
 
@@ -623,7 +623,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={chartDataForBar}
                 setFilters={setDspFilters}
                 selectOptionsBottom={selectOptions}
-                info="The total number of streams and views recorded during this campaign across DSPs. These figures are estimates; please confirm the actual numbers with your distributor."
+                info="Estimated total number of streams and views recorded during this campaign across DSPs. These figures are estimates; please confirm the actual numbers with your distributor."
               />
             </div>
 
@@ -635,7 +635,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
                 chartData={pieChartDataDSPPerformance}
                 setFilters={setDspPerformanceFilters}
                 // maxWidth="500px"
-                info="A breakdown of activities and engagement metrics recorded across all DSPs. These figures are estimates; please verify the actual data with your distributor."
+                info="Estimated breakdown of activities and engagement metrics recorded across all DSPs. These figures are estimates; please verify the actual data with your distributor."
               />
             </div>
 
@@ -702,21 +702,21 @@ const InsightChart: React.FC<InsightChartProps> = ({
         <div className="fixed bottom-[90px] lg:left-32 right-0 flex justify-center z-30 w-full">
           <div className="bg-none p-[8px] flex items-center gap-[10px] max-w-[500px] w-full relative">
             <button
-              className="font-IBM text-[28px] z-10 absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              className="font-IBM text-[28px] z-10 absolute top-0 right-2 text-gray-500 hover:text-gray-700"
               onClick={() => setOpenChatModal(false)}
             >
               &times;
             </button>
-            <div className="bg-white border border-gray-300  p-inputgroup py-[10px] mt-8 mb-2 flex flex-col justify-between items-start">
+            <div className="bg-white border border-gray-300  p-inputgroup py-[10px] mt-8 mb-2 flex flex-row justify-between items-center">
               <Input
                 placeholder="hello@arroweye.pro"
-                className="w-full lg:min-w-[400px] border-none focus:ring-0 focus:outline-none focus:border-transparent placeholder:font-IBM"
+                className="w-full lg:min-w-[400px] border-none shadow-none focus:ring-0 focus:outline-none placeholder:font-IBM"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <div className="ml-3 flex justify-center items-center bg-blue-500 rounded-full p-4">
+              <div className="mx-3 flex justify-center items-center bg-blue-500 rounded-full p-4">
                 <VscSend
-                  size={20}
+                  size={16}
                   className="text-white cursor-pointer"
                   onClick={() => {
                     if (content?.id) {
@@ -737,19 +737,19 @@ const InsightChart: React.FC<InsightChartProps> = ({
       <div className="fixed bottom-[30px] lg:left-32 right-0 flex justify-center z-30 w-full">
         <div className="bg-white border border-gray-300 rounded p-[8px] flex items-center gap-[10px]">
           <p
-            className="rounded-full p-[8px] bg-black text-white !w-[70px] text-center cursor-pointer"
+            className="rounded-[8px] p-[8px] bg-black text-white !w-[70px] text-center cursor-pointer"
             onClick={() => setExportModal(true)}
           >
             Export
           </p>
           <p
-            className=" cursor-pointer rounded-full p-[8px] bg-[#007bff] text-white w-[70px] text-center"
+            className=" cursor-pointer rounded-[8px] p-[8px] bg-[#007bff] text-white w-[70px] text-center"
             onClick={() => setOpenChatModal(!openChatModal)}
           >
             Send
           </p>
           <p
-            className="rounded-full border p-[8px] text-black bg-white w-[70px] text-center cursor-pointer"
+            className="rounded-[8px] border p-[8px] text-black bg-white w-[70px] text-center cursor-pointer"
             onClick={handleShareClick}
           >
             {shareButtonText}

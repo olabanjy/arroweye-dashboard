@@ -209,7 +209,7 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
         )}
 
         <div
-          className="p-2 font-IBM text-[16px] font-[500] w-full rounded text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
+          className="p-2 font-IBM text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
           onClick={() => downloadCSV(csvData)}
         >
           <p>{downloadButtonText}</p>
@@ -220,7 +220,7 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
 
         {radioButtonText && (
           <p
-            className={`p-2 cursor-pointer text-[16px] font-[500] font-IBM w-full rounded text-center ${
+            className={`p-2 cursor-pointer text-[16px] font-[500] font-IBM w-full rounded-full text-center ${
               outline
                 ? "border border-black text-black hover:bg-black hover:text-white"
                 : "hover:bg-orange-500 bg-black text-white"

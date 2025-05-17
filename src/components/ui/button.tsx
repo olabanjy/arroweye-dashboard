@@ -53,11 +53,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
         disabled={isDisabled}
+        style={{ fontFamily: "IBM Plex Sans" }}
       >
         {!isLoading && (label || "Button")}
-        {isLoading && loadingText && (
-          <span className="ml-2">{loadingText}</span>
-        )}
+        {isLoading && loadingText && <span className="">{loadingText}</span>}
       </button>
     );
   }
