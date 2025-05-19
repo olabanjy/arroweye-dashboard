@@ -173,12 +173,14 @@ const InvoicesTab = () => {
                   <IoFilter />
                 </div>
               )}
-              <div
-                className="cursor-pointer p-[16px] bg-[#ffdead] text-[#000000] rounded-full"
-                onClick={showDialog}
-              >
-                <MdOutlineGroupAdd />
-              </div>
+              {userLoggedInProfile?.business_type === "Vendor" && (
+                <div
+                  className="cursor-pointer p-[16px] bg-[#ffdead] text-[#000000] rounded-full"
+                  onClick={showDialog}
+                >
+                  <MdOutlineGroupAdd />
+                </div>
+              )}
             </div>
           </div>
         </div>
