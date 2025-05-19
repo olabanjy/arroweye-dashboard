@@ -165,10 +165,6 @@ const Invoice = () => {
           </div>
         </div>
 
-        <div className="text-center text-xs text-gray-400">
-          <p>Receipt ID: #{content?.id}</p>
-        </div>
-
         {content?.status !== "Unpaid" ? (
           <button
             onClick={handlePrint}

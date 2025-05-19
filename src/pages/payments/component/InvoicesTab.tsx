@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import ls from "localstorage-slim";
 import { Input } from "@/components/ui/input";
 import { IoFilter } from "react-icons/io5";
 import { MdOutlineGroupAdd } from "react-icons/md";
@@ -14,6 +15,7 @@ import CompanyDetailsForm from "./CompanyDetailsForm";
 import { TbBuildingBank } from "react-icons/tb";
 
 const InvoicesTab = () => {
+  const [userLoggedInProfile, setUserLoggedInProfile] = useState<any>({});
   const [activeTab, setActiveTab] = useState("Invoice");
   const [filter, setFilter] = useState(false);
   const [amountFilter, setAmountFilter] = useState<any>("");
@@ -117,6 +119,12 @@ const InvoicesTab = () => {
     });
   };
 
+  useEffect(() => {
+    const content: any = ls.get("Profile", { decrypt: true });
+    console.log(content?.user?.user_profile);
+    setUserLoggedInProfile(content?.user?.user_profile);
+  }, []);
+
   return (
     <div className=" font-IBM mt-[50px]">
       <div className="grid md:flex items-center gap-[20px] md:gap-[40px] mb-[16px]">
@@ -131,16 +139,18 @@ const InvoicesTab = () => {
           >
             Invoices
           </button>
-          <button
-            className={`pb-[10px] text-[18px] transition-all duration-300 ${
-              activeTab === "Users"
-                ? "border-b border-[#17845a] text-[#17845a] font-[400]"
-                : "font-[400]"
-            }`}
-            onClick={() => setActiveTab("Users")}
-          >
-            Users
-          </button>
+          {userLoggedInProfile?.business_type === "Vendor" && (
+            <button
+              className={`pb-[10px] text-[18px] transition-all duration-300 ${
+                activeTab === "Users"
+                  ? "border-b border-[#17845a] text-[#17845a] font-[400]"
+                  : "font-[400]"
+              }`}
+              onClick={() => setActiveTab("Users")}
+            >
+              Users
+            </button>
+          )}
         </div>
 
         <div className="flex-grow">
