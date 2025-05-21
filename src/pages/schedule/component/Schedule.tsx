@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ls from "localstorage-slim";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -53,6 +54,12 @@ const Schedule: React.FC<ScheduleProps> = ({
   const [eventItem, setEventItem] = useState<EventsItem[]>([]);
   const [vendorOptions, setVendorOptions] = useState<any>([]);
   const [subvendorOptions, setSubvendorOptions] = useState<any>([]);
+
+  const [userLoggedInProfile, setUserLoggedInProfile] = useState<any>({});
+  useEffect(() => {
+    const content: any = ls.get("Profile", { decrypt: true });
+    setUserLoggedInProfile(content?.user?.user_profile);
+  }, []);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -138,7 +145,7 @@ const Schedule: React.FC<ScheduleProps> = ({
       formData.description || `Vendor: ${Vendor}, Subvendor: ${Subvendor}`
     );
     const eventLocation = String(formData.location || "Online");
-    const organizerEmail = String(formData.email || "noreply@example.com");
+    const organizerEmail = String(formData.email || "hi@pinegingr.com");
 
     const startDateTime = formData.start
       ? new Date(formData.start)
@@ -162,7 +169,6 @@ const Schedule: React.FC<ScheduleProps> = ({
       location: eventLocation,
       status: "CONFIRMED",
       uid: `event-${Date.now()}`,
-      url: "https://example.com/event/123",
       categories: ["Tech", "Virtual"],
       htmlContent: `<strong>${eventTitle}</strong><br/>Vendor: ${Vendor}<br/>Subvendor: ${Subvendor}`,
       organizer: {
@@ -234,6 +240,11 @@ const Schedule: React.FC<ScheduleProps> = ({
   };
   const handleDateClick = (info: DateClickArg) => {
     if (!isDateClickEnabled) return;
+
+    if (userLoggedInProfile?.role === "Manager") {
+      console.log("met condition");
+      return;
+    }
 
     const selectedDate = info.dateStr;
     const currentDate = new Date().toISOString().split("T")[0];
@@ -421,18 +432,14 @@ const Schedule: React.FC<ScheduleProps> = ({
       <div className="schedule-container space-y-[20px] mb-[100px]">
         {filterIcon && (
           <div className=" flex items-center justify-center gap-[5px] mb-[30px]">
-            <div
-              className="w-12 h-12 rounded-full bg-[#5d00e4] inline-flex text-[#ffffff]  items-center justify-center cursor-pointer"
-              onClick={() => setIsModalVisible(true)}
-            >
-              <PiCalendarPlus />
-            </div>{" "}
-            <div
-              className="w-12 h-12 cursor-pointer rounded-full bg-[#000000] inline-flex text-[#ffffff]  items-center justify-center"
-              onClick={() => setisFilter(true)}
-            >
-              <IoFilter />
-            </div>
+            {userLoggedInProfile.role !== "Manager" && (
+              <div
+                className="w-12 h-12 rounded-full bg-[#5d00e4] inline-flex text-[#ffffff]  items-center justify-center cursor-pointer"
+                onClick={() => setIsModalVisible(true)}
+              >
+                <PiCalendarPlus />
+              </div>
+            )}
           </div>
         )}
         <div className="calendar-container">
@@ -718,25 +725,26 @@ const Schedule: React.FC<ScheduleProps> = ({
                     </p>
                   )}
                 </div>
+                {viewOnly === true && (
+                  <button
+                    className="relative group rounded-full"
+                    type="button"
+                    onClick={() => {
+                      if (!formData.project) {
+                        toast.info("No project code");
+                      }
+                      window.open(`/campaigns/${formData?.project}`);
+                    }}
+                  >
+                    <p className="bg-[#000] hover:bg-orange-500 text-[#fff] rounded-full h-[40px] w-[40px] flex items-center justify-center cursor-pointer font-IBM">
+                      <GoArrowUpRight size={24} />
+                    </p>
 
-                <button
-                  className="relative group rounded-full"
-                  type="button"
-                  onClick={() => {
-                    if (!formData.project) {
-                      toast.info("No project code");
-                    }
-                    window.open(`/campaigns/${formData?.project}`);
-                  }}
-                >
-                  <p className="bg-[#000] hover:bg-orange-500 text-[#fff] rounded-full h-[40px] w-[40px] flex items-center justify-center cursor-pointer font-IBM">
-                    <GoArrowUpRight size={24} />
-                  </p>
-
-                  <p className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-max px-3 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-100">
-                    View Project
-                  </p>
-                </button>
+                    <p className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-max px-3 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-100">
+                      View Project
+                    </p>
+                  </button>
+                )}
               </div>
             </div>
           </form>

@@ -754,15 +754,6 @@ const ProjectDetails = () => {
                       disabled={!addUserFormData.fullname}
                     />
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <InputSwitch
-                      id="phone"
-                      checked={broadcast}
-                      onChange={(e) => setBroadcast(e.value)}
-                      className="custom-switch"
-                    />
-                    <p>Broadcast</p>
-                  </div>
                 </div>
               </Dialog>
             </div>

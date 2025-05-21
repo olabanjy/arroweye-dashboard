@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ls from "localstorage-slim";
 import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { Dialog } from "primereact/dialog";
@@ -10,6 +11,7 @@ import {
 } from "@/services/api";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { ContentItem } from "@/types/contents";
+import { hasAccess } from "@/lib/utils";
 interface Item {
   id: number;
   item: string;
@@ -56,6 +58,12 @@ const Manage = () => {
   const [business, setBusiness] = useState<ContentItem[] | null>(null);
 
   const [items, setItems] = useState<Item[]>([]);
+
+  const [userLoggedInProfile, setUserLoggedInProfile] = useState<any>({});
+  useEffect(() => {
+    const content: any = ls.get("Profile", { decrypt: true });
+    setUserLoggedInProfile(content?.user?.user_profile);
+  }, []);
 
   const handleCurrencyChange = (value: string | number) => {
     setProjectFormData((prevState) => ({
@@ -408,12 +416,14 @@ const Manage = () => {
               {projectErrors.currency && (
                 <p className="text-red-500 text-xs">{projectErrors.currency}</p>
               )}
-              <div
-                className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-black cursor-pointer absolute bottom-0 -right-14"
-                onClick={addItemField}
-              >
-                <p className="text-white text-xl">+</p>
-              </div>
+              {hasAccess(userLoggedInProfile, [""]) && (
+                <div
+                  className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-black cursor-pointer absolute bottom-0 -right-14"
+                  onClick={addItemField}
+                >
+                  <p className="text-white text-xl">+</p>
+                </div>
+              )}
             </div>
 
             {/* Select Vendor */}

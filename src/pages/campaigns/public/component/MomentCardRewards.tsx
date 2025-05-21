@@ -199,7 +199,7 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
         {MomentsTitle}
       </p>
 
-      <div className="relative h-[300px] rounded overflow-hidden group">
+      <div className="relative h-[400px] rounded overflow-hidden group">
         {error ? (
           <Alert
             variant="destructive"
@@ -210,7 +210,7 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
         ) : (
           <>
             <iframe
-              className="w-full h-full"
+              className="w-full h-[400px]"
               src={`${videoUrls[currentVideoIndex]}?autoplay=${isPlaying ? "1" : "0"}&controls=1&showinfo=0&rel=0`}
               title={`${videoTitle} - Video ${currentVideoIndex + 1}`}
               frameBorder="0"
