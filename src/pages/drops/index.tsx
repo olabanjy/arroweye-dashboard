@@ -62,6 +62,13 @@ const AssetsLibrary = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [filter, setFilter] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [userLoggedInProfile, setUserLoggedInProfile] = useState<any>({});
+
+  useEffect(() => {
+    const content: any = ls.get("Profile", { decrypt: true });
+    console.log(content?.user?.user_profile);
+    setUserLoggedInProfile(content?.user?.user_profile);
+  }, []);
 
   useEffect(() => {
     setFilter(false);
@@ -261,24 +268,31 @@ const AssetsLibrary = () => {
                   onChange={(value: any) => updateFilters("month", value)}
                 />
               </div>
-              <div className="max-w-[150px] w-full">
-                <SelectInput
-                  placeholder="Vendor"
-                  rounded={true}
-                  options={vendorOptions}
-                  value={filters.vendor}
-                  onChange={(value: any) => updateFilters("vendor", value)}
-                />
-              </div>
-              <div className="max-w-[150px] w-full">
-                <SelectInput
-                  placeholder="Sub-Vendor"
-                  rounded={true}
-                  options={subVendorOptions}
-                  value={filters.subvendor}
-                  onChange={(value: any) => updateFilters("subvendor", value)}
-                />
-              </div>
+              {userLoggedInProfile?.business_type === "Vendor" && (
+                <>
+                  <div className="max-w-[150px] w-full">
+                    <SelectInput
+                      placeholder="Vendor"
+                      rounded={true}
+                      options={vendorOptions}
+                      value={filters.vendor}
+                      onChange={(value: any) => updateFilters("vendor", value)}
+                    />
+                  </div>{" "}
+                  <div className="max-w-[150px] w-full">
+                    <SelectInput
+                      placeholder="Sub-Vendor"
+                      rounded={true}
+                      options={subVendorOptions}
+                      value={filters.subvendor}
+                      onChange={(value: any) =>
+                        updateFilters("subvendor", value)
+                      }
+                    />
+                  </div>
+                </>
+              )}
+
               <div className="max-w-[150px] w-full">
                 <SelectInput
                   placeholder="Platform"

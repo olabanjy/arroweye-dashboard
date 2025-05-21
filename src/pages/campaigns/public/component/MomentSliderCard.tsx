@@ -147,13 +147,13 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
             </div>{" "}
             <Slider ref={sliderRef} {...sliderSettings}>
               {images?.map((image, index) => (
-                <div key={index} className="relative w-full h-[300px]">
+                <div key={index} className="relative w-full h-[400px]">
                   <img
                     src={image}
                     alt={`Slide ${index + 1}`}
-                    className="object-cover w-full h-full rounded"
+                    className="object-contain w-full h-full rounded"
                     width={500}
-                    height={300}
+                    height={400}
                   />
                   <a
                     // href={

@@ -121,7 +121,6 @@ const InvoicesTab = () => {
 
   useEffect(() => {
     const content: any = ls.get("Profile", { decrypt: true });
-    console.log(content?.user?.user_profile);
     setUserLoggedInProfile(content?.user?.user_profile);
   }, []);
 
