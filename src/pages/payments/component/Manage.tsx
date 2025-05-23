@@ -11,7 +11,7 @@ import {
 } from "@/services/api";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { ContentItem } from "@/types/contents";
-import { hasAccess } from "@/lib/utils";
+import { hasAccess, hasAccessExceptVendorManager } from "@/lib/utils";
 interface Item {
   id: number;
   item: string;
@@ -365,322 +365,328 @@ const Manage = () => {
 
   return (
     <div className="my-[20px]">
-      <form onSubmit={handleProjectSubmit}>
-        <div className="space-y-[20px]">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 pr-10 items-start gap-[20px] relative">
-            {/* Project Title */}
-            <div className="w-full">
-              <Input
-                label="PROJECT TITLE"
-                type="text"
-                name="project_title"
-                placeholder=""
-                info="This is the title of the campaign, preferably the project name such as the song or album title."
-                value={projectFormData.project_title}
-                onChange={handleInputChange}
-              />
-              {projectErrors.project_title && (
-                <p className="text-red-500 text-xs">
-                  {projectErrors.project_title}
-                </p>
-              )}
+      {hasAccessExceptVendorManager(userLoggedInProfile, [""]) && (
+        <form onSubmit={handleProjectSubmit}>
+          <div className="space-y-[20px]">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 pr-10 items-start gap-[20px] relative">
+              {/* Project Title */}
+              <div className="w-full">
+                <Input
+                  label="PROJECT TITLE"
+                  type="text"
+                  name="project_title"
+                  placeholder=""
+                  info="This is the title of the campaign, preferably the project name such as the song or album title."
+                  value={projectFormData.project_title}
+                  onChange={handleInputChange}
+                />
+                {projectErrors.project_title && (
+                  <p className="text-red-500 text-xs">
+                    {projectErrors.project_title}
+                  </p>
+                )}
+              </div>
+
+              {/* P.O Code */}
+              <div className="w-full">
+                <Input
+                  label="P.O CODE"
+                  type="number"
+                  name="po_code"
+                  placeholder=""
+                  info="This is the purchase order code provided by the vendor. If none is provided, leave it blank."
+                  value={projectFormData.po_code}
+                  onChange={handleInputChange}
+                />
+                {projectErrors.po_code && (
+                  <p className="text-red-500 text-xs">
+                    {projectErrors.po_code}
+                  </p>
+                )}
+              </div>
+
+              {/* Currency with Add Button */}
+              <div className="w-full relative">
+                <SelectInput
+                  icon={true}
+                  label="CURRENCY"
+                  name="currency"
+                  options={currencyOptions}
+                  info="This is the currency in which the invoice is issued, and it will be the same amount reflected on the invoice."
+                  value={projectFormData.currency}
+                  onChange={handleCurrencyChange}
+                />
+                {projectErrors.currency && (
+                  <p className="text-red-500 text-xs">
+                    {projectErrors.currency}
+                  </p>
+                )}
+                {hasAccess(userLoggedInProfile, [""]) && (
+                  <div
+                    className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-black cursor-pointer absolute bottom-0 -right-14"
+                    onClick={addItemField}
+                  >
+                    <p className="text-white text-xl">+</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Select Vendor */}
+              <div className="w-full">
+                <SelectInput
+                  icon={true}
+                  label="SELECT VENDOR"
+                  name="vendor"
+                  options={vendorOptions}
+                  onChange={handleVendorChange}
+                  value={projectFormData.vendor_id}
+                />
+                {projectErrors.vendor_id && (
+                  <p className="text-red-500 text-xs">
+                    {projectErrors.vendor_id}
+                  </p>
+                )}
+              </div>
+
+              {/* Select Subvendor */}
+              <div className="w-full">
+                <SelectInput
+                  icon={true}
+                  name="subVendor"
+                  label="SELECT SUBVENDOR"
+                  options={subVendorOptions}
+                  onChange={handleSubVendorChange}
+                  value={projectFormData.subvendor_id}
+                />
+                {projectErrors.subvendor_id && (
+                  <p className="text-red-500 text-xs">
+                    {projectErrors.subvendor_id}
+                  </p>
+                )}
+              </div>
+
+              <div className="w-full">
+                <Input
+                  label="ARTIST NAME"
+                  type="text"
+                  name="artist_name"
+                  placeholder=""
+                  info="Description for your new input field."
+                  value={projectFormData.artist_name || ""}
+                  onChange={handleInputChange}
+                />
+                {projectErrors.artist_name && (
+                  <p className="text-red-500 text-xs">
+                    {projectErrors.artist_name}
+                  </p>
+                )}
+              </div>
             </div>
 
-            {/* P.O Code */}
-            <div className="w-full">
-              <Input
-                label="P.O CODE"
-                type="number"
-                name="po_code"
-                placeholder=""
-                info="This is the purchase order code provided by the vendor. If none is provided, leave it blank."
-                value={projectFormData.po_code}
-                onChange={handleInputChange}
-              />
-              {projectErrors.po_code && (
-                <p className="text-red-500 text-xs">{projectErrors.po_code}</p>
-              )}
-            </div>
-
-            {/* Currency with Add Button */}
-            <div className="w-full relative">
-              <SelectInput
-                icon={true}
-                label="CURRENCY"
-                name="currency"
-                options={currencyOptions}
-                info="This is the currency in which the invoice is issued, and it will be the same amount reflected on the invoice."
-                value={projectFormData.currency}
-                onChange={handleCurrencyChange}
-              />
-              {projectErrors.currency && (
-                <p className="text-red-500 text-xs">{projectErrors.currency}</p>
-              )}
-              {hasAccess(userLoggedInProfile, [""]) && (
-                <div
-                  className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-black cursor-pointer absolute bottom-0 -right-14"
-                  onClick={addItemField}
-                >
-                  <p className="text-white text-xl">+</p>
-                </div>
-              )}
-            </div>
-
-            {/* Select Vendor */}
-            <div className="w-full">
-              <SelectInput
-                icon={true}
-                label="SELECT VENDOR"
-                name="vendor"
-                options={vendorOptions}
-                onChange={handleVendorChange}
-                value={projectFormData.vendor_id}
-              />
-              {projectErrors.vendor_id && (
-                <p className="text-red-500 text-xs">
-                  {projectErrors.vendor_id}
-                </p>
-              )}
-            </div>
-
-            {/* Select Subvendor */}
-            <div className="w-full">
-              <SelectInput
-                icon={true}
-                name="subVendor"
-                label="SELECT SUBVENDOR"
-                options={subVendorOptions}
-                onChange={handleSubVendorChange}
-                value={projectFormData.subvendor_id}
-              />
-              {projectErrors.subvendor_id && (
-                <p className="text-red-500 text-xs">
-                  {projectErrors.subvendor_id}
-                </p>
-              )}
-            </div>
-
-            <div className="w-full">
-              <Input
-                label="ARTIST NAME"
-                type="text"
-                name="artist_name"
-                placeholder=""
-                info="Description for your new input field."
-                value={projectFormData.artist_name || ""}
-                onChange={handleInputChange}
-              />
-              {projectErrors.artist_name && (
-                <p className="text-red-500 text-xs">
-                  {projectErrors.artist_name}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-[20px] space-y-[20px]">
-            {items.map((item: any, index) => (
-              <div className="flex items-end gap-[20px]" key={item.id}>
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 items-center gap-[20px]">
-                  <div className=" flex items-center col-span-2  w-full">
-                    <div className="   w-full ">
-                      <SelectInput
-                        icon={true}
-                        name="service"
-                        label="SERVICE"
-                        options={customOptions}
-                        value={item.service_id || ""}
-                        onChange={(value: string | number) => {
-                          const selectedValue = Number(value);
-                          const selectedOption = customOptions.find(
-                            (opt) => opt.value === selectedValue
-                          );
-
-                          console.log(selectedOption);
-
-                          if (selectedValue === 9) {
-                            setIsAddNewService(true);
-                          } else {
-                            const updatedItems = items.map((i) =>
-                              i.id === item.id
-                                ? {
-                                    ...i,
-                                    service_id: selectedValue,
-                                    cost: selectedOption?.cost || "",
-                                  }
-                                : i
+            <div className="mt-[20px] space-y-[20px]">
+              {items.map((item: any, index) => (
+                <div className="flex items-end gap-[20px]" key={item.id}>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-4 items-center gap-[20px]">
+                    <div className=" flex items-center col-span-2  w-full">
+                      <div className="   w-full ">
+                        <SelectInput
+                          icon={true}
+                          name="service"
+                          label="SERVICE"
+                          options={customOptions}
+                          value={item.service_id || ""}
+                          onChange={(value: string | number) => {
+                            const selectedValue = Number(value);
+                            const selectedOption = customOptions.find(
+                              (opt) => opt.value === selectedValue
                             );
-                            setItems(updatedItems);
 
-                            console.log(updatedItems);
-                            const updatedServices = [
-                              ...projectFormData.services,
-                            ];
-                            updatedServices[index] = {
-                              ...updatedServices[index],
-                              service_id: selectedValue,
-                              cost: selectedOption?.cost || "",
-                            };
-                            setProjectFormData((prevData) => ({
-                              ...prevData,
-                              services: updatedServices,
-                            }));
-                          }
+                            console.log(selectedOption);
+
+                            if (selectedValue === 9) {
+                              setIsAddNewService(true);
+                            } else {
+                              const updatedItems = items.map((i) =>
+                                i.id === item.id
+                                  ? {
+                                      ...i,
+                                      service_id: selectedValue,
+                                      cost: selectedOption?.cost || "",
+                                    }
+                                  : i
+                              );
+                              setItems(updatedItems);
+
+                              console.log(updatedItems);
+                              const updatedServices = [
+                                ...projectFormData.services,
+                              ];
+                              updatedServices[index] = {
+                                ...updatedServices[index],
+                                service_id: selectedValue,
+                                cost: selectedOption?.cost || "",
+                              };
+                              setProjectFormData((prevData) => ({
+                                ...prevData,
+                                services: updatedServices,
+                              }));
+                            }
+                          }}
+                        />
+
+                        {projectErrors.services[index]?.service_id && (
+                          <p className="text-red-500 text-xs">
+                            {projectErrors.services[index].service_id}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="max-w-[350px] w-full ">
+                      <Input
+                        type="number"
+                        name="cost"
+                        placeholder="Cost"
+                        label=" COST"
+                        value={item.cost || ""}
+                        readOnly
+                        onChange={(e) => {
+                          const updatedCost = e.target.value;
+
+                          const updatedItems = items.map((i) =>
+                            i.id === item.id ? { ...i, cost: updatedCost } : i
+                          );
+                          setItems(updatedItems);
+
+                          const updatedServices = [...projectFormData.services];
+                          updatedServices[index] = {
+                            ...updatedServices[index],
+                          };
+                          setProjectFormData((prevData) => ({
+                            ...prevData,
+                            services: updatedServices,
+                          }));
                         }}
                       />
-
-                      {projectErrors.services[index]?.service_id && (
+                      {projectErrors.cost && (
                         <p className="text-red-500 text-xs">
-                          {projectErrors.services[index].service_id}
+                          {projectErrors.cost}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="max-w-[350px] w-full">
+                      <Input
+                        type="number"
+                        name="quantity"
+                        label="QUANTITY"
+                        placeholder="Quantity"
+                        value={item.quantity || 1}
+                        onChange={(e) => {
+                          const updatedQuantity = Number(e.target.value);
+
+                          const updatedItems = items.map((i) =>
+                            i.id === item.id
+                              ? { ...i, quantity: updatedQuantity }
+                              : i
+                          );
+                          setItems(updatedItems);
+
+                          const updatedServices = [...projectFormData.services];
+                          updatedServices[index] = {
+                            ...updatedServices[index],
+                            quantity: updatedQuantity,
+                          };
+                          setProjectFormData((prevData) => ({
+                            ...prevData,
+                            services: updatedServices,
+                          }));
+                        }}
+                      />
+                      {projectErrors.services[index]?.quantity && (
+                        <p className="text-red-500 text-xs">
+                          {projectErrors.services[index].quantity}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <div className="max-w-[350px] w-full ">
-                    <Input
-                      type="number"
-                      name="cost"
-                      placeholder="Cost"
-                      label=" COST"
-                      value={item.cost || ""}
-                      readOnly
-                      onChange={(e) => {
-                        const updatedCost = e.target.value;
-
-                        const updatedItems = items.map((i) =>
-                          i.id === item.id ? { ...i, cost: updatedCost } : i
-                        );
-                        setItems(updatedItems);
-
-                        const updatedServices = [...projectFormData.services];
-                        updatedServices[index] = {
-                          ...updatedServices[index],
-                        };
-                        setProjectFormData((prevData) => ({
-                          ...prevData,
-                          services: updatedServices,
-                        }));
-                      }}
-                    />
-                    {projectErrors.cost && (
-                      <p className="text-red-500 text-xs">
-                        {projectErrors.cost}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="max-w-[350px] w-full">
-                    <Input
-                      type="number"
-                      name="quantity"
-                      label="QUANTITY"
-                      placeholder="Quantity"
-                      value={item.quantity || 1}
-                      onChange={(e) => {
-                        const updatedQuantity = Number(e.target.value);
-
-                        const updatedItems = items.map((i) =>
-                          i.id === item.id
-                            ? { ...i, quantity: updatedQuantity }
-                            : i
-                        );
-                        setItems(updatedItems);
-
-                        const updatedServices = [...projectFormData.services];
-                        updatedServices[index] = {
-                          ...updatedServices[index],
-                          quantity: updatedQuantity,
-                        };
-                        setProjectFormData((prevData) => ({
-                          ...prevData,
-                          services: updatedServices,
-                        }));
-                      }}
-                    />
-                    {projectErrors.services[index]?.quantity && (
-                      <p className="text-red-500 text-xs">
-                        {projectErrors.services[index].quantity}
-                      </p>
-                    )}
+                  <div
+                    className="w-[40px] h-[40px]  mb-[5px] flex items-center justify-center rounded-full bg-black cursor-pointer"
+                    onClick={() => removeItemField(item.id)}
+                  >
+                    <p className="text-white text-xl">-</p>
                   </div>
                 </div>
-
-                <div
-                  className="w-[40px] h-[40px]  mb-[5px] flex items-center justify-center rounded-full bg-black cursor-pointer"
-                  onClick={() => removeItemField(item.id)}
-                >
-                  <p className="text-white text-xl">-</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {items.length > 0 && (
-            <div className="flex items-center gap-[10px] my-[40px]">
-              <button
-                type="submit"
-                className="cursor-pointer rounded-full px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline"
-              >
-                Save
-              </button>
-              <div className="cursor-pointer rounded-full px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline-flex items-start gap-[4px]">
-                <p>Download</p>
-                <sup className="font-bold p-[8px] rounded-full bg-white text-black">
-                  PDF
-                </sup>
-              </div>
+              ))}
             </div>
-          )}
 
-          <div className="mt-[20px] ">
-            {selectedService && (
-              <div>
-                <p className="text-[16px] text-gray-700">
-                  Subtotal:{" "}
-                  {selectedService === "Dollars"
-                    ? `$${subtotal.toFixed(2)}`
-                    : selectedService === "Naira"
-                      ? `₦${subtotal.toFixed(2)}`
-                      : selectedService === "Ethereum"
-                        ? `Ξ${subtotal.toFixed(2)}`
-                        : `₦${subtotal.toFixed(2)}`}{" "}
-                </p>
-                <p className="text-[16px] text-gray-700">
-                  Service Charge (15%):{" "}
-                  {selectedService === "Dollars"
-                    ? `$${serviceCharge.toFixed(2)}`
-                    : selectedService === "Naira"
-                      ? `₦${serviceCharge.toFixed(2)}`
-                      : selectedService === "Ethereum"
-                        ? `Ξ${serviceCharge.toFixed(2)}`
-                        : `₦${serviceCharge.toFixed(2)}`}{" "}
-                </p>
-                <p className="text-[16px] text-gray-700">
-                  Tax (7.5%):{" "}
-                  {selectedService === "Dollars"
-                    ? `$${tax.toFixed(2)}`
-                    : selectedService === "Naira"
-                      ? `₦${tax.toFixed(2)}`
-                      : selectedService === "Ethereum"
-                        ? `Ξ${tax.toFixed(2)}`
-                        : `₦${tax.toFixed(2)}`}{" "}
-                </p>
-                <p className="text-[16px] text-gray-700 font-bold ">
-                  Total:{" "}
-                  {selectedService === "Dollars"
-                    ? `$${total.toFixed(2)}`
-                    : selectedService === "Naira"
-                      ? `₦${total.toFixed(2)}`
-                      : selectedService === "Ethereum"
-                        ? `Ξ${total.toFixed(2)}`
-                        : `₦${total.toFixed(2)}`}{" "}
-                </p>
+            {items.length > 0 && (
+              <div className="flex items-center gap-[10px] my-[40px]">
+                <button
+                  type="submit"
+                  className="cursor-pointer rounded-full px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline"
+                >
+                  Save
+                </button>
+                <div className="cursor-pointer rounded-full px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline-flex items-start gap-[4px]">
+                  <p>Download</p>
+                  <sup className="font-bold p-[8px] rounded-full bg-white text-black">
+                    PDF
+                  </sup>
+                </div>
               </div>
             )}
+
+            <div className="mt-[20px] ">
+              {selectedService && (
+                <div>
+                  <p className="text-[16px] text-gray-700">
+                    Subtotal:{" "}
+                    {selectedService === "Dollars"
+                      ? `$${subtotal.toFixed(2)}`
+                      : selectedService === "Naira"
+                        ? `₦${subtotal.toFixed(2)}`
+                        : selectedService === "Ethereum"
+                          ? `Ξ${subtotal.toFixed(2)}`
+                          : `₦${subtotal.toFixed(2)}`}{" "}
+                  </p>
+                  <p className="text-[16px] text-gray-700">
+                    Service Charge (15%):{" "}
+                    {selectedService === "Dollars"
+                      ? `$${serviceCharge.toFixed(2)}`
+                      : selectedService === "Naira"
+                        ? `₦${serviceCharge.toFixed(2)}`
+                        : selectedService === "Ethereum"
+                          ? `Ξ${serviceCharge.toFixed(2)}`
+                          : `₦${serviceCharge.toFixed(2)}`}{" "}
+                  </p>
+                  <p className="text-[16px] text-gray-700">
+                    Tax (7.5%):{" "}
+                    {selectedService === "Dollars"
+                      ? `$${tax.toFixed(2)}`
+                      : selectedService === "Naira"
+                        ? `₦${tax.toFixed(2)}`
+                        : selectedService === "Ethereum"
+                          ? `Ξ${tax.toFixed(2)}`
+                          : `₦${tax.toFixed(2)}`}{" "}
+                  </p>
+                  <p className="text-[16px] text-gray-700 font-bold ">
+                    Total:{" "}
+                    {selectedService === "Dollars"
+                      ? `$${total.toFixed(2)}`
+                      : selectedService === "Naira"
+                        ? `₦${total.toFixed(2)}`
+                        : selectedService === "Ethereum"
+                          ? `Ξ${total.toFixed(2)}`
+                          : `₦${total.toFixed(2)}`}{" "}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      )}
 
       <div
         className={`custom-dialog-overlay ${

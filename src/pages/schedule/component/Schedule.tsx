@@ -253,7 +253,7 @@ const Schedule: React.FC<ScheduleProps> = ({
       // setSelectedDate(selectedDate);
       setIsModalVisible(true);
     } else {
-      alert(`You cannot set events in the past`);
+      toast.warning(`You cannot set events in the past`);
     }
   };
 

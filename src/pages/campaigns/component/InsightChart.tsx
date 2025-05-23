@@ -35,6 +35,7 @@ import MomentCardRewards from "../public/component/MomentCardRewards";
 const selectOptions = [
   [
     { value: "nigeria", label: "Nigeria" },
+    { value: "UK", label: "UK" },
     { value: "ghana", label: "Ghana" },
     { value: "kenya", label: "Kenya" },
     { value: "ivoryCoast", label: "Ivory Coast" },
@@ -44,6 +45,7 @@ const selectOptionsAirPlay = [
   [
     { value: "", label: "Countries" },
     { value: "Nigeria", label: "Nigeria" },
+    { value: "UK", label: "UK" },
     { value: "Kenya", label: "Kenya" },
     { value: "SouthAfrica", label: "S.Africa" },
     { value: "IvoryCoast", label: "Ivory Coast" },

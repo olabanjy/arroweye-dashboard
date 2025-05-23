@@ -46,6 +46,18 @@ export const hasAccess = (userProfile: any, allowedRoles: any = []) => {
   return allowedRoles.includes(userProfile?.role);
 };
 
+export const hasAccessExceptVendorManager = (
+  userProfile: any,
+  allowedRoles: any = []
+) => {
+  if (userProfile?.business_type === "Vendor") {
+    // Grant access to all vendors except Managers
+    return userProfile?.role !== "Manager";
+  }
+
+  return allowedRoles.includes(userProfile?.role);
+};
+
 export const extractErrorMessage = (errorData: any): string => {
   // Case 1: String error
   if (typeof errorData === "string") {

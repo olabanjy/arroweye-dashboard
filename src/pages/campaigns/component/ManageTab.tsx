@@ -8,18 +8,7 @@ const ProjectTab = () => {
 
   return (
     <div className=" ">
-      <div className="flex gap-[10px] items-center mb-4 lg:ml-[20px] ">
-        <button
-          className={`px-[16px] py-[4px] rounded-full text-[18px]  ${
-            activeTab === "Manage"
-              ? "bg-[#e6ff99] text-black font-[500]"
-              : " font-[400]"
-          }`}
-          onClick={() => setActiveTab("Manage")}
-        >
-          Manage
-        </button>
-      </div>
+      <div className="flex gap-[10px] items-center mb-4 lg:ml-[20px] "></div>
 
       <div>
         {activeTab === "Manage" && (

@@ -95,12 +95,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       if (date && onChange) {
         let finalDate = new Date(date);
 
-        // Only add a day if the value is not already set (initially null)
-        if (!value) {
-          finalDate.setDate(finalDate.getDate() + 1);
-        }
+        // Format manually to avoid timezone conversion issues
+        const year = finalDate.getFullYear();
+        const month = String(finalDate.getMonth() + 1).padStart(2, "0");
+        const day = String(finalDate.getDate()).padStart(2, "0");
+        const hours = String(finalDate.getHours()).padStart(2, "0");
+        const minutes = String(finalDate.getMinutes()).padStart(2, "0");
 
-        const formattedDate = finalDate.toISOString().slice(0, 16);
+        const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
 
         const syntheticEvent = {
           target: {

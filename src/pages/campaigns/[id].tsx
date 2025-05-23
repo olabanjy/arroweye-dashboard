@@ -720,7 +720,6 @@ const ProjectDetails = () => {
               }`}
             >
               <Dialog
-                header="Enter Full Name"
                 visible={nameDialogVisible}
                 onHide={hideNameDialog}
                 breakpoints={{ "960px": "75vw", "640px": "100vw" }}
@@ -890,8 +889,6 @@ const ProjectDetails = () => {
                       { value: "Manager", label: "Manager" },
                       { value: "Supervisor", label: "Supervisor" },
                       { value: "Agent", label: "Agent" },
-                      { value: "Vendor", label: "Vendor" },
-                      { value: "SubVendor", label: "SubVendor" },
                     ]}
                   />
                 </div>
