@@ -7,8 +7,10 @@ import SecurityNotification from "./security/SecurityNotification";
 import AssetsNotification from "./assets/AssetsNotification";
 import PaymentsNotification from "./payments/PaymentsNotification";
 import { getLoggedInUser } from "@/services/api";
+import { useRouter } from "next/router";
 
 const TopNav: FC = () => {
+  const router = useRouter();
   const [notifications, setNotifications] = useState<any>({
     campaigns: [],
     milestones: [],
@@ -262,7 +264,10 @@ const TopNav: FC = () => {
                 </div>
                 {activeMainTab === "drops" && activeInnerTab === "assets" && (
                   <div className="bg-black px-4 py-[4px] rounded text-center mx-4 mb-4">
-                    <button className="text-white font-medium text-[14px] w-full font-IBM">
+                    <button
+                      className="text-white font-medium text-[14px] w-full font-IBM"
+                      onClick={() => router.push("/drops")}
+                    >
                       View All Assets
                     </button>
                   </div>

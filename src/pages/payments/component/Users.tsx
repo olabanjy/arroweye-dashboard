@@ -67,9 +67,7 @@ const Users = () => {
               key={`status-${item.id}`}
               className="flex justify-center gap-2"
             >
-              <div className="p-[16px] text-green-500 rounded-full">
-                Active
-              </div>
+              <div className="p-[16px] text-green-500 rounded-full">Active</div>
             </div>
           ),
         },
@@ -114,21 +112,6 @@ const Users = () => {
                 <p className="text-[#818486]">Role</p>
                 <p className="text-[#5117ec] font-[600]">
                   {selectedUser.staff[0].role || " "}
-                </p>
-              </div>
-              <div>
-                <p className="text-[#818486]">Vendor</p>
-                <p className="text-[#000000] font-[600]">
-                  {selectedUser.staff[0].vendor || ""}
-                </p>
-              </div>
-              <div>
-                <p className="text-[#818486]">Licence/s</p>
-                <p className="text-[#000000] font-[600] flex items-center gap-[5px]">
-                  {selectedUser.staff[0].licenses || 0}{" "}
-                  <span>
-                    <IoIosAddCircle size={20} />
-                  </span>
                 </p>
               </div>
             </div>
