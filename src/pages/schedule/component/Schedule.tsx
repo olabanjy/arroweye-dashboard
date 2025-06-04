@@ -15,6 +15,7 @@ import {
   deleteEvents,
   getBusiness,
   getEvents,
+  RescheduleEvent,
 } from "@/services/api";
 import { ContentItem, EventsItem } from "@/types/contents";
 import { PiCalendarPlus } from "react-icons/pi";
@@ -198,6 +199,23 @@ const Schedule: React.FC<ScheduleProps> = ({
     });
   };
 
+  const rescheduleEvent = () => {
+    const payload = {
+      event_id: formData.id,
+      reason: rescheduleReason,
+      start_dte: formData.start_dte,
+      end_dte: formData.end_dte,
+    };
+
+    RescheduleEvent(payload)
+      .then((response) => {
+        console.log(response);
+        setRescheduleDialog(false);
+        setIsModalVisible(false);
+      })
+      .catch((err) => console.log(err));
+  };
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [viewOnly, setViewOnly] = useState(false);
   const [filter, setisFilter] = useState(false);
@@ -219,6 +237,8 @@ const Schedule: React.FC<ScheduleProps> = ({
     end_dte: "",
   });
   const [deleteDialog, setDeleteDialog] = useState(false);
+  const [rescheduleDialog, setRescheduleDialog] = useState(false);
+  const [rescheduleReason, setRescheduleReason] = useState("");
   const [scheduleIdToBeDeleted, setScheduleIdToBeDeleted] = useState<any>("");
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -724,6 +744,14 @@ const Schedule: React.FC<ScheduleProps> = ({
                       Share
                     </p>
                   )}
+                  {viewOnly && (
+                    <p
+                      className=" text-[14px] cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
+                      onClick={() => setRescheduleDialog(true)}
+                    >
+                      Reschedule
+                    </p>
+                  )}
                 </div>
                 {viewOnly === true && (
                   <button
@@ -804,6 +832,48 @@ const Schedule: React.FC<ScheduleProps> = ({
           </form>
         </Dialog>
       </div>
+      <Dialog
+        header={
+          <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
+            <Tooltip info="Reason for event rescheduling request" />
+            <span>ENTER REASON</span>
+          </div>
+        }
+        visible={rescheduleDialog !== false}
+        onHide={() => setRescheduleDialog(false)}
+        breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+        style={{ width: "25vw" }}
+        className="custom-dialog-overlay"
+        headerClassName=" tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400]"
+      >
+        <div className="max-w-[400px] w-full">
+          <Input
+            type="text"
+            name="rescheduleReason"
+            value={rescheduleReason}
+            onChange={(e) => {
+              console.log("Value", e.target.value);
+              setRescheduleReason(e.target.value);
+            }}
+            placeholder="Enter Reason"
+            error={!rescheduleReason ? "Kindly Enter a reason" : ""}
+          />
+        </div>
+
+        <div className="flex gap-5 items-center mt-5">
+          <Button
+            label="Cancel"
+            className="rounded-full"
+            onClick={() => setRescheduleDialog(false)}
+          />
+          <Button
+            disabled={deleteLoading}
+            label="Submit"
+            className=" text-[14px] cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
+            onClick={() => rescheduleEvent()}
+          />
+        </div>
+      </Dialog>
       <Dialog
         header={
           <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">

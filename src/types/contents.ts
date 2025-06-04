@@ -90,6 +90,7 @@ export interface ContentItem {
   total?: number;
   status?: string;
   watchers?: any;
+  notifications?: any;
 }
 
 export interface EventsItem {

@@ -19,16 +19,22 @@ const axiosInstance = axios.create({
 
 console.log("Base URL:", process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN);
 
+// REMOVE THE FIRST INTERCEPTOR - KEEP ONLY THIS ONE
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const state: RootState = store.getState();
-    const content: any = ls.get("Profile", { decrypt: true });
-    const token = content?.access;
+    if (!config.headers["skipAuth"]) {
+      const state: RootState = store.getState();
+      const content: any = ls.get("Profile", { decrypt: true });
+      const token = content?.access;
 
-    if (token) {
-      config.headers = new AxiosHeaders(config.headers);
-      config.headers.set("Authorization", `Bearer ${token}`);
+      if (token) {
+        config.headers = new AxiosHeaders(config.headers);
+        config.headers.set("Authorization", `Bearer ${token}`);
+      }
     }
+
+    delete config.headers["skipAuth"];
+
     return config;
   },
   (error) => {
@@ -66,12 +72,14 @@ const apiRequest = async <T>({
   params = {},
   requireToken = true,
   headers = {},
-  skipErrorHandling = false, // Add a flag to skip automatic error handling
-  loadingToastId = null, // Optional ID for a loading toast to update on error
+  skipErrorHandling = false,
+  loadingToastId = null,
 }: ApiRequestParams): Promise<T> => {
   try {
+    const requestHeaders = { ...axiosInstance.defaults.headers, ...headers };
+
     if (!requireToken) {
-      delete axiosInstance.defaults.headers.common["Authorization"];
+      requestHeaders["skipAuth"] = "true";
     }
 
     const response: AxiosResponse<T> = await axiosInstance({
@@ -79,7 +87,7 @@ const apiRequest = async <T>({
       url,
       data,
       params,
-      headers: { ...axiosInstance.defaults.headers, ...headers },
+      headers: requestHeaders,
     } as AxiosRequestConfig);
 
     return response.data;

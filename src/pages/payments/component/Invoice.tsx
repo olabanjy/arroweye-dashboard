@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import Table from "./Table";
 import { BsTrash } from "react-icons/bs";
 import { TbCurrencyDollar } from "react-icons/tb";
-import { getInvoice } from "@/services/api";
+import { getInvoice, initializePayment } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 const Invoice = ({ amountFilter, statusFilter }: any) => {
   const headers = [
@@ -47,6 +48,10 @@ const Invoice = ({ amountFilter, statusFilter }: any) => {
     null
   );
 
+  const [email, setEmail] = useState("");
+  const [invoiceId, setInvoiceId] = useState("");
+  const [reference, setReference] = useState("");
+
   const getCurrencySymbol = (currency: string) => {
     switch (currency) {
       case "Dollars":
@@ -62,6 +67,7 @@ const Invoice = ({ amountFilter, statusFilter }: any) => {
 
   useEffect(() => {
     getInvoice().then((fetchedContent) => {
+      console.log("fetchedContent", fetchedContent);
       setContent(fetchedContent);
     });
   }, []);
@@ -94,18 +100,70 @@ const Invoice = ({ amountFilter, statusFilter }: any) => {
     setFilteredContent(result);
   }, [content, amountFilter, statusFilter]);
 
-  const toggleStatus = (id: unknown) => {
-    const updateContent = (prevContent: ContentItem[] | null) =>
-      prevContent?.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              status: item.status === "Unpaid" ? "Paid" : "Unpaid",
-            }
-          : item
-      ) || [];
+  const generateInvoiceReference = () => {
+    const timestamp = Date.now();
+    const randomSuffix = Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase();
+    return `INV-${timestamp}-${randomSuffix}`;
+  };
 
-    setContent((prevContent) => updateContent(prevContent));
+  const openPaystackPopup = (authorizationUrl: string) => {
+    const popup = window.open(
+      authorizationUrl,
+      "paystack-payment",
+      "width=500,height=600,scrollbars=yes,resizable=yes,location=yes"
+    );
+
+    if (!popup || popup.closed || typeof popup.closed === "undefined") {
+      toast.warning(
+        "Popup blocked! Please allow popups for this site and try again."
+      );
+      return;
+    }
+
+    const checkClosed = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(checkClosed);
+      }
+    }, 1000);
+
+    setTimeout(() => {
+      if (!popup.closed) {
+        popup.close();
+        clearInterval(checkClosed);
+      }
+    }, 900000);
+  };
+
+  const toggleStatus = (item: any) => {
+    const paymentToast = toast.loading("Initializing payment...");
+
+    const invoiceReference = generateInvoiceReference();
+    const payload = {
+      email: item?.project?.subvendor?.owner_email,
+      reference: invoiceReference,
+      invoice_id: item?.id,
+    };
+    initializePayment(payload)
+      .then((response) => {
+        console.log(response);
+        openPaystackPopup(response.authorization_url);
+        toast.update(paymentToast, {
+          render: "Payment generated",
+          isLoading: false,
+          type: "success",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.update(paymentToast, {
+          render: "Error occured",
+          isLoading: false,
+          type: "error",
+        });
+      });
   };
 
   const rows = (filteredContent || [])
@@ -150,7 +208,7 @@ const Invoice = ({ amountFilter, statusFilter }: any) => {
         {
           content: (
             <div
-              onClick={() => item.id && toggleStatus(item.id)}
+              // onClick={() => item.id && toggleStatus(item.id)}
               className={`cursor-pointer text-center ${item.status !== "Unpaid" && "text-[#000000]"}`}
             >
               {item.status}
@@ -166,14 +224,18 @@ const Invoice = ({ amountFilter, statusFilter }: any) => {
             >
               {item.status === "Unpaid" ? (
                 <div
-                  onClick={() => item.id && toggleStatus(item.id)}
+                  onClick={() => {
+                    setInvoiceId(item?.id);
+                    setEmail(item?.project?.subvendor?.owner_email);
+                    item.id && toggleStatus(item);
+                  }}
                   className="p-[12px]  border border-[#2ea879] bg-[#ffffff] text-[#2ea879] rounded-full cursor-pointer"
                 >
                   <TbCurrencyDollar size={16} />
                 </div>
               ) : (
                 <div
-                  onClick={() => item.id && toggleStatus(item.id)}
+                  // onClick={() => item.id && toggleStatus(item.id)}
                   className="p-[16px] text-[#000000] cursor-pointer"
                 >
                   <BsTrash size={16} />
