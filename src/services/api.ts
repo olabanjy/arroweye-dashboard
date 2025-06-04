@@ -289,6 +289,33 @@ export const CreateEvent = async (payload: unknown): Promise<void> => {
   }
 };
 
+export const RescheduleEvent = async (payload: unknown): Promise<void> => {
+  const createToast = toast.loading("rescheduling event...");
+  try {
+    const { data: response } = await apiRequest<
+      ApiRequestResponse<ApiResponse>
+    >({
+      method: "POST",
+      url: `/api/v1/projects/schedule/events/reschedule/`,
+      data: payload,
+      requireToken: true,
+      skipErrorHandling: true,
+      loadingToastId: createToast,
+    });
+
+    console.log(response);
+    toast.update(createToast, {
+      render:
+        "Event Reschedule Request Successful, go to Payments page to complete",
+      type: "info",
+      isLoading: false,
+      autoClose: 5000,
+    });
+  } catch (error: unknown) {
+    return;
+  }
+};
+
 export const ClaimReward = async (payload: unknown): Promise<void> => {
   const claimRewardToast = toast.loading("claiming reward...");
   try {
@@ -1128,6 +1155,21 @@ export const shareProject = async (
 
     console.log(response);
     toast.success("Action successful!");
+  } catch (error: unknown) {}
+};
+
+export const initializePayment = async (payload: unknown): Promise<any> => {
+  try {
+    const { data: response } = await apiRequest<
+      ApiRequestResponse<ApiResponse>
+    >({
+      method: "POST",
+      url: `/api/v1/payments/initialize/`,
+      data: payload,
+      requireToken: true,
+    });
+
+    return response;
   } catch (error: unknown) {}
 };
 

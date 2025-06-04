@@ -7,6 +7,10 @@ import { getSingleProject } from "@/services/api";
 import { useRouter } from "next/router";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "react-toastify";
+import FirstPlayNotificationCard from "@/pages/dashboard/component/FirstPlayNotificationCard";
+import SecurityNotificationCard from "@/pages/dashboard/component/SecurityNotificationCard";
+import PaymentMomentNotificationCard from "@/pages/dashboard/component/payments/PaymentMomentNotificationCard";
+import MilestoneNotificationCard from "@/pages/dashboard/component/MilestoneNotificationCard";
 
 const calculateTimeAgo = (dateString: string): string => {
   const createdDate = new Date(dateString);
@@ -31,10 +35,14 @@ const DropsList = () => {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [dropzoneData, setDropzoneData] = useState<ContentItem | null>(null);
   const [pin, setPin] = useState("");
+  const [activeMainTab, setActiveMainTab] = useState("drops");
 
   const { query } = useRouter();
   const { id } = query;
 
+  const handleMainTabClick = (tab: string) => {
+    setActiveMainTab(tab);
+  };
   const handleDownload = (link: string) => {
     window.open(link, "_blank");
   };
@@ -45,6 +53,7 @@ const DropsList = () => {
   };
 
   const handleUnlock = () => {};
+
   useEffect(() => {
     if (!!id) {
       getSingleProject(Number(id)).then((fetchedContent: any) => {
@@ -60,19 +69,68 @@ const DropsList = () => {
     return formatDistanceToNow(date, { addSuffix: true });
   };
 
-  console.log("DROPZONES DATA ARE HERE", dropzoneData);
+  const componentMap: any = {
+    Assets: AssetsNotificationCard,
+    Campaigns: FirstPlayNotificationCard,
+    Security: SecurityNotificationCard,
+    Payments: PaymentMomentNotificationCard,
+    Milestone: MilestoneNotificationCard,
+  };
 
   return (
     <div className="mt-[50px] grid lg:grid-cols-2 items-start gap-[20px]">
       {/* Left Panel */}
       <div className="border border-[#f4f0f0] max-h-[800px] h-full">
         <div className="border-b border-[#f4f0f0]">
-          <p className="border px-[16px] py-[8px] bg-[#f4faff] text-[16px] text-[#212529] font-[900]">
-            Drops
-          </p>
+          <div className="flex items-center gap-[20px] text-[16px] p-4 bg-[#f4faff]">
+            <p
+              className={`cursor-pointer ${
+                activeMainTab === "updates"
+                  ? "text-[#000000] font-[500]"
+                  : "text-[#767676] font-[400]"
+              }`}
+              onClick={() => handleMainTabClick("updates")}
+            >
+              Updates
+            </p>
+            <p
+              className={`cursor-pointer ${
+                activeMainTab === "drops"
+                  ? "text-[#000000] font-[500]"
+                  : "text-[#767676] font-[400]"
+              }`}
+              onClick={() => handleMainTabClick("drops")}
+            >
+              Drops
+            </p>
+          </div>
         </div>
         <div className="h-[600px] overflow-y-auto scrollbar-hide">
-          {dropzoneData?.dropzone?.length ? (
+          {activeMainTab === "updates" &&
+          dropzoneData?.notifications?.length ? (
+            dropzoneData.notifications.map((drop: any, index: number) => {
+              const Component =
+                componentMap[drop.type] || AssetsNotificationCard;
+
+              return (
+                <div key={index} className="p-[20px]">
+                  <Component
+                    timeAgo={formatRelativeDate(drop.created)}
+                    message={drop.content}
+                    onDownload={() => handleDownload(drop.link)}
+                    onShare={() => handleShare(drop.link)}
+                    actions={drop.actions}
+                    iconClass={drop.icon}
+                  />
+                </div>
+              );
+            })
+          ) : (
+            <p className="text-center text-gray-500 p-[20px]">
+              No drops available.
+            </p>
+          )}
+          {activeMainTab === "drops" && dropzoneData?.dropzone?.length ? (
             dropzoneData.dropzone.map((drop: any, index) => (
               <div key={index} className="p-[20px]">
                 <AssetsNotificationCard
