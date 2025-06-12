@@ -19,13 +19,13 @@ import {
 } from "@/services/api";
 import { ContentItem, EventsItem } from "@/types/contents";
 import { PiCalendarPlus } from "react-icons/pi";
-import { IoFilter } from "react-icons/io5";
 import { useRouter } from "next/router";
 import AutocompleteInput from "./Autocomplete";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/pages/drops";
 import { createEvent, EventAttributes } from "ics";
+import { cn, hasAccessNoVendor } from "@/lib/utils";
 
 interface FormErrors {
   title?: string;
@@ -117,6 +117,7 @@ const Schedule: React.FC<ScheduleProps> = ({
     subvendor: item.subvendor,
     location: item.location,
     project: item.project,
+    code: item.code,
   }));
 
   const downloadFormDataAsICS = (
@@ -219,7 +220,7 @@ const Schedule: React.FC<ScheduleProps> = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [viewOnly, setViewOnly] = useState(false);
   const [filter, setisFilter] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<any>({
     id: "",
     title: "",
     vendor_id: "",
@@ -236,6 +237,9 @@ const Schedule: React.FC<ScheduleProps> = ({
     start_dte: "",
     end_dte: "",
   });
+  const [projectPin, setProjectPin] = useState("");
+  const [pinEntered, setPinEntered] = useState("");
+  const [pinError, setPinError] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [rescheduleDialog, setRescheduleDialog] = useState(false);
   const [rescheduleReason, setRescheduleReason] = useState("");
@@ -261,10 +265,10 @@ const Schedule: React.FC<ScheduleProps> = ({
   const handleDateClick = (info: DateClickArg) => {
     if (!isDateClickEnabled) return;
 
-    if (userLoggedInProfile?.role === "Manager") {
-      console.log("met condition");
-      return;
-    }
+    // if (userLoggedInProfile?.role === "Manager") {
+    //   console.log("met condition");
+    //   return;
+    // }
 
     const selectedDate = info.dateStr;
     const currentDate = new Date().toISOString().split("T")[0];
@@ -301,7 +305,7 @@ const Schedule: React.FC<ScheduleProps> = ({
 
   const handleFormChange = (e: any) => {
     const { name, value } = e.target;
-    setFormData((prevData) => {
+    setFormData((prevData: any) => {
       const newData = { ...prevData, [name]: value };
 
       // Clear end_dte error if start_dte is changed
@@ -338,7 +342,7 @@ const Schedule: React.FC<ScheduleProps> = ({
 
   const handleSelectChange = ({ name, value }: any) => {
     console.log(`Updating select ${name} with value:`, value); // Debug log
-    setFormData((prevData) => ({
+    setFormData((prevData: any) => ({
       ...prevData,
       [name]: value,
     }));
@@ -417,7 +421,11 @@ const Schedule: React.FC<ScheduleProps> = ({
 
         console.log("Submitting form data:", updatedFormData);
 
-        await CreateEvent(updatedFormData);
+        await CreateEvent(updatedFormData).then(() =>
+          getEvents().then((fetchedNewEvents: any) => {
+            setEventItem(fetchedNewEvents || []);
+          })
+        );
 
         const newEvent = {
           id: (content.length + 1).toString(),
@@ -499,7 +507,7 @@ const Schedule: React.FC<ScheduleProps> = ({
               eventClick={(info: any) => {
                 // alert(`Event: ${info.event.title}`);
                 setFormErrors({});
-                console.log("INFO", info.event.id.split("-")[0]);
+                setProjectPin(info?.event?._def?.extendedProps?.code);
                 setFormData({
                   id: info?.event?.id?.split("-")[0],
                   title: info.event.title,
@@ -535,9 +543,8 @@ const Schedule: React.FC<ScheduleProps> = ({
               }}
               events={events}
               eventClick={(info: any) => {
-                // alert(`Event: ${info.event.title}`);
                 setFormErrors({});
-                console.log("INFO", info.event.id.split("-")[0]);
+                setProjectPin(info?.event?._def?.extendedProps?.code);
                 setFormData({
                   id: info?.event?.id?.split("-")[0],
                   title: info.event.title,
@@ -744,14 +751,15 @@ const Schedule: React.FC<ScheduleProps> = ({
                       Share
                     </p>
                   )}
-                  {viewOnly && (
-                    <p
-                      className=" text-[14px] cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
-                      onClick={() => setRescheduleDialog(true)}
-                    >
-                      Reschedule
-                    </p>
-                  )}
+                  {viewOnly &&
+                    hasAccessNoVendor(userLoggedInProfile, ["Manager"]) && (
+                      <p
+                        className=" text-[14px] cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
+                        onClick={() => setRescheduleDialog(true)}
+                      >
+                        Reschedule
+                      </p>
+                    )}
                 </div>
                 {viewOnly === true && (
                   <button
@@ -852,7 +860,6 @@ const Schedule: React.FC<ScheduleProps> = ({
             name="rescheduleReason"
             value={rescheduleReason}
             onChange={(e) => {
-              console.log("Value", e.target.value);
               setRescheduleReason(e.target.value);
             }}
             placeholder="Enter Reason"
@@ -893,6 +900,32 @@ const Schedule: React.FC<ScheduleProps> = ({
           refundable.
         </p>
 
+        <input
+          type="password"
+          name="projectPin"
+          autoComplete="new-password"
+          className={cn(
+            "mt-2 block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-[8px]",
+            pinError && "border-red-500 focus:ring-red-500"
+          )}
+          placeholder={"Enter Pin"}
+          value={pinEntered}
+          onChange={(e) => {
+            const newPin = e.target.value;
+            setPinEntered(newPin);
+            if (newPin.length >= 6) {
+              setPinError(newPin !== projectPin);
+            } else {
+              setPinError(false);
+            }
+          }}
+        />
+        {pinError && (
+          <span className="text-red-500 text-sm mt-1">
+            Wrong password entered
+          </span>
+        )}
+
         <div className="flex gap-5 items-center mt-5">
           <Button
             label="Cancel"
@@ -900,7 +933,7 @@ const Schedule: React.FC<ScheduleProps> = ({
             onClick={() => setDeleteDialog(false)}
           />
           <Button
-            disabled={deleteLoading}
+            disabled={pinEntered.length < 6 || pinError || deleteLoading}
             label="Delete Event"
             className={`bg-red-600 ${deleteLoading ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => handleDelete(Number(formData.id))}

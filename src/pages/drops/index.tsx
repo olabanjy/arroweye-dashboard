@@ -492,7 +492,7 @@ const AssetsLibrary = () => {
             header={
               <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
                 <Tooltip info="Delete the dropzone selected" />
-                <span>DELETE DROPZONE</span>
+                <span>DELETE DROP</span>
               </div>
             }
             visible={deleteDialog !== false}

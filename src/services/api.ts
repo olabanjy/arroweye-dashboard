@@ -283,7 +283,6 @@ export const CreateEvent = async (payload: unknown): Promise<void> => {
       isLoading: false,
       autoClose: 3000,
     });
-    window.location.reload();
   } catch (error: unknown) {
     return;
   }
@@ -306,8 +305,8 @@ export const RescheduleEvent = async (payload: unknown): Promise<void> => {
     console.log(response);
     toast.update(createToast, {
       render:
-        "Event Reschedule Request Successful, go to Payments page to complete",
-      type: "info",
+        "Event Reschedule Request Successful, go to Invoice page to complete",
+      type: "success",
       isLoading: false,
       autoClose: 5000,
     });

@@ -20,6 +20,7 @@ const InvoicesTab = () => {
   const [filter, setFilter] = useState(false);
   const [amountFilter, setAmountFilter] = useState<any>("");
   const [statusFilter, setStatusFilter] = useState<any>("");
+  const [searchText, setSearchText] = useState<any>("");
   const [visible, setVisible] = useState(false);
   const [detailsModal, setDetailsModal] = useState(false);
 
@@ -159,6 +160,8 @@ const InvoicesTab = () => {
                 <Input
                   type="text"
                   placeholder="Search by title, label and artist..."
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
                   className="w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
                 />
               </div>
@@ -223,7 +226,11 @@ const InvoicesTab = () => {
 
       <div>
         {activeTab === "Invoice" && (
-          <Invoice amountFilter={amountFilter} statusFilter={statusFilter} />
+          <Invoice
+            amountFilter={amountFilter}
+            statusFilter={statusFilter}
+            searchText={searchText}
+          />
         )}
         {activeTab === "Users" && <Users />}
       </div>
