@@ -84,6 +84,7 @@ export interface ContentItem {
     vendor?: { organization_name: string };
     subvendor?: { organization_name: string };
     pin: number;
+    artist_name: string;
   };
   po_code?: string;
   created?: string;

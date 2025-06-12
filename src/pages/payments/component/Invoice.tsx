@@ -7,7 +7,7 @@ import { ContentItem } from "@/types/contents";
 import Link from "next/link";
 import { toast } from "react-toastify";
 
-const Invoice = ({ amountFilter, statusFilter }: any) => {
+const Invoice = ({ amountFilter, statusFilter, searchText }: any) => {
   const headers = [
     <div key="project-header" className=" text-start">
       {" "}
@@ -16,6 +16,10 @@ const Invoice = ({ amountFilter, statusFilter }: any) => {
     <div key="project-PoCode" className=" text-start">
       {" "}
       P.O Code
+    </div>,
+    <div key="project-PoCode" className=" text-start">
+      {" "}
+      Invoice Type
     </div>,
     <div key="project-Label" className=" text-start">
       {" "}
@@ -72,11 +76,32 @@ const Invoice = ({ amountFilter, statusFilter }: any) => {
     });
   }, []);
 
-  // Apply filters whenever content, amountFilter, or statusFilter changes
+  // Apply filters whenever content, amountFilter, statusFilter, or searchText changes
   useEffect(() => {
     if (!content) return;
 
     let result = [...content];
+
+    // Apply search filter if searchText is not empty
+    if (searchText && searchText.trim() !== "") {
+      const searchTerm = searchText.toLowerCase().trim();
+      result = result.filter((item) => {
+        const title = item?.project?.title?.toLowerCase() || "";
+        const label =
+          item?.project?.subvendor?.organization_name?.toLowerCase() || "";
+        const artist =
+          (
+            item?.project?.artist_name ||
+            item?.project?.subvendor?.organization_name
+          )?.toLowerCase() || "";
+
+        return (
+          title.includes(searchTerm) ||
+          label.includes(searchTerm) ||
+          artist.includes(searchTerm)
+        );
+      });
+    }
 
     // Apply status filter if it exists
     if (
@@ -90,15 +115,15 @@ const Invoice = ({ amountFilter, statusFilter }: any) => {
     if (amountFilter) {
       if (amountFilter === "htl") {
         // High to low sorting
-        result.sort((a, b) => (a.total || 0) - (b.total || 0));
+        result.sort((a, b) => (b.total || 0) - (a.total || 0));
       } else if (amountFilter === "lth") {
         // Low to high sorting
-        result.sort((a, b) => (b.total || 0) - (a.total || 0));
+        result.sort((a, b) => (a.total || 0) - (b.total || 0));
       }
     }
 
     setFilteredContent(result);
-  }, [content, amountFilter, statusFilter]);
+  }, [content, amountFilter, statusFilter, searchText]);
 
   const generateInvoiceReference = () => {
     const timestamp = Date.now();
@@ -180,6 +205,7 @@ const Invoice = ({ amountFilter, statusFilter }: any) => {
           className: "bg-[#2ea879] text-white text-center ",
         },
         { content: <div className=" text-start">{item?.po_code} </div> },
+        { content: <div className=" text-start">{item?.invoice_type} </div> },
         {
           content: (
             <div className=" text-start">

@@ -17,7 +17,7 @@ const Invoice = () => {
   useEffect(() => {
     if (!!id) {
       getPaymentInvoice(Number(id)).then((fetchedContent) => {
-        console.log(fetchedContent);
+        console.log("fetchedContent", fetchedContent);
         setContent(fetchedContent);
       });
     }
@@ -171,20 +171,20 @@ const Invoice = () => {
             </div>
           </div>
 
-          {content?.status !== "Unpaid" ? (
+          {content?.status === "Paid" ? (
+            <button
+              onClick={handlePrint}
+              className="print:hidden w-full p-[10px] text-center font-[600] text-[16px] mt-2 rounded-full text-[#ffffff] bg-[#000000] hover:bg-orange-500 transition-all duration-700 ease-in-out transform "
+            >
+              Download Receipt
+            </button>
+          ) : (
             <button
               onClick={handlePrint}
               disabled
               className="print:hidden w-full p-[10px] text-center font-[600] text-[16px] mt-2 rounded-full text-[#ffffff] bg-[#c4c3c3] transition-all duration-700 ease-in-out transform "
             >
               UnPaid
-            </button>
-          ) : (
-            <button
-              onClick={handlePrint}
-              className="print:hidden w-full p-[10px] text-center font-[600] text-[16px] mt-2 rounded-full text-[#ffffff] bg-[#000000] hover:bg-orange-500 transition-all duration-700 ease-in-out transform "
-            >
-              Download Receipt
             </button>
           )}
         </div>

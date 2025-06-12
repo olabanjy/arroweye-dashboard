@@ -45,6 +45,13 @@ export const hasAccess = (userProfile: any, allowedRoles: any = []) => {
 
   return allowedRoles.includes(userProfile?.role);
 };
+export const hasAccessNoVendor = (userProfile: any, allowedRoles: any = []) => {
+  if (userProfile?.business_type === "Vendor") {
+    return false;
+  }
+
+  return allowedRoles.includes(userProfile?.role);
+};
 
 export const hasAccessExceptVendorManager = (
   userProfile: any,
