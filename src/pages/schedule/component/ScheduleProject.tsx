@@ -867,7 +867,7 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
             onClick={() => setRescheduleDialog(false)}
           />
           <Button
-            disabled={deleteLoading}
+            disabled={pinEntered.length < 6 || pinError || deleteLoading}
             label="Submit"
             className=" text-[14px] cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
             onClick={() => rescheduleEvent()}
