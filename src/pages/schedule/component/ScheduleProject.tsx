@@ -204,7 +204,6 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
   const rescheduleEvent = () => {
     const payload = {
       event_id: formData.id,
-      reason: rescheduleReason,
       start_dte: formData.start_dte,
       end_dte: formData.end_dte,
     };
@@ -212,7 +211,6 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
     RescheduleEvent(payload)
       .then((response) => {
         console.log(response);
-        setRescheduleDialog(false);
         setIsModalVisible(false);
       })
       .catch((err) => console.log(err));
@@ -242,8 +240,6 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
   const [pinEntered, setPinEntered] = useState("");
   const [pinError, setPinError] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
-  const [rescheduleDialog, setRescheduleDialog] = useState(false);
-  const [rescheduleReason, setRescheduleReason] = useState("");
   const [scheduleIdToBeDeleted, setScheduleIdToBeDeleted] = useState<any>("");
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -686,7 +682,7 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
                   <Input
                     type="datetime-local"
                     name="start_dte"
-                    disabled={viewOnly === true}
+                    // disabled={viewOnly === true}
                     value={formData.start_dte}
                     onChange={handleFormChange}
                     placeholder="Start Date & Time"
@@ -697,7 +693,7 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
                   <Input
                     type="datetime-local"
                     name="end_dte"
-                    disabled={viewOnly === true}
+                    // disabled={viewOnly === true}
                     value={formData.end_dte}
                     onChange={handleFormChange}
                     placeholder="End Date & Time"
@@ -746,7 +742,7 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
                     hasAccessNoVendor(userLoggedInProfile, ["Manager"]) && (
                       <p
                         className=" text-[14px] cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
-                        onClick={() => setRescheduleDialog(true)}
+                        onClick={() => rescheduleEvent()}
                       >
                         Reschedule
                       </p>
@@ -833,47 +829,7 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
           </form>
         </Dialog>
       </div>
-      <Dialog
-        header={
-          <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
-            <Tooltip info="Reason for event rescheduling request" />
-            <span>ENTER REASON</span>
-          </div>
-        }
-        visible={rescheduleDialog !== false}
-        onHide={() => setRescheduleDialog(false)}
-        breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-        style={{ width: "25vw" }}
-        className="custom-dialog-overlay"
-        headerClassName=" tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400]"
-      >
-        <div className="max-w-[400px] w-full">
-          <Input
-            type="text"
-            name="rescheduleReason"
-            value={rescheduleReason}
-            onChange={(e) => {
-              setRescheduleReason(e.target.value);
-            }}
-            placeholder="Enter Reason"
-            error={!rescheduleReason ? "Kindly Enter a reason" : ""}
-          />
-        </div>
 
-        <div className="flex gap-5 items-center mt-5">
-          <Button
-            label="Cancel"
-            className="rounded-full"
-            onClick={() => setRescheduleDialog(false)}
-          />
-          <Button
-            disabled={pinEntered.length < 6 || pinError || deleteLoading}
-            label="Submit"
-            className=" text-[14px] cursor-pointer px-[20px] py-[8px] bg-[#5300d7] rounded-full text-[#fff] inline-flex"
-            onClick={() => rescheduleEvent()}
-          />
-        </div>
-      </Dialog>
       <Dialog
         header={
           <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">

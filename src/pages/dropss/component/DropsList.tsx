@@ -78,6 +78,7 @@ const DropsList = () => {
               onShare={() => handleShare(drop.link)}
               actions={drop.actions}
               iconClass={drop.icon}
+              read={true}
             />
           </div>
         );
@@ -106,6 +107,7 @@ const DropsList = () => {
               { type: "Share", url: drop.link },
             ]}
             iconClass={drop.icon}
+            read={true}
           />
         </div>
       ));

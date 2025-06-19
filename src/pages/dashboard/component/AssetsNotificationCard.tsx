@@ -11,6 +11,7 @@ interface AssetsNotificationCardProps {
   onShare: () => void;
   actions: any;
   iconClass?: string;
+  read?: boolean;
 }
 
 const AssetsNotificationCard: FC<AssetsNotificationCardProps> = ({
@@ -21,6 +22,7 @@ const AssetsNotificationCard: FC<AssetsNotificationCardProps> = ({
   onShare,
   actions,
   iconClass,
+  read,
 }) => {
   const handleCopyLink = (link: string) => {
     navigator.clipboard.writeText(link).then(() => {
@@ -36,7 +38,9 @@ const AssetsNotificationCard: FC<AssetsNotificationCardProps> = ({
   };
 
   return (
-    <div className="flex items-start gap-[10px] pb-[20px] border-b font-IBM ">
+    <div
+      className={`flex items-start gap-[10px] pb-[20px] border-b ${!!read ? "p-2" : "bg-blue-100 p-2 rounded-[8px]"}`}
+    >
       {!!iconClass ? (
         <div
           className={`w-9 h-9 px-[10px] py-[4px] flex items-center justify-center`}

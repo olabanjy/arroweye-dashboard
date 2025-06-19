@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { FaRegBell } from "react-icons/fa";
-import { IoIosClose } from "react-icons/io";
+import { IoIosClose, IoIosRefresh } from "react-icons/io";
 import CampaignNotifications from "./campaigns/CampaignNotifications";
 import MileStonesNotification from "./milestones/MileStonesNotification";
 import SecurityNotification from "./security/SecurityNotification";
@@ -19,6 +19,7 @@ const TopNav: FC = () => {
     payments: [],
   });
   const [notificationScrolled, setNotificationScrolled] = useState(false);
+  const [notificationLoading, setNotificationLoading] = useState(false);
   const [allNotificationsRead, setAllNotificationsRead] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeMainTab, setActiveMainTab] = useState("updates");
@@ -38,6 +39,7 @@ const TopNav: FC = () => {
   };
 
   useEffect(() => {
+    setNotificationLoading(true);
     getLoggedInUser().then((user) => {
       const groupedNotifications = user.notifications.reduce(
         (acc: any, notification: any) => {
@@ -57,6 +59,7 @@ const TopNav: FC = () => {
       );
 
       setNotifications(groupedNotifications);
+      setNotificationLoading(false);
     });
   }, [notificationScrolled]);
 
@@ -140,6 +143,19 @@ const TopNav: FC = () => {
                       >
                         Drops
                       </p>
+                    </div>{" "}
+                    <div className="flex items-center">
+                      <button
+                        className="text-[#0e3531] text-[16px] w-8 h-8 flex items-center justify-center rounded-full border bg-white"
+                        onClick={() =>
+                          setNotificationScrolled(!notificationScrolled)
+                        }
+                      >
+                        <IoIosRefresh size={16} />
+                      </button>{" "}
+                      {!!notificationLoading && (
+                        <div className="h-4 w-4 animate-spin bg-none border-4 border-t-transparent border-blue-500 rounded-full" />
+                      )}
                     </div>
                     <button
                       className="text-[#0e3531] text-[16px] w-8 h-8 flex items-center justify-center rounded-full border bg-white"
