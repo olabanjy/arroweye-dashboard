@@ -198,6 +198,7 @@ const AssetsNotification: React.FC<any> = ({
                   onShare={handleShare}
                   actions={item.actions}
                   iconClass={item.icon}
+                  read={item.read}
                 />
               </div>
             );

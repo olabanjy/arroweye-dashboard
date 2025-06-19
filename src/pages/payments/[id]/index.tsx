@@ -167,7 +167,7 @@ const Invoice = () => {
             </div>
             <div className="flex justify-between text-[16px]">
               <p className=" font-[600]">Payment Method </p>
-              <p className=" font-[400]">Bank Transfer</p>
+              <p className=" font-[400]">Paystack</p>
             </div>
           </div>
 
