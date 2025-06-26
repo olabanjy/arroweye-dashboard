@@ -202,18 +202,32 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
   };
 
   const rescheduleEvent = () => {
-    const payload = {
-      event_id: formData.id,
-      start_dte: formData.start_dte,
-      end_dte: formData.end_dte,
+    const newErrors = {
+      code: "",
     };
 
-    RescheduleEvent(payload)
-      .then((response) => {
-        console.log(response);
-        setIsModalVisible(false);
-      })
-      .catch((err) => console.log(err));
+    if (!formData.code) {
+      newErrors.code = "Product Code is required.";
+    }
+
+    setFormErrors(newErrors);
+    const hasErrors = Object.values(newErrors).some((error) => error !== "");
+
+    if (!hasErrors) {
+      const payload = {
+        event_id: formData.id,
+        start_dte: formData.start_dte,
+        end_dte: formData.end_dte,
+        code: formData.code,
+      };
+
+      RescheduleEvent(payload)
+        .then((response) => {
+          console.log(response);
+          setIsModalVisible(false);
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -242,6 +256,131 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [scheduleIdToBeDeleted, setScheduleIdToBeDeleted] = useState<any>("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const findLabelByValue = (
+    options: { value: number; label: string }[],
+    value: number
+  ) => {
+    const found = options.find((option) => option.value === value);
+    return found ? found.label : value.toString();
+  };
+
+  const eventTitles: any = {
+    "Interview with Artist": {
+      type: "interview",
+      location: "Studio A",
+      link: "https://example.com/interview-call-sheet",
+    },
+    "Video Shoot": {
+      type: "shoot",
+      location: "Studio B",
+      link: "https://example.com/video-shoot-call-sheet",
+    },
+    "Live Performance": {
+      type: "performance",
+      location: "Venue X",
+      link: "https://example.com/live-performance-call-sheet",
+    },
+    "Rehearsal Session": {
+      type: "rehearsal",
+      location: "Studio C",
+      link: "https://example.com/rehearsal-call-sheet",
+    },
+    "Other Event": {
+      type: "other",
+      location: "Location Y",
+      link: "https://example.com/other-call-sheet",
+    },
+  };
+
+  const getEventDetails = () => {
+    const title = formData.title.trim();
+    const start = formData.start_dte;
+    const end = formData.end_dte;
+    const location = formData.location.trim();
+    const vendor = formData.vendor_id
+      ? findLabelByValue(vendorOptions, formData.vendor_id)
+      : "";
+    const subvendor = formData.subvendor_id
+      ? findLabelByValue(subvendorOptions, formData.subvendor_id)
+      : "";
+
+    if (!title || !start || !end || !location || !vendor || !subvendor) {
+      toast.error("Please fill in all fields");
+      return null;
+    }
+
+    const eventDetails = eventTitles[title] || { link: null };
+    return {
+      title,
+      start,
+      end,
+      extendedProps: {
+        location,
+        vendor,
+        subvendor,
+        callSheetLink: eventDetails.link,
+      },
+    };
+  };
+
+  const formatDateForICS = (dateString: any) => {
+    const date = new Date(dateString);
+    return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  };
+
+  function formatDetails(eventDetails: any, includeICSLine: any) {
+    const currentDate = new Date().toLocaleString();
+    const startDate = new Date(eventDetails.start).toLocaleString(); // Only convert once
+
+    return (
+      `Hello,\n\n` +
+      `Find the call sheet for this event here: ${eventDetails.extendedProps.callSheetLink || "N/A"}\n\n` +
+      `Title: ${eventDetails.title}\n` +
+      `Date: ${startDate}\n` +
+      `Location: ${eventDetails.extendedProps.location}\n` +
+      `Vendor: ${eventDetails.extendedProps.vendor}\n` +
+      `Subvendor: ${eventDetails.extendedProps.subvendor}\n\n` +
+      `*********\n\n` +
+      `For more information on best practices for schedules visit pinegingr.com/faqs.\n` +
+      `Please be punctual, rescheduling fees apply for certain event types and timelines. For further inquiries, contact hi@pinegingr.com.\n\n` +
+      `*********\n\n` +
+      `Auto-generated on arroweye.pro on ${currentDate}.\n` +
+      (includeICSLine ? `(Kindly attach the .ICS calendar invite)` : "")
+    ); // Conditionally add ICS line
+  }
+
+  const exportICS = () => {
+    const eventDetails = getEventDetails();
+    if (!eventDetails) return;
+
+    const startDate = formatDateForICS(eventDetails.start);
+    const endDate = formatDateForICS(eventDetails.end);
+    const description = formatDetails(eventDetails, false).replace(
+      /\n/g,
+      "\\n"
+    );
+
+    const icsData = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "BEGIN:VEVENT",
+      `SUMMARY:${eventDetails.title}`,
+      `DTSTART:${startDate}`,
+      `DTEND:${endDate}`,
+      `LOCATION:${eventDetails.extendedProps.location}`,
+      `DESCRIPTION:${description}`,
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\n");
+
+    const blob = new Blob([icsData], { type: "text/calendar" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "event.ics";
+    toast.success("Calender invite is downloaded");
+    link.click();
+  };
 
   const handleDelete = (eventID: number) => {
     setDeleteLoading(true);
@@ -728,13 +867,14 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
                     )}
                   <p
                     className="text-[14px] px-[20px] py-[8px] bg-[#000] rounded-full text-[#fff] inline-flex cursor-pointer"
-                    onClick={() =>
-                      downloadFormDataAsICS(
-                        formData,
-                        vendorOptions,
-                        subvendorOptions
-                      )
-                    }
+                    // onClick={() =>
+                    //   downloadFormDataAsICS(
+                    //     formData,
+                    //     vendorOptions,
+                    //     subvendorOptions
+                    //   )
+                    // }
+                    onClick={() => exportICS()}
                   >
                     Share
                   </p>

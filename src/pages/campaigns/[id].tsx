@@ -470,7 +470,8 @@ const ProjectDetails = () => {
       "Title",
       "Total Audience Growth",
       "Total Investment",
-      "Total Revenue",
+      "Total Revenue Min",
+      "Total Revenue Max",
     ];
 
     // Extract required fields from content
@@ -478,9 +479,10 @@ const ProjectDetails = () => {
       content.code ?? "",
       content.description ? content.description.replace(/,/g, ";") : "",
       content.title ? content.title.replace(/,/g, ";") : "",
-      content.total_audience_growth ?? 0,
+      content.total_audience_growth?.value ?? 0,
       content.total_investment ?? 0,
-      content.total_revenue ?? 0,
+      content.total_revenue?.mininum ?? 0,
+      content.total_revenue?.maximum ?? 0,
     ].join(",");
 
     // Create CSV content (single row)

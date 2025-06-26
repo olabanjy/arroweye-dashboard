@@ -397,6 +397,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
         (item: any) => item.embed_link
       );
       const momentReportUrl = newMomentMedia.map((item: any) => item.report);
+      console.log("MOMENT MEDIA", momentReportUrl);
       const newRecapMedia = media.filter((item: any) => item?.type === "Recap");
       const embedRecapLinks = newRecapMedia.map((item: any) => item.embed_link);
       const dspCoversWithFiles = media.filter(
