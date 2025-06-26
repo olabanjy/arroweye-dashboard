@@ -291,9 +291,7 @@ export const CreateEvent = async (payload: unknown): Promise<void> => {
 export const RescheduleEvent = async (payload: unknown): Promise<void> => {
   const createToast = toast.loading("rescheduling event...");
   try {
-    const { data: response } = await apiRequest<
-      ApiRequestResponse<ApiResponse>
-    >({
+    const response: any = await apiRequest<ApiRequestResponse<ApiResponse>>({
       method: "POST",
       url: `/api/v1/projects/schedule/events/reschedule/`,
       data: payload,
@@ -302,10 +300,11 @@ export const RescheduleEvent = async (payload: unknown): Promise<void> => {
       loadingToastId: createToast,
     });
 
-    console.log(response);
+    console.log("RESCHEDULE RESCHEDULE", response);
     toast.update(createToast, {
-      render:
-        "Event Reschedule Request Successful, go to Invoice page to complete",
+      render: !!response?.invoice_created
+        ? "Event Reschedule Request Successful, go to Invoice page to complete"
+        : "Event Reschedule Request Successful",
       type: "success",
       isLoading: false,
       autoClose: 5000,

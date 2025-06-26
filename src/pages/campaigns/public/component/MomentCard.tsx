@@ -208,6 +208,13 @@ const MomentCard: React.FC<MomentCardProps> = ({
                 ? "border border-black text-black hover:bg-black hover:text-white"
                 : "hover:bg-orange-500 bg-black text-white"
             }`}
+            onClick={
+              () =>
+                window.open(
+                  `https://studio-api.arroweye.pro${reportUrls[currentVideoIndex]}`,
+                  "_blank"
+                )
+            }
           >
             {radioButtonText}
           </button>
