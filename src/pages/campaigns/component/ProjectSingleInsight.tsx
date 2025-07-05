@@ -64,7 +64,11 @@ const ProjectSingleInsight = () => {
         <div className="w-full">
           <InsightCard
             title="AUDIENCE GROWTH"
-            value={`${formatNumber(content?.total_audience_growth?.value || 0)}`}
+            value={
+              content?.total_audience_growth?.value
+                ? `+ ${formatNumber(content?.total_audience_growth?.value)}`
+                : "0"
+            }
             extraClass="h-[220px]"
             percentageChange={content?.total_audience_growth?.percentage}
             percentageColor={
