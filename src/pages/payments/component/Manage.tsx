@@ -43,7 +43,7 @@ interface ProjectFormData {
   vendor_id: string | number;
   subvendor_id: string | number;
   artist_name: string;
-  discount: string;
+  discount: number;
   po_code: string;
   currency: string | number;
   services: { service_id: number; quantity: number; cost: number | string }[];
@@ -223,7 +223,7 @@ const Manage = () => {
     vendor_id: "",
     subvendor_id: "",
     artist_name: "",
-    discount: "",
+    discount: 0,
     po_code: "",
     currency: "",
     services: [
@@ -291,8 +291,8 @@ const Manage = () => {
     if (!projectFormData.artist_name) {
       newErrors.artist_name = "Please enter an Artist Name.";
     }
-    if (!projectFormData.discount) {
-      newErrors.discount = "Please enter a Discount.";
+    if (projectFormData.discount < 0 || projectFormData.discount > 100) {
+      newErrors.discount = "Please enter a Discount value between 0 and 100%.";
     }
     if (!projectFormData.po_code) {
       newErrors.po_code = "Please enter a PO Code.";
@@ -500,11 +500,11 @@ const Manage = () => {
 
               <div className="w-full">
                 <Input
-                  label="DISCOUNT"
+                  label="DISCOUNT %"
                   type="number"
                   name="discount"
                   placeholder=""
-                  info="Description for your new input field."
+                  info="This is an option discount percentage offered by Vendor."
                   value={projectFormData.discount || ""}
                   onChange={handleInputChange}
                 />
