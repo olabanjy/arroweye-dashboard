@@ -16,7 +16,7 @@ interface Item {
   id: number;
   item: string;
   cost: number | string;
-  quantity: number;
+  quantity: number | null;
   service_id?: number;
 }
 
@@ -31,6 +31,7 @@ type ProjectErrors = {
   vendor_id: string | null;
   subvendor_id: string | number | null;
   artist_name: string | null;
+  discount: string | null;
   po_code: string;
   currency: string;
   cost: string;
@@ -42,6 +43,7 @@ interface ProjectFormData {
   vendor_id: string | number;
   subvendor_id: string | number;
   artist_name: string;
+  discount: string;
   po_code: string;
   currency: string | number;
   services: { service_id: number; quantity: number; cost: number | string }[];
@@ -95,7 +97,7 @@ const Manage = () => {
         id: Date.now(),
         item: "",
         cost: "",
-        quantity: 1,
+        quantity: null,
       },
     ]);
   };
@@ -221,6 +223,7 @@ const Manage = () => {
     vendor_id: "",
     subvendor_id: "",
     artist_name: "",
+    discount: "",
     po_code: "",
     currency: "",
     services: [
@@ -237,6 +240,7 @@ const Manage = () => {
     vendor_id: "",
     subvendor_id: "",
     artist_name: "",
+    discount: "",
     po_code: "",
     currency: "",
     cost: "",
@@ -253,7 +257,8 @@ const Manage = () => {
     e.preventDefault();
 
     const subtotal = items.reduce(
-      (sum, item) => sum + parseFloat(item.cost.toString()) * item.quantity,
+      (sum, item) =>
+        sum + parseFloat(item.cost.toString()) * (item.quantity || 1),
       0
     );
     const customCost = subtotal;
@@ -263,6 +268,7 @@ const Manage = () => {
       vendor_id: null,
       subvendor_id: null,
       artist_name: "",
+      discount: "",
       po_code: "",
       currency: "",
       cost: "",
@@ -276,8 +282,17 @@ const Manage = () => {
     if (!projectFormData.project_title) {
       newErrors.project_title = "Please enter a Project Title.";
     }
+    if (!projectFormData.currency) {
+      newErrors.project_title = "Please select a Currency option.";
+    }
     if (!projectFormData.vendor_id) {
       newErrors.vendor_id = "Please select a Vendor.";
+    }
+    if (!projectFormData.artist_name) {
+      newErrors.artist_name = "Please enter an Artist Name.";
+    }
+    if (!projectFormData.discount) {
+      newErrors.discount = "Please enter a Discount.";
     }
     if (!projectFormData.po_code) {
       newErrors.po_code = "Please enter a PO Code.";
@@ -336,7 +351,8 @@ const Manage = () => {
     const subtotal = items.reduce(
       (sum, item) =>
         sum +
-        (item.cost ? parseFloat(item.cost.toString()) : 0) * item.quantity,
+        (item.cost ? parseFloat(item.cost.toString()) : 0) *
+          (item.quantity || 1),
       0
     );
 
@@ -391,7 +407,7 @@ const Manage = () => {
               <div className="w-full">
                 <Input
                   label="P.O CODE"
-                  type="number"
+                  type="text"
                   name="po_code"
                   placeholder=""
                   info="This is the purchase order code provided by the vendor. If none is provided, leave it blank."
@@ -478,6 +494,23 @@ const Manage = () => {
                 {projectErrors.artist_name && (
                   <p className="text-red-500 text-xs">
                     {projectErrors.artist_name}
+                  </p>
+                )}
+              </div>
+
+              <div className="w-full">
+                <Input
+                  label="DISCOUNT"
+                  type="number"
+                  name="discount"
+                  placeholder=""
+                  info="Description for your new input field."
+                  value={projectFormData.discount || ""}
+                  onChange={handleInputChange}
+                />
+                {projectErrors.discount && (
+                  <p className="text-red-500 text-xs">
+                    {projectErrors.discount}
                   </p>
                 )}
               </div>
@@ -581,7 +614,7 @@ const Manage = () => {
                         name="quantity"
                         label="QUANTITY"
                         placeholder="Quantity"
-                        value={item.quantity || 1}
+                        value={item.quantity}
                         onChange={(e) => {
                           const updatedQuantity = Number(e.target.value);
 
@@ -629,12 +662,6 @@ const Manage = () => {
                 >
                   Save
                 </button>
-                <div className="cursor-pointer rounded-full px-[16px] py-[10px] hover:bg-orange-500 bg-[#000000] text-white inline-flex items-start gap-[4px]">
-                  <p>Download</p>
-                  <sup className="font-bold p-[8px] rounded-full bg-white text-black">
-                    PDF
-                  </sup>
-                </div>
               </div>
             )}
 
@@ -652,7 +679,7 @@ const Manage = () => {
                           : `₦${subtotal.toFixed(2)}`}{" "}
                   </p>
                   <p className="text-[16px] text-gray-700">
-                    Service Charge (15%):{" "}
+                    Service Charge (5%):{" "}
                     {selectedService === "Dollars"
                       ? `$${serviceCharge.toFixed(2)}`
                       : selectedService === "Naira"
