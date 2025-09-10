@@ -22,6 +22,7 @@ interface FormErrors {
 interface TableData {
   channel: string;
   publication: string;
+  editorial_link: string;
 }
 
 const EditorialAddMedia = () => {
@@ -105,6 +106,7 @@ const EditorialAddMedia = () => {
             {
               channel: formData.channel,
               publication: formData.publication,
+              editorial_link: formData.editorial_link,
             },
           ]);
           resetForm();
@@ -161,10 +163,10 @@ const EditorialAddMedia = () => {
     }
 
     // Create CSV content
-    const headers = ["Publication,Channel"];
+    const headers = ["Publication,Channel,Link"];
     const rows = tableData.map(
       (item) =>
-        `${item.publication.replace(/,/g, ";")},${item.channel.replace(/,/g, ";")}`
+        `${item.publication.replace(/,/g, ";")},${item.channel.replace(/,/g, ";")},${item.editorial_link.replace(/,/g, ";")}`
     );
     const csvContent = headers.concat(rows).join("\n");
 
@@ -216,7 +218,7 @@ const EditorialAddMedia = () => {
             <Input
               type="text"
               name="editorial_link"
-              placeholder="Add source link *"
+              placeholder="Link *"
               value={formData.editorial_link}
               onChange={handleInputChange}
               className={errors.editorial_link ? "border-red-500" : ""}
@@ -232,7 +234,7 @@ const EditorialAddMedia = () => {
             <Input
               type="text"
               name="publication"
-              placeholder="Add download link *"
+              placeholder="Publication"
               value={formData.publication}
               onChange={handleInputChange}
               className={errors.publication ? "border-red-500" : ""}
@@ -270,7 +272,10 @@ const EditorialAddMedia = () => {
           <tbody>
             {tableData.map((item, index) => (
               <tr key={index} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border border-gray-200">
+                <td
+                  className="px-4 py-2 border border-gray-200 cursor-pointer text-blue-500"
+                  onClick={() => window.open(item.editorial_link, "_blank")}
+                >
                   {item.publication}
                 </td>
                 <td className="px-4 py-2 border border-gray-200">
