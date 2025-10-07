@@ -65,7 +65,7 @@ const Sidebar: FC = () => {
       >
         <div className="p-[50px] border-b flex items-center justify-center">
           <Image
-            src="https://res.cloudinary.com/dih0krdcj/image/upload/v1710656700/Arroweye%20Pro/qkpawzztfn7c6osevfmm.svg"
+            src="https://res.cloudinary.com/dyueswnzk/image/upload/v1758701294/21_elj38n_jljfio.svg"
             alt="Logo"
             width={50}
             height={50}
