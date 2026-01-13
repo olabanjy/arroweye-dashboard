@@ -1,4 +1,5 @@
 import { FC, ReactNode, useEffect } from "react";
+import { useRouter } from "next/router";
 import ls from "localstorage-slim";
 import Sidebar from "@/pages/dashboard/component/Sidebar";
 import TopNav from "@/pages/dashboard/component/topNav";
@@ -11,6 +12,7 @@ interface LayoutProps {
 }
 
 const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
+  const router = useRouter();
   useEffect(() => {
     const content: any = ls.get("Profile", { decrypt: true });
     const token = content?.access;
@@ -30,7 +32,7 @@ const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
         <main
           className={`flex-1 ${
             withBorder ? "border border-gray-100" : ""
-          }  mx-[20px] border-none rounded-[8px] mt-[20px]`}
+          } ${router.pathname !== "/campaigns/spins-notifications" ? "mx-[20px]" : ""} border-none rounded-[8px] mt-[20px]`}
         >
           {children}
         </main>
