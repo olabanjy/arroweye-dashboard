@@ -87,9 +87,32 @@ const FirstPlayNotificationCard: FC<FirstPlayNotificationCardProps> = ({
                 <div
                   key={action.type} // Add a key for each item
                   className="w-max h-[30px] rounded px-[10px] py-[4px] bg-[#000000] text-white flex items-center justify-center cursor-pointer"
-                  // onClick={() => window.open(action.url, "_blank")}
+                  onClick={() => window.open(action.url, "_blank")}
                 >
                   Manage
+                </div>
+              ) : action.type === "View" &&
+                iconClass === "mdi mdi-album #088cff" ? (
+                <div
+                  key={action.type} // Add a key for each item
+                  className="w-max h-[30px] rounded px-[10px] py-[4px] bg-[#000000] text-white flex items-center justify-center cursor-pointer"
+                  onClick={() => {
+                    const spinNotification = {
+                      content: message,
+                      timeAgo: timeAgo,
+                    };
+
+                    localStorage.setItem(
+                      "spinNotification",
+                      JSON.stringify(spinNotification)
+                    );
+
+                    window.dispatchEvent(new Event("spinNotificationUpdate"));
+
+                    window.open(action.url, "_blank");
+                  }}
+                >
+                  View
                 </div>
               ) : action.type === "View" ? (
                 <div

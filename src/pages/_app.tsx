@@ -32,7 +32,12 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   useEffect(() => {
-    if (router.pathname === "/login" || router.pathname === "/") return;
+    if (
+      router.pathname === "/login" ||
+      router.pathname === "/spins" ||
+      router.pathname === "/"
+    )
+      return;
 
     let timeout: NodeJS.Timeout;
 
@@ -105,7 +110,9 @@ export default function App({ Component, pageProps }: AppProps) {
           <div id="preloader_line"></div>
         </div>
       )}
-      <ScrollToTopButton />
+
+      {router.pathname !== "/spins" && <ScrollToTopButton />}
+
       <Component {...pageProps} />
       <ToastContainer />
 

@@ -1281,3 +1281,28 @@ export const AddAirplayData = async (
     return;
   }
 };
+
+export const getSpinsAnalytics = async (
+  startDate?: string,
+  endDate?: string
+): Promise<any | null> => {
+  try {
+    let url = `/api/v1/spins/audio-spins-analytics/`;
+
+    // Add query parameters if dates are provided
+    if (startDate && endDate) {
+      url += `?start_date=${startDate}&end_date=${endDate}`;
+    }
+
+    const response = await apiRequest({
+      method: "GET",
+      url: url,
+      data: null,
+      requireToken: false,
+    });
+
+    return response as any;
+  } catch (error: unknown) {
+    return null;
+  }
+};
