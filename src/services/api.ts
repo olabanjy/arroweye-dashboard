@@ -71,7 +71,7 @@ export const getStoredGenreContent = (): ContentItem[] | null => {
 };
 
 export const getSingleContent = async (
-  id: number
+  id: number,
 ): Promise<ContentItem | null> => {
   try {
     const response = await apiRequest<ContentItem>({
@@ -124,7 +124,7 @@ export const CreateBusiness = async (payload: unknown): Promise<any> => {
 export const CreateMedia = async (
   id: number,
   payload: unknown,
-  contentType?: string
+  contentType?: string,
 ): Promise<any> => {
   try {
     const { data: response } = await apiRequest<
@@ -184,7 +184,7 @@ export const CreateChannel = async (payload: unknown): Promise<void> => {
 
 export const CreateSocialStats = async (
   id: number,
-  payload: unknown
+  payload: unknown,
 ): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
@@ -205,7 +205,7 @@ export const CreateSocialStats = async (
 
 export const CreateDspStats = async (
   id: number,
-  payload: unknown
+  payload: unknown,
 ): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
@@ -366,7 +366,7 @@ export const AddStaff = async (payload: unknown): Promise<any> => {
 };
 
 export const LoginEP = async (
-  payload: unknown
+  payload: unknown,
 ): Promise<{ status: number; message: string; errorResponse?: unknown }> => {
   try {
     const response = await apiRequest<ApiRequestResponse<ApiResponse>>({
@@ -569,7 +569,7 @@ export const getStoredProjects = (): ContentItem[] | null => {
   return content as ContentItem[];
 };
 export const getProjectNotifications = async (
-  id: number
+  id: number,
 ): Promise<any | null> => {
   try {
     const response = await apiRequest<any>({
@@ -863,7 +863,7 @@ export const geteDSPPerformanceStats = async ({
 };
 
 export const getSingleProject = async (
-  id: number
+  id: number,
 ): Promise<ContentItem | null> => {
   try {
     const response = await apiRequest<ContentItem>({
@@ -1004,7 +1004,7 @@ export const getStoredEvent = (): ContentItem[] | null => {
 };
 
 export const getPaymentInvoice = async (
-  id: number
+  id: number,
 ): Promise<ContentItem | null> => {
   try {
     const response = await apiRequest<ContentItem>({
@@ -1098,7 +1098,7 @@ export const getDsp = async (): Promise<ContentItem[] | null> => {
 };
 
 export const getBusinessStaff = async (
-  id: number
+  id: number,
 ): Promise<ContentItem[] | null> => {
   try {
     const response = await apiRequest<ContentItem[]>({
@@ -1120,7 +1120,7 @@ export const getBusinessStaff = async (
 
 export const archiveProject = async (
   id: number,
-  payload: unknown
+  payload: unknown,
 ): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
@@ -1139,7 +1139,7 @@ export const archiveProject = async (
 
 export const shareProject = async (
   id: number,
-  payload: unknown
+  payload: unknown,
 ): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
@@ -1190,7 +1190,7 @@ export const getNotification = async (): Promise<ContentItem[] | null> => {
 
 export const sendProjectEmail = async (
   id: number | string,
-  payload: SendEmailPayload
+  payload: SendEmailPayload,
 ): Promise<SendEmailResponse | null> => {
   try {
     const response = await apiRequest({
@@ -1209,7 +1209,7 @@ export const sendProjectEmail = async (
 
 export const campaignStaffAction = async (
   id: number | string,
-  payload: any
+  payload: any,
 ): Promise<any | null> => {
   try {
     const response = await apiRequest({
@@ -1227,7 +1227,7 @@ export const campaignStaffAction = async (
 };
 
 export const markNotificationsAsRead = async (
-  payload: any
+  payload: any,
 ): Promise<any | null> => {
   try {
     const response = await apiRequest({
@@ -1245,7 +1245,7 @@ export const markNotificationsAsRead = async (
 
 export const createDropzone = async (
   projectId: string,
-  data: DropzonePayload
+  data: DropzonePayload,
 ): Promise<DropzonePayload | null> => {
   try {
     const response = await apiRequest({
@@ -1263,7 +1263,7 @@ export const createDropzone = async (
 
 export const AddAirplayData = async (
   payload: unknown,
-  id: number
+  id: number,
 ): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
@@ -1284,7 +1284,7 @@ export const AddAirplayData = async (
 
 export const getSpinsAnalytics = async (
   startDate?: string,
-  endDate?: string
+  endDate?: string,
 ): Promise<any | null> => {
   try {
     let url = `/api/v1/spins/audio-spins-analytics/`;
@@ -1293,6 +1293,24 @@ export const getSpinsAnalytics = async (
     if (startDate && endDate) {
       url += `?start_date=${startDate}&end_date=${endDate}`;
     }
+
+    const response = await apiRequest({
+      method: "GET",
+      url: url,
+      data: null,
+      requireToken: false,
+    });
+
+    return response as any;
+  } catch (error: unknown) {
+    return null;
+  }
+};
+export const getSpinsNotificationPublic = async (
+  spinId: string | string[] | undefined,
+): Promise<any | null> => {
+  try {
+    let url = `/api/v1/spins/public-spin/${spinId}`;
 
     const response = await apiRequest({
       method: "GET",
