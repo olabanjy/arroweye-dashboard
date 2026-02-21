@@ -452,9 +452,8 @@ const SpinsTableComponent: React.FC = () => {
         6: { cellWidth: 8, halign: "center" }, // WOC
         7: { cellWidth: 13, halign: "center" }, // GROWTH
         8: { cellWidth: 13 }, // STATUS
-        9: { cellWidth: 13 }, // GENRE
-        10: { cellWidth: 18 }, // LOCATION
-        11: { cellWidth: 18 }, // DJ
+        9: { cellWidth: 18 }, // LOCATION
+        10: { cellWidth: 18 }, // DJ
       },
       alternateRowStyles: {
         fillColor: [245, 247, 250],
@@ -792,7 +791,7 @@ const SpinsTableComponent: React.FC = () => {
               <XCircle size={24} />
             </button>
             <p className="text-center text-lg mt-14 mb-8">
-              Select your preferred format
+              Select your export format
             </p>
             <div className="flex justify-center gap-4">
               <button
@@ -801,25 +800,23 @@ const SpinsTableComponent: React.FC = () => {
               >
                 CSV
               </button>
-              <button
+              {/* <button
                 onClick={exportToPDF}
                 className="w-48 h-48 border rounded-lg hover:border-blue-500 hover:text-blue-500 transition-colors font-semibold"
               >
                 PDF
-              </button>
+              </button> */}
             </div>
           </div>
         </>
       )}
 
-      {showBackToTop && (
-        <button
-          onClick={() => setHelpOpen(true)}
-          className="fixed bottom-8 left-5 w-12 h-12 bg-black text-white rounded-full shadow-lg hover:bg-gray-800 transition-colors flex items-center justify-center"
-        >
-          <Info size={20} />
-        </button>
-      )}
+      <button
+        onClick={() => setHelpOpen(true)}
+        className="fixed bottom-8 left-5 w-12 h-12 bg-black text-white rounded-full shadow-lg hover:bg-gray-800 transition-colors flex items-center justify-center"
+      >
+        <Info size={20} />
+      </button>
 
       {/* Help Modal */}
       {helpOpen && (
@@ -877,11 +874,31 @@ const SpinsTableComponent: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="border rounded-2xl overflow-hidden mt-4">
-                  <div className="aspect-video bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500">
-                      Video Player ({videoLang})
-                    </span>
+                <div className="border rounded-2xl overflow-hidden mt-4 flex justify-center">
+                  <div
+                    className={
+                      videoLang === "english"
+                        ? "aspect-video w-full"
+                        : "aspect-[9/16] max-h-[576px]"
+                    }
+                  >
+                    <iframe
+                      src={
+                        videoLang === "english"
+                          ? "https://www.youtube.com/embed/bfeT5Yo2890"
+                          : "https://www.youtube.com/embed/rg1C6qYKHyE"
+                      }
+                      title={
+                        videoLang === "english"
+                          ? "Arroweye Pro® Spins"
+                          : "Arroweye Pro® Spins (Pidgin)"
+                      }
+                      className="w-full h-full"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allowFullScreen
+                    />
                   </div>
                 </div>
 
