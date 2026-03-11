@@ -800,12 +800,12 @@ const SpinsTableComponent: React.FC = () => {
               >
                 CSV
               </button>
-              {/* <button
+              <button
                 onClick={exportToPDF}
                 className="w-48 h-48 border rounded-lg hover:border-blue-500 hover:text-blue-500 transition-colors font-semibold"
               >
                 PDF
-              </button> */}
+              </button>
             </div>
           </div>
         </>

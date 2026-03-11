@@ -779,13 +779,13 @@ const InsightChart: React.FC<InsightChartProps> = ({
               Select your preferred format
             </p>
 
-            <div className="grid grid-cols-2 gap-[10px] pb-5">
-              <div
+            <div className="grid grid-cols-1 gap-[10px] pb-5 px-10">
+              {/* <div
                 className="font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center"
                 onClick={() => handleDownloadPage && handleDownloadPage()}
               >
                 PDF
-              </div>
+              </div> */}
               <div
                 className="font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center"
                 onClick={() => handleDownloadData && handleDownloadData()}
