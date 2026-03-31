@@ -47,7 +47,7 @@ const ProjectSingleInsight = () => {
           <InsightCard
             title="TOTAL REVENUE"
             currency={<>$</>}
-            value={`${formatNumber(content?.total_revenue?.mininum || 0)}`}
+            value={`${formatNumber(content?.total_revenue?.minimum || 0)}`}
             maxValue={`${formatNumber(content?.total_revenue?.maximum || 0)}`}
             extraClass="h-[220px]"
             percentageChange={content?.total_revenue?.percentage}
