@@ -55,7 +55,7 @@ export const hasAccessNoVendor = (userProfile: any, allowedRoles: any = []) => {
 
 export const hasAccessExceptVendorManager = (
   userProfile: any,
-  allowedRoles: any = []
+  allowedRoles: any = [],
 ) => {
   if (userProfile?.business_type === "Vendor") {
     // Grant access to all vendors except Managers
@@ -101,6 +101,7 @@ export const extractErrorMessage = (errorData: any): string => {
 
 export const redirectToLogin = () => {
   if (typeof window !== "undefined") {
+    clearLS();
     window.location.href = "/login";
   }
 };
@@ -113,25 +114,29 @@ interface ToastUpdateOptions {
 export const handleApiError = (
   error: unknown,
   defaultMessage = "Request failed. Please try again.",
-  toastUpdateOptions?: ToastUpdateOptions
+  toastUpdateOptions?: ToastUpdateOptions,
 ): string => {
   let errorMessage = defaultMessage;
 
-  // Handle Axios errors
   if (axios.isAxiosError(error)) {
+    const status = error.response?.status;
     const errorData = error.response?.data;
 
-    if (errorData) {
-      errorMessage = extractErrorMessage(errorData);
-    } else if (error.response?.data?.message) {
-      errorMessage = error.response.data.message;
-    } else if (error.response?.status === 403) {
-      errorMessage =
-        "Access denied. You don't have permission for this action.";
-      redirectToLogin();
-    } else if (error.response?.status === 401) {
+    // ✅ ALWAYS handle auth first
+    if (status === 401) {
       errorMessage = "Authentication required. Please log in again.";
       redirectToLogin();
+    } else if (status === 403) {
+      errorMessage =
+        "Access denied. You don't have permission for this action.";
+    }
+    // ✅ THEN handle API messages
+    else if (errorData) {
+      errorMessage = extractErrorMessage(errorData);
+    }
+    // fallback
+    else if (errorData?.message) {
+      errorMessage = errorData.message;
     }
   }
 

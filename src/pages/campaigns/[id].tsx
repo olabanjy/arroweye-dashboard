@@ -53,7 +53,7 @@ interface User {
 const ProjectDetails = () => {
   const [content, setContent] = useState<any | null>(null);
   const [subvendorStaff, setSubVendorStaff] = useState<ContentItem[] | null>(
-    null
+    null,
   );
   const [staffSuggestions, setStaffSuggestions] = useState<any[]>([]);
 
@@ -157,7 +157,7 @@ const ProjectDetails = () => {
     }
 
     const hasErrors = Object.values(newAddUserErrors).some(
-      (error) => error !== ""
+      (error) => error !== "",
     );
 
     if (hasErrors) {
@@ -338,8 +338,15 @@ const ProjectDetails = () => {
 
   useEffect(() => {
     const content: any = ls.get("Profile", { decrypt: true });
+    console.log("content", content);
     setUserLoggedInProfile(content?.user?.user_profile);
   }, []);
+  useEffect(() => {
+    console.log(
+      "userLoggedInProfileuserLoggedInProfileuserLoggedInProfile",
+      userLoggedInProfile,
+    );
+  }, [userLoggedInProfile]);
 
   useEffect(() => {
     if (!!content?.subvendor?.id) {
@@ -347,7 +354,7 @@ const ProjectDetails = () => {
         (fetchedStaffs: any) => {
           console.log("STAFFS", fetchedStaffs);
           setStaffSuggestions(fetchedStaffs);
-        }
+        },
       );
     }
   }, [content]);
@@ -423,7 +430,7 @@ const ProjectDetails = () => {
               0, // X position
               -position, // Y position (negative to shift the content up)
               imgWidth,
-              imgHeight
+              imgHeight,
             );
 
             // Move the position down by the page height
@@ -581,7 +588,10 @@ const ProjectDetails = () => {
                     </div>
                   ))}
 
-                  {hasAccess(userLoggedInProfile, ["Manager"]) && (
+                  {hasAccess(userLoggedInProfile, [
+                    "Manager",
+                    "Advertiser",
+                  ]) && (
                     <div className="relative group">
                       <p
                         className="bg-[#ffdead] text-[#000000] rounded-full w-[50px] h-[50px] flex items-center justify-center  text-center cursor-pointer"

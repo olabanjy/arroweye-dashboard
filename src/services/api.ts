@@ -1306,6 +1306,7 @@ export const getSpinsAnalytics = async (
     return null;
   }
 };
+
 export const getSpinsNotificationPublic = async (
   spinId: string | string[] | undefined,
 ): Promise<any | null> => {
@@ -1317,6 +1318,201 @@ export const getSpinsNotificationPublic = async (
       url: url,
       data: null,
       requireToken: false,
+    });
+
+    return response as any;
+  } catch (error: unknown) {
+    return null;
+  }
+};
+
+export const getCampaignClusters = async (): Promise<any | null> => {
+  try {
+    let url = `/api/v1/clusters/`;
+
+    const response = await apiRequest({
+      method: "GET",
+      url: url,
+      data: null,
+      requireToken: false,
+    });
+
+    return response as any;
+  } catch (error: unknown) {
+    return null;
+  }
+};
+
+export const getCampaignSongISRC = async (
+  song_isrc: string,
+): Promise<any | null> => {
+  try {
+    let url = `/api/v1/songs/lookup?isrc=${song_isrc}`;
+
+    const response = await apiRequest({
+      method: "GET",
+      url: url,
+      data: null,
+      requireToken: true,
+    });
+
+    return response as any;
+  } catch (error: unknown) {
+    return null;
+  }
+};
+
+export const getCampaignWallet = async (): Promise<any | null> => {
+  try {
+    let url = `/api/v1/wallet/`;
+
+    const response = await apiRequest({
+      method: "GET",
+      url: url,
+      data: null,
+      requireToken: true,
+    });
+
+    return response as any;
+  } catch (error: unknown) {
+    return null;
+  }
+};
+
+export const fundCampaignWallet = async (payload: unknown): Promise<any> => {
+  const createToast = toast.loading("Initiating Payment...");
+  try {
+    const result = await apiRequest<ApiRequestResponse<ApiResponse>>({
+      method: "POST",
+      url: `/api/v1/wallet/fund/`,
+      data: payload,
+      requireToken: true,
+    });
+
+    toast.update(createToast, {
+      render: "Payment Initiated Successfully",
+      type: "success",
+      isLoading: false,
+      autoClose: 3000,
+    });
+    console.log("PAYMENT RESPONSE", result);
+    return result;
+    // window.location.reload();
+  } catch (error: unknown) {
+    return null;
+  }
+};
+
+export const getClusterDjs = async (params?: {
+  cluster_id?: number | null;
+  search?: string;
+}): Promise<any | null> => {
+  try {
+    let url = `/api/v1/djs/`;
+
+    const query = new URLSearchParams();
+
+    if (params?.cluster_id != null) {
+      query.append("cluster_id", String(params.cluster_id));
+    }
+
+    if (params?.search) {
+      query.append("search", params.search);
+    }
+
+    const queryString = query.toString();
+    if (queryString) {
+      url += `?${queryString}`;
+    }
+
+    const response = await apiRequest({
+      method: "GET",
+      url,
+      data: null,
+      requireToken: true,
+    });
+
+    return response as any;
+  } catch (error: unknown) {
+    return null;
+  }
+};
+
+export const verifyWalletPayment = async (
+  reference: string,
+): Promise<any | null> => {
+  try {
+    const response = await apiRequest({
+      method: "GET",
+      url: `/api/v1/wallet/verify/`,
+      params: { reference },
+      requireToken: true,
+    });
+
+    return response as any;
+  } catch (error: unknown) {
+    throw error; // re-throw so the caller can handle toast/status
+  }
+};
+
+export const createCampaignDraft = async (payload: unknown): Promise<any> => {
+  try {
+    const result = await apiRequest<ApiRequestResponse<ApiResponse>>({
+      method: "POST",
+      url: `/api/v1/campaigns/draft/`,
+      data: payload,
+      requireToken: true,
+    });
+    console.log("DRAFT RESPONSE", result);
+    ls.set("LastCampaignDraft", result, { encrypt: true });
+    return result;
+    // window.location.reload();
+  } catch (error: unknown) {
+    return null;
+  }
+};
+
+export const launchCampaignFully = async (
+  id: number,
+  payload: unknown,
+): Promise<any> => {
+  try {
+    const result = await apiRequest<ApiRequestResponse<ApiResponse>>({
+      method: "POST",
+      url: `/api/v1/campaigns/${id}/launch/`,
+      data: payload,
+      requireToken: true,
+    });
+    console.log("PAYMENT RESPONSE", result);
+    return result;
+    // window.location.reload();
+  } catch (error: unknown) {
+    return null;
+  }
+};
+
+export const getPromoterPlans = async (params?: {
+  search?: string;
+}): Promise<any | null> => {
+  try {
+    let url = `/api/v1/aggregators/`;
+
+    const query = new URLSearchParams();
+
+    if (params?.search) {
+      query.append("search", params.search);
+    }
+
+    const queryString = query.toString();
+    if (queryString) {
+      url += `?${queryString}`;
+    }
+
+    const response = await apiRequest({
+      method: "GET",
+      url,
+      data: null,
+      requireToken: true,
     });
 
     return response as any;
