@@ -32,7 +32,7 @@ const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
         <main
           className={`flex-1 ${
             withBorder ? "border border-gray-100" : ""
-          } ${router.pathname !== "/campaigns/spins-notifications" ? "mx-[20px]" : ""} border-none rounded-[8px] mt-[20px]`}
+          } ${router.pathname !== "/campaigns/spins-notifications" && router.pathname !== "/campaigns/setup/custom" && router.pathname !== "/campaigns/setup/promoter" ? "mx-[20px]" : ""} border-none rounded-[8px] mt-[20px]`}
         >
           {children}
         </main>
