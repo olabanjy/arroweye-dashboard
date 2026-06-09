@@ -79,12 +79,14 @@ interface InsightChartProps {
   editMode?: boolean;
   handleDownloadPage?: () => void;
   handleDownloadData?: () => void;
+  isAdvertiser: boolean | null;
 }
 
 const InsightChart: React.FC<InsightChartProps> = ({
   editMode = false,
   handleDownloadPage,
   handleDownloadData,
+  isAdvertiser,
 }) => {
   const [initialTab, setInitialTab] = useState<any>("moments");
   const [addDataModal, setAddDataModal] = useState(false);
@@ -146,20 +148,25 @@ const InsightChart: React.FC<InsightChartProps> = ({
   });
 
   useEffect(() => {
+    if (isAdvertiser === null) return;
+
+    if (isAdvertiser) {
+      return;
+    }
     if (!!id) {
       getSingleProject(Number(id)).then((fetchedContent) => {
         setContent(fetchedContent);
         setMedia(fetchedContent?.media);
       });
     }
-  }, [id]);
+  }, [id, isAdvertiser]);
 
   useEffect(() => {
     if (!!id) {
       getAirPlayStats({ id: Number(id), ...airplayChannelsFilters }).then(
         (fetchedContent) => {
           setAirPlayData(fetchedContent);
-        }
+        },
       );
     }
   }, [
@@ -197,7 +204,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
       getAudienceStats({ id: Number(id), ...airplayAudienceFilters }).then(
         (fetchedContent) => {
           setAudienceData(fetchedContent);
-        }
+        },
       );
     }
   }, [
@@ -212,7 +219,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
       geteSMActionStats({ id: Number(id), ...socialMediaActionsFilters }).then(
         (fetchedContent) => {
           setSmactionData(fetchedContent);
-        }
+        },
       );
     }
   }, [id, socialMediaActionsFilters.weeks, socialMediaActionsFilters.lifetime]);
@@ -229,10 +236,10 @@ const InsightChart: React.FC<InsightChartProps> = ({
   }, [id, dspPerformanceFilters.weeks, dspPerformanceFilters.lifetime]);
 
   const generateDoughnutChartData = (
-    data: Record<string, number>
+    data: Record<string, number>,
   ): ChartData<"doughnut", number[], string> => {
     const filteredEntries = Object.entries(data).filter(
-      ([key]) => key !== "total_count"
+      ([key]) => key !== "total_count",
     );
 
     if (filteredEntries.length === 0) {
@@ -253,7 +260,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
     const values = filteredEntries.map(([_, value]) => value);
 
     const backgroundColors = labels.map(
-      (_, i) => `hsl(${(i * 60) % 360}, 70%, 80%)`
+      (_, i) => `hsl(${(i * 60) % 360}, 70%, 80%)`,
     );
     const borderColors = getDarkerColor(backgroundColors, 20);
 
@@ -277,10 +284,10 @@ const InsightChart: React.FC<InsightChartProps> = ({
     smactionData && generateDoughnutChartData(smactionData);
 
   const generatePieChartData = (
-    data: Record<string, number>
+    data: Record<string, number>,
   ): ChartData<"pie", number[], string> => {
     const filteredEntries = Object.entries(data).filter(
-      ([key]) => key !== "total_count"
+      ([key]) => key !== "total_count",
     );
 
     if (filteredEntries.length === 0) {
@@ -302,7 +309,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
     const values = filteredEntries.map(([_, value]) => value);
 
     const backgroundColors = labels.map(
-      (_, i) => `hsl(${(i * 60) % 360}, 70%, 80%)`
+      (_, i) => `hsl(${(i * 60) % 360}, 70%, 80%)`,
     );
     const borderColors = getDarkerColor(backgroundColors, 20);
 
@@ -331,10 +338,10 @@ const InsightChart: React.FC<InsightChartProps> = ({
     dspPerformanceData && generatePieChartData(dspPerformanceData);
 
   const generateBarChartData = (
-    data: Record<string, number>
+    data: Record<string, number>,
   ): ChartData<"bar", number[], string> => {
     const filteredEntries = Object.entries(data).filter(
-      ([key]) => key !== "total_count"
+      ([key]) => key !== "total_count",
     );
 
     if (filteredEntries.length === 0) {
@@ -356,7 +363,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
     const values = filteredEntries.map(([_, value]) => value);
 
     const backgroundColors = labels.map(
-      (_, i) => `hsl(${(i * 60) % 360}, 70%, 80%)`
+      (_, i) => `hsl(${(i * 60) % 360}, 70%, 80%)`,
     );
 
     return {
@@ -391,10 +398,10 @@ const InsightChart: React.FC<InsightChartProps> = ({
       setGiftingsReportUrls(giftings);
 
       const newMomentMedia = media.filter(
-        (item: any) => item?.type === "Moment"
+        (item: any) => item?.type === "Moment",
       );
       const embedMomentLinks = newMomentMedia.map(
-        (item: any) => item.embed_link
+        (item: any) => item.embed_link,
       );
       const momentReportUrl = newMomentMedia.map((item: any) => item.report);
       console.log("MOMENT MEDIA", momentReportUrl);
@@ -402,12 +409,12 @@ const InsightChart: React.FC<InsightChartProps> = ({
       const embedRecapLinks = newRecapMedia.map((item: any) => item.embed_link);
       const dspCoversWithFiles = media.filter(
         (item: any) =>
-          item?.type === "DSP_Covers" && item?.files && item.files.length > 0
+          item?.type === "DSP_Covers" && item?.files && item.files.length > 0,
       );
       const dspfileUrls = dspCoversWithFiles.flatMap((item: any) =>
         item.files.map(
-          (file: any) => `https://studio-api.arroweye.pro${file.file}`
-        )
+          (file: any) => `https://studio-api.arroweye.pro${file.file}`,
+        ),
       );
 
       setMomentReportUrls(momentReportUrl);
@@ -429,7 +436,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
       geteSMActionStats({ id: Number(id), ...socialMediaActionsFilters }).then(
         (fetchedContent) => {
           setSmactionData(fetchedContent);
-        }
+        },
       );
     }
     if (!!id) {
@@ -448,7 +455,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
       getAudienceStats({ id: Number(id), ...airplayAudienceFilters }).then(
         (fetchedContent) => {
           setAudienceData(fetchedContent);
-        }
+        },
       );
     }
     if (!!id) {

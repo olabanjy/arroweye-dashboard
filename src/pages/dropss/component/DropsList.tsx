@@ -12,7 +12,9 @@ import SecurityNotificationCard from "@/pages/dashboard/component/SecurityNotifi
 import PaymentMomentNotificationCard from "@/pages/dashboard/component/payments/PaymentMomentNotificationCard";
 import MilestoneNotificationCard from "@/pages/dashboard/component/MilestoneNotificationCard";
 
-const DropsList = () => {
+const DropsList: React.FC<{ isAdvertiser: boolean | null }> = ({
+  isAdvertiser,
+}) => {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [dropzoneData, setDropzoneData] = useState<ContentItem | null>(null);
   const [pin, setPin] = useState("");
@@ -35,13 +37,18 @@ const DropsList = () => {
   };
 
   useEffect(() => {
+    if (isAdvertiser === null) return;
+
+    if (isAdvertiser) {
+      return;
+    }
     if (!!id) {
       getSingleProject(Number(id)).then((fetchedContent: any) => {
         setDropzoneData(fetchedContent);
         setPin(fetchedContent?.pin);
       });
     }
-  }, [id]);
+  }, [id, isAdvertiser]);
 
   const formatRelativeDate = (dateString: string) => {
     const date = new Date(dateString);
