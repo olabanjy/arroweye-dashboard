@@ -15,6 +15,7 @@ import {
   AddStaff,
   campaignStaffAction,
   getBusinessStaff,
+  getSingleCampaign,
   getSingleProject,
 } from "@/services/api";
 import { ContentItem } from "@/types/contents";
@@ -32,6 +33,7 @@ import { toast } from "react-toastify";
 import ScheduleProject from "../schedule/component/ScheduleProject";
 import EmailInputWithSuggestions from "./component/EmailInputWithSuggestions";
 import { hasAccess } from "@/lib/utils";
+import CampaignInsightAdvertiser from "./component/CampaignInsightAdvertiser";
 
 interface User {
   id: string;
@@ -72,6 +74,8 @@ const ProjectDetails = () => {
   const [editMode, setEditMode] = useState(false);
   const [editModeOff, setEditModeOff] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+
+  const [isAdvertiser, setIsAdvertiser] = useState<boolean | null>(null);
 
   const showDialog = () => {
     setVisible(true);
@@ -328,25 +332,43 @@ const ProjectDetails = () => {
   };
 
   useEffect(() => {
+    if (isAdvertiser === null) return;
+
+    if (isAdvertiser) {
+      return;
+    }
     if (!!id) {
       getSingleProject(Number(id)).then((fetchedContent) => {
         setSubVendorStaff(fetchedContent?.watchers);
         setContent(fetchedContent);
       });
     }
-  }, [id]);
+  }, [id, isAdvertiser]);
+
+  useEffect(() => {
+    if (isAdvertiser === null) return;
+
+    if (!isAdvertiser) {
+      return;
+    }
+    if (!!id) {
+      getSingleCampaign(Number(id)).then((fetchedContent) => {
+        console.log("fetchedContent", fetchedContent);
+        setContent(fetchedContent);
+      });
+    }
+  }, [id, isAdvertiser]);
 
   useEffect(() => {
     const content: any = ls.get("Profile", { decrypt: true });
     console.log("content", content);
     setUserLoggedInProfile(content?.user?.user_profile);
+    if (content?.user?.user_type === "Advertiser") {
+      setIsAdvertiser(true);
+    } else {
+      setIsAdvertiser(false);
+    }
   }, []);
-  useEffect(() => {
-    console.log(
-      "userLoggedInProfileuserLoggedInProfileuserLoggedInProfile",
-      userLoggedInProfile,
-    );
-  }, [userLoggedInProfile]);
 
   useEffect(() => {
     if (!!content?.subvendor?.id) {
@@ -523,10 +545,11 @@ const ProjectDetails = () => {
           <div className="flex flex-col gap-2">
             <div className="text-[#919393] flex items-center gap-[5px] text-[0.875rem]">
               <p className=" uppercase text-[#5e5e5e] tracking-[.1rem]">
-                {content?.vendor?.organization_name}
+                {content?.vendor?.organization_name || content?.campaign?.mode}
               </p>
               <p className="uppercase p-[4px] border border-[#d5d9db] bg-[#f7fcff] rounded tracking-[.1rem]">
-                {content?.subvendor?.organization_name}
+                {content?.subvendor?.organization_name ||
+                  content?.campaign?.song_artist}
               </p>
             </div>
             <div className="pr-[40px] mb-5">
@@ -565,7 +588,7 @@ const ProjectDetails = () => {
                 </div>
               ) : (
                 <p className="font-[900] text-[45px] text-[#000000] flex-grow">
-                  {content?.title}
+                  {content?.title || content?.campaign?.song_title}
                 </p>
               )}
 
@@ -588,10 +611,7 @@ const ProjectDetails = () => {
                     </div>
                   ))}
 
-                  {hasAccess(userLoggedInProfile, [
-                    "Manager",
-                    "Advertiser",
-                  ]) && (
+                  {hasAccess(userLoggedInProfile, ["Manager"]) && (
                     <div className="relative group">
                       <p
                         className="bg-[#ffdead] text-[#000000] rounded-full w-[50px] h-[50px] flex items-center justify-center  text-center cursor-pointer"
@@ -633,9 +653,9 @@ const ProjectDetails = () => {
               </div>
             </div>
 
-            {hasAccess(userLoggedInProfile, ["Manager"]) && (
+            {(hasAccess(userLoggedInProfile, ["Manager"]) || isAdvertiser) && (
               <div className="">
-                <ProjectSingleInsight />
+                <ProjectSingleInsight isAdvertiser={isAdvertiser} />
               </div>
             )}
           </div>
@@ -785,6 +805,8 @@ const ProjectDetails = () => {
               </div>
             </>
           )}
+
+          {isAdvertiser && <CampaignInsightAdvertiser content={content} />}
 
           <div
             className={`custom-dialog-overlay ${
@@ -1035,9 +1057,11 @@ const ProjectDetails = () => {
             </Dialog>
           </div>
 
-          <div className=" mb-[100px]">
-            <DropsList />
-          </div>
+          {!isAdvertiser && (
+            <div className="mb-[100px]">
+              <DropsList />
+            </div>
+          )}
         </div>
       </DashboardLayout>
     </>

@@ -12,6 +12,7 @@ const Sidebar: FC = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
   const [userRole, setUserRole] = useState("");
+  const [isAdvertiser, setIsAdvertiser] = useState(false);
   const router = useRouter();
 
   const isActive = (path: string) => {
@@ -30,7 +31,11 @@ const Sidebar: FC = () => {
 
   useEffect(() => {
     const content: any = ls.get("Profile", { decrypt: true });
+    console.log("CONTENT FOR LOGGED IN USER", content);
     setUserRole(content?.user?.user_profile?.role);
+    if (content?.user?.user_type === "Advertiser") {
+      setIsAdvertiser(true);
+    }
   }, []);
 
   return (
@@ -108,7 +113,7 @@ const Sidebar: FC = () => {
                   </Link>
 
                   {/* Submenu */}
-                  {isActive("/campaigns") && (
+                  {isActive("/campaigns") && isAdvertiser && (
                     <ul className="ml-6 mt-1 space-y-1 border-l border-gray-200 pl-3">
                       <li>
                         <Link
@@ -145,26 +150,29 @@ const Sidebar: FC = () => {
                 </li>
 
                 {/* Drops */}
-                <Link href="/drops">
-                  <li className="flex items-center justify-between p-2 rounded cursor-pointer">
-                    <span className="flex items-center space-x-2">
-                      <span
-                        className={`${
-                          isActive("/drops")
-                            ? "bg-[#17954c] w-1 h-1"
-                            : "bg-transparent w-1 h-1"
-                        } rounded-full`}
-                      />
-                      <span
-                        className={`${
-                          isActive("/drops") ? "font-[500]" : "font-[400]"
-                        }`}
-                      >
-                        Drops
+
+                {!isAdvertiser && (
+                  <Link href="/drops">
+                    <li className="flex items-center justify-between p-2 rounded cursor-pointer">
+                      <span className="flex items-center space-x-2">
+                        <span
+                          className={`${
+                            isActive("/drops")
+                              ? "bg-[#17954c] w-1 h-1"
+                              : "bg-transparent w-1 h-1"
+                          } rounded-full`}
+                        />
+                        <span
+                          className={`${
+                            isActive("/drops") ? "font-[500]" : "font-[400]"
+                          }`}
+                        >
+                          Drops
+                        </span>
                       </span>
-                    </span>
-                  </li>
-                </Link>
+                    </li>
+                  </Link>
+                )}
 
                 {/* Payments (Role-based) */}
                 {["Supervisor", "Manager"].includes(userRole) && (
@@ -191,38 +199,42 @@ const Sidebar: FC = () => {
                 )}
 
                 {/* Schedule */}
-                <Link href="/schedule">
-                  <li className="flex items-center justify-between p-2 rounded cursor-pointer">
-                    <span className="flex items-center space-x-2">
-                      <span
-                        className={`${
-                          isActive("/schedule")
-                            ? "bg-[#17954c] w-1 h-1"
-                            : "bg-transparent w-1 h-1"
-                        } rounded-full`}
-                      />
-                      <span
-                        className={`${
-                          isActive("/schedule") ? "font-[500]" : "font-[400]"
-                        }`}
-                      >
-                        Schedule
+                {!isAdvertiser && (
+                  <Link href="/schedule">
+                    <li className="flex items-center justify-between p-2 rounded cursor-pointer">
+                      <span className="flex items-center space-x-2">
+                        <span
+                          className={`${
+                            isActive("/schedule")
+                              ? "bg-[#17954c] w-1 h-1"
+                              : "bg-transparent w-1 h-1"
+                          } rounded-full`}
+                        />
+                        <span
+                          className={`${
+                            isActive("/schedule") ? "font-[500]" : "font-[400]"
+                          }`}
+                        >
+                          Schedule
+                        </span>
                       </span>
-                    </span>
-                  </li>
-                </Link>
+                    </li>
+                  </Link>
+                )}
 
                 {/* Resources */}
-                <li
-                  onClick={toggleResourcesSidebar}
-                  className="flex items-center justify-between p-2 rounded cursor-pointer"
-                >
-                  <span className="flex items-center space-x-2">
-                    <span className="bg-transparent w-1 h-1 rounded-full" />
-                    <span>Resources</span>
-                  </span>
-                  <TfiMore size={18} />
-                </li>
+                {!isAdvertiser && (
+                  <li
+                    onClick={toggleResourcesSidebar}
+                    className="flex items-center justify-between p-2 rounded cursor-pointer"
+                  >
+                    <span className="flex items-center space-x-2">
+                      <span className="bg-transparent w-1 h-1 rounded-full" />
+                      <span>Resources</span>
+                    </span>
+                    <TfiMore size={18} />
+                  </li>
+                )}
 
                 {/* Settings */}
                 <Link href="/settings">

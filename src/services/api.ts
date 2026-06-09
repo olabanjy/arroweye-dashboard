@@ -1476,19 +1476,12 @@ export const launchCampaignFully = async (
   id: number,
   payload: unknown,
 ): Promise<any> => {
-  try {
-    const result = await apiRequest<ApiRequestResponse<ApiResponse>>({
-      method: "POST",
-      url: `/api/v1/campaigns/${id}/launch/`,
-      data: payload,
-      requireToken: true,
-    });
-    console.log("PAYMENT RESPONSE", result);
-    return result;
-    // window.location.reload();
-  } catch (error: unknown) {
-    return null;
-  }
+  return await apiRequest<ApiRequestResponse<ApiResponse>>({
+    method: "POST",
+    url: `/api/v1/campaigns/${id}/launch/`,
+    data: payload,
+    requireToken: true,
+  });
 };
 
 export const getPromoterPlans = async (params?: {
@@ -1516,6 +1509,49 @@ export const getPromoterPlans = async (params?: {
     });
 
     return response as any;
+  } catch (error: unknown) {
+    return null;
+  }
+};
+
+export const getCreatedCampaigns = async (): Promise<any | null> => {
+  try {
+    let url = `/api/v1/campaigns/`;
+
+    const response = await apiRequest({
+      method: "GET",
+      url: url,
+      data: null,
+      requireToken: true,
+    });
+
+    return response as any;
+  } catch (error: unknown) {
+    return null;
+  }
+};
+
+export const getSingleCampaign = async (
+  id: number,
+): Promise<ContentItem | null> => {
+  try {
+    const response = await apiRequest<ContentItem>({
+      method: "GET",
+      url: `/api/v1/campaigns/${id}/dashboard/`,
+      data: null,
+      requireToken: true,
+    });
+
+    if (response) {
+      const contentItem: ContentItem = response;
+
+      // ls.set("SingleProject", contentItem, { encrypt: true });
+
+      return contentItem;
+    } else {
+      console.error("Invalid Project item structure:", response);
+      return null;
+    }
   } catch (error: unknown) {
     return null;
   }
