@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const PRICE_PER_TOKEN = 2500; // ₦ per token
-const MIN_TOKENS = 10;
+const MIN_TOKENS = 1;
 const MAX_TOKENS = 10000;
 const MIN_AMOUNT = 2500;
 
@@ -20,18 +20,19 @@ export default function SetBudget() {
 
   const router = useRouter();
 
-  const budget = tokens * PRICE_PER_TOKEN;
-
   const formatBudget = (amount: number) =>
     new Intl.NumberFormat("en-NG").format(amount);
 
-  const increment = () => setTokens((t) => Math.min(t + 10, MAX_TOKENS));
-  const decrement = () => setTokens((t) => Math.max(t - 10, MIN_TOKENS));
-
-  const handleTokenInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseInt(e.target.value.replace(/\D/g, ""), 10);
-    if (!isNaN(val)) setTokens(Math.min(Math.max(val, MIN_TOKENS), MAX_TOKENS));
+  // Single source of truth: update all three states together
+  const applyTokens = (newTokens: number) => {
+    const clamped = Math.min(Math.max(newTokens, MIN_TOKENS), MAX_TOKENS);
+    setTokens(clamped);
+    setTokenInput(String(clamped));
+    setBudgetInput(formatBudget(clamped * PRICE_PER_TOKEN));
   };
+
+  const increment = () => applyTokens(tokens + 10);
+  const decrement = () => applyTokens(tokens - 10);
 
   const [errors, setErrors] = useState<{
     email?: string;
@@ -45,16 +46,8 @@ export default function SetBudget() {
     const newErrors: typeof errors = {};
     const budgetNum = parseInt(budgetInput.replace(/[^0-9]/g, ""), 10);
 
-    // if (!email) newErrors.email = "Email is required.";
-    // else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-    //   newErrors.email = "Enter a valid email.";
-
-    // if (!isrc) newErrors.isrc = "ISRC / UPC is required.";
-
     if (!budgetInput || isNaN(budgetNum) || budgetNum < MIN_AMOUNT)
       newErrors.budget = `Minimum amount is ₦${formatBudget(MIN_AMOUNT)}.`;
-
-    // if (!startDate) newErrors.date = "Start date is required.";
 
     if (!accepted) newErrors.terms = "You must accept the terms of service.";
 
@@ -63,10 +56,8 @@ export default function SetBudget() {
 
     await fundCampaignWallet({ amount_naira: budgetNum })
       .then((data) => {
-        const authUrl = data?.paystack?.data?.authorization_url;
-
+        const authUrl = data?.paystack?.authorization_url;
         if (authUrl) window.open(authUrl, "_blank");
-
         setTimeout(() => {
           router.push("/campaigns/setup?showModal=true");
         }, 5000);
@@ -215,7 +206,7 @@ export default function SetBudget() {
           >
             -
           </button>
-          <div className="flex flex-col">
+          <div className="flex flex-col items-center">
             <input
               type="text"
               inputMode="numeric"
@@ -225,14 +216,17 @@ export default function SetBudget() {
                 setBudgetInput(raw);
                 const num = parseInt(raw, 10);
                 if (!isNaN(num)) {
-                  setTokens(Math.round(num / PRICE_PER_TOKEN));
-                  setTokenInput(String(Math.round(num / PRICE_PER_TOKEN)));
+                  const newTokens = Math.round(num / PRICE_PER_TOKEN);
+                  setTokens(newTokens);
+                  setTokenInput(String(newTokens));
                 }
               }}
               onBlur={() => {
                 const num = parseInt(budgetInput.replace(/[^0-9]/g, ""), 10);
-                const clamped = isNaN(num) ? 0 : Math.max(num, 0);
-                setTokens(Math.round(clamped / PRICE_PER_TOKEN));
+                const clamped = isNaN(num) ? MIN_AMOUNT : Math.max(num, 0);
+                const newTokens = Math.round(clamped / PRICE_PER_TOKEN);
+                setTokens(newTokens);
+                setTokenInput(String(newTokens));
                 setBudgetInput(formatBudget(clamped));
               }}
               className="budget-display text-center bg-transparent border-none outline-none w-full min-w-0"
@@ -268,10 +262,10 @@ export default function SetBudget() {
               }}
               onBlur={() => {
                 const num = parseInt(tokenInput, 10);
-                const clamped = isNaN(num) ? 0 : Math.max(num, 0);
-                setTokens(clamped);
-                setTokenInput(String(clamped));
-                setBudgetInput(formatBudget(clamped * PRICE_PER_TOKEN));
+                const clamped = isNaN(num)
+                  ? MIN_TOKENS
+                  : Math.max(num, MIN_TOKENS);
+                applyTokens(clamped);
               }}
             />
           </div>
@@ -316,6 +310,7 @@ export default function SetBudget() {
           </div>
         </div>
 
+        {/* CTA */}
         {/* CTA */}
         <div className="flex flex-col items-center gap-4">
           <button className="buy-btn" onClick={handleSubmit}>

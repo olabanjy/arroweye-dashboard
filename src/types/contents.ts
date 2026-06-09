@@ -92,6 +92,12 @@ export interface ContentItem {
   status?: string;
   watchers?: any;
   notifications?: any;
+  kpis?: {
+    total_investment_naira: any;
+    estimated_revenue_min_naira: any;
+    estimated_revenue_max_naira: any;
+    shazams_count: any;
+  };
 }
 
 export interface EventsItem {

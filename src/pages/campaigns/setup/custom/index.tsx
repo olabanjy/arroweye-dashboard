@@ -111,11 +111,10 @@ const CustomCampaign = () => {
       song_artist: campaignSongDetails?.artist,
       song_artwork: campaignSongDetails?.artwork,
       target_audience_reach: audienceReachValue,
-      start_date: "2026-06-06",
+      start_date: startDate || "2026-06-06",
       mode: "custom",
     })
-      .then((data) => {
-        console.log("DATA FEEDBACK", data);
+      .then(() => {
         toast.update(createDraftToast, {
           render:
             "Campaign Created Successfully, feel free to edit selection before Launch",
@@ -143,15 +142,10 @@ const CustomCampaign = () => {
 
     const existindDraft: any = ls.get("LastCampaignDraft", { decrypt: true });
 
-    console.log("existindDraft", existindDraft);
-
     const payload = buildCampaignPayload(selectedDistricts, djSpins, true);
 
-    console.log("PAYLOAD", payload);
-
     await launchCampaignFully(existindDraft?.id, payload)
-      .then((data) => {
-        console.log("DATA", data);
+      .then(() => {
         toast.update(createToast, {
           render: "Campaign Launched Successfully",
           type: "success",
@@ -227,7 +221,6 @@ const CustomCampaign = () => {
   useEffect(() => {
     getCampaignWallet()
       .then((fetchedContent: any) => {
-        console.log("WALLET DETAILS", fetchedContent);
         setWalletDetails(fetchedContent);
       })
       .catch((err) => {
@@ -413,14 +406,6 @@ const CustomCampaign = () => {
       });
   };
 
-  useEffect(() => {
-    console.log("selectedDistricts is true?", selectedDistricts);
-  }, [selectedDistricts]);
-
-  useEffect(() => {
-    console.log("djSpins", djSpins);
-  }, [djSpins]);
-
   const [isrc, setIsrc] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -470,11 +455,13 @@ const CustomCampaign = () => {
               />
               <div className="relative">
                 <Input
+                  value={isrc}
                   ref={inputRef}
                   className="border-[#9D9A9A]"
                   type="text"
                   placeholder="ISRC / UPC"
-                  onChange={() => {
+                  onChange={(e) => {
+                    setIsrc(e.target.value);
                     if (timeoutRef.current) {
                       clearTimeout(timeoutRef.current);
                     }
@@ -663,7 +650,6 @@ const CustomCampaign = () => {
 
                   <button
                     className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-black text-white font-medium"
-                    disabled={true}
                     onClick={startOver}
                   >
                     <RefreshCcw size={16} />
@@ -689,6 +675,12 @@ const CustomCampaign = () => {
                 {/* Launch CTA */}
                 <button
                   className={`order-3 md:order-3 w-full md:w-auto px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold ${loadingCampaignCreation || Object.keys(selectedDistricts).length === 0 || !startDate || !campaignSongDetails?.artist ? "opacity-50 italic" : ""}`}
+                  disabled={
+                    loadingCampaignCreation ||
+                    Object.keys(selectedDistricts).length === 0 ||
+                    !startDate ||
+                    !campaignSongDetails?.artist
+                  }
                   onClick={handleCreateCampaignDraft}
                 >
                   {loadingCampaignCreation === true

@@ -76,24 +76,15 @@ export default function PlanCard({
         </div>
 
         {/* Right */}
-        <div className="border border-black rounded-2xl p-4 min-w-[230px]">
+        <div className="w-max border border-black rounded-2xl p-4">
           <p className="text-[11px] uppercase tracking-[2px] font-bold mb-3">
             Spins Per DJ
           </p>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center">
             <div className="w-[116px] h-[54px] border border-black rounded-2xl flex items-center justify-center text-[24px]">
               {spinsPerDj}
             </div>
-
-            <button
-              onClick={onToggle}
-              className={`w-14 h-14 rounded-full flex items-center justify-center text-white ${
-                selected ? "bg-red-500" : "bg-black"
-              }`}
-            >
-              {selected ? <Minus size={28} /> : <Plus size={28} />}
-            </button>
           </div>
         </div>
       </div>
@@ -117,14 +108,6 @@ export default function PlanCard({
 
               <span className="text-xl mt-1 text-center">{spinsPerDj}</span>
             </div>
-            <button
-                onClick={onToggle}
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${
-                  selected ? "bg-red-500" : "bg-black"
-                }`}
-              >
-                {selected ? <Minus size={18} /> : <Plus size={18} />}
-              </button>
           </div>
         </div>
 
