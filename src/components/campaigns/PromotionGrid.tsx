@@ -6,6 +6,7 @@ export interface PromotionGridProps {
   data: any[];
   selectedPromotion: any;
   setSelectedPromotion: (promo: any) => void;
+  resetPlan?: () => void;
   onPlanSelected: (payload: {
     accept_terms: boolean;
     aggregator_plan_id: number;
@@ -20,6 +21,7 @@ export const PromotionGrid: React.FC<PromotionGridProps> = ({
   data,
   selectedPromotion,
   setSelectedPromotion,
+  resetPlan,
   onPlanSelected,
   onAudienceReach,
   onPlanStats,
@@ -29,7 +31,13 @@ export const PromotionGrid: React.FC<PromotionGridProps> = ({
       <PromotionPlans
         isModalPage={isModalPage ? true : false}
         promotion={selectedPromotion}
-        onBack={() => setSelectedPromotion(null)}
+        onBack={() => {
+          setSelectedPromotion(null);
+          resetPlan && resetPlan();
+        }}
+        onPlanSelected={onPlanSelected}
+        onAudienceReach={onAudienceReach}
+        onPlanStats={onPlanStats}
       />
     );
   }
@@ -57,27 +65,7 @@ export const PromotionGrid: React.FC<PromotionGridProps> = ({
               0,
             ) / promo.managed_djs.length,
           )}
-          onClick={() => {
-            setSelectedPromotion(promo);
-
-            const firstPlan = promo.plans[0];
-            onPlanSelected({
-              accept_terms: true,
-              aggregator_plan_id: firstPlan.id,
-              cluster_ids: firstPlan.clusters.map((c: any) => c.id),
-            });
-
-            const totalReach = promo.plans.reduce(
-              (total: number, plan: any) => total + plan.audience_reach,
-              0,
-            );
-            onAudienceReach(totalReach);
-
-            onPlanStats({
-              totalTokens: firstPlan.calculated_total_tokens,
-              totalDJs: firstPlan.djs.length,
-            });
-          }}
+          onClick={() => setSelectedPromotion(promo)}
         />
       ))}
     </div>

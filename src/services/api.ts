@@ -1456,20 +1456,16 @@ export const verifyWalletPayment = async (
 };
 
 export const createCampaignDraft = async (payload: unknown): Promise<any> => {
-  try {
-    const result = await apiRequest<ApiRequestResponse<ApiResponse>>({
-      method: "POST",
-      url: `/api/v1/campaigns/draft/`,
-      data: payload,
-      requireToken: true,
-    });
-    console.log("DRAFT RESPONSE", result);
-    ls.set("LastCampaignDraft", result, { encrypt: true });
-    return result;
-    // window.location.reload();
-  } catch (error: unknown) {
-    return null;
-  }
+  const result = await apiRequest<ApiRequestResponse<ApiResponse>>({
+    method: "POST",
+    url: `/api/v1/campaigns/draft/`,
+    data: payload,
+    requireToken: true,
+  });
+
+  console.log("DRAFT RESPONSE", result);
+  ls.set("LastCampaignDraft", result, { encrypt: true });
+  return result;
 };
 
 export const launchCampaignFully = async (

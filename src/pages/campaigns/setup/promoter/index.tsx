@@ -64,6 +64,12 @@ const PromoterCampaign = () => {
     setCampaignSongDetails(null);
   };
 
+  const resetPlan = () => {
+    setCampaignPayload(null);
+    setTotalDJs(0);
+    setTotalTokens(0);
+  };
+
   const inputRef = useRef<HTMLInputElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -101,7 +107,17 @@ const PromoterCampaign = () => {
       start_date: startDate || "2026-06-06",
       mode: "aggregator",
     })
-      .then(() => {
+      .then((result) => {
+        if (!result) {
+          toast.update(createDraftToast, {
+            render: "Campaign Creation Failed, kindly try again",
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+          });
+          setLoadingCampaignCreation(false);
+          return;
+        }
         toast.update(createDraftToast, {
           render:
             "Campaign Created Successfully, feel free to edit selection before Launch",
@@ -140,6 +156,7 @@ const PromoterCampaign = () => {
           autoClose: 3000,
         });
         setLoadingCampaignCreation(false);
+        setEditBeforeLaunchModal(false);
         setTimeout(() => {
           router.push("/campaigns");
         }, 3000);
@@ -282,6 +299,7 @@ const PromoterCampaign = () => {
                 data={promotersData}
                 selectedPromotion={selectedPromotion}
                 setSelectedPromotion={setSelectedPromotion}
+                resetPlan={resetPlan}
                 onPlanSelected={handlePlanSelected}
                 onAudienceReach={(reach) => setTotalAudienceReach(reach)}
                 onPlanStats={({ totalTokens, totalDJs }) => {
@@ -291,7 +309,7 @@ const PromoterCampaign = () => {
               />
             </div>
 
-            {selectedPromotion && (
+            {selectedPromotion && campaignPayload && (
               <div className="w-full px-4 py-6 md:px-6 md:py-5 rounded-xl">
                 <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
                   {/* Actions (Automate + Start Over) */}

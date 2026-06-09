@@ -26,20 +26,23 @@ export default function PlanCard({
   selected = false,
   onToggle,
 }: PlanCardProps) {
+  const selectedBorder = selected
+    ? "border-[#0B66D3] ring-2 ring-[#0B66D3]"
+    : "border-[#D4CECE]";
+
   return (
     <>
       {/* Desktop */}
-      <div className="hidden sm:flex justify-between items-center border border-[#D4CECE] rounded-2xl bg-white p-10">
+      <div
+        onClick={onToggle}
+        className={`hidden sm:flex justify-between items-center border rounded-2xl bg-white p-10 transition-all cursor-pointer ${selectedBorder}`}
+      >
         {/* Left */}
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <h2 className="text-[26px] font-semibold text-[#0B66D3]">
               {title}
             </h2>
-
-            {/* <span className="px-4 py-1 rounded-full bg-[#E7C4F5] text-xs font-bold uppercase">
-              Popular
-            </span> */}
           </div>
 
           <p className="text-[#666] mt-2">{location}</p>
@@ -54,13 +57,11 @@ export default function PlanCard({
 
           <p className="mt-3">
             <span className="font-medium">Top Locations: </span>
-
             {topLocations.map((location, index) => (
               <span key={location}>
                 <a href="#" className="text-[#0B66D3] underline">
                   {location}
                 </a>
-
                 {index < topLocations.length - 1 && ", "}
               </span>
             ))}
@@ -80,7 +81,6 @@ export default function PlanCard({
           <p className="text-[11px] uppercase tracking-[2px] font-bold mb-3">
             Spins Per DJ
           </p>
-
           <div className="flex items-center">
             <div className="w-[116px] h-[54px] border border-black rounded-2xl flex items-center justify-center text-[24px]">
               {spinsPerDj}
@@ -90,11 +90,13 @@ export default function PlanCard({
       </div>
 
       {/* Mobile */}
-      <div className="sm:hidden border border-[#D4CECE] rounded-2xl bg-white p-5">
+      <div
+        onClick={onToggle}
+        className={`sm:hidden border rounded-2xl bg-white p-5 transition-all cursor-pointer ${selectedBorder}`}
+      >
         <div className="flex justify-between items-start gap-4">
           <div>
             <h2 className="text-lg font-bold text-[#0B66D3]">{title}</h2>
-
             <p className="text-sm text-[#666] mt-1">{location}</p>
           </div>
         </div>
@@ -105,7 +107,6 @@ export default function PlanCard({
               <span className="text-[10px] uppercase tracking-widest font-bold">
                 Spins Per DJ
               </span>
-
               <span className="text-xl mt-1 text-center">{spinsPerDj}</span>
             </div>
           </div>
@@ -121,7 +122,6 @@ export default function PlanCard({
 
         <p className="mt-3 text-sm">
           <span className="font-medium">Top Locations: </span>
-
           {topLocations.join(", ")}
         </p>
 

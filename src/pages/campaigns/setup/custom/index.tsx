@@ -33,6 +33,7 @@ const CustomCampaign = () => {
   const [editBeforeLaunchModal, setEditBeforeLaunchModal] = useState(false);
   const [loadingCampaignSong, setLoadingCampaignSong] = useState(false);
   const [loadingCampaignCreation, setLoadingCampaignCreation] = useState(false);
+  const [hasCreatedDraft, setHasCreatedDraft] = useState(false);
   const [startDate, setStartDate] = useState<string>("");
   const [campaignSongDetails, setCampaignSongDetails] = useState<any>(null);
   const [clusters, setClusters] = useState<any[]>([]);
@@ -114,7 +115,17 @@ const CustomCampaign = () => {
       start_date: startDate || "2026-06-06",
       mode: "custom",
     })
-      .then(() => {
+      .then((result) => {
+        if (!result) {
+          toast.update(createDraftToast, {
+            render: "Campaign Creation Failed, kindly try again",
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+          });
+          setLoadingCampaignCreation(false);
+          return;
+        }
         toast.update(createDraftToast, {
           render:
             "Campaign Created Successfully, feel free to edit selection before Launch",
@@ -123,6 +134,7 @@ const CustomCampaign = () => {
           autoClose: 3000,
         });
         setEditBeforeLaunchModal(true);
+        setHasCreatedDraft(true);
         setLoadingCampaignCreation(false);
       })
       .catch((err) => {
@@ -153,6 +165,7 @@ const CustomCampaign = () => {
           autoClose: 3000,
         });
         setLoadingCampaignCreation(false);
+        setEditBeforeLaunchModal(false);
         setTimeout(() => {
           router.push("/campaigns");
         }, 3000);
@@ -690,7 +703,7 @@ const CustomCampaign = () => {
               </div>
             </div>
 
-            {Object.keys(selectedDistricts).length !== 0 && (
+            {Object.keys(selectedDistricts).length !== 0 && hasCreatedDraft && (
               <div className="flex justify-end">
                 <button
                   className={`mt-10 md:px-6 ${!campaignSongDetails?.artist || Object.keys(selectedDistricts).length === 0 ? "opacity-50" : ""}`}
