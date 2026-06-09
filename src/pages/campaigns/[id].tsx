@@ -795,6 +795,7 @@ const ProjectDetails = () => {
                 editMode={toggleNotifications}
                 handleDownloadPage={handleDownloadPDF}
                 handleDownloadData={handleExportCSV}
+                isAdvertiser={isAdvertiser}
               />
               <div className="  ">
                 <ScheduleProject
@@ -1059,7 +1060,7 @@ const ProjectDetails = () => {
 
           {!isAdvertiser && (
             <div className="mb-[100px]">
-              <DropsList />
+              <DropsList isAdvertiser={isAdvertiser} />
             </div>
           )}
         </div>

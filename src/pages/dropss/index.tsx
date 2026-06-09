@@ -68,7 +68,7 @@ const Drops = () => {
             </div>
           </div>
         </div>
-        <DropsList />
+        <DropsList isAdvertiser={false} />
       </div>
       <div
         className={`custom-dialog-overlay ${

@@ -57,7 +57,7 @@ const ProjectDetailsPublic = () => {
         </div>
 
         <div className=" ">
-          <InsightChart />
+          <InsightChart isAdvertiser={false} />
           <Moments />
         </div>
       </div>
