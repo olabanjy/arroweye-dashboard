@@ -15,6 +15,7 @@ import { BadgeCheck, RefreshCcw, Zap } from "lucide-react";
 import { toast } from "react-toastify";
 import Modal from "@/pages/component/Modal";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const PromoterCampaign = () => {
   const router = useRouter();
@@ -185,7 +186,9 @@ const PromoterCampaign = () => {
       <DashboardLayout>
         <div className="bg-[#F6F6F6] py-7">
           <div className="flex justify-center items-center gap-2 mb-7">
-            <p className="text-[#A3A3A3]">Set Budget</p>
+            <Link href="/campaigns/setup">
+              <p className="text-[#A3A3A3]">Set Budget</p>
+            </Link>
             <div className="h-[1px] w-8 bg-[#A3A3A3]" />
             <p>Launch Campaign</p>
           </div>
@@ -243,39 +246,41 @@ const PromoterCampaign = () => {
               </div>
             </div>
 
-            <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12">
-              <div className="flex flex-col justify-between items-center min-h-[30px]">
-                <p className="text-xs font-medium text-center leading-tight">
-                  TOTAL TOKENS
-                </p>
-                <p className="text-3xl font-medium">
-                  {walletDetails?.available_balance || "0"}
-                </p>
-              </div>
+            <div className="sticky top-0 z-50 bg-white py-2">
+              <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12">
+                <div className="flex flex-col justify-between items-center min-h-[30px]">
+                  <p className="text-xs font-medium text-center leading-tight">
+                    TOTAL TOKENS
+                  </p>
+                  <p className="text-3xl font-medium">
+                    {walletDetails?.available_balance || "0"}
+                  </p>
+                </div>
 
-              <div className="flex flex-col justify-between items-center min-h-[30px]">
-                <p className="text-xs font-medium text-center leading-tight">
-                  TOKENS ALLOCATED
-                </p>
-                <p className="text-3xl font-medium">{totalTokens || "0"}</p>
-              </div>
+                <div className="flex flex-col justify-between items-center min-h-[30px]">
+                  <p className="text-xs font-medium text-center leading-tight">
+                    TOKENS ALLOCATED
+                  </p>
+                  <p className="text-3xl font-medium">{totalTokens || "0"}</p>
+                </div>
 
-              <div className="flex flex-col justify-between items-center min-h-[30px]">
-                <p className="text-xs font-medium text-center leading-tight">
-                  TOKENS REMAINING
-                </p>
-                <p className="text-3xl font-medium">
-                  {totalTokens > 0 && walletDetails?.available_balance > 0
-                    ? walletDetails.available_balance - totalTokens
-                    : 0}
-                </p>
-              </div>
+                <div className="flex flex-col justify-between items-center min-h-[30px]">
+                  <p className="text-xs font-medium text-center leading-tight">
+                    TOKENS REMAINING
+                  </p>
+                  <p className="text-3xl font-medium">
+                    {totalTokens > 0 && walletDetails?.available_balance > 0
+                      ? walletDetails.available_balance - totalTokens
+                      : 0}
+                  </p>
+                </div>
 
-              <div className="flex flex-col justify-between items-center min-h-[30px]">
-                <p className="text-xs font-medium text-center leading-tight">
-                  DJS SELECTED
-                </p>
-                <p className="text-3xl font-medium">{totalDJs || 0}</p>
+                <div className="flex flex-col justify-between items-center min-h-[30px]">
+                  <p className="text-xs font-medium text-center leading-tight">
+                    DJS SELECTED
+                  </p>
+                  <p className="text-3xl font-medium">{totalDJs || 0}</p>
+                </div>
               </div>
             </div>
 

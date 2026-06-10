@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export interface DJCardProps {
   id: string | number;
@@ -31,6 +31,44 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
+function InfoTooltip() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-4 h-4 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 flex items-center justify-center text-[10px] font-bold transition-colors"
+        aria-label="Spin counter help"
+      >
+        ?
+      </button>
+      {open && (
+        <div className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 w-52 bg-gray-900 text-white text-xs rounded-xl px-3 py-2.5 shadow-lg leading-relaxed">
+          <p>
+            <span className="text-green-400 font-bold">+</span> adds a spin,{" "}
+            <span className="text-red-400 font-bold">−</span> removes one. You
+            can also type a number directly in the input box.
+          </p>
+          {/* Arrow */}
+          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function SpinCounter({
   spins,
   onChange,
@@ -39,29 +77,84 @@ function SpinCounter({
   onChange: (value: number) => void;
 }) {
   return (
-    <div className="p-4 flex flex-row items-end gap-3 border border-black rounded-xl">
+    <div className="p-4 flex flex-row items-end gap-2 border border-black rounded-xl">
       <div className="flex flex-col">
-        <span className="mb-2 text-[10px] font-bold tracking-widest uppercase">
-          Total Spins
-        </span>
+        <div className="mb-2 flex items-center gap-1">
+          <span className="text-[10px] font-bold tracking-widest uppercase">
+            Total Spins
+          </span>
+          <InfoTooltip />
+        </div>
         <input
           type="number"
           value={spins}
           min={0}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-16 h-11 rounded-xl border border-black flex items-center justify-center bg-white text-center text-xl font-bold text-gray-800 tabular-nums"
+          className="w-16 h-10 rounded-xl border border-black flex items-center justify-center bg-white text-center text-xl font-bold text-gray-800 tabular-nums"
         />
       </div>
-      <div>
-        <button
-          onClick={() => onChange(Math.max(0, spins - 1))}
-          disabled={spins === 0}
-          className="w-11 h-11 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white text-2xl font-bold transition-all duration-150 select-none"
-          aria-label="Decrement spins"
-        >
-          -
-        </button>
+      {/* Minus */}
+      <button
+        onClick={() => onChange(Math.max(0, spins - 1))}
+        disabled={spins === 0}
+        className="w-9 h-9 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white text-xl font-bold transition-all duration-150 select-none"
+        aria-label="Decrement spins"
+      >
+        −
+      </button>
+      {/* Plus */}
+      <button
+        onClick={() => onChange(spins + 1)}
+        className="w-9 h-9 rounded-full bg-green-500 hover:bg-green-600 active:scale-95 flex items-center justify-center text-white text-xl font-bold transition-all duration-150 select-none"
+        aria-label="Increment spins"
+      >
+        +
+      </button>
+    </div>
+  );
+}
+
+function MobileSpinCounter({
+  spins,
+  onChange,
+}: {
+  spins: number;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <div className="p-2 flex flex-row items-end gap-1 border border-black rounded-xl">
+      <div className="flex flex-col">
+        <div className="mb-1 flex items-center gap-0.5">
+          <span className="text-[8px] font-bold tracking-widest uppercase">
+            Spins
+          </span>
+          <InfoTooltip />
+        </div>
+        <input
+          type="number"
+          value={spins}
+          min={0}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="w-10 h-8 rounded-xl border border-black flex items-center justify-center bg-white text-center font-bold text-gray-800 tabular-nums"
+        />
       </div>
+      {/* Minus */}
+      <button
+        onClick={() => onChange(Math.max(0, spins - 1))}
+        disabled={spins === 0}
+        className="w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold transition-all duration-150 select-none"
+        aria-label="Decrement spins"
+      >
+        −
+      </button>
+      {/* Plus */}
+      <button
+        onClick={() => onChange(spins + 1)}
+        className="w-6 h-6 rounded-full bg-green-500 hover:bg-green-600 active:scale-95 flex items-center justify-center text-white font-bold transition-all duration-150 select-none"
+        aria-label="Increment spins"
+      >
+        +
+      </button>
     </div>
   );
 }
@@ -151,31 +244,7 @@ export default function DJCard({
               </h2>
               <p className="text-xs text-gray-400 mt-0.5">{location}</p>
             </div>
-            {/* Compact spin counter for mobile header */}
-            <div className="p-2 flex flex-row items-end gap-1 border border-black rounded-xl">
-              <div className="flex flex-col">
-                <span className="mb-1 text-[8px] font-bold tracking-widest uppercase">
-                  Spins
-                </span>
-                <input
-                  type="number"
-                  value={spins}
-                  min={0}
-                  onChange={(e) => onSpinsChange(Number(e.target.value))}
-                  className="w-10 h-8 rounded-xl border border-black flex items-center justify-center bg-white text-center font-bold text-gray-800 tabular-nums"
-                />
-              </div>
-              <div>
-                <button
-                  onClick={() => onSpinsChange(Math.max(0, spins - 1))}
-                  disabled={spins === 0}
-                  className="w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold transition-all duration-150 select-none"
-                  aria-label="Decrement spins"
-                >
-                  -
-                </button>
-              </div>
-            </div>
+            <MobileSpinCounter spins={spins} onChange={onSpinsChange} />
           </div>
 
           {/* Divider */}

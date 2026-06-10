@@ -1,9 +1,18 @@
+import { X } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 
 const AddCampaign = () => {
+  const router = useRouter();
   return (
     <div className="fixed inset-0 z-10 lg:z-50 flex items-center justify-center bg-black bg-opacity-80">
+      <div
+        className="absolute top-10 right-5 lg:right-20 cursor-pointer"
+        onClick={() => router.push("/campaigns/setup")}
+      >
+        <X className="text-white lg:w-10 lg:h-10" />
+      </div>
       <div className="flex flex-col justify-center items-center gap-24">
         <p className="text-xl font-semibold text-white">LAUNCH YOUR CAMPAIGN</p>
 
