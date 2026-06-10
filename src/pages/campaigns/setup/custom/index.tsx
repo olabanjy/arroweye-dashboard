@@ -513,40 +513,41 @@ const CustomCampaign = () => {
                 )}
               </div>
             </div>
+            <div className="sticky top-0 z-50 bg-white py-2">
+              <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12">
+                <div className="flex flex-col justify-between items-center min-h-[80px]">
+                  <p className="text-lg font-medium text-center leading-tight">
+                    TOTAL TOKENS
+                  </p>
+                  <p className="text-5xl font-medium">
+                    {walletDetails?.available_balance || "0"}
+                  </p>
+                </div>
 
-            <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12">
-              <div className="flex flex-col justify-between items-center min-h-[80px]">
-                <p className="text-lg font-medium text-center leading-tight">
-                  TOTAL TOKENS
-                </p>
-                <p className="text-5xl font-medium">
-                  {walletDetails?.available_balance || "0"}
-                </p>
-              </div>
+                <div className="flex flex-col justify-between items-center min-h-[80px]">
+                  <p className="text-lg font-medium text-center leading-tight">
+                    TOKENS ALLOCATED
+                  </p>
+                  <p className="text-5xl font-medium">{totalTokens || "0"}</p>
+                </div>
 
-              <div className="flex flex-col justify-between items-center min-h-[80px]">
-                <p className="text-lg font-medium text-center leading-tight">
-                  TOKENS ALLOCATED
-                </p>
-                <p className="text-5xl font-medium">{totalTokens || "0"}</p>
-              </div>
+                <div className="flex flex-col justify-between items-center min-h-[80px]">
+                  <p className="text-lg font-medium text-center leading-tight">
+                    TOKENS REMAINING
+                  </p>
+                  <p className="text-5xl font-medium">
+                    {totalTokens > 0 && walletDetails?.available_balance > 0
+                      ? walletDetails.available_balance - totalTokens
+                      : 0}
+                  </p>
+                </div>
 
-              <div className="flex flex-col justify-between items-center min-h-[80px]">
-                <p className="text-lg font-medium text-center leading-tight">
-                  TOKENS REMAINING
-                </p>
-                <p className="text-5xl font-medium">
-                  {totalTokens > 0 && walletDetails?.available_balance > 0
-                    ? walletDetails.available_balance - totalTokens
-                    : 0}
-                </p>
-              </div>
-
-              <div className="flex flex-col justify-between items-center min-h-[80px]">
-                <p className="text-lg font-medium text-center leading-tight">
-                  DJS SELECTED
-                </p>
-                <p className="text-5xl font-medium">{totalDJs || 0}</p>
+                <div className="flex flex-col justify-between items-center min-h-[80px]">
+                  <p className="text-lg font-medium text-center leading-tight">
+                    DJS SELECTED
+                  </p>
+                  <p className="text-5xl font-medium">{totalDJs || 0}</p>
+                </div>
               </div>
             </div>
 
@@ -614,7 +615,7 @@ const CustomCampaign = () => {
 
                               <button
                                 onClick={() => removeDj(districtId, dj.id)}
-                                className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors"
+                                className="absolute top-1 sm:top-3 right-3 text-gray-400 hover:text-red-500 transition-colors"
                                 aria-label="Remove DJ"
                               >
                                 ✕
@@ -783,7 +784,7 @@ const CustomCampaign = () => {
 
                           <button
                             onClick={() => removeDj(districtId, dj.id)}
-                            className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors"
+                            className="absolute top-1 sm:top-3 right-3 text-gray-400 hover:text-red-500 transition-colors"
                             aria-label="Remove DJ"
                           >
                             ✕
