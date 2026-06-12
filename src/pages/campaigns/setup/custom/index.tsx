@@ -369,7 +369,7 @@ const CustomCampaign = () => {
   const activePlaceholder =
     selectedClusterId !== null && selectedDistricts[selectedClusterId]
       ? `Search Djs in ${selectedDistricts[selectedClusterId].name}`
-      : "Search Djs";
+      : "Select District to Search Djs";
 
   const fetchDjs = (districtId: number | null, search?: string) => {
     if (!districtId) return;
