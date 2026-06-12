@@ -1,6 +1,3 @@
-import { Info } from "lucide-react";
-import { useState } from "react";
-
 export interface PlanCardProps {
   id: number;
   title: string;
@@ -27,41 +24,20 @@ export default function PlanCard({
   selected = false,
   onToggle,
 }: PlanCardProps) {
-  const [showTooltip, setShowTooltip] = useState(false);
-
   const selectedBorder = selected
     ? "border-[#0B66D3] ring-2 ring-[#0B66D3]"
     : "border-[#D4CECE]";
 
-  const TooltipIcon = () => (
-    <div
-      className="relative inline-flex items-center"
-      onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
+  const StatusLabel = () => (
+    <span
+      className={`absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 whitespace-nowrap rounded-full border bg-white px-3 py-1 text-xs font-medium ${
+        selected
+          ? "border-[#E03131] text-[#E03131]"
+          : "border-[#0B66D3] text-[#0B66D3]"
+      }`}
     >
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          setShowTooltip((prev) => !prev);
-        }}
-        className="text-[#0B66D3] hover:text-[#0952aa] focus:outline-none"
-        aria-label="How to select a plan"
-      >
-        <Info size={16} />
-      </button>
-
-      {showTooltip && (
-        <div
-          onClick={(e) => e.stopPropagation()}
-          className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg z-10 text-center pointer-events-none"
-        >
-          Click on a card to select this plan
-          {/* Arrow */}
-          <span className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800" />
-        </div>
-      )}
-    </div>
+      {selected ? "Click to Remove" : "Click to Add"}
+    </span>
   );
 
   return (
@@ -69,13 +45,12 @@ export default function PlanCard({
       {/* Desktop */}
       <div
         onClick={onToggle}
-        className={`hidden sm:flex justify-between items-center border rounded-2xl bg-white p-10 transition-all cursor-pointer ${selectedBorder}`}
+        className={`relative hidden sm:flex justify-between items-center border rounded-2xl bg-white p-10 transition-all cursor-pointer ${selectedBorder}`}
       >
         {/* Left */}
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-[#0B66D3]">{title}</h2>
-            <TooltipIcon />
           </div>
 
           <p className="text-[#666] mt-2">{location}</p>
@@ -120,18 +95,19 @@ export default function PlanCard({
             </div>
           </div>
         </div>
+
+        <StatusLabel />
       </div>
 
       {/* Mobile */}
       <div
         onClick={onToggle}
-        className={`sm:hidden border rounded-2xl bg-white p-5 transition-all cursor-pointer ${selectedBorder}`}
+        className={`relative sm:hidden border rounded-2xl bg-white p-5 transition-all cursor-pointer ${selectedBorder}`}
       >
         <div className="flex justify-between items-start gap-4">
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold text-[#0B66D3]">{title}</h2>
-              <TooltipIcon />
             </div>
             <p className="text-sm text-[#666] mt-1">{location}</p>
           </div>
@@ -166,6 +142,8 @@ export default function PlanCard({
         </p>
 
         <p className="mt-3 text-[#F2A000] font-medium">{totalTokens} Tokens</p>
+
+        <StatusLabel />
       </div>
     </>
   );

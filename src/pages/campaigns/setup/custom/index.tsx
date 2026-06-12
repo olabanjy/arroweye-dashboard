@@ -366,6 +366,11 @@ const CustomCampaign = () => {
     });
   };
 
+  const activePlaceholder =
+    selectedClusterId !== null && selectedDistricts[selectedClusterId]
+      ? `Search Djs in ${selectedDistricts[selectedClusterId].name}`
+      : "Search Djs";
+
   const fetchDjs = (districtId: number | null, search?: string) => {
     if (!districtId) return;
 
@@ -513,7 +518,7 @@ const CustomCampaign = () => {
                 )}
               </div>
             </div>
-            <div className="sticky top-0 z-50 bg-white py-2">
+            <div className="sticky top-0 z-30 bg-white py-2">
               <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12">
                 <div className="flex flex-col justify-between items-center min-h-[80px]">
                   <p className="text-lg font-medium text-center leading-tight">
@@ -563,7 +568,7 @@ const CustomCampaign = () => {
               <Input
                 className="border-[#9D9A9A]"
                 type="search"
-                placeholder="Search Djs"
+                placeholder={activePlaceholder}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={(e) => {
