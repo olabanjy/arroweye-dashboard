@@ -1,3 +1,4 @@
+import { Minus, Plus } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 export interface DJCardProps {
@@ -94,21 +95,23 @@ function SpinCounter({
         />
       </div>
       {/* Minus */}
+      {/* Minus */}
       <button
         onClick={() => onChange(Math.max(0, spins - 1))}
         disabled={spins === 0}
-        className="w-9 h-9 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white text-xl font-bold transition-all duration-150 select-none"
+        className="w-9 h-9 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white transition-all duration-150 select-none"
         aria-label="Decrement spins"
       >
-        −
+        <Minus size={18} strokeWidth={3} />
       </button>
+
       {/* Plus */}
       <button
         onClick={() => onChange(spins + 1)}
-        className="w-9 h-9 rounded-full bg-green-500 hover:bg-green-600 active:scale-95 flex items-center justify-center text-white text-xl font-bold transition-all duration-150 select-none"
+        className="w-9 h-9 rounded-full bg-green-500 hover:bg-green-600 active:scale-95 flex items-center justify-center text-white transition-all duration-150 select-none"
         aria-label="Increment spins"
       >
-        +
+        <Plus size={18} strokeWidth={3} />
       </button>
     </div>
   );
@@ -145,7 +148,7 @@ function MobileSpinCounter({
         className="w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold transition-all duration-150 select-none"
         aria-label="Decrement spins"
       >
-        −
+        <Minus size={15} strokeWidth={2} />
       </button>
       {/* Plus */}
       <button
@@ -153,7 +156,7 @@ function MobileSpinCounter({
         className="w-6 h-6 rounded-full bg-green-500 hover:bg-green-600 active:scale-95 flex items-center justify-center text-white font-bold transition-all duration-150 select-none"
         aria-label="Increment spins"
       >
-        +
+        <Plus size={15} strokeWidth={2} />
       </button>
     </div>
   );

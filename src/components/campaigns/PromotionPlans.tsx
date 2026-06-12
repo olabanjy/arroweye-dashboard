@@ -26,6 +26,26 @@ export default function PromotionPlans({
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
 
   const handlePlanSelect = (plan: any) => {
+    // If the clicked plan is already selected, unselect it
+    if (selectedPlanId === plan.id) {
+      setSelectedPlanId(null);
+
+      onPlanSelected({
+        accept_terms: false,
+        aggregator_plan_id: plan.id,
+        cluster_ids: [],
+      });
+
+      onAudienceReach(0);
+
+      onPlanStats({
+        totalTokens: 0,
+        totalDJs: 0,
+      });
+
+      return;
+    }
+
     setSelectedPlanId(plan.id);
 
     onPlanSelected({
@@ -47,7 +67,7 @@ export default function PromotionPlans({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {!isModalPage && (
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">

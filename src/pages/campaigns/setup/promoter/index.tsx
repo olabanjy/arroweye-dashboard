@@ -246,40 +246,40 @@ const PromoterCampaign = () => {
               </div>
             </div>
 
-            <div className="sticky top-0 z-50 bg-white py-2">
+            <div className="sticky top-0 z-30 bg-white py-2">
               <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12">
-                <div className="flex flex-col justify-between items-center min-h-[30px]">
-                  <p className="text-xs font-medium text-center leading-tight">
+                <div className="flex flex-col justify-between items-center min-h-[80px]">
+                  <p className="text-lg font-medium text-center leading-tight">
                     TOTAL TOKENS
                   </p>
-                  <p className="text-3xl font-medium">
+                  <p className="text-5xl font-medium">
                     {walletDetails?.available_balance || "0"}
                   </p>
                 </div>
 
-                <div className="flex flex-col justify-between items-center min-h-[30px]">
-                  <p className="text-xs font-medium text-center leading-tight">
+                <div className="flex flex-col justify-between items-center min-h-[80px]">
+                  <p className="text-lg font-medium text-center leading-tight">
                     TOKENS ALLOCATED
                   </p>
-                  <p className="text-3xl font-medium">{totalTokens || "0"}</p>
+                  <p className="text-5xl font-medium">{totalTokens || "0"}</p>
                 </div>
 
-                <div className="flex flex-col justify-between items-center min-h-[30px]">
-                  <p className="text-xs font-medium text-center leading-tight">
+                <div className="flex flex-col justify-between items-center min-h-[80px]">
+                  <p className="text-lg font-medium text-center leading-tight">
                     TOKENS REMAINING
                   </p>
-                  <p className="text-3xl font-medium">
+                  <p className="text-5xl font-medium">
                     {totalTokens > 0 && walletDetails?.available_balance > 0
                       ? walletDetails.available_balance - totalTokens
                       : 0}
                   </p>
                 </div>
 
-                <div className="flex flex-col justify-between items-center min-h-[30px]">
-                  <p className="text-xs font-medium text-center leading-tight">
+                <div className="flex flex-col justify-between items-center min-h-[80px]">
+                  <p className="text-lg font-medium text-center leading-tight">
                     DJS SELECTED
                   </p>
-                  <p className="text-3xl font-medium">{totalDJs || 0}</p>
+                  <p className="text-5xl font-medium">{totalDJs || 0}</p>
                 </div>
               </div>
             </div>
