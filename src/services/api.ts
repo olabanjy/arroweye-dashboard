@@ -1510,17 +1510,17 @@ export const getPromoterPlans = async (params?: {
   }
 };
 
-export const getCreatedCampaigns = async (): Promise<any | null> => {
+export const getCreatedCampaigns = async (
+  page = 1,
+  pageSize = 10,
+): Promise<any | null> => {
   try {
-    let url = `/api/v1/campaigns/`;
-
     const response = await apiRequest({
       method: "GET",
-      url: url,
+      url: `/api/v1/campaigns/?page=${page}&page_size=${pageSize}`,
       data: null,
       requireToken: true,
     });
-
     return response as any;
   } catch (error: unknown) {
     return null;

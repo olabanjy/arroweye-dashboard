@@ -13,6 +13,7 @@ import Link from "next/link";
 import { MdOutlineModeEditOutline } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
 import { Button } from "@/components/ui/button";
+import Pagination from "@/pages/drops/component/Pagination";
 
 interface ProjectsProps {
   filterVisible: boolean;
@@ -49,6 +50,10 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const [copiedPin, setCopiedPin] = useState<string | null>(null);
   const [content, setContent] = useState<ContentItem[] | null>(null);
   const [campaignList, setCampaignList] = useState<any[] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const PAGE_SIZE = 10;
   const [isArchiving, setIsArchiving] = useState<number | null>(null);
 
   const [investmentFilter, setInvestmentFilter] = useState<any>("");
@@ -80,7 +85,6 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const fetchProjects = async () => {
     try {
       const fetchedContent = await getProjects();
-      console.log("Projects", fetchedContent);
       setContent(fetchedContent);
     } catch (error) {
       console.error("Error fetching projects:", error);
@@ -90,17 +94,22 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   };
 
   useEffect(() => {
-    if (isAdvertiser === null) return; // still resolving
-
+    if (isAdvertiser === null) return;
     if (!isAdvertiser) {
       setIsLoading(false);
       return;
     }
 
-    const fetchgetCreatedCampaigns = async () => {
+    const fetchCampaigns = async () => {
+      setIsLoading(true);
       try {
-        const fetchedContent = await getCreatedCampaigns();
-        setCampaignList(fetchedContent?.results);
+        const fetchedContent = await getCreatedCampaigns(
+          currentPage,
+          PAGE_SIZE,
+        );
+        setCampaignList(fetchedContent?.results ?? []);
+        setTotalPages(fetchedContent?.pages ?? 1);
+        setTotalCount(fetchedContent?.count ?? 0);
       } catch (error) {
         console.error("Error fetching campaigns:", error);
       } finally {
@@ -108,8 +117,8 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
       }
     };
 
-    fetchgetCreatedCampaigns();
-  }, [isAdvertiser]);
+    fetchCampaigns();
+  }, [isAdvertiser, currentPage]);
 
   useEffect(() => {
     const content: any = ls.get("Profile", { decrypt: true });
@@ -178,11 +187,8 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           item.song_artist?.toLowerCase().includes(searchValue.toLowerCase())),
     )
     .sort((a: any, b: any) => {
-      if (investmentFilter === "htl") {
-        return b.total_tokens - a.total_tokens;
-      } else if (investmentFilter === "lth") {
-        return a.total_tokens - b.total_tokens;
-      }
+      if (investmentFilter === "htl") return b.total_tokens - a.total_tokens;
+      if (investmentFilter === "lth") return a.total_tokens - b.total_tokens;
       return 0;
     });
   return (
@@ -299,13 +305,16 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
         )}
 
         {isAdvertiser && (
-          <Table
-            highlightFirstCell={true}
-            headers={campaignHeaders}
-            rows={filteredCampaignList
-              ?.slice()
-              .reverse()
-              .map((item, index) => ({
+          <div>
+            {isLoading && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60 rounded-md">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#31bc86] border-t-transparent" />
+              </div>
+            )}
+            <Table
+              highlightFirstCell={true}
+              headers={campaignHeaders}
+              rows={filteredCampaignList?.map((item) => ({
                 data: [
                   <div key={`title-${item.id}`}>
                     <Link href={`/campaigns/${item.id}`}>
@@ -327,26 +336,22 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                   </Link>,
                 ],
               }))}
-            emptyState={
-              isLoading ? (
+              emptyState={
                 <div className="flex h-[50vh] flex-col items-center justify-center text-center">
-                  <div className="my-[32px]">
-                    <p className="text-[20px] font-[600] text-grey-400">
-                      Loading...
-                    </p>
-                  </div>
+                  <p className="text-[20px] font-[600] text-grey-400">
+                    No Campaigns
+                  </p>
                 </div>
-              ) : (
-                <div className="flex h-[50vh] flex-col items-center justify-center text-center">
-                  <div className="my-[32px]">
-                    <p className="text-[20px] font-[600] text-grey-400">
-                      No Campaigns
-                    </p>
-                  </div>
-                </div>
-              )
-            }
-          />
+              }
+            />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => {
+                if (!isLoading) setCurrentPage(page);
+              }}
+            />
+          </div>
         )}
       </div>
 

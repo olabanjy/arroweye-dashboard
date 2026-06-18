@@ -43,6 +43,24 @@ const CustomCampaign = () => {
   );
   const [search, setSearch] = useState("");
   const [djSpins, setDjSpins] = useState<Record<number, number>>({});
+  const [totalAudienceReach, setTotalAudienceReach] = useState("");
+
+  const handleTotalReachChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/,/g, "");
+    if (/^\d*$/.test(raw)) {
+      setTotalAudienceReach(raw);
+    }
+  };
+
+  const handleTotalReachBlur = () => {
+    const raw = totalAudienceReach.replace(/,/g, "");
+    if (!raw) return;
+    setTotalAudienceReach(Number(raw).toLocaleString("en-US"));
+  };
+
+  const handleTotalReachFocus = () => {
+    setTotalAudienceReach(totalAudienceReach.replace(/,/g, ""));
+  };
 
   const buildCampaignPayload = (
     selectedDistricts: Record<number, DistrictEntry>,
@@ -98,20 +116,20 @@ const CustomCampaign = () => {
     return audienceReach;
   };
 
+  const parseFormattedNumber = (value: string): number =>
+    Number(value.replace(/,/g, "")) || 0;
+
   const handleCreateCampaignDraft = async () => {
     const createDraftToast = toast.loading("Creating Campaign...");
     setLoadingCampaignCreation(true);
-    const audienceReachValue = calculateAudienceReach(
-      selectedDistricts,
-      djSpins,
-    );
+
     await createCampaignDraft({
       song_isrc: campaignSongDetails?.isrc,
       song_upc: campaignSongDetails?.upc,
       song_title: campaignSongDetails?.title,
       song_artist: campaignSongDetails?.artist,
       song_artwork: campaignSongDetails?.artwork,
-      target_audience_reach: audienceReachValue,
+      target_audience_reach: parseFormattedNumber(totalAudienceReach),
       start_date: startDate || "2026-06-06",
       mode: "custom",
     })
@@ -150,14 +168,24 @@ const CustomCampaign = () => {
   };
 
   const handleLaunchCampaign = async () => {
-    const createToast = toast.loading("Creating Campaign...");
+    const createToast = toast.loading("Launching Campaign...");
 
     const existindDraft: any = ls.get("LastCampaignDraft", { decrypt: true });
 
     const payload = buildCampaignPayload(selectedDistricts, djSpins, true);
 
     await launchCampaignFully(existindDraft?.id, payload)
-      .then(() => {
+      .then((result) => {
+        if (!result) {
+          toast.update(createToast, {
+            render: "Campaign Creation Failed, kindly try again",
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+          });
+          setLoadingCampaignCreation(false);
+          return;
+        }
         toast.update(createToast, {
           render: "Campaign Launched Successfully",
           type: "success",
@@ -267,6 +295,20 @@ const CustomCampaign = () => {
     return total;
   }, [selectedDistricts, djSpins]);
 
+  const totalReachNumber = Number(totalAudienceReach.replace(/,/g, "")) || 0;
+  const reachValue =
+    Number(
+      String(calculateAudienceReach(selectedDistricts, djSpins)).replace(
+        /,/g,
+        "",
+      ),
+    ) || 0;
+
+  const reachPercentage =
+    totalReachNumber > 0
+      ? Math.min((reachValue / totalReachNumber) * 100, 100)
+      : 0;
+
   const startOver = () => {
     setSelectedDistricts({});
     setIsrc("");
@@ -371,6 +413,10 @@ const CustomCampaign = () => {
       ? `Search Djs in ${selectedDistricts[selectedClusterId].name}`
       : "Select District to Search Djs";
 
+  const isTotalAudienceReachValid =
+    totalAudienceReach.trim().length > 0 &&
+    Number(totalAudienceReach.replace(/,/g, "")) > 0;
+
   const fetchDjs = (districtId: number | null, search?: string) => {
     if (!districtId) return;
 
@@ -469,7 +515,12 @@ const CustomCampaign = () => {
               <Input
                 className="border-[#9D9A9A]"
                 type="text"
-                placeholder="Email"
+                inputMode="numeric"
+                placeholder="Enter Target Audience"
+                value={totalAudienceReach}
+                onChange={handleTotalReachChange}
+                onBlur={handleTotalReachBlur}
+                onFocus={handleTotalReachFocus}
               />
               <div className="relative">
                 <Input
@@ -486,7 +537,6 @@ const CustomCampaign = () => {
 
                     timeoutRef.current = setTimeout(() => {
                       const value = inputRef.current?.value;
-
                       if (value) {
                         fetchSong(value);
                       }
@@ -494,7 +544,7 @@ const CustomCampaign = () => {
                   }}
                 />
                 {loadingCampaignSong === true && (
-                  <span className="italic absolute top-14 text-sm mt-2">
+                  <span className="italic absolute top-14 text-sm mt-2 truncate w-full block">
                     Loading Song....
                   </span>
                 )}
@@ -502,23 +552,24 @@ const CustomCampaign = () => {
                   campaignSongDetails?.artist &&
                   campaignSongDetails?.title && (
                     <div
-                      className={`absolute flex flex-row gap-2 items-center top-14 text-sm mt-2 text-green-500`}
+                      title={`${campaignSongDetails?.artist} - ${campaignSongDetails?.title}`}
+                      className="absolute flex flex-row gap-2 items-center top-14 text-sm mt-2 text-green-500 w-full overflow-hidden cursor-default"
                     >
-                      <BadgeCheck height={14} width={14} />
-                      <p>
+                      <BadgeCheck height={14} width={14} className="shrink-0" />
+                      <p className="truncate">
                         {campaignSongDetails?.artist} -{" "}
                         {campaignSongDetails?.title}
-                      </p>{" "}
+                      </p>
                     </div>
                   )}
                 {loadingCampaignSong !== true && campaignSongDetails?.error && (
-                  <p className={`absolute top-14 text-sm mt-2 text-red-500`}>
+                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
                     {campaignSongDetails?.error}
                   </p>
                 )}
               </div>
             </div>
-            <div className="sticky top-0 z-30 bg-white py-2">
+            <div className="mt-8 py-[1px] sticky top-0 z-30 bg-white">
               <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12">
                 <div className="flex flex-col justify-between items-center min-h-[80px]">
                   <p className="text-lg font-medium text-center leading-tight">
@@ -645,10 +696,18 @@ const CustomCampaign = () => {
 
             <div className="mt-10 flex flex-col gap-2">
               <p>Audience Reach</p>
-              <div className="bg-gray-200 w-full h-1" />
-              <p className="text-right">
-                {calculateAudienceReach(selectedDistricts, djSpins)}
-              </p>
+              <div className="bg-gray-200 w-full h-1 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-300"
+                  style={{
+                    width: `${reachPercentage}%`,
+                    backgroundColor: "#F4C300",
+                  }}
+                />
+              </div>
+              {totalAudienceReach && (
+                <p className="text-right">{reachValue.toLocaleString()}</p>
+              )}
             </div>
 
             <div className="w-full px-4 py-6 md:px-6 md:py-5 rounded-xl">
@@ -693,12 +752,13 @@ const CustomCampaign = () => {
 
                 {/* Launch CTA */}
                 <button
-                  className={`order-3 md:order-3 w-full md:w-auto px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold ${loadingCampaignCreation || Object.keys(selectedDistricts).length === 0 || !startDate || !campaignSongDetails?.artist ? "opacity-50 italic" : ""}`}
+                  className={`order-3 md:order-3 w-full md:w-auto px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold ${loadingCampaignCreation || Object.keys(selectedDistricts).length === 0 || !startDate || !campaignSongDetails?.artist || !isTotalAudienceReachValid ? "opacity-50 italic" : ""}`}
                   disabled={
                     loadingCampaignCreation ||
                     Object.keys(selectedDistricts).length === 0 ||
                     !startDate ||
-                    !campaignSongDetails?.artist
+                    !campaignSongDetails?.artist ||
+                    !isTotalAudienceReachValid
                   }
                   onClick={handleCreateCampaignDraft}
                 >

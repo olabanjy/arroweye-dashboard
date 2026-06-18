@@ -28,7 +28,7 @@ const PromoterCampaign = () => {
   const [campaignSongDetails, setCampaignSongDetails] = useState<any>(null);
   const [totalTokens, setTotalTokens] = useState<number>(0);
   const [totalDJs, setTotalDJs] = useState<number>(0);
-  const [totalAudienceReach, setTotalAudienceReach] = useState<number>(0);
+  const [totalAudienceReach, setTotalAudienceReach] = useState("");
   const [selectedPromotion, setSelectedPromotion] = useState<any>(null);
   const [campaignPayload, setCampaignPayload] = useState<{
     accept_terms: boolean;
@@ -36,6 +36,23 @@ const PromoterCampaign = () => {
     cluster_ids: number[];
   } | null>(null);
   const [search, setSearch] = useState<string | undefined>("");
+
+  const handleTotalReachChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/,/g, "");
+    if (/^\d*$/.test(raw)) {
+      setTotalAudienceReach(raw);
+    }
+  };
+
+  const handleTotalReachBlur = () => {
+    const raw = totalAudienceReach.replace(/,/g, "");
+    if (!raw) return;
+    setTotalAudienceReach(Number(raw).toLocaleString("en-US"));
+  };
+
+  const handleTotalReachFocus = () => {
+    setTotalAudienceReach(totalAudienceReach.replace(/,/g, ""));
+  };
 
   useEffect(() => {
     getPromoterPlans()
@@ -58,7 +75,7 @@ const PromoterCampaign = () => {
   }, []);
 
   const startOver = () => {
-    setTotalAudienceReach(0);
+    setTotalAudienceReach("");
     setSelectedPromotion(null);
     setCampaignPayload(null);
     setStartDate("");
@@ -94,6 +111,9 @@ const PromoterCampaign = () => {
     }
   };
 
+  const parseFormattedNumber = (value: string): number =>
+    Number(value.replace(/,/g, "")) || 0;
+
   const handleCreateCampaignDraft = async () => {
     const createDraftToast = toast.loading("Creating Campaign...");
     setLoadingCampaignCreation(true);
@@ -104,7 +124,7 @@ const PromoterCampaign = () => {
       song_title: campaignSongDetails?.title,
       song_artist: campaignSongDetails?.artist,
       song_artwork: campaignSongDetails?.artwork,
-      target_audience_reach: totalAudienceReach,
+      target_audience_reach: parseFormattedNumber(totalAudienceReach),
       start_date: startDate || "2026-06-06",
       mode: "aggregator",
     })
@@ -198,22 +218,28 @@ const PromoterCampaign = () => {
               <Input
                 className="border-[#9D9A9A]"
                 type="text"
-                placeholder="Email"
+                inputMode="numeric"
+                placeholder="Enter Target Audience"
+                value={totalAudienceReach}
+                onChange={handleTotalReachChange}
+                onBlur={handleTotalReachBlur}
+                onFocus={handleTotalReachFocus}
               />
               <div className="relative">
                 <Input
+                  // value={isrc}
                   ref={inputRef}
                   className="border-[#9D9A9A]"
                   type="text"
                   placeholder="ISRC / UPC"
-                  onChange={() => {
+                  onChange={(e) => {
+                    // setIsrc(e.target.value);
                     if (timeoutRef.current) {
                       clearTimeout(timeoutRef.current);
                     }
 
                     timeoutRef.current = setTimeout(() => {
                       const value = inputRef.current?.value;
-
                       if (value) {
                         fetchSong(value);
                       }
@@ -221,7 +247,7 @@ const PromoterCampaign = () => {
                   }}
                 />
                 {loadingCampaignSong === true && (
-                  <span className="italic absolute top-14 text-sm mt-2">
+                  <span className="italic absolute top-14 text-sm mt-2 truncate w-full block">
                     Loading Song....
                   </span>
                 )}
@@ -229,24 +255,25 @@ const PromoterCampaign = () => {
                   campaignSongDetails?.artist &&
                   campaignSongDetails?.title && (
                     <div
-                      className={`absolute flex flex-row gap-2 items-center top-14 text-sm mt-2 text-green-500`}
+                      title={`${campaignSongDetails?.artist} - ${campaignSongDetails?.title}`}
+                      className="absolute flex flex-row gap-2 items-center top-14 text-sm mt-2 text-green-500 w-full overflow-hidden cursor-default"
                     >
-                      <BadgeCheck height={14} width={14} />
-                      <p>
+                      <BadgeCheck height={14} width={14} className="shrink-0" />
+                      <p className="truncate">
                         {campaignSongDetails?.artist} -{" "}
                         {campaignSongDetails?.title}
-                      </p>{" "}
+                      </p>
                     </div>
                   )}
                 {loadingCampaignSong !== true && campaignSongDetails?.error && (
-                  <p className={`absolute top-14 text-sm mt-2 text-red-500`}>
+                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
                     {campaignSongDetails?.error}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="sticky top-0 z-30 bg-white py-2">
+            <div className="mt-8 py-[1px] sticky top-0 z-30 bg-white">
               <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12">
                 <div className="flex flex-col justify-between items-center min-h-[80px]">
                   <p className="text-lg font-medium text-center leading-tight">
@@ -306,7 +333,7 @@ const PromoterCampaign = () => {
                 setSelectedPromotion={setSelectedPromotion}
                 resetPlan={resetPlan}
                 onPlanSelected={handlePlanSelected}
-                onAudienceReach={(reach) => setTotalAudienceReach(reach)}
+                onAudienceReach={(reach) => console.log(reach)}
                 onPlanStats={({ totalTokens, totalDJs }) => {
                   setTotalTokens(totalTokens);
                   setTotalDJs(totalDJs);
@@ -347,11 +374,12 @@ const PromoterCampaign = () => {
 
                   {/* Launch CTA */}
                   <button
-                    className={`order-3 md:order-3 w-full md:w-auto px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold ${loadingCampaignCreation || !startDate || !campaignSongDetails?.artist ? "opacity-50 italic" : ""}`}
+                    className={`order-3 md:order-3 w-full md:w-auto px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold ${loadingCampaignCreation || !startDate || !campaignSongDetails?.artist || !totalAudienceReach ? "opacity-50 italic" : ""}`}
                     disabled={
                       loadingCampaignCreation ||
                       !startDate ||
-                      !campaignSongDetails?.artist
+                      !campaignSongDetails?.artist ||
+                      !totalAudienceReach
                     }
                     onClick={handleCreateCampaignDraft}
                   >
@@ -379,7 +407,7 @@ const PromoterCampaign = () => {
               selectedPromotion={selectedPromotion}
               setSelectedPromotion={setSelectedPromotion}
               onPlanSelected={handlePlanSelected}
-              onAudienceReach={(reach) => setTotalAudienceReach(reach)}
+              onAudienceReach={(reach) => console.log(reach)}
               onPlanStats={({ totalTokens, totalDJs }) => {
                 setTotalTokens(totalTokens);
                 setTotalDJs(totalDJs);
