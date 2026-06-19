@@ -34,7 +34,9 @@ function StarRating({ rating }: { rating: number }) {
 
 function InfoTooltip() {
   const [open, setOpen] = useState(false);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
   const ref = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -46,23 +48,43 @@ function InfoTooltip() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
 
+  const handleToggle = () => {
+    if (!open && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.top + window.scrollY, // anchor to button top, tooltip goes up
+        left: rect.left + rect.width / 2 + window.scrollX,
+      });
+    }
+    setOpen((v) => !v);
+  };
+
   return (
     <div className="relative" ref={ref}>
       <button
-        onClick={() => setOpen((v) => !v)}
+        ref={btnRef}
+        onClick={handleToggle}
         className="w-4 h-4 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 flex items-center justify-center text-[10px] font-bold transition-colors"
         aria-label="Spin counter help"
       >
         ?
       </button>
       {open && (
-        <div className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 w-52 bg-gray-900 text-white text-xs rounded-xl px-3 py-2.5 shadow-lg leading-relaxed">
+        <div
+          style={{
+            position: "fixed",
+            top: coords.top - 8, // 8px gap above the button
+            left: coords.left,
+            transform: "translate(-50%, -100%)",
+            zIndex: 9999,
+          }}
+          className="w-52 bg-gray-900 text-white text-xs rounded-xl px-3 py-2.5 shadow-lg leading-relaxed"
+        >
           <p>
             <span className="text-green-400 font-bold">+</span> adds a spin,{" "}
             <span className="text-red-400 font-bold">−</span> removes one. You
             can also type a number directly in the input box.
           </p>
-          {/* Arrow */}
           <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
         </div>
       )}
