@@ -13,6 +13,7 @@ import {
   getCampaignSongISRC,
   createCampaignDraft,
   launchCampaignFully,
+  getSystemAudienceReach,
 } from "@/services/api";
 import AutomateClusterModal from "@/components/campaigns/AutomateClusterModal";
 import Link from "next/link";
@@ -44,23 +45,6 @@ const CustomCampaign = () => {
   const [search, setSearch] = useState("");
   const [djSpins, setDjSpins] = useState<Record<number, number>>({});
   const [totalAudienceReach, setTotalAudienceReach] = useState("");
-
-  const handleTotalReachChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/,/g, "");
-    if (/^\d*$/.test(raw)) {
-      setTotalAudienceReach(raw);
-    }
-  };
-
-  const handleTotalReachBlur = () => {
-    const raw = totalAudienceReach.replace(/,/g, "");
-    if (!raw) return;
-    setTotalAudienceReach(Number(raw).toLocaleString("en-US"));
-  };
-
-  const handleTotalReachFocus = () => {
-    setTotalAudienceReach(totalAudienceReach.replace(/,/g, ""));
-  };
 
   const buildCampaignPayload = (
     selectedDistricts: Record<number, DistrictEntry>,
@@ -129,7 +113,7 @@ const CustomCampaign = () => {
       song_title: campaignSongDetails?.title,
       song_artist: campaignSongDetails?.artist,
       song_artwork: campaignSongDetails?.artwork,
-      target_audience_reach: parseFormattedNumber(totalAudienceReach),
+      // target_audience_reach: reachValue,
       start_date: startDate || "2026-06-06",
       mode: "custom",
     })
@@ -269,6 +253,16 @@ const CustomCampaign = () => {
       });
   }, []);
 
+  useEffect(() => {
+    getSystemAudienceReach()
+      .then((fetchedContent: any) => {
+        setTotalAudienceReach(fetchedContent?.system_target_audience_reach);
+      })
+      .catch((err) => {
+        console.log("ERR", err);
+      });
+  }, []);
+
   const [selectedDistricts, setSelectedDistricts] = useState<
     Record<number, DistrictEntry>
   >({});
@@ -295,7 +289,7 @@ const CustomCampaign = () => {
     return total;
   }, [selectedDistricts, djSpins]);
 
-  const totalReachNumber = Number(totalAudienceReach.replace(/,/g, "")) || 0;
+  const totalReachNumber = Number(totalAudienceReach) || 0;
   const reachValue =
     Number(
       String(calculateAudienceReach(selectedDistricts, djSpins)).replace(
@@ -413,10 +407,6 @@ const CustomCampaign = () => {
       ? `Search Djs in ${selectedDistricts[selectedClusterId].name}`
       : "Select District to Search Djs";
 
-  const isTotalAudienceReachValid =
-    totalAudienceReach.trim().length > 0 &&
-    Number(totalAudienceReach.replace(/,/g, "")) > 0;
-
   const fetchDjs = (districtId: number | null, search?: string) => {
     if (!districtId) return;
 
@@ -511,17 +501,7 @@ const CustomCampaign = () => {
           </div>
 
           <div className="bg-white py-8 mx-5 px-5 lg:px-14">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px] items-center">
-              <Input
-                className="border-[#9D9A9A]"
-                type="text"
-                inputMode="numeric"
-                placeholder="Enter Target Audience"
-                value={totalAudienceReach}
-                onChange={handleTotalReachChange}
-                onBlur={handleTotalReachBlur}
-                onFocus={handleTotalReachFocus}
-              />
+            <div className="grid grid-cols-1 gap-[20px] items-center">
               <div className="relative">
                 <Input
                   value={isrc}
@@ -706,7 +686,7 @@ const CustomCampaign = () => {
                 />
               </div>
               {totalAudienceReach && (
-                <p className="text-right">{reachValue.toLocaleString()}</p>
+                <p className="text-right">{reachValue.toLocaleString()} of {totalAudienceReach?.toLocaleString()}</p>
               )}
             </div>
 
@@ -752,13 +732,13 @@ const CustomCampaign = () => {
 
                 {/* Launch CTA */}
                 <button
-                  className={`order-3 md:order-3 w-full md:w-auto px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold ${loadingCampaignCreation || Object.keys(selectedDistricts).length === 0 || !startDate || !campaignSongDetails?.artist || !isTotalAudienceReachValid ? "opacity-50 italic" : ""}`}
+                  className={`order-3 md:order-3 w-full md:w-auto px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold ${loadingCampaignCreation || Object.keys(selectedDistricts).length === 0 || !startDate || !campaignSongDetails?.artist || !reachValue ? "opacity-50 italic" : ""}`}
                   disabled={
                     loadingCampaignCreation ||
                     Object.keys(selectedDistricts).length === 0 ||
                     !startDate ||
                     !campaignSongDetails?.artist ||
-                    !isTotalAudienceReachValid
+                    !reachValue
                   }
                   onClick={handleCreateCampaignDraft}
                 >
@@ -845,15 +825,8 @@ const CustomCampaign = () => {
                                 [spinKey]: value,
                               }))
                             }
+                            isOnModal={true}
                           />
-
-                          <button
-                            onClick={() => removeDj(districtId, dj.id)}
-                            className="absolute top-1 sm:top-3 right-3 text-gray-400 hover:text-red-500 transition-colors"
-                            aria-label="Remove DJ"
-                          >
-                            ✕
-                          </button>
                         </div>
                       );
                     })

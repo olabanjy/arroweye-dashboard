@@ -4,6 +4,7 @@ import PlanCard from "./PlanCard";
 
 interface PromotionPlansProps {
   isModalPage: boolean;
+  isOnModal?: boolean; // add this
   promotion: any;
   onBack: () => void;
   onPlanSelected: (payload: {
@@ -17,6 +18,7 @@ interface PromotionPlansProps {
 
 export default function PromotionPlans({
   isModalPage,
+  isOnModal, // add this
   promotion,
   onBack,
   onPlanSelected,
@@ -26,28 +28,19 @@ export default function PromotionPlans({
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
 
   const handlePlanSelect = (plan: any) => {
-    // If the clicked plan is already selected, unselect it
     if (selectedPlanId === plan.id) {
       setSelectedPlanId(null);
-
       onPlanSelected({
         accept_terms: false,
         aggregator_plan_id: plan.id,
         cluster_ids: [],
       });
-
       onAudienceReach(0);
-
-      onPlanStats({
-        totalTokens: 0,
-        totalDJs: 0,
-      });
-
+      onPlanStats({ totalTokens: 0, totalDJs: 0 });
       return;
     }
 
     setSelectedPlanId(plan.id);
-
     onPlanSelected({
       accept_terms: true,
       aggregator_plan_id: plan.id,
@@ -59,7 +52,6 @@ export default function PromotionPlans({
       0,
     );
     onAudienceReach(audienceReach);
-
     onPlanStats({
       totalTokens: plan.calculated_total_tokens,
       totalDJs: plan.djs.length,
@@ -108,6 +100,7 @@ export default function PromotionPlans({
             topLocations={topLocations}
             selected={selectedPlanId === plan.id}
             onToggle={() => handlePlanSelect(plan)}
+            isOnModal={isOnModal} // pass it down
           />
         );
       })}

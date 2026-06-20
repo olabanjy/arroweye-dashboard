@@ -13,6 +13,7 @@ export interface DJCardProps {
   initialSpins?: number;
   spins: number;
   onSpinsChange: (value: number) => void;
+  isOnModal?: boolean;
 }
 
 function StarRating({ rating }: { rating: number }) {
@@ -52,7 +53,7 @@ function InfoTooltip() {
     if (!open && btnRef.current) {
       const rect = btnRef.current.getBoundingClientRect();
       setCoords({
-        top: rect.top + window.scrollY, // anchor to button top, tooltip goes up
+        top: rect.top + window.scrollY,
         left: rect.left + rect.width / 2 + window.scrollX,
       });
     }
@@ -73,7 +74,7 @@ function InfoTooltip() {
         <div
           style={{
             position: "fixed",
-            top: coords.top - 8, // 8px gap above the button
+            top: coords.top - 8,
             left: coords.left,
             transform: "translate(-50%, -100%)",
             zIndex: 9999,
@@ -95,9 +96,11 @@ function InfoTooltip() {
 function SpinCounter({
   spins,
   onChange,
+  isOnModal = false,
 }: {
   spins: number;
   onChange: (value: number) => void;
+  isOnModal?: boolean;
 }) {
   return (
     <div className="p-4 flex flex-row items-end gap-2 border border-black rounded-xl">
@@ -106,35 +109,37 @@ function SpinCounter({
           <span className="text-[10px] font-bold tracking-widest uppercase">
             Total Spins
           </span>
-          <InfoTooltip />
+          {!isOnModal && <InfoTooltip />}
         </div>
         <input
           type="number"
           value={spins}
           min={0}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-16 h-10 rounded-xl border border-black flex items-center justify-center bg-white text-center text-xl font-bold text-gray-800 tabular-nums"
+          disabled={isOnModal}
+          className="w-16 h-10 rounded-xl border border-black flex items-center justify-center bg-white text-center text-xl font-bold text-gray-800 tabular-nums disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
         />
       </div>
-      {/* Minus */}
-      {/* Minus */}
-      <button
-        onClick={() => onChange(Math.max(0, spins - 1))}
-        disabled={spins === 0}
-        className="w-9 h-9 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white transition-all duration-150 select-none"
-        aria-label="Decrement spins"
-      >
-        <Minus size={18} strokeWidth={3} />
-      </button>
 
-      {/* Plus */}
-      <button
-        onClick={() => onChange(spins + 1)}
-        className="w-9 h-9 rounded-full bg-green-500 hover:bg-green-600 active:scale-95 flex items-center justify-center text-white transition-all duration-150 select-none"
-        aria-label="Increment spins"
-      >
-        <Plus size={18} strokeWidth={3} />
-      </button>
+      {!isOnModal && (
+        <>
+          <button
+            onClick={() => onChange(Math.max(0, spins - 1))}
+            disabled={spins === 0}
+            className="w-9 h-9 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white transition-all duration-150 select-none"
+            aria-label="Decrement spins"
+          >
+            <Minus size={18} strokeWidth={3} />
+          </button>
+          <button
+            onClick={() => onChange(spins + 1)}
+            className="w-9 h-9 rounded-full bg-green-500 hover:bg-green-600 active:scale-95 flex items-center justify-center text-white transition-all duration-150 select-none"
+            aria-label="Increment spins"
+          >
+            <Plus size={18} strokeWidth={3} />
+          </button>
+        </>
+      )}
     </div>
   );
 }
@@ -142,9 +147,11 @@ function SpinCounter({
 function MobileSpinCounter({
   spins,
   onChange,
+  isOnModal = false,
 }: {
   spins: number;
   onChange: (value: number) => void;
+  isOnModal?: boolean;
 }) {
   return (
     <div className="p-2 flex flex-row items-end gap-1 border border-black rounded-xl">
@@ -160,26 +167,30 @@ function MobileSpinCounter({
           value={spins}
           min={0}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-10 h-8 rounded-xl border border-black flex items-center justify-center bg-white text-center font-bold text-gray-800 tabular-nums"
+          disabled={isOnModal}
+          className="w-10 h-8 rounded-xl border border-black flex items-center justify-center bg-white text-center font-bold text-gray-800 tabular-nums disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
         />
       </div>
-      {/* Minus */}
-      <button
-        onClick={() => onChange(Math.max(0, spins - 1))}
-        disabled={spins === 0}
-        className="w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold transition-all duration-150 select-none"
-        aria-label="Decrement spins"
-      >
-        <Minus size={15} strokeWidth={2} />
-      </button>
-      {/* Plus */}
-      <button
-        onClick={() => onChange(spins + 1)}
-        className="w-6 h-6 rounded-full bg-green-500 hover:bg-green-600 active:scale-95 flex items-center justify-center text-white font-bold transition-all duration-150 select-none"
-        aria-label="Increment spins"
-      >
-        <Plus size={15} strokeWidth={2} />
-      </button>
+
+      {!isOnModal && (
+        <>
+          <button
+            onClick={() => onChange(Math.max(0, spins - 1))}
+            disabled={spins === 0}
+            className="w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold transition-all duration-150 select-none"
+            aria-label="Decrement spins"
+          >
+            <Minus size={15} strokeWidth={2} />
+          </button>
+          <button
+            onClick={() => onChange(spins + 1)}
+            className="w-6 h-6 rounded-full bg-green-500 hover:bg-green-600 active:scale-95 flex items-center justify-center text-white font-bold transition-all duration-150 select-none"
+            aria-label="Increment spins"
+          >
+            <Plus size={15} strokeWidth={2} />
+          </button>
+        </>
+      )}
     </div>
   );
 }
@@ -199,6 +210,7 @@ export default function DJCard({
   initialSpins = 15,
   spins,
   onSpinsChange,
+  isOnModal = false,
 }: DJCardProps) {
   return (
     <div className="min-h-max min-w-screen flex items-center justify-center font-sans">
@@ -248,13 +260,16 @@ export default function DJCard({
 
         {/* Right: Spin Counter */}
         <div className="flex-shrink-0">
-          <SpinCounter spins={spins} onChange={onSpinsChange} />
+          <SpinCounter
+            spins={spins}
+            onChange={onSpinsChange}
+            isOnModal={isOnModal}
+          />
         </div>
       </div>
 
       {/* ── Mobile Card ── */}
       <div className="flex sm:hidden w-full max-w-sm bg-white rounded-2xl border border-[#D4CECE] overflow-hidden">
-        {/* Top accent bar */}
         <div
           className="absolute left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-amber-400 rounded-t-2xl"
           style={{ position: "relative" }}
@@ -269,7 +284,11 @@ export default function DJCard({
               </h2>
               <p className="text-xs text-gray-400 mt-0.5">{location}</p>
             </div>
-            <MobileSpinCounter spins={spins} onChange={onSpinsChange} />
+            <MobileSpinCounter
+              spins={spins}
+              onChange={onSpinsChange}
+              isOnModal={isOnModal}
+            />
           </div>
 
           {/* Divider */}
