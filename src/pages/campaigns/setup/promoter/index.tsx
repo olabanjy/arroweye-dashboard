@@ -28,7 +28,7 @@ const PromoterCampaign = () => {
   const [campaignSongDetails, setCampaignSongDetails] = useState<any>(null);
   const [totalTokens, setTotalTokens] = useState<number>(0);
   const [totalDJs, setTotalDJs] = useState<number>(0);
-  const [totalAudienceReach, setTotalAudienceReach] = useState("");
+  const [totalAudienceReach, setTotalAudienceReach] = useState<number>(0);
   const [selectedPromotion, setSelectedPromotion] = useState<any>(null);
   const [campaignPayload, setCampaignPayload] = useState<{
     accept_terms: boolean;
@@ -36,23 +36,6 @@ const PromoterCampaign = () => {
     cluster_ids: number[];
   } | null>(null);
   const [search, setSearch] = useState<string | undefined>("");
-
-  const handleTotalReachChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/,/g, "");
-    if (/^\d*$/.test(raw)) {
-      setTotalAudienceReach(raw);
-    }
-  };
-
-  const handleTotalReachBlur = () => {
-    const raw = totalAudienceReach.replace(/,/g, "");
-    if (!raw) return;
-    setTotalAudienceReach(Number(raw).toLocaleString("en-US"));
-  };
-
-  const handleTotalReachFocus = () => {
-    setTotalAudienceReach(totalAudienceReach.replace(/,/g, ""));
-  };
 
   useEffect(() => {
     getPromoterPlans()
@@ -75,7 +58,7 @@ const PromoterCampaign = () => {
   }, []);
 
   const startOver = () => {
-    setTotalAudienceReach("");
+    setTotalAudienceReach(0);
     setSelectedPromotion(null);
     setCampaignPayload(null);
     setStartDate("");
@@ -111,9 +94,6 @@ const PromoterCampaign = () => {
     }
   };
 
-  const parseFormattedNumber = (value: string): number =>
-    Number(value.replace(/,/g, "")) || 0;
-
   const handleCreateCampaignDraft = async () => {
     const createDraftToast = toast.loading("Creating Campaign...");
     setLoadingCampaignCreation(true);
@@ -124,7 +104,7 @@ const PromoterCampaign = () => {
       song_title: campaignSongDetails?.title,
       song_artist: campaignSongDetails?.artist,
       song_artwork: campaignSongDetails?.artwork,
-      target_audience_reach: parseFormattedNumber(totalAudienceReach),
+      // target_audience_reach: totalAudienceReach,
       start_date: startDate || "2026-06-06",
       mode: "aggregator",
     })
@@ -214,26 +194,16 @@ const PromoterCampaign = () => {
           </div>
 
           <div className="bg-white py-8 mx-5 px-5 lg:px-14">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px] items-center">
-              <Input
-                className="border-[#9D9A9A]"
-                type="text"
-                inputMode="numeric"
-                placeholder="Enter Target Audience"
-                value={totalAudienceReach}
-                onChange={handleTotalReachChange}
-                onBlur={handleTotalReachBlur}
-                onFocus={handleTotalReachFocus}
-              />
+            <div className="grid grid-cols-1 gap-[20px] items-center">
               <div className="relative">
                 <Input
-                  // value={isrc}
+                  //  value={isrc}
                   ref={inputRef}
                   className="border-[#9D9A9A]"
                   type="text"
                   placeholder="ISRC / UPC"
                   onChange={(e) => {
-                    // setIsrc(e.target.value);
+                    //  setIsrc(e.target.value);
                     if (timeoutRef.current) {
                       clearTimeout(timeoutRef.current);
                     }
@@ -333,7 +303,7 @@ const PromoterCampaign = () => {
                 setSelectedPromotion={setSelectedPromotion}
                 resetPlan={resetPlan}
                 onPlanSelected={handlePlanSelected}
-                onAudienceReach={(reach) => console.log(reach)}
+                onAudienceReach={(reach) => setTotalAudienceReach(reach)}
                 onPlanStats={({ totalTokens, totalDJs }) => {
                   setTotalTokens(totalTokens);
                   setTotalDJs(totalDJs);
@@ -403,6 +373,7 @@ const PromoterCampaign = () => {
           <div>
             <PromotionGrid
               isModalPage={true}
+              isOnModal={true} // add this
               data={promotersData}
               selectedPromotion={selectedPromotion}
               setSelectedPromotion={setSelectedPromotion}

@@ -3,6 +3,7 @@ import PromotionPlans from "./PromotionPlans";
 
 export interface PromotionGridProps {
   isModalPage?: boolean;
+  isOnModal?: boolean; // add this
   data: any[];
   selectedPromotion: any;
   setSelectedPromotion: (promo: any) => void;
@@ -18,6 +19,7 @@ export interface PromotionGridProps {
 
 export const PromotionGrid: React.FC<PromotionGridProps> = ({
   isModalPage,
+  isOnModal, // add this
   data,
   selectedPromotion,
   setSelectedPromotion,
@@ -30,6 +32,7 @@ export const PromotionGrid: React.FC<PromotionGridProps> = ({
     return (
       <PromotionPlans
         isModalPage={isModalPage ? true : false}
+        isOnModal={isOnModal} // pass it down
         promotion={selectedPromotion}
         onBack={() => {
           setSelectedPromotion(null);

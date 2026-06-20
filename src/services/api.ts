@@ -1343,6 +1343,23 @@ export const getCampaignClusters = async (): Promise<any | null> => {
   }
 };
 
+export const getSystemAudienceReach = async (): Promise<any | null> => {
+  try {
+    let url = `/api/v1/system-target-audience-reach/`;
+
+    const response = await apiRequest({
+      method: "GET",
+      url: url,
+      data: null,
+      requireToken: true,
+    });
+
+    return response as any;
+  } catch (error: unknown) {
+    return null;
+  }
+};
+
 export const getCampaignSongISRC = async (
   song_isrc: string,
 ): Promise<any | null> => {
