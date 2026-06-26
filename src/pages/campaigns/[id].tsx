@@ -534,7 +534,9 @@ const ProjectDetails = () => {
   return (
     <>
       <Head>
-        <title>{content?.title} - Arroweye</title>
+        <title>
+          {content?.title || content?.campaign?.song_title} - Arroweye
+        </title>
       </Head>
       <DashboardLayout withBorder={false}>
         <div
