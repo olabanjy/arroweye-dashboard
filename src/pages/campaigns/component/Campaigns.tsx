@@ -10,6 +10,7 @@ import {
 } from "@/services/api";
 import { ContentItem } from "@/types/contents";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { MdOutlineModeEditOutline } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ interface ProjectsProps {
 }
 
 const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
+  const router = useRouter();
   const [editMode, setEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -52,6 +54,23 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const [campaignList, setCampaignList] = useState<any[] | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  // restore page from URL (e.g. returning from /campaigns/[id])
+  useEffect(() => {
+    if (!router.isReady) return;
+    const p = parseInt(router.query.page as string, 10);
+    if (!isNaN(p) && p > 0) setCurrentPage(p);
+  }, [router.isReady]);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    router.push(
+      { pathname: router.pathname, query: { ...router.query, page } },
+      undefined,
+      { shallow: true },
+    );
+  };
+
   const [totalCount, setTotalCount] = useState(0);
   const PAGE_SIZE = 10;
   const [isArchiving, setIsArchiving] = useState<number | null>(null);
@@ -348,7 +367,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={(page) => {
-                if (!isLoading) setCurrentPage(page);
+                if (!isLoading) goToPage(page);
               }}
             />
           </div>

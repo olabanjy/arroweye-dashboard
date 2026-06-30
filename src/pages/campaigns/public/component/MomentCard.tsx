@@ -1,8 +1,7 @@
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog } from "primereact/dialog";
 import { ClaimReward } from "@/services/api";
 
@@ -21,6 +20,7 @@ interface MomentCardProps {
   MomentsTitle?: string;
   assetsButton?: string;
   csvData?: any;
+  loading?: boolean;
 }
 
 const MomentCard: React.FC<MomentCardProps> = ({
@@ -38,25 +38,13 @@ const MomentCard: React.FC<MomentCardProps> = ({
   MomentsTitle,
   assetsButton,
   csvData,
+  loading = false,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [error, setError] = useState<string | null>(null);
+  const hasData = (videoUrls?.length ?? 0) > 0;
 
-  // Validate video URLs on component mount and when URLs change
-  useEffect(() => {
-    validateVideoUrls();
-  }, [videoUrls]);
-
-  const validateVideoUrls = () => {
-    if (!videoUrls || videoUrls.length === 0) {
-      setError("No Media Added Yet");
-      return false;
-    }
-
-    setError(null);
-    return true;
-  };
+  const validateVideoUrls = () => hasData;
 
   const handlePlayClick = () => {
     if (validateVideoUrls()) {
@@ -107,15 +95,10 @@ const MomentCard: React.FC<MomentCardProps> = ({
         {MomentsTitle}
       </p>
 
-      <div className="relative h-[400px] rounded overflow-hidden group">
-        {error ? (
-          <Alert
-            variant="destructive"
-            className="h-full flex items-center justify-center"
-          >
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        ) : (
+      {loading ? (
+        <div className="h-[400px] w-full rounded bg-gray-200 animate-pulse" />
+      ) : hasData ? (
+        <div className="relative h-[400px] rounded overflow-hidden group">
           <>
             <iframe
               className="w-full h-[400px]"
@@ -156,36 +139,38 @@ const MomentCard: React.FC<MomentCardProps> = ({
               </button>
             )}
           </>
-        )}
-      </div>
+        </div>
+      ) : null}
 
       <div className="space-y-[5px] flex flex-col items-center justify-center">
-        <div className="flex items-center gap-2 w-full">
-          {watchButtonText && (
-            <button
-              className="p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[16px] font-[500] flex-grow rounded-full bg-black text-white text-center"
-              onClick={() =>
-                window.open(videoUrls[currentVideoIndex], "_blank")
-              }
-              disabled={!videoUrls[currentVideoIndex]}
-            >
-              {watchButtonText}
-            </button>
-          )}
+        {hasData && (
+          <div className="flex items-center gap-2 w-full">
+            {watchButtonText && (
+              <button
+                className="p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[16px] font-[500] flex-grow rounded-full bg-black text-white text-center"
+                onClick={() =>
+                  window.open(videoUrls[currentVideoIndex], "_blank")
+                }
+                disabled={!videoUrls[currentVideoIndex]}
+              >
+                {watchButtonText}
+              </button>
+            )}
 
-          {downloadIcon && watchButtonText && (
-            <button
-              className="bg-black hover:bg-orange-500 font-IBM text-[16px] font-medium text-white p-[11px] rounded-full inline-flex"
-              onClick={() =>
-                window.open(videoUrls[currentVideoIndex], "_blank")
-              }
-              disabled={!videoUrls[currentVideoIndex]}
-            >
-              <MdOutlineFileDownload className="text-[16px]" />
-            </button>
-          )}
-        </div>
-        {assetsButton && (
+            {downloadIcon && watchButtonText && (
+              <button
+                className="bg-black hover:bg-orange-500 font-IBM text-[16px] font-medium text-white p-[11px] rounded-full inline-flex"
+                onClick={() =>
+                  window.open(videoUrls[currentVideoIndex], "_blank")
+                }
+                disabled={!videoUrls[currentVideoIndex]}
+              >
+                <MdOutlineFileDownload className="text-[16px]" />
+              </button>
+            )}
+          </div>
+        )}
+        {hasData && assetsButton && (
           <p className="p-2 cursor-pointer text-[16px] font-[500] font-IBM w-full rounded text-center hover:bg-orange-500 bg-black text-white">
             {assetsButton}
           </p>

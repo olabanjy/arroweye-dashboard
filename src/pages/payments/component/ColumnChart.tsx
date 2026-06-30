@@ -199,8 +199,8 @@ const ColumnChart: FC<InsightChartProps> = ({
           </div>
         </div>
       </div>
-
-      <div className="flex items-center justify-between">
+      {/* told to also hide this */}
+      <div className="hidden items-center justify-between">
         <div>
           {selectOptionsBottom?.map((options, index) => (
             <div key={index} className="max-w-[200px] w-full">

@@ -5,11 +5,24 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
-import { MdArrowForward } from "react-icons/md";
+import {
+  MdArrowForward,
+  MdCampaign,
+  MdWaterDrop,
+  MdPayment,
+  MdCalendarMonth,
+  MdSettings,
+  MdLogout,
+  MdAddCircleOutline,
+  MdHelpOutline,
+  MdSchool,
+  MdGavel,
+} from "react-icons/md";
 import { TfiMore } from "react-icons/tfi";
 
 const Sidebar: FC = () => {
   const [isOpen, setIsOpen] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
   const [userRole, setUserRole] = useState("");
   const [isAdvertiser, setIsAdvertiser] = useState(false);
@@ -61,22 +74,48 @@ const Sidebar: FC = () => {
 
       {/* Sidebar Container */}
       <div
-        className={`fixed lg:relative top-0 left-0 z-[9] w-64 h-screen bg-white border border-slate-100 text-[#000000] flex flex-col transform ${
+        className={`fixed lg:relative top-0 left-0 z-[9] ${
+          isCollapsed ? "w-20" : "w-64"
+        } h-screen bg-white border border-slate-100 text-[#000000] flex flex-col transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 transition-transform duration-700 overflow-hidden`}
+        } lg:translate-x-0 transition-all duration-700`}
       >
-        {/* Logo */}
-        <div className="p-[50px] border-b flex items-center justify-center">
-          <Image
-            src="https://res.cloudinary.com/dyueswnzk/image/upload/v1758701294/21_elj38n_jljfio.svg"
-            alt="Logo"
-            width={50}
-            height={50}
-            priority
-          />
-        </div>
+        <button
+          onClick={() => {
+            setIsResourcesOpen(false);
+            setIsCollapsed((prev) => !prev);
+          }}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className={`group border-b flex items-center justify-center w-full focus:outline-none ${
+            isCollapsed ? "p-[25px]" : "p-[50px]"
+          }`}
+        >
+     
+          <span className="relative inline-flex items-center justify-center">
+            <span className="block group-hover:opacity-0 transition-opacity">
+              <Image
+                src="https://res.cloudinary.com/dyueswnzk/image/upload/v1758701294/21_elj38n_jljfio.svg"
+                alt="Logo"
+                width={isCollapsed ? 36 : 50}
+                height={isCollapsed ? 36 : 50}
+                priority
+              />
+            </span>
 
-        <div className="relative flex-1">
+            <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-[#17954c]">
+              <svg width={28} height={28} viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6,2H18A2,2 0 0,1 20,4V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2M6,8V16H10V8H6Z" />
+              </svg>
+            </span>
+
+            <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 hidden whitespace-nowrap p-[8px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-50 shadow-lg font-IBM">
+              <span className="absolute right-full top-1/2 -translate-y-1/2 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black" />
+              {isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            </span>
+          </span>
+        </button>
+
+        <div className="relative flex-1 overflow-hidden">
           {/* MAIN MENU */}
           <div
             className={`absolute inset-0 overflow-auto transition-transform duration-700 ${
@@ -85,24 +124,30 @@ const Sidebar: FC = () => {
           >
             <nav className="flex-1">
               <ul className="grid space-y-[20px] p-4">
-                <li className="text-[#03a835] text-[12px] font-semibold">
-                  MENU
+                <li className="text-[#03a835] text-[12px] font-semibold h-4">
+                  {!isCollapsed && "MENU"}
                 </li>
 
                 {/* Campaigns */}
                 <li>
                   <Link href="/campaigns">
-                    <div className="flex items-center justify-between p-2 rounded cursor-pointer">
+                    <div
+                      className={`flex items-center p-2 rounded cursor-pointer ${
+                        isCollapsed ? "justify-center" : "justify-between"
+                      }`}
+                      title="Campaigns"
+                    >
                       <span className="flex items-center space-x-2">
                         <span
-                          className={`${
+                          className={`${isCollapsed ? "hidden" : ""} ${
                             isActive("/campaigns")
                               ? "bg-[#17954c] w-1 h-1"
                               : "bg-transparent w-1 h-1"
                           } rounded-full`}
                         />
+                        <MdCampaign size={22} className="text-black" />
                         <span
-                          className={`${
+                          className={`${isCollapsed ? "hidden" : ""} ${
                             isActive("/campaigns") ? "font-[500]" : "font-[400]"
                           }`}
                         >
@@ -113,7 +158,7 @@ const Sidebar: FC = () => {
                   </Link>
 
                   {/* Submenu */}
-                  {isActive("/campaigns") && isAdvertiser && (
+                  {isActive("/campaigns") && isAdvertiser && !isCollapsed && (
                     <ul className="ml-6 mt-1 space-y-1 border-l border-gray-200 pl-3">
                       <li>
                         <Link
@@ -130,6 +175,11 @@ const Sidebar: FC = () => {
                                   ? "bg-[#17954c] w-1 h-1"
                                   : "bg-transparent w-1 h-1"
                               } rounded-full`}
+                            />
+
+                            <MdAddCircleOutline
+                              size={18}
+                              className="text-gray-500"
                             />
 
                             {/* Text */}
@@ -153,17 +203,23 @@ const Sidebar: FC = () => {
 
                 {!isAdvertiser && (
                   <Link href="/drops">
-                    <li className="flex items-center justify-between p-2 rounded cursor-pointer">
+                    <li
+                      className={`flex items-center p-2 rounded cursor-pointer ${
+                        isCollapsed ? "justify-center" : "justify-between"
+                      }`}
+                      title="Drops"
+                    >
                       <span className="flex items-center space-x-2">
                         <span
-                          className={`${
+                          className={`${isCollapsed ? "hidden" : ""} ${
                             isActive("/drops")
                               ? "bg-[#17954c] w-1 h-1"
                               : "bg-transparent w-1 h-1"
                           } rounded-full`}
                         />
+                        <MdWaterDrop size={22} className="text-black" />
                         <span
-                          className={`${
+                          className={`${isCollapsed ? "hidden" : ""} ${
                             isActive("/drops") ? "font-[500]" : "font-[400]"
                           }`}
                         >
@@ -177,17 +233,23 @@ const Sidebar: FC = () => {
                 {/* Payments (Role-based) */}
                 {["Supervisor", "Manager"].includes(userRole) && (
                   <Link href="/payments">
-                    <li className="flex items-center justify-between p-2 rounded cursor-pointer">
+                    <li
+                      className={`flex items-center p-2 rounded cursor-pointer ${
+                        isCollapsed ? "justify-center" : "justify-between"
+                      }`}
+                      title="Payments"
+                    >
                       <span className="flex items-center space-x-2">
                         <span
-                          className={`${
+                          className={`${isCollapsed ? "hidden" : ""} ${
                             isActive("/payments")
                               ? "bg-[#17954c] w-1 h-1"
                               : "bg-transparent w-1 h-1"
                           } rounded-full`}
                         />
+                        <MdPayment size={22} className="text-black" />
                         <span
-                          className={`${
+                          className={`${isCollapsed ? "hidden" : ""} ${
                             isActive("/payments") ? "font-[500]" : "font-[400]"
                           }`}
                         >
@@ -201,17 +263,23 @@ const Sidebar: FC = () => {
                 {/* Schedule */}
                 {!isAdvertiser && (
                   <Link href="/schedule">
-                    <li className="flex items-center justify-between p-2 rounded cursor-pointer">
+                    <li
+                      className={`flex items-center p-2 rounded cursor-pointer ${
+                        isCollapsed ? "justify-center" : "justify-between"
+                      }`}
+                      title="Schedule"
+                    >
                       <span className="flex items-center space-x-2">
                         <span
-                          className={`${
+                          className={`${isCollapsed ? "hidden" : ""} ${
                             isActive("/schedule")
                               ? "bg-[#17954c] w-1 h-1"
                               : "bg-transparent w-1 h-1"
                           } rounded-full`}
                         />
+                        <MdCalendarMonth size={22} className="text-black" />
                         <span
-                          className={`${
+                          className={`${isCollapsed ? "hidden" : ""} ${
                             isActive("/schedule") ? "font-[500]" : "font-[400]"
                           }`}
                         >
@@ -225,30 +293,53 @@ const Sidebar: FC = () => {
                 {/* Resources */}
                 {!isAdvertiser && (
                   <li
-                    onClick={toggleResourcesSidebar}
-                    className="flex items-center justify-between p-2 rounded cursor-pointer"
+                    onClick={() => {
+                      if (isCollapsed) {
+                        setIsCollapsed(false);
+                        setIsResourcesOpen(true);
+                      } else {
+                        toggleResourcesSidebar();
+                      }
+                    }}
+                    title="Resources"
+                    className={`flex items-center p-2 rounded cursor-pointer ${
+                      isCollapsed ? "justify-center" : "justify-between"
+                    }`}
                   >
                     <span className="flex items-center space-x-2">
-                      <span className="bg-transparent w-1 h-1 rounded-full" />
-                      <span>Resources</span>
+                      <span
+                        className={`${
+                          isCollapsed ? "hidden" : ""
+                        } bg-transparent w-1 h-1 rounded-full`}
+                      />
+                      <MdSchool size={22} className="text-black" />
+                      <span className={isCollapsed ? "hidden" : ""}>
+                        Resources
+                      </span>
                     </span>
-                    <TfiMore size={18} />
+                    {!isCollapsed && <TfiMore size={18} />}
                   </li>
                 )}
 
                 {/* Settings */}
                 <Link href="/settings">
-                  <li className="flex items-center justify-between p-2 rounded cursor-pointer">
+                  <li
+                    className={`flex items-center p-2 rounded cursor-pointer ${
+                      isCollapsed ? "justify-center" : "justify-between"
+                    }`}
+                    title="Settings"
+                  >
                     <span className="flex items-center space-x-2">
                       <span
-                        className={`${
+                        className={`${isCollapsed ? "hidden" : ""} ${
                           isActive("/settings")
                             ? "bg-[#17954c] w-1 h-1"
                             : "bg-transparent w-1 h-1"
                         } rounded-full`}
                       />
+                      <MdSettings size={22} className="text-black" />
                       <span
-                        className={`${
+                        className={`${isCollapsed ? "hidden" : ""} ${
                           isActive("/settings") ? "font-[500]" : "font-[400]"
                         }`}
                       >
@@ -261,11 +352,19 @@ const Sidebar: FC = () => {
                 {/* Logout */}
                 <li
                   onClick={logout}
-                  className="flex items-center justify-between p-2 rounded cursor-pointer"
+                  title="Logout"
+                  className={`flex items-center p-2 rounded cursor-pointer ${
+                    isCollapsed ? "justify-center" : "justify-between"
+                  }`}
                 >
                   <span className="flex items-center space-x-2">
-                    <span className="bg-transparent w-1 h-1 rounded-full" />
-                    <span>Logout</span>
+                    <span
+                      className={`${
+                        isCollapsed ? "hidden" : ""
+                      } bg-transparent w-1 h-1 rounded-full`}
+                    />
+                    <MdLogout size={22} className="text-black" />
+                    <span className={isCollapsed ? "hidden" : ""}>Logout</span>
                   </span>
                 </li>
               </ul>
@@ -289,29 +388,32 @@ const Sidebar: FC = () => {
 
             <ul className="space-y-4 p-4">
               <li
-                className="p-2 hover:bg-gray-200 rounded cursor-pointer"
+                className="p-2 hover:bg-gray-200 rounded cursor-pointer flex items-center gap-2"
                 onClick={() =>
                   window.open("https://arroweye.substack.com/", "_blank")
                 }
               >
+                <MdHelpOutline size={22} className="text-black" />
                 FAQs
               </li>
 
               <li
-                className="p-2 hover:bg-gray-200 rounded cursor-pointer"
+                className="p-2 hover:bg-gray-200 rounded cursor-pointer flex items-center gap-2"
                 onClick={() =>
                   window.open("https://butta.cocoa.house/", "_blank")
                 }
               >
+                <MdSchool size={22} className="text-black" />
                 Learn
               </li>
 
               <li
-                className="p-2 hover:bg-gray-200 rounded cursor-pointer"
+                className="p-2 hover:bg-gray-200 rounded cursor-pointer flex items-center gap-2"
                 onClick={() =>
                   window.open("http://arroweye.pro/legal", "_blank")
                 }
               >
+                <MdGavel size={22} className="text-black" />
                 Legal
               </li>
             </ul>

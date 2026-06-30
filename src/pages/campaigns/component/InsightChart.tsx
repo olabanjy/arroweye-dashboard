@@ -113,6 +113,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
   const [content, setContent] = useState<any | null>(null);
   const [media, setMedia] = useState<any | null>([]);
+  const [mediaLoading, setMediaLoading] = useState(true);
   const { id } = query;
 
   const [airplayChannelsFilters, setairplayChannelsFilters] = useState({
@@ -154,10 +155,13 @@ const InsightChart: React.FC<InsightChartProps> = ({
       return;
     }
     if (!!id) {
-      getSingleProject(Number(id)).then((fetchedContent) => {
-        setContent(fetchedContent);
-        setMedia(fetchedContent?.media);
-      });
+      setMediaLoading(true);
+      getSingleProject(Number(id))
+        .then((fetchedContent) => {
+          setContent(fetchedContent);
+          setMedia(fetchedContent?.media);
+        })
+        .finally(() => setMediaLoading(false));
     }
   }, [id, isAdvertiser]);
 
@@ -543,6 +547,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
               downloadButtonText="Download Data"
               radioButtonText="Radio Monitor"
               subText="Radio monitor report is populating..."
+              loading={mediaLoading}
             />
           </div>
           <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
@@ -602,6 +607,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
               radioButtonText="Claim Reward"
               subText="Special delivery just for you 🎁💗 "
               outline={true}
+              loading={mediaLoading}
             />
           </div>
           <div className="border p-[20px]  rounded-[8px] space-y-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
@@ -651,6 +657,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
             <MomentSliderCard
               images={dspMediaData}
+              loading={mediaLoading}
               csvData={{ ...dspData, ...dspPerformanceData }}
               downloadButtonText="Download Data"
               downloadIcon={true}

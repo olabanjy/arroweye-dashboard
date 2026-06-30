@@ -23,6 +23,7 @@ export default {
       fontFamily: {
         IBM: ['"IBM Plex Sans"', "sans-serif"],
         Poppins: ["Poppins", "sans-serif"],
+        sansFlex: ['"Google Sans Flex"', "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

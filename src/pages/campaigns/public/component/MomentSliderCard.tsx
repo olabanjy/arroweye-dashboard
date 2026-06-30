@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import Slider from "react-slick";
 import { MdOutlineFileDownload } from "react-icons/md";
 import Image from "next/image";
@@ -7,7 +7,6 @@ import { FaRegCirclePlay } from "react-icons/fa6";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface MomentSliderCardProps {
   images: string[];
@@ -22,6 +21,7 @@ interface MomentSliderCardProps {
   assetsButton?: string;
   additionalContent?: React.ReactNode;
   csvData?: any;
+  loading?: boolean;
 }
 
 const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
@@ -37,9 +37,10 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
   assetsButton,
   additionalContent,
   csvData,
+  loading = false,
 }) => {
   const sliderRef = useRef<Slider | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const hasData = (images?.length ?? 0) > 0;
 
   const sliderSettings = {
     dots: false,
@@ -91,20 +92,6 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
     }
   };
 
-  useEffect(() => {
-    validateVideoUrls();
-  }, [images]);
-
-  const validateVideoUrls = () => {
-    if (!images || images.length === 0) {
-      setError("No Media Added Yet");
-      return false;
-    }
-
-    setError(null);
-    return true;
-  };
-
   const downloadCSV = (data: any, filename = "DSPData.csv") => {
     const headers = Object.keys(data).join(",") + "\n";
     const values = Object.values(data).join(",") + "\n";
@@ -128,15 +115,10 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
         {MomentsTitle}
       </p>
 
-      <div className="relative">
-        {error ? (
-          <Alert
-            variant="destructive"
-            className="h-[300px] flex items-center justify-center"
-          >
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        ) : (
+      {loading ? (
+        <div className="h-[400px] w-full rounded bg-gray-200 animate-pulse" />
+      ) : hasData ? (
+        <div className="relative">
           <>
             {" "}
             <div
@@ -181,25 +163,27 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
               <HiMiniArrowRight className="text-white text-[14px]" />
             </div>
           </>
-        )}
-      </div>
+        </div>
+      ) : null}
 
       <div className="space-y-[5px] flex flex-col items-center justify-center">
-        <div className="flex items-center gap-2 w-full">
-          {watchButtonText && (
-            <p className="p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[16px] font-[500] flex-grow rounded bg-black text-white text-center">
-              {watchButtonText}
-            </p>
-          )}
+        {hasData && (
+          <div className="flex items-center gap-2 w-full">
+            {watchButtonText && (
+              <p className="p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[16px] font-[500] flex-grow rounded bg-black text-white text-center">
+                {watchButtonText}
+              </p>
+            )}
 
-          {downloadIcon && watchButtonText && (
-            <div className="bg-black hover:bg-orange-500 font-IBM text-[16px] font-medium text-white p-[11px] rounded inline-flex">
-              <MdOutlineFileDownload className="text-[16px]" />
-            </div>
-          )}
-        </div>
+            {downloadIcon && watchButtonText && (
+              <div className="bg-black hover:bg-orange-500 font-IBM text-[16px] font-medium text-white p-[11px] rounded inline-flex">
+                <MdOutlineFileDownload className="text-[16px]" />
+              </div>
+            )}
+          </div>
+        )}
 
-        {assetsButton && (
+        {hasData && assetsButton && (
           <button
             className="w-full p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[16px] font-[500] flex-grow rounded-full bg-black text-white text-center"
             onClick={() => downloadAllDspFiles(images)}
