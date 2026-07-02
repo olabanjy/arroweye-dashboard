@@ -115,8 +115,8 @@ const PieChart: FC<InsightChartProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <p className="text-2xl lg:text-[56px] font-[600] font-IBM">
+      <div className="flex items-center gap-2 ">
+        <p className="text-2xl lg:text-[56px] font-[600] font-sansFlex">
           {!!value && formatNumber(value)}
         </p>
         {Number(value) > 1000 && (
@@ -124,12 +124,12 @@ const PieChart: FC<InsightChartProps> = ({
         )}
       </div>
       <div>
-        <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-IBM">
+        <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-sansFlex">
           {valuePlaceHolder}
         </p>
 
         {defaultChartData && (
-          <div className="w-full h-[300px] font-IBM">
+          <div className="w-full h-[300px] font-sansFlex">
             <Pie
               data={defaultChartData}
               options={{
@@ -164,8 +164,8 @@ const PieChart: FC<InsightChartProps> = ({
           </div>
         )}
       </div>
-
-      <div className="flex items-center justify-between">
+      {/* directed to hide this for now */}
+      <div className=" items-center hidden justify-between">
         <div>
           {selectOptionsBottom?.map((options, index) => (
             <div key={index} className="max-w-[200px] w-full">

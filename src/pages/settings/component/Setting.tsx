@@ -41,7 +41,7 @@ const Setting = () => {
     type: string = "text",
     onChange?: React.ChangeEventHandler<HTMLInputElement>,
     info?: string,
-    extraElement?: React.ReactNode
+    extraElement?: React.ReactNode,
   ) => (
     <div className="relative w-full">
       <div className="flex items-end gap-2 w-full">
@@ -130,7 +130,7 @@ const Setting = () => {
             toggleNotifications,
             "text",
             (e) => setUserName(e.target.value),
-            "This is the full name of the user and will appear across all campaigns as such. Please contact your admin for any required changes."
+            "This is the full name of the user and will appear across all campaigns as such. Please contact your admin for any required changes.",
           )}
           {renderCopyInput(
             "USER EMAIL",
@@ -138,23 +138,23 @@ const Setting = () => {
             toggleNotifications,
             "email",
             (e) => setEmail(e.target.value),
-            "This is the email that will receive all notifications concerning your campaign and account security. Please contact your admin for any required changes."
+            "This is the email that will receive all notifications concerning your campaign and account security. Please contact your admin for any required changes.",
           )}
-          {renderCopyInput(
+          {/* {renderCopyInput(
             "VENDOR",
             labelName,
             toggleNotifications,
             "text",
             (e) => setLabelName(e.target.value),
             "This is the name of the organization your account belongs to. Please contact your admin for any required changes.sss"
-          )}
+          )} */}
           {renderCopyInput(
             "UNIQUE ID",
             phone,
             toggleNotifications,
             "text",
             (e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 15)),
-            ""
+            "",
           )}
 
           {/* <div className="flex gap-[10px] items-end flex-1">
