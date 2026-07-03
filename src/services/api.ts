@@ -6,8 +6,8 @@ import { ContentItem, EventsItem, StaffItem } from "@/types/contents";
 import { DropzonePayload } from "@/types/dropzone";
 import { handleApiError } from "@/lib/utils";
 
-if (typeof window !== "undefined" && window?.sessionStorage)
-  ls.config.storage = sessionStorage;
+if (typeof window !== "undefined" && window?.localStorage)
+  ls.config.storage = localStorage;
 
 interface ApiResponse {
   action: string;

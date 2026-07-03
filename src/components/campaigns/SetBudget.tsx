@@ -17,8 +17,6 @@ export default function SetBudget({
 }) {
   const [tokens, setTokens] = useState(340);
   const [email, setEmail] = useState("");
-  const [isrc, setIsrc] = useState("");
-  const [startDate, setStartDate] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [budgetInput, setBudgetInput] = useState("850,000");
   const [tokenInput, setTokenInput] = useState("340");
@@ -72,9 +70,7 @@ export default function SetBudget({
 
   const [errors, setErrors] = useState<{
     email?: string;
-    isrc?: string;
     budget?: string;
-    date?: string;
     terms?: string;
   }>({});
 
@@ -199,19 +195,6 @@ export default function SetBudget({
           background: white;
         }
 
-        input[type="date"]::-webkit-calendar-picker-indicator {
-          opacity: 0.4;
-          cursor: pointer;
-        }
-
-        .hint-text {
-          font-size: 0.75rem;
-          color: #999;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          margin-top: 6px;
-        }
       `}</style>
       <div className="flex justify-center items-center gap-2 mb-7 my-10">
         <p>Set Budget</p>
@@ -221,7 +204,7 @@ export default function SetBudget({
         </p>
       </div>
       <div className="mt-10 mb-20 budget-card w-full px-6 py-10 sm:px-10 sm:py-12">
-        {/* Email & ISRC row */}
+        {/* Email & Tokens row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <div>
             <Input
@@ -237,13 +220,26 @@ export default function SetBudget({
           <div>
             <Input
               type="text"
-              placeholder="ISRC / UPC"
-              value={isrc}
-              onChange={(e) => setIsrc(e.target.value)}
+              inputMode="numeric"
+              placeholder="Tokens"
+              value={tokenInput}
+              onChange={(e) => {
+                const raw = e.target.value.replace(/[^0-9]/g, "");
+                setTokenInput(raw);
+                const num = parseInt(raw, 10);
+                if (!isNaN(num)) {
+                  setTokens(num);
+                  setBudgetInput(formatBudget(num * PRICE_PER_TOKEN));
+                }
+              }}
+              onBlur={() => {
+                const num = parseInt(tokenInput, 10);
+                const clamped = isNaN(num)
+                  ? MIN_TOKENS
+                  : Math.max(num, MIN_TOKENS);
+                applyTokens(clamped);
+              }}
             />
-            {errors.isrc && (
-              <p className="text-red-500 text-xs mt-1">{errors.isrc}</p>
-            )}
           </div>
         </div>
 
@@ -304,72 +300,6 @@ export default function SetBudget({
           >
             +
           </button>
-        </div>
-
-        {/* Tokens & Start Date row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          <div>
-            <Input
-              type="text"
-              inputMode="numeric"
-              value={tokenInput}
-              onChange={(e) => {
-                const raw = e.target.value.replace(/[^0-9]/g, "");
-                setTokenInput(raw);
-                const num = parseInt(raw, 10);
-                if (!isNaN(num)) {
-                  setTokens(num);
-                  setBudgetInput(formatBudget(num * PRICE_PER_TOKEN));
-                }
-              }}
-              onBlur={() => {
-                const num = parseInt(tokenInput, 10);
-                const clamped = isNaN(num)
-                  ? MIN_TOKENS
-                  : Math.max(num, MIN_TOKENS);
-                applyTokens(clamped);
-              }}
-            />
-          </div>
-          <div>
-            <Input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              placeholder="01/01/2034"
-            />
-            {errors.date && (
-              <p className="text-red-500 text-xs mt-1">{errors.date}</p>
-            )}
-            <p className="hint-text">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                <circle
-                  cx="8"
-                  cy="8"
-                  r="7.25"
-                  stroke="#bbb"
-                  strokeWidth="1.5"
-                />
-                <rect
-                  x="7.25"
-                  y="6.75"
-                  width="1.5"
-                  height="5"
-                  rx=".75"
-                  fill="#bbb"
-                />
-                <rect
-                  x="7.25"
-                  y="4.25"
-                  width="1.5"
-                  height="1.5"
-                  rx=".75"
-                  fill="#bbb"
-                />
-              </svg>
-              Campaigns run for 30 days from the start date.
-            </p>
-          </div>
         </div>
 
         {/* CTA */}
