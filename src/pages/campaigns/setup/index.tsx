@@ -19,6 +19,7 @@ const Setup = () => {
   const [verifyStatus, setVerifyStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
+  const [walletRefreshToken, setWalletRefreshToken] = useState(0);
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -37,6 +38,9 @@ const Setup = () => {
           isLoading: false,
           autoClose: 3000,
         });
+
+        // Re-fetch wallet so the credited balance shows before proceeding
+        setWalletRefreshToken((n) => n + 1);
 
         router.replace(
           {
@@ -68,7 +72,7 @@ const Setup = () => {
       </Head>
 
       <DashboardLayout>
-        <SetBudget />
+        <SetBudget refreshToken={walletRefreshToken} />
         {showModal && <AddCampaign />}
       </DashboardLayout>
     </>

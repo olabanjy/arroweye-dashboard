@@ -35,6 +35,7 @@ const CustomCampaign = () => {
   const [loadingCampaignSong, setLoadingCampaignSong] = useState(false);
   const [loadingCampaignCreation, setLoadingCampaignCreation] = useState(false);
   const [hasCreatedDraft, setHasCreatedDraft] = useState(false);
+  const [draftId, setDraftId] = useState<number | null>(null);
   const [startDate, setStartDate] = useState<string>("");
   const [campaignSongDetails, setCampaignSongDetails] = useState<any>(null);
   const [clusters, setClusters] = useState<any[]>([]);
@@ -114,7 +115,7 @@ const CustomCampaign = () => {
       song_artist: campaignSongDetails?.artist,
       song_artwork: campaignSongDetails?.artwork,
       // target_audience_reach: reachValue,
-      start_date: startDate || "2026-06-06",
+      start_date: startDate,
       mode: "custom",
     })
       .then((result) => {
@@ -128,6 +129,7 @@ const CustomCampaign = () => {
           setLoadingCampaignCreation(false);
           return;
         }
+        setDraftId(result?.id ?? null);
         toast.update(createDraftToast, {
           render:
             "Campaign Created Successfully, feel free to edit selection before Launch",
@@ -154,11 +156,23 @@ const CustomCampaign = () => {
   const handleLaunchCampaign = async () => {
     const createToast = toast.loading("Launching Campaign...");
 
-    const existindDraft: any = ls.get("LastCampaignDraft", { decrypt: true });
+    const fallbackDraft: any = ls.get("LastCampaignDraft", { decrypt: true });
+    const campaignId = draftId ?? fallbackDraft?.id;
+
+    if (!campaignId) {
+      toast.update(createToast, {
+        render: "No campaign draft found. Please create the campaign first.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      setLoadingCampaignCreation(false);
+      return;
+    }
 
     const payload = buildCampaignPayload(selectedDistricts, djSpins, true);
 
-    await launchCampaignFully(existindDraft?.id, payload)
+    await launchCampaignFully(campaignId, payload)
       .then((result) => {
         if (!result) {
           toast.update(createToast, {
@@ -390,7 +404,7 @@ const CustomCampaign = () => {
       setDjSpins((prev) => {
         const updated = { ...prev };
 
-        delete updated[djId as any];
+        delete updated[`${districtId}-${djId}` as any];
 
         return updated;
       });
@@ -885,6 +899,12 @@ const CustomCampaign = () => {
               {/* Launch CTA */}
               <button
                 className={`order-3 md:order-3 w-full md:w-auto px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold ${loadingCampaignCreation || Object.keys(selectedDistricts).length === 0 || !startDate || !campaignSongDetails?.artist ? "opacity-50 italic" : ""}`}
+                disabled={
+                  loadingCampaignCreation ||
+                  Object.keys(selectedDistricts).length === 0 ||
+                  !startDate ||
+                  !campaignSongDetails?.artist
+                }
                 onClick={handleLaunchCampaign}
               >
                 {loadingCampaignCreation === true

@@ -161,12 +161,7 @@ const Sidebar: FC = () => {
                   {isActive("/campaigns") && isAdvertiser && !isCollapsed && (
                     <ul className="ml-6 mt-1 space-y-1 border-l border-gray-200 pl-3">
                       <li>
-                        <Link
-                          href={{
-                            pathname: "/campaigns/setup",
-                            query: { showModal: "true" },
-                          }}
-                        >
+                        <Link href="/campaigns/setup">
                           <div className="flex items-center space-x-2 cursor-pointer">
                             {/* Dot */}
                             <span

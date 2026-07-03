@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import ls from "localstorage-slim";
 import { Input } from "@/components/ui/input";
-import { fundCampaignWallet } from "@/services/api";
-import Link from "next/link";
+import { fundCampaignWallet, getCampaignWallet } from "@/services/api";
 import { useRouter } from "next/router";
 
 const PRICE_PER_TOKEN = 2500; // ₦ per token
 const MIN_TOKENS = 1;
 const MAX_TOKENS = 10000;
 const MIN_AMOUNT = 2500;
+const BUDGET_STORAGE_KEY = "SetBudgetTokens";
 
-export default function SetBudget() {
+export default function SetBudget({
+  refreshToken = 0,
+}: {
+  refreshToken?: number;
+}) {
   const [tokens, setTokens] = useState(340);
   const [email, setEmail] = useState("");
   const [isrc, setIsrc] = useState("");
@@ -19,6 +24,20 @@ export default function SetBudget() {
   const [tokenInput, setTokenInput] = useState("340");
 
   const router = useRouter();
+
+  const [availableBalance, setAvailableBalance] = useState(0);
+
+  useEffect(() => {
+    getCampaignWallet()
+      .then((data: any) => {
+        setAvailableBalance(Number(data?.available_balance) || 0);
+      })
+      .catch((err) => {
+        console.error("Failed to load wallet balance:", err);
+      });
+  }, [refreshToken]);
+
+  const needsTopUp = tokens > availableBalance;
 
   const formatBudget = (amount: number) =>
     new Intl.NumberFormat("en-NG").format(amount);
@@ -34,6 +53,23 @@ export default function SetBudget() {
   const increment = () => applyTokens(tokens + 10);
   const decrement = () => applyTokens(tokens - 10);
 
+  // Restore the previously selected budget on mount (survives back-navigation)
+  const skipPersist = useRef(true);
+
+  useEffect(() => {
+    const saved = Number(ls.get(BUDGET_STORAGE_KEY));
+    if (!isNaN(saved) && saved > 0) applyTokens(saved);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (skipPersist.current) {
+      skipPersist.current = false;
+      return;
+    }
+    ls.set(BUDGET_STORAGE_KEY, tokens);
+  }, [tokens]);
+
   const [errors, setErrors] = useState<{
     email?: string;
     isrc?: string;
@@ -42,7 +78,7 @@ export default function SetBudget() {
     terms?: string;
   }>({});
 
-  const handleSubmit = async () => {
+  const handleBuyToken = async () => {
     const newErrors: typeof errors = {};
     const budgetNum = parseInt(budgetInput.replace(/[^0-9]/g, ""), 10);
 
@@ -54,18 +90,37 @@ export default function SetBudget() {
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    await fundCampaignWallet({ amount_naira: budgetNum })
+    const callbackUrl = `${window.location.origin}/campaigns/setup?showModal=true`;
+
+    await fundCampaignWallet({
+      amount_naira: budgetNum,
+      callback_url: callbackUrl,
+    })
       .then((data) => {
         const authUrl = data?.paystack?.authorization_url;
-        if (authUrl) window.open(authUrl, "_blank");
-        setTimeout(() => {
-          router.push("/campaigns/setup?showModal=true");
-        }, 5000);
+        if (authUrl) {
+          window.location.href = authUrl;
+        } else {
+          setErrors({
+            budget: "Could not start payment. Please try again.",
+          });
+        }
       })
       .catch((err) => {
         console.error("Error submitting form:", err);
       });
   };
+
+  const handleContinue = () => {
+    if (!accepted) {
+      setErrors({ terms: "You must accept the terms of service." });
+      return;
+    }
+    setErrors({});
+    router.push("/campaigns/setup?showModal=true");
+  };
+
+  const handleSubmit = () => (needsTopUp ? handleBuyToken() : handleContinue());
 
   return (
     <div className="bg-[#f0f0ef] p-4 sm:p-7">
@@ -161,14 +216,9 @@ export default function SetBudget() {
       <div className="flex justify-center items-center gap-2 mb-7 my-10">
         <p>Set Budget</p>
         <div className="h-[1px] w-8 bg-[#A3A3A3]" />
-        <Link
-          href={{
-            pathname: "/campaigns/setup",
-            query: { showModal: "true" },
-          }}
-        >
-          <p className="text-[#A3A3A3]">Launch Campaign</p>
-        </Link>
+        <p className="text-[#A3A3A3] cursor-not-allowed select-none">
+          Launch Campaign
+        </p>
       </div>
       <div className="mt-10 mb-20 budget-card w-full px-6 py-10 sm:px-10 sm:py-12">
         {/* Email & ISRC row */}
@@ -229,10 +279,22 @@ export default function SetBudget() {
                 setTokenInput(String(newTokens));
                 setBudgetInput(formatBudget(clamped));
               }}
+              style={{ color: needsTopUp ? "#e11d48" : "#111" }}
               className="budget-display text-center bg-transparent border-none outline-none w-full min-w-0"
             />
             {errors.budget && (
               <p className="text-red-500 text-xs mt-1">{errors.budget}</p>
+            )}
+            <p className="text-xs text-[#999] mt-2">
+              Wallet balance: {formatBudget(availableBalance)} tokens
+            </p>
+            {needsTopUp && (
+              <p className="text-xs text-[#e11d48] mt-1">
+                Exceeds your balance - buy{" "}
+                {formatBudget(tokens - availableBalance)} more token
+                {tokens - availableBalance === 1 ? "" : "s"} to cover this
+                budget.
+              </p>
             )}
           </div>
           <button
@@ -311,10 +373,16 @@ export default function SetBudget() {
         </div>
 
         {/* CTA */}
-        {/* CTA */}
         <div className="flex flex-col items-center gap-4">
-          <button className="buy-btn" onClick={handleSubmit}>
-            Buy Token
+          <button
+            className="buy-btn"
+            onClick={handleSubmit}
+            disabled={!accepted}
+            style={
+              !accepted ? { opacity: 0.5, cursor: "not-allowed" } : undefined
+            }
+          >
+            {needsTopUp ? "Buy Token" : "Continue"}
           </button>
           <label className="flex items-center gap-2.5 cursor-pointer select-none">
             <div
