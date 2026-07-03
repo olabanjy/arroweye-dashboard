@@ -1396,10 +1396,27 @@ export const getCampaignWallet = async (): Promise<any | null> => {
   }
 };
 
-export const fundCampaignWallet = async (payload: unknown): Promise<any> => {
+interface FundWalletPayload {
+  amount_naira: number;
+  callback_url?: string;
+}
+
+interface PaystackInitialization {
+  authorization_url: string;
+  access_code?: string;
+  reference?: string;
+}
+
+interface FundWalletResponse {
+  paystack?: PaystackInitialization;
+}
+
+export const fundCampaignWallet = async (
+  payload: FundWalletPayload,
+): Promise<FundWalletResponse | null> => {
   const createToast = toast.loading("Initiating Payment...");
   try {
-    const result = await apiRequest<ApiRequestResponse<ApiResponse>>({
+    const result = await apiRequest<FundWalletResponse>({
       method: "POST",
       url: `/api/v1/wallet/fund/`,
       data: payload,

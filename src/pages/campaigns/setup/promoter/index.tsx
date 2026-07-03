@@ -36,6 +36,7 @@ const PromoterCampaign = () => {
     cluster_ids: number[];
   } | null>(null);
   const [search, setSearch] = useState<string | undefined>("");
+  const [draftId, setDraftId] = useState<number | null>(null);
 
   useEffect(() => {
     getPromoterPlans()
@@ -105,7 +106,7 @@ const PromoterCampaign = () => {
       song_artist: campaignSongDetails?.artist,
       song_artwork: campaignSongDetails?.artwork,
       // target_audience_reach: totalAudienceReach,
-      start_date: startDate || "2026-06-06",
+      start_date: startDate,
       mode: "aggregator",
     })
       .then((result) => {
@@ -119,6 +120,7 @@ const PromoterCampaign = () => {
           setLoadingCampaignCreation(false);
           return;
         }
+        setDraftId(result?.id ?? null);
         toast.update(createDraftToast, {
           render:
             "Campaign Created Successfully, feel free to edit selection before Launch",
@@ -144,11 +146,23 @@ const PromoterCampaign = () => {
   const handleLaunchCampaign = async () => {
     const createToast = toast.loading("Creating Campaign...");
 
-    const existindDraft: any = ls.get("LastCampaignDraft", { decrypt: true });
+    const fallbackDraft: any = ls.get("LastCampaignDraft", { decrypt: true });
+    const campaignId = draftId ?? fallbackDraft?.id;
+
+    if (!campaignId) {
+      toast.update(createToast, {
+        render: "No campaign draft found. Please create the campaign first.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      setLoadingCampaignCreation(false);
+      return;
+    }
 
     const payload = campaignPayload;
 
-    await launchCampaignFully(existindDraft?.id, payload)
+    await launchCampaignFully(campaignId, payload)
       .then(() => {
         toast.update(createToast, {
           render: "Campaign Launched Successfully",
@@ -427,6 +441,11 @@ const PromoterCampaign = () => {
               {/* Launch CTA */}
               <button
                 className={`order-3 md:order-3 w-full md:w-auto px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold ${loadingCampaignCreation || !startDate || !campaignSongDetails?.artist ? "opacity-50 italic" : ""}`}
+                disabled={
+                  loadingCampaignCreation ||
+                  !startDate ||
+                  !campaignSongDetails?.artist
+                }
                 onClick={handleLaunchCampaign}
               >
                 {loadingCampaignCreation === true
