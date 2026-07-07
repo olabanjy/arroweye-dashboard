@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Table from "./Table";
 import { SelectInput } from "@/components/ui/selectinput";
-import { getProjects, archiveProject } from "@/services/api";
-import { ContentItem } from "@/types/contents";
 import { Dialog } from "primereact/dialog";
 import { Button } from "@/components/ui/button";
+import { useArchive } from "../hooks/use-archive";
 
 interface ProjectsProps {
   filterVisible: boolean;
@@ -12,8 +11,18 @@ interface ProjectsProps {
 }
 
 const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
-  const [editMode, setEditMode] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    editMode,
+    setEditMode,
+    isArchiving,
+    setIsArchiving,
+    copiedPin,
+    isLoading,
+    filteredContent,
+    handleArchiveSubmit,
+    handleCopyPin,
+  } = useArchive({ searchValue });
+
   const headers: { content: string; align: "left" | "center" | "right" }[] = [
     { content: "Campaigns", align: "left" },
     { content: "Label", align: "left" },
@@ -23,46 +32,6 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
     { content: "Pin", align: "center" },
     { content: "Action", align: "center" },
   ];
-
-  const [isArchiving, setIsArchiving] = useState<string | null>(null);
-  const [copiedPin, setCopiedPin] = useState<string | null>(null);
-  const [content, setContent] = useState<ContentItem[] | null>(null);
-
-  useEffect(() => {
-    getProjects().then((fetchedContent) => {
-      setContent(fetchedContent);
-      setIsLoading(false);
-    });
-  }, []);
-
-  const filteredContent = content
-    ?.filter((item) => item.archived === true)
-    ?.filter((item) =>
-      item.title?.toLowerCase().includes(searchValue.toLowerCase())
-    );
-
-  const handleArchiveSubmit = async (projectId: string, archive: boolean) => {
-    try {
-      setIsArchiving(projectId);
-      await archiveProject(Number(projectId), { archived: archive });
-      const updatedContent = await getProjects();
-      setContent(updatedContent);
-      setEditMode(false);
-    } catch (error) {
-      console.error(
-        `Error ${archive ? "archiving" : "unarchiving"} project ${projectId}:`,
-        error
-      );
-    } finally {
-      setIsArchiving(null);
-    }
-  };
-
-  const handleCopyPin = (pin: string) => {
-    navigator.clipboard.writeText(pin);
-    setCopiedPin(pin);
-    setTimeout(() => setCopiedPin(null), 2000);
-  };
 
   return (
     <div className="">

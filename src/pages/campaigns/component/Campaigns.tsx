@@ -1,20 +1,13 @@
-import React, { useEffect, useState } from "react";
-import ls from "localstorage-slim";
+import React, { useState } from "react";
 import Table from "./Table";
 import { BsTrash } from "react-icons/bs";
 import { SelectInput } from "@/components/ui/selectinput";
-import {
-  archiveProject,
-  getProjects,
-  getCreatedCampaigns,
-} from "@/services/api";
-import { ContentItem } from "@/types/contents";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { MdOutlineModeEditOutline } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/pages/drops/component/Pagination";
+import { useCampaigns } from "../hooks/use-campaigns";
 
 interface ProjectsProps {
   filterVisible: boolean;
@@ -22,12 +15,26 @@ interface ProjectsProps {
 }
 
 const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
-  const router = useRouter();
-  const [editMode, setEditMode] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [isAdvertiser, setIsAdvertiser] = useState<boolean | null>(null);
-  const [userRole, setUserRole] = useState("");
+  const {
+    isLoading,
+    isAdvertiser,
+    copiedPin,
+    currentPage,
+    totalPages,
+    isArchiving,
+    setIsArchiving,
+    investmentFilter,
+    setInvestmentFilter,
+    revenueFilter,
+    setRevenueFilter,
+    goToPage,
+    handleCopyPin,
+    handleArchiveSubmit,
+    editMode,
+    setEditMode,
+    filteredContent,
+    filteredCampaignList,
+  } = useCampaigns({ searchValue });
 
   const headers: { content: string; align: "left" | "center" | "right" }[] = [
     { content: "Campaigns", align: "left" },
@@ -49,167 +56,6 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
     { content: "Manage", align: "center" },
   ];
 
-  const [copiedPin, setCopiedPin] = useState<string | null>(null);
-  const [content, setContent] = useState<ContentItem[] | null>(null);
-  const [campaignList, setCampaignList] = useState<any[] | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-
-  // restore page from URL (e.g. returning from /campaigns/[id])
-  useEffect(() => {
-    if (!router.isReady) return;
-    const p = parseInt(router.query.page as string, 10);
-    if (!isNaN(p) && p > 0) setCurrentPage(p);
-  }, [router.isReady]);
-
-  const goToPage = (page: number) => {
-    setCurrentPage(page);
-    router.push(
-      { pathname: router.pathname, query: { ...router.query, page } },
-      undefined,
-      { shallow: true },
-    );
-  };
-
-  const [totalCount, setTotalCount] = useState(0);
-  const PAGE_SIZE = 10;
-  const [isArchiving, setIsArchiving] = useState<number | null>(null);
-
-  const [investmentFilter, setInvestmentFilter] = useState<any>("");
-  const [revenueFilter, setRevenueFilter] = useState<any>("");
-
-  useEffect(() => {
-    if (isAdvertiser === null) return; // still resolving
-
-    if (isAdvertiser) {
-      setContent([]);
-      setIsLoading(false);
-      return;
-    }
-
-    const fetchProjects = async () => {
-      try {
-        const fetchedContent = await getProjects();
-        setContent(fetchedContent);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProjects();
-  }, [isAdvertiser]);
-
-  const fetchProjects = async () => {
-    try {
-      const fetchedContent = await getProjects();
-      setContent(fetchedContent);
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isAdvertiser === null) return;
-    if (!isAdvertiser) {
-      setIsLoading(false);
-      return;
-    }
-
-    const fetchCampaigns = async () => {
-      setIsLoading(true);
-      try {
-        const fetchedContent = await getCreatedCampaigns(
-          currentPage,
-          PAGE_SIZE,
-        );
-        setCampaignList(fetchedContent?.results ?? []);
-        setTotalPages(fetchedContent?.pages ?? 1);
-        setTotalCount(fetchedContent?.count ?? 0);
-      } catch (error) {
-        console.error("Error fetching campaigns:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCampaigns();
-  }, [isAdvertiser, currentPage]);
-
-  useEffect(() => {
-    const content: any = ls.get("Profile", { decrypt: true });
-    console.log("CONTENT FOR LOGGED IN USER", content);
-    setUserRole(content?.user?.user_profile?.role);
-    if (content?.user?.user_type === "Advertiser") {
-      setIsAdvertiser(true);
-    } else {
-      setIsAdvertiser(false);
-    }
-  }, []);
-
-  const handleCopyPin = (pin: string) => {
-    navigator.clipboard.writeText(pin);
-    setCopiedPin(pin);
-    setTimeout(() => setCopiedPin(null), 2000);
-  };
-
-  const handleArchiveSubmit = async (projectId: number) => {
-    try {
-      setIsArchiving(projectId);
-      await archiveProject(projectId, { archived: true });
-      await fetchProjects();
-      setEditMode(false);
-    } catch (error) {
-      console.error(`Error archiving project ${projectId}:`, error);
-    } finally {
-      setIsArchiving(null);
-    }
-  };
-
-  const filteredContent = content
-    ?.filter(
-      (item) =>
-        !item.archived &&
-        (item.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          item.vendor?.organization_name
-            ?.toLowerCase()
-            .includes(searchValue.toLowerCase()) ||
-          item.subvendor?.organization_name
-            ?.toLowerCase()
-            .includes(searchValue.toLowerCase())),
-    )
-    .sort((a: any, b: any) => {
-      if (investmentFilter === "htl") {
-        return b.total_investment - a.total_investment; // High to Low
-      } else if (investmentFilter === "lth") {
-        return a.total_investment - b.total_investment; // Low to High
-      }
-      return 0; // No sorting
-    })
-    .sort((a: any, b: any) => {
-      if (revenueFilter === "htl") {
-        return b.total_revenue - a.total_revenue; // High to Low
-      } else if (revenueFilter === "lth") {
-        return a.total_revenue - b.total_revenue; // Low to High
-      }
-      return 0; // No sorting
-    });
-
-  const filteredCampaignList = campaignList
-    ?.filter(
-      (item) =>
-        item.status === "active" &&
-        (item.song_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          item.song_artist?.toLowerCase().includes(searchValue.toLowerCase())),
-    )
-    .sort((a: any, b: any) => {
-      if (investmentFilter === "htl") return b.total_tokens - a.total_tokens;
-      if (investmentFilter === "lth") return a.total_tokens - b.total_tokens;
-      return 0;
-    });
   return (
     <>
       {filterVisible && (

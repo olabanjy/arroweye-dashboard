@@ -1,25 +1,20 @@
-import React, { useEffect, useState } from "react";
-import ls from "localstorage-slim";
+import React from "react";
 import DashboardLayout from "../dashboard/layout";
 import { HiOutlineCube } from "react-icons/hi";
 import { IoFilter } from "react-icons/io5";
 import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
-import { FaGoogleDrive } from "react-icons/fa";
 import { IoIosArrowRoundDown } from "react-icons/io";
 import { FiInfo, FiMinus } from "react-icons/fi";
 import LibraryCard from "./component/LibraryCard";
 import { Dialog } from "primereact/dialog";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { LuCopy } from "react-icons/lu";
-import { ContentItem } from "@/types/contents";
-import { deleteDropZones, getBusiness, getDropZones } from "@/services/api";
 import Pagination from "./component/Pagination";
 import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Head from "next/head";
+import { useDrops } from "./hooks/use-drops";
 
 const colors = [
   "bg-red-500",
@@ -57,146 +52,36 @@ export const Tooltip = ({ info }: { info: string }) => (
 const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
 
 const AssetsLibrary = () => {
-  const [content, setContent] = useState<any>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [filter, setFilter] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<any>(null);
-  const [userLoggedInProfile, setUserLoggedInProfile] = useState<any>({});
-
-  useEffect(() => {
-    const content: any = ls.get("Profile", { decrypt: true });
-    console.log(content?.user?.user_profile);
-    setUserLoggedInProfile(content?.user?.user_profile);
-  }, []);
-
-  useEffect(() => {
-    setFilter(false);
-  }, []);
-
-  const [filters, setFilters] = useState({
-    search: "",
-    year: "",
-    month: "",
-    vendor: "",
-    subvendor: "",
-    platform: "",
-  });
-  const [debouncedSearch, setDebouncedSearch] = useState(filters.search);
-  const [vendorOptions, setVendorOptions] = useState([]);
-  const [subVendorOptions, setSubvendorOptions] = useState([]);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [deleteDialog, setDeleteDialog] = useState(false);
-  const [projectPin, setProjectPin] = useState("");
-  const [pinEntered, setPinEntered] = useState("");
-  const [pinError, setPinError] = useState(false);
-  const [dropIdToBeDeleted, setDropIdToBeDeleted] = useState<any>("");
-
-  const updateFilters = (key: string, value: string) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [key]: value,
-    }));
-  };
-
-  const fetchDropZones = async () => {
-    const response = await getDropZones({
-      page: currentPage,
-      ...filters,
-      search: debouncedSearch, // Use debounced search value
-    });
-
-    if (response) {
-      console.log("ALL DROPZONES", response);
-      setContent(response.results || []);
-      setTotalPages(Math.ceil(response.count / 10));
-    }
-  };
-
-  // Debounce effect for search
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(filters.search);
-    }, 2000); // 2 seconds debounce
-
-    return () => clearTimeout(handler);
-  }, [filters.search]);
-
-  // Trigger API call when filters (excluding search) or page changes
-  useEffect(() => {
-    fetchDropZones();
-  }, [
+  const {
+    content,
     currentPage,
-    debouncedSearch,
-    filters.year,
-    filters.month,
-    filters.vendor,
-    filters.subvendor,
-    filters.platform,
-  ]);
-
-  useEffect(() => {
-    getBusiness()
-      .then((fetchedContent: any) => {
-        // Filter and map data for vendors
-        const vendors = fetchedContent
-          .filter((business: any) => business.type === "Vendor")
-          .map((business: any) => ({
-            value: business.id,
-            label: business.organization_name,
-          }));
-
-        // Filter and map data for subvendors
-        const subvendors = fetchedContent
-          .filter((business: any) => business.type === "SubVendor")
-          .map((business: any) => ({
-            value: business.id,
-            label: business.organization_name,
-          }));
-
-        setVendorOptions(vendors);
-        setSubvendorOptions(subvendors);
-      })
-      .catch((err) => {
-        console.error("Error fetching business data:", err);
-      });
-  }, []);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handleUserClick = (item: any) => {
-    setSelectedUser(item);
-  };
-
-  const handleCopyLink = (link: string) => {
-    navigator.clipboard.writeText(link).then(() => {
-      toast.success("Link has been copied!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-    });
-  };
-
-  const handleDelete = (id: number) => {
-    setDeleteLoading(true);
-    deleteDropZones(id)
-      .then((fetchedContent: any) => {
-        setDeleteLoading(false);
-        fetchDropZones();
-        setDeleteDialog(false);
-        setPinEntered("");
-      })
-      .catch((err) => {
-        setDeleteLoading(false);
-        console.error("Error fetching business data:", err);
-      });
-  };
+    totalPages,
+    filter,
+    setFilter,
+    selectedUser,
+    setSelectedUser,
+    userLoggedInProfile,
+    filters,
+    setFilters,
+    updateFilters,
+    vendorOptions,
+    subVendorOptions,
+    deleteLoading,
+    deleteDialog,
+    setDeleteDialog,
+    projectPin,
+    setProjectPin,
+    pinEntered,
+    setPinEntered,
+    pinError,
+    setPinError,
+    dropIdToBeDeleted,
+    setDropIdToBeDeleted,
+    handlePageChange,
+    handleUserClick,
+    handleCopyLink,
+    handleDelete,
+  } = useDrops();
 
   return (
     <>

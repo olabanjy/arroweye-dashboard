@@ -401,24 +401,15 @@ export const Verify = async (payload: unknown): Promise<void> => {
     return;
   }
 };
+export const VerifyLogin = async (payload: unknown): Promise<any> => {
+  const response = await apiRequest<any>({
+    method: "POST",
+    url: `/verify-login/`,
+    data: payload,
+    requireToken: false,
+  });
 
-export const VerifyLogin = async (payload: unknown): Promise<void> => {
-  try {
-    const response = await apiRequest<ApiRequestResponse<ApiResponse>>({
-      method: "POST",
-      url: `/verify-login/`,
-      data: payload,
-      requireToken: false,
-    });
-
-    console.log("VERIFY", response);
-    const contentItem = response;
-    ls.set("Profile", contentItem, { encrypt: true });
-    toast.success("Verification successful!");
-    window.location.href = "/campaigns";
-  } catch (error: unknown) {
-    return;
-  }
+  return response;
 };
 
 export const getDropZones = async ({
@@ -437,81 +428,43 @@ export const getDropZones = async ({
   vendor?: string;
   subvendor?: string;
   platform?: string;
-}): Promise<any | null> => {
-  try {
-    const content: any = ls.get("Profile", { decrypt: true });
-    const token = content?.access;
+}): Promise<any> => {
+  const params: Record<string, string | number> = { page };
+  if (search) params.search = search;
+  if (year) params.year = year;
+  if (month) params.month = month;
+  if (vendor) params.vendor = vendor;
+  if (subvendor) params.subvendor = subvendor;
+  if (platform) params.platform = platform;
 
-    // Construct query parameters dynamically
-    const params: Record<string, string | number> = { page };
-    if (search) params.search = search;
-    if (year) params.year = year;
-    if (month) params.month = month;
-    if (vendor) params.vendor = vendor;
-    if (subvendor) params.subvendor = subvendor;
-    if (platform) params.platform = platform;
+  const response = await apiRequest({
+    method: "GET",
+    url: `/api/v1/projects/general/dropzone/`,
+    params,
+    requireToken: true,
+  });
 
-    const response = await apiRequest({
-      method: "GET",
-      url: `/api/v1/projects/general/dropzone/`,
-      params,
-      requireToken: true,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response;
-  } catch (error: unknown) {
-    return null;
-  }
+  return response;
 };
 
-export const deleteDropZones = async (id: number): Promise<any | null> => {
-  const loadingDelete = toast.loading("Deleting dropzone");
-  try {
-    const content: any = ls.get("Profile", { decrypt: true });
-    const token = content?.access;
-
-    const response = await apiRequest({
-      method: "DELETE",
-      url: `/api/v1/projects/general/dropzone/${id}`,
-      requireToken: true,
-      skipErrorHandling: true,
-      loadingToastId: loadingDelete,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    toast.update(loadingDelete, {
-      render: "Deleted successfully",
-      type: "info",
-      isLoading: false,
-      autoClose: 3000,
-    });
-    return response;
-  } catch (error: unknown) {
-    return null;
-  }
+export const deleteDropZones = async (id: number): Promise<any> => {
+  const response = await apiRequest({
+    method: "DELETE",
+    url: `/api/v1/projects/general/dropzone/${id}`,
+    requireToken: true,
+    skipErrorHandling: true,
+  });
+  return response;
 };
 
-export const getBusiness = async (): Promise<StaffItem[] | null> => {
-  try {
-    const response = await apiRequest({
-      method: "GET",
-      url: `/api/v1/org/business/`,
-      data: null,
-      requireToken: true,
-    });
+export const getBusiness = async (): Promise<StaffItem[]> => {
+  const response = await apiRequest<StaffItem[]>({
+    method: "GET",
+    url: `/api/v1/org/business/`,
+    requireToken: true,
+  });
 
-    console.log("BUSINESS", response);
-
-    ls.set("Business", response, { encrypt: true });
-
-    return response as StaffItem[];
-  } catch (error: unknown) {
-    return null;
-  }
+  return response;
 };
 
 export const getStoredBusiness = (): StaffItem[] | null => {
@@ -546,27 +499,14 @@ export const getStoredBusiness = (): StaffItem[] | null => {
 //   }
 // };
 
-export const getProjects = async (): Promise<ContentItem[] | null> => {
-  try {
-    const response = await apiRequest({
-      method: "GET",
-      url: `/api/v1/projects/`,
-      data: null,
-      requireToken: true,
-    });
+export const getProjects = async (): Promise<ContentItem[]> => {
+  const response = await apiRequest<ContentItem[]>({
+    method: "GET",
+    url: `/api/v1/projects/`,
+    requireToken: true,
+  });
 
-    ls.set("Projects", response, { encrypt: true });
-
-    return response as ContentItem[];
-  } catch (error: unknown) {
-    return null;
-  }
-};
-
-export const getStoredProjects = (): ContentItem[] | null => {
-  const content = ls.get("Projects", { decrypt: true });
-
-  return content as ContentItem[];
+  return response;
 };
 export const getProjectNotifications = async (
   id: number,
