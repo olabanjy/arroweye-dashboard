@@ -21,6 +21,8 @@ import Image from "next/image";
 import Modal from "@/pages/component/Modal";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { useIsrcUpcValidator } from "../hooks/use-isrc-upc-validator";
+
 
 interface DistrictEntry {
   name: string;
@@ -474,10 +476,13 @@ const CustomCampaign = () => {
       });
   };
 
-  const [isrc, setIsrc] = useState("");
-
-  const inputRef = useRef<HTMLInputElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const {
+    value: isrc,
+    setValue: setIsrc,
+    error: validationError,
+    isValid: isIsrcValid,
+    isValidating: isIsrcValidating,
+  } = useIsrcUpcValidator("");
 
   const fetchSong = async (value: string) => {
     if (!value) return;
@@ -499,6 +504,14 @@ const CustomCampaign = () => {
     }
   };
 
+  useEffect(() => {
+    if (isIsrcValid && isrc) {
+      fetchSong(isrc);
+    } else {
+      setCampaignSongDetails(null);
+    }
+  }, [isIsrcValid, isrc]);
+
   return (
     <>
       <Head>
@@ -519,30 +532,27 @@ const CustomCampaign = () => {
               <div className="relative">
                 <Input
                   value={isrc}
-                  ref={inputRef}
                   className="border-[#9D9A9A]"
                   type="text"
                   placeholder="ISRC / UPC"
-                  onChange={(e) => {
-                    setIsrc(e.target.value);
-                    if (timeoutRef.current) {
-                      clearTimeout(timeoutRef.current);
-                    }
-
-                    timeoutRef.current = setTimeout(() => {
-                      const value = inputRef.current?.value;
-                      if (value) {
-                        fetchSong(value);
-                      }
-                    }, 2000);
-                  }}
+                  onChange={(e) => setIsrc(e.target.value)}
                 />
-                {loadingCampaignSong === true && (
+                {(loadingCampaignSong || isIsrcValidating) && (
                   <span className="italic absolute top-14 text-sm mt-2 truncate w-full block">
-                    Loading Song....
+                    {isIsrcValidating ? "Validating code..." : "Loading Song...."}
                   </span>
                 )}
-                {loadingCampaignSong !== true &&
+                {!loadingCampaignSong && !isIsrcValidating && validationError && (
+                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
+                    {validationError}
+                  </p>
+                )}
+                {!loadingCampaignSong && !isIsrcValidating && !validationError && campaignSongDetails?.error && (
+                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
+                    {campaignSongDetails?.error}
+                  </p>
+                )}
+                {!loadingCampaignSong && !isIsrcValidating && !validationError &&
                   campaignSongDetails?.artist &&
                   campaignSongDetails?.title && (
                     <div
@@ -556,11 +566,6 @@ const CustomCampaign = () => {
                       </p>
                     </div>
                   )}
-                {loadingCampaignSong !== true && campaignSongDetails?.error && (
-                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
-                    {campaignSongDetails?.error}
-                  </p>
-                )}
               </div>
             </div>
             <div className="mt-8 py-[1px] sticky top-0 z-30 bg-white">

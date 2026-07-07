@@ -16,6 +16,8 @@ import { toast } from "react-toastify";
 import Modal from "@/pages/component/Modal";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useIsrcUpcValidator } from "../hooks/use-isrc-upc-validator";
+
 
 const PromoterCampaign = () => {
   const router = useRouter();
@@ -58,12 +60,21 @@ const PromoterCampaign = () => {
       });
   }, []);
 
+  const {
+    value: isrc,
+    setValue: setIsrc,
+    error: validationError,
+    isValid: isIsrcValid,
+    isValidating: isIsrcValidating,
+  } = useIsrcUpcValidator("");
+
   const startOver = () => {
     setTotalAudienceReach(0);
     setSelectedPromotion(null);
     setCampaignPayload(null);
     setStartDate("");
     setCampaignSongDetails(null);
+    setIsrc("");
   };
 
   const resetPlan = () => {
@@ -71,9 +82,6 @@ const PromoterCampaign = () => {
     setTotalDJs(0);
     setTotalTokens(0);
   };
-
-  const inputRef = useRef<HTMLInputElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchSong = async (value: string) => {
     if (!value) return;
@@ -94,6 +102,14 @@ const PromoterCampaign = () => {
       setLoadingCampaignSong(false);
     }
   };
+
+  useEffect(() => {
+    if (isIsrcValid && isrc) {
+      fetchSong(isrc);
+    } else {
+      setCampaignSongDetails(null);
+    }
+  }, [isIsrcValid, isrc]);
 
   const handleCreateCampaignDraft = async () => {
     const createDraftToast = toast.loading("Creating Campaign...");
@@ -211,31 +227,28 @@ const PromoterCampaign = () => {
             <div className="grid grid-cols-1 gap-[20px] items-center">
               <div className="relative">
                 <Input
-                  //  value={isrc}
-                  ref={inputRef}
+                  value={isrc}
                   className="border-[#9D9A9A]"
                   type="text"
                   placeholder="ISRC / UPC"
-                  onChange={(e) => {
-                    //  setIsrc(e.target.value);
-                    if (timeoutRef.current) {
-                      clearTimeout(timeoutRef.current);
-                    }
-
-                    timeoutRef.current = setTimeout(() => {
-                      const value = inputRef.current?.value;
-                      if (value) {
-                        fetchSong(value);
-                      }
-                    }, 2000);
-                  }}
+                  onChange={(e) => setIsrc(e.target.value)}
                 />
-                {loadingCampaignSong === true && (
+                {(loadingCampaignSong || isIsrcValidating) && (
                   <span className="italic absolute top-14 text-sm mt-2 truncate w-full block">
-                    Loading Song....
+                    {isIsrcValidating ? "Validating code..." : "Loading Song...."}
                   </span>
                 )}
-                {loadingCampaignSong !== true &&
+                {!loadingCampaignSong && !isIsrcValidating && validationError && (
+                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
+                    {validationError}
+                  </p>
+                )}
+                {!loadingCampaignSong && !isIsrcValidating && !validationError && campaignSongDetails?.error && (
+                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
+                    {campaignSongDetails?.error}
+                  </p>
+                )}
+                {!loadingCampaignSong && !isIsrcValidating && !validationError &&
                   campaignSongDetails?.artist &&
                   campaignSongDetails?.title && (
                     <div
@@ -249,11 +262,6 @@ const PromoterCampaign = () => {
                       </p>
                     </div>
                   )}
-                {loadingCampaignSong !== true && campaignSongDetails?.error && (
-                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
-                    {campaignSongDetails?.error}
-                  </p>
-                )}
               </div>
             </div>
 
