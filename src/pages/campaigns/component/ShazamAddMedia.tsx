@@ -1,6 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import { CreateMedia } from "@/services/api";
+import { CreateMedia } from "@/services";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";

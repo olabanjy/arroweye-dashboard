@@ -3,7 +3,7 @@ import ls from "localstorage-slim";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Dialog } from "primereact/dialog";
-import { ClaimReward } from "@/services/api";
+import { ClaimReward } from "@/services";
 
 interface MomentCardRewardsProps {
   giftingPin?: string;

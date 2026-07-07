@@ -3,7 +3,7 @@ import Table from "./Table";
 import { IoIosAddCircle, IoMdCheckmark } from "react-icons/io";
 import Modal from "@/pages/component/Modal";
 import { LuUserMinus } from "react-icons/lu";
-import { getBusiness } from "@/services/api";
+import { getBusiness } from "@/services";
 import { StaffItem } from "@/types/contents";
 
 const Users = () => {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProjects, archiveProject } from "@/services/api";
+import { getProjects, archiveProject } from "@/services";
 
 interface UseArchiveProps {
   searchValue: string;
@@ -22,7 +22,7 @@ export const useArchive = ({ searchValue }: UseArchiveProps) => {
   const filteredContent = (content || [])
     .filter((item) => item.archived === true)
     .filter((item) =>
-      item.title?.toLowerCase().includes(searchValue.toLowerCase())
+      item.title?.toLowerCase().includes(searchValue.toLowerCase()),
     );
 
   const handleArchiveSubmit = async (projectId: string, archive: boolean) => {
@@ -34,7 +34,7 @@ export const useArchive = ({ searchValue }: UseArchiveProps) => {
     } catch (error) {
       console.error(
         `Error ${archive ? "archiving" : "unarchiving"} project ${projectId}:`,
-        error
+        error,
       );
     } finally {
       setIsArchiving(null);

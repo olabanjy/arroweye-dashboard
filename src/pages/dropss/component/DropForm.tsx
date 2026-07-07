@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { createDropzone, getLoggedInUser } from "@/services/api";
+import { createDropzone, getLoggedInUser } from "@/services";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { IoCloudUploadOutline } from "react-icons/io5";

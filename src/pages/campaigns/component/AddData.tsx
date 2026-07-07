@@ -7,7 +7,7 @@ import RadioData from "./RadioData";
 import TVData from "./TvData";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
-import { AddAirplayData, CreateChannel, getChannel } from "@/services/api";
+import { AddAirplayData, CreateChannel, getChannel } from "@/services";
 import { WeekInput } from "@/components/ui/weekInput";
 import { SelectInput } from "@/components/ui/selectinput";
 import { Input } from "@/components/ui/input";
@@ -71,7 +71,7 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
   useEffect(() => {
     getChannel().then((content: any) => {
       const radioContent = content.filter(
-        (item: any) => item.channel === activeDetailsTab
+        (item: any) => item.channel === activeDetailsTab,
       );
       setStations(radioContent);
     });
@@ -159,16 +159,16 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
   const updateAirPlayData = (
     index: number,
     field: keyof AirPlayData,
-    value: string | number
+    value: string | number,
   ) => {
     setAirPlayData((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
     );
   };
 
   const updateAllAirPlayIds = (newId: number) => {
     setAirPlayData((prev) =>
-      prev.map((item) => ({ ...item, metric_id: newId }))
+      prev.map((item) => ({ ...item, metric_id: newId })),
     );
   };
 
@@ -178,7 +178,7 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
     const processAirplayData = (items: any[]) => {
       // Filter items where airplay.channel matches activeDetailsTab
       const filteredItems = items.filter(
-        (item) => item?.airplay?.channel === activeDetailsTab
+        (item) => item?.airplay?.channel === activeDetailsTab,
       );
 
       if (filteredItems.length === 0) return [];
@@ -229,7 +229,7 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
   });
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -239,7 +239,7 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
   };
 
   const handleInputChangeNumber = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -289,7 +289,7 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
 
           getChannel().then((fetchedContent: any) => {
             const radioContent = fetchedContent.filter(
-              (item: any) => item.channel === activeDetailsTab
+              (item: any) => item.channel === activeDetailsTab,
             );
             setStations(radioContent);
           });
@@ -395,7 +395,7 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
                                 updateAirPlayData(
                                   index,
                                   "airplay_id",
-                                  selectedValue
+                                  selectedValue,
                                 );
                               }
                             }}
@@ -420,12 +420,12 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
                                   updateAirPlayData(
                                     index,
                                     week as keyof AirPlayData,
-                                    e.target.value
+                                    e.target.value,
                                   )
                                 }
                               />
                             </div>
-                          )
+                          ),
                         )}
                       </div>
 

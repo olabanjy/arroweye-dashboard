@@ -14,7 +14,7 @@ import {
   createCampaignDraft,
   launchCampaignFully,
   getSystemAudienceReach,
-} from "@/services/api";
+} from "@/services";
 import AutomateClusterModal from "@/components/campaigns/AutomateClusterModal";
 import Link from "next/link";
 import Image from "next/image";
@@ -700,7 +700,10 @@ const CustomCampaign = () => {
                 />
               </div>
               {totalAudienceReach && (
-                <p className="text-right">{reachValue.toLocaleString()} of {totalAudienceReach?.toLocaleString()}</p>
+                <p className="text-right">
+                  {reachValue.toLocaleString()} of{" "}
+                  {totalAudienceReach?.toLocaleString()}
+                </p>
               )}
             </div>
 

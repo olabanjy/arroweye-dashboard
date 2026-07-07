@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { getDropZones, deleteDropZones, getBusiness } from "@/services/api";
+import { getDropZones, deleteDropZones, getBusiness } from "@/services";
 import { useAuth } from "@/context/auth-context";
 
 export const useDrops = () => {
@@ -89,7 +89,9 @@ export const useDrops = () => {
   });
 
   const content = dropZonesData?.results || [];
-  const totalPages = dropZonesData?.count ? Math.ceil(dropZonesData.count / 10) : 1;
+  const totalPages = dropZonesData?.count
+    ? Math.ceil(dropZonesData.count / 10)
+    : 1;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

@@ -10,7 +10,7 @@ import {
   getCampaignWallet,
   getPromoterPlans,
   launchCampaignFully,
-} from "@/services/api";
+} from "@/services";
 import { BadgeCheck, RefreshCcw, Zap } from "lucide-react";
 import { toast } from "react-toastify";
 import Modal from "@/pages/component/Modal";

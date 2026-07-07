@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StaticImageData } from "next/image";
 import { Toast } from "primereact/toast";
-import { LoginEP, VerifyLogin } from "@/services/api";
+import { LoginEP, VerifyLogin } from "@/services";
 import { useAuth } from "@/context/auth-context";
 
 import Bg1 from "@assets/image (1).webp";
@@ -34,7 +34,7 @@ export const useLogin = ({ toastRef }: UseLoginProps) => {
   const [toggleNotifications, setToggleNotifications] = useState(false);
 
   const [randomBgImage] = useState<StaticImageData | string>(
-    getDeterministicBgImage()
+    getDeterministicBgImage(),
   );
   const [isBlurred, setIsBlurred] = useState(true);
 

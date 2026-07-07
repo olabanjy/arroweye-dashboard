@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ls from "localstorage-slim";
 import { Input } from "@/components/ui/input";
-import { fundCampaignWallet, getCampaignWallet } from "@/services/api";
+import { fundCampaignWallet, getCampaignWallet } from "@/services";
 import { useRouter } from "next/router";
 
 const PRICE_PER_TOKEN = 2500; // ₦ per token

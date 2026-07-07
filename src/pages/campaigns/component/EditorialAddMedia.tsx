@@ -1,6 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import { CreateMedia } from "@/services/api";
+import { CreateMedia } from "@/services";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
@@ -166,7 +166,7 @@ const EditorialAddMedia = () => {
     const headers = ["Publication,Channel,Link"];
     const rows = tableData.map(
       (item) =>
-        `${item.publication.replace(/,/g, ";")},${item.channel.replace(/,/g, ";")},${item.editorial_link.replace(/,/g, ";")}`
+        `${item.publication.replace(/,/g, ";")},${item.channel.replace(/,/g, ";")},${item.editorial_link.replace(/,/g, ";")}`,
     );
     const csvContent = headers.concat(rows).join("\n");
 

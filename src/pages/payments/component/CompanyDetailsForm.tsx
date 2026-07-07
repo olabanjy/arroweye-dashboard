@@ -5,7 +5,7 @@ import Logo from "@assets/arroreyelogoSm.svg";
 import { LuImagePlus } from "react-icons/lu";
 import { Dialog } from "primereact/dialog";
 import { Input } from "@/components/ui/input";
-import { CreateBusiness } from "@/services/api";
+import { CreateBusiness } from "@/services";
 
 interface CompanyDetailsFormProps {
   visible: boolean;
@@ -194,7 +194,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => {

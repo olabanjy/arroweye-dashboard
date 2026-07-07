@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Grip, X, ArrowUp, Info, XCircle } from "lucide-react";
-import { getSpinsAnalytics } from "@/services/api";
+import { getSpinsAnalytics } from "@/services";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import jsPDF from "jspdf";

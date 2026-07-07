@@ -4,11 +4,7 @@ import { Dialog } from "primereact/dialog";
 import { FiInfo } from "react-icons/fi";
 import { PiCalendarPlus } from "react-icons/pi";
 import { ContentItem } from "@/types/contents";
-import {
-  CreateMetric,
-  CreateSocialStats,
-  getSocialMedia,
-} from "@/services/api";
+import { CreateMetric, CreateSocialStats, getSocialMedia } from "@/services";
 import TiktokData from "./TiktokData";
 import FacebookData from "./FacebookData";
 import TwitterData from "./TwitterData";
@@ -98,7 +94,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
   }, []);
 
   const SocialMediaID = content?.find(
-    (social) => social.name === activeDetailsTab
+    (social) => social.name === activeDetailsTab,
   )?.id;
 
   const hideDialog = () => {
@@ -110,7 +106,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
   };
 
   const socialMetrics = content?.find(
-    (social: any) => social.name === activeDetailsTab
+    (social: any) => social.name === activeDetailsTab,
   )?.metrics;
 
   const [projectFormData, setProjectFormData] = useState<ProjectFormData>({
@@ -157,7 +153,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
         totalServices: totals.totalServices + 1,
       };
     },
-    { totalSpins: 0, totalServices: 0 }
+    { totalSpins: 0, totalServices: 0 },
   );
 
   const handleProjectSubmit = (e: React.FormEvent) => {
@@ -191,7 +187,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
     setProjectErrors(newErrors);
 
     const hasErrors = newErrors.sm_data.some((service) =>
-      Object.values(service).some((value) => value !== null)
+      Object.values(service).some((value) => value !== null),
     );
 
     if (!hasErrors) {
@@ -268,7 +264,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
       const indexToRemove = items.findIndex((item) => item.id === id);
 
       const updatedServices = prevData.sm_data.filter(
-        (_, index) => index !== indexToRemove
+        (_, index) => index !== indexToRemove,
       );
 
       setTotalImpressions(0);
@@ -319,7 +315,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -335,7 +331,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
   const processSocialMediaData = (items: any[]) => {
     // Filter items where sm.name matches activeDetailsTab
     const filteredItems = items.filter(
-      (item) => item?.sm?.name === activeDetailsTab
+      (item) => item?.sm?.name === activeDetailsTab,
     );
 
     if (filteredItems.length === 0) return [];
@@ -392,7 +388,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
 
   const calculateTotal = (metricName: any) => {
     const metric = processedData?.find(
-      (item: any) => item.metric_name === metricName
+      (item: any) => item.metric_name === metricName,
     );
     if (!metric) return 0;
 
@@ -513,7 +509,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
                                         ...i,
                                         metric_id: selectedValue,
                                       }
-                                    : i
+                                    : i,
                                 );
 
                                 setItems(updatedItems);
@@ -535,7 +531,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
                                   updatedServices.reduce((sum) => sum + 0, 0);
                                 const newTotalAudience = updatedServices.reduce(
                                   (sum) => sum + 0,
-                                  0
+                                  0,
                                 );
 
                                 setTotalImpressions(newTotalImpressions);
@@ -564,7 +560,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
                               const updatedItems = items.map((i) =>
                                 i.id === item.id
                                   ? { ...i, week_1: updatedWeek1 }
-                                  : i
+                                  : i,
                               );
                               setItems(updatedItems);
 
@@ -601,7 +597,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
                               const updatedItems = items.map((i) =>
                                 i.id === item.id
                                   ? { ...i, week_2: updatedWeek2 }
-                                  : i
+                                  : i,
                               );
                               setItems(updatedItems);
 
@@ -638,7 +634,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
                               const updatedItems = items.map((i) =>
                                 i.id === item.id
                                   ? { ...i, week_3: updatedWeek3 }
-                                  : i
+                                  : i,
                               );
                               setItems(updatedItems);
 
@@ -675,7 +671,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
                               const updatedItems = items.map((i) =>
                                 i.id === item.id
                                   ? { ...i, week_4: updatedWeek4 }
-                                  : i
+                                  : i,
                               );
                               setItems(updatedItems);
 

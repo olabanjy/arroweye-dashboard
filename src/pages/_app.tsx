@@ -15,7 +15,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import { LoginEP } from "@/services/api";
+import { LoginEP } from "@/services";
 import { MdLockOutline } from "react-icons/md";
 import type { AppProps } from "next/app";
 import ScrollToTopButton from "./component/ScrollToTopButton";
@@ -28,6 +28,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isIdle, setIsIdle] = useState(false);
   const router = useRouter();
+  BProgress.configure({ showSpinner: false });
 
   useEffect(() => {
     const handleStart = () => BProgress.start();

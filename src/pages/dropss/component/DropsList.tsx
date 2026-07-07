@@ -3,7 +3,7 @@ import DropZoneInput from "./DropZoneInput";
 import AssetsNotificationCard from "@/pages/dashboard/component/AssetsNotificationCard";
 import DropForm from "./DropForm";
 import { ContentItem } from "@/types/contents";
-import { getSingleProject } from "@/services/api";
+import { getSingleProject } from "@/services";
 import { useRouter } from "next/router";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "react-toastify";

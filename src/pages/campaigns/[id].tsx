@@ -17,7 +17,7 @@ import {
   getBusinessStaff,
   getSingleCampaign,
   getSingleProject,
-} from "@/services/api";
+} from "@/services";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
 import ProjectSingleInsight from "./component/ProjectSingleInsight";

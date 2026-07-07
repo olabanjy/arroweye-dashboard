@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import InsightCard from "./InsightCard";
-import { getSingleCampaign, getSingleProject } from "@/services/api";
+import { getSingleCampaign, getSingleProject } from "@/services";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
 

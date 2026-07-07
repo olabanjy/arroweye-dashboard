@@ -2,12 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { WeekInput } from "@/components/ui/weekInput";
-import {
-  CreateDspStats,
-  CreateMetric,
-  getDsp,
-  getMetric,
-} from "@/services/api";
+import { CreateDspStats, CreateMetric, getDsp, getMetric } from "@/services";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
 import { Dialog } from "primereact/dialog";
@@ -126,7 +121,7 @@ const SpotifyData = () => {
         totalServices: totals.totalServices + 1,
       };
     },
-    { totalSpins: 0, totalServices: 0 }
+    { totalSpins: 0, totalServices: 0 },
   );
 
   const handleProjectSubmit = (e: React.FormEvent) => {
@@ -160,7 +155,7 @@ const SpotifyData = () => {
     setProjectErrors(newErrors);
 
     const hasErrors = newErrors.dsp_data.some((service) =>
-      Object.values(service).some((value) => value !== null)
+      Object.values(service).some((value) => value !== null),
     );
 
     if (!hasErrors) {
@@ -237,7 +232,7 @@ const SpotifyData = () => {
       const indexToRemove = items.findIndex((item) => item.id === id);
 
       const updatedServices = prevData.dsp_data.filter(
-        (_, index) => index !== indexToRemove
+        (_, index) => index !== indexToRemove,
       );
 
       setTotalImpressions(0);
@@ -292,7 +287,7 @@ const SpotifyData = () => {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -339,7 +334,7 @@ const SpotifyData = () => {
                                 ...i,
                                 metric_id: selectedValue,
                               }
-                            : i
+                            : i,
                         );
 
                         setItems(updatedItems);
@@ -357,11 +352,11 @@ const SpotifyData = () => {
 
                         const newTotalImpressions = updatedServices.reduce(
                           (sum) => sum + 0,
-                          0
+                          0,
                         );
                         const newTotalAudience = updatedServices.reduce(
                           (sum) => sum + 0,
-                          0
+                          0,
                         );
 
                         setTotalImpressions(newTotalImpressions);
@@ -388,7 +383,7 @@ const SpotifyData = () => {
                       const updatedWeek1 = e.target.value;
 
                       const updatedItems = items.map((i) =>
-                        i.id === item.id ? { ...i, week_1: updatedWeek1 } : i
+                        i.id === item.id ? { ...i, week_1: updatedWeek1 } : i,
                       );
                       setItems(updatedItems);
 
@@ -421,7 +416,7 @@ const SpotifyData = () => {
                       const updatedWeek2 = e.target.value;
 
                       const updatedItems = items.map((i) =>
-                        i.id === item.id ? { ...i, week_2: updatedWeek2 } : i
+                        i.id === item.id ? { ...i, week_2: updatedWeek2 } : i,
                       );
                       setItems(updatedItems);
 
@@ -454,7 +449,7 @@ const SpotifyData = () => {
                       const updatedWeek3 = e.target.value;
 
                       const updatedItems = items.map((i) =>
-                        i.id === item.id ? { ...i, week_3: updatedWeek3 } : i
+                        i.id === item.id ? { ...i, week_3: updatedWeek3 } : i,
                       );
                       setItems(updatedItems);
 
@@ -487,7 +482,7 @@ const SpotifyData = () => {
                       const updatedWeek4 = e.target.value;
 
                       const updatedItems = items.map((i) =>
-                        i.id === item.id ? { ...i, week_4: updatedWeek4 } : i
+                        i.id === item.id ? { ...i, week_4: updatedWeek4 } : i,
                       );
                       setItems(updatedItems);
 

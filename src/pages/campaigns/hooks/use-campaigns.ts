@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProjects, getCreatedCampaigns, archiveProject } from "@/services/api";
+import { getProjects, getCreatedCampaigns, archiveProject } from "@/services";
 import { ContentItem } from "@/types/contents";
 
 import { useAuth } from "@/context/auth-context";
@@ -55,9 +55,11 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
 
   const isLoading = isAuthLoading
     ? true
-    : (isAdvertiser ? isCampaignsLoading : isProjectsLoading);
+    : isAdvertiser
+      ? isCampaignsLoading
+      : isProjectsLoading;
 
-  const content = isAdvertiser ? [] : (projectsData || null);
+  const content = isAdvertiser ? [] : projectsData || null;
 
   useEffect(() => {
     if (isAuthLoading) return;

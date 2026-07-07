@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Dialog } from "primereact/dialog";
-import { ClaimReward } from "@/services/api";
+import { ClaimReward } from "@/services";
 
 interface MomentCardProps {
   giftingPin?: string;
@@ -56,7 +56,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
     e.stopPropagation();
     if (validateVideoUrls()) {
       setCurrentVideoIndex((prev) =>
-        prev === 0 ? videoUrls.length - 1 : prev - 1
+        prev === 0 ? videoUrls.length - 1 : prev - 1,
       );
       setIsPlaying(false);
     }
@@ -66,7 +66,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
     e.stopPropagation();
     if (validateVideoUrls()) {
       setCurrentVideoIndex((prev) =>
-        prev === videoUrls.length - 1 ? 0 : prev + 1
+        prev === videoUrls.length - 1 ? 0 : prev + 1,
       );
       setIsPlaying(false);
     }
@@ -193,12 +193,11 @@ const MomentCard: React.FC<MomentCardProps> = ({
                 ? "border border-black text-black hover:bg-black hover:text-white"
                 : "hover:bg-orange-500 bg-black text-white"
             }`}
-            onClick={
-              () =>
-                window.open(
-                  `https://studio-api.arroweye.pro${reportUrls[currentVideoIndex]}`,
-                  "_blank"
-                )
+            onClick={() =>
+              window.open(
+                `https://studio-api.arroweye.pro${reportUrls[currentVideoIndex]}`,
+                "_blank",
+              )
             }
           >
             {radioButtonText}

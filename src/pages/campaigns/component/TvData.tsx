@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { SelectInput } from "@/components/ui/selectinput";
 import { WeekInput } from "@/components/ui/weekInput";
-import { AddAirplayData, getChannel } from "@/services/api";
+import { AddAirplayData, getChannel } from "@/services";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
 
@@ -124,10 +124,10 @@ const TVData = () => {
   const updateAirPlayData = (
     index: number,
     field: keyof AirPlayData,
-    value: string | number
+    value: string | number,
   ) => {
     setAirPlayData((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
     );
   };
 
@@ -173,7 +173,7 @@ const TVData = () => {
                         updateAirPlayData(
                           index,
                           week as keyof AirPlayData,
-                          e.target.value
+                          e.target.value,
                         )
                       }
                     />

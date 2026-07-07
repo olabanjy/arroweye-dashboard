@@ -20,7 +20,7 @@ import {
   getAudienceStats,
   geteSMActionStats,
   geteDSPPerformanceStats,
-} from "@/services/api";
+} from "@/services";
 import ColumnChart from "@/pages/payments/component/ColumnChart";
 import { Dialog } from "primereact/dialog";
 import { Input } from "@/components/ui/input";

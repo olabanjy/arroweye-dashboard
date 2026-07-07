@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import ls from "localstorage-slim";
+import React from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -9,35 +8,16 @@ import { Dialog } from "primereact/dialog";
 import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { GoArrowUpRight } from "react-icons/go";
-import { DateClickArg } from "@fullcalendar/interaction";
-import {
-  CreateEvent,
-  deleteEvents,
-  getBusiness,
-  getProjectsEvents,
-  RescheduleEvent,
-} from "@/services/api";
-import { ContentItem, EventsItem } from "@/types/contents";
 import { PiCalendarPlus } from "react-icons/pi";
 import { IoFilter } from "react-icons/io5";
 import { useRouter } from "next/router";
 import AutocompleteInput from "./Autocomplete";
-import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/pages/drops";
-import { createEvent, EventAttributes } from "ics";
 import { cn, hasAccessNoVendor } from "@/lib/utils";
-
-interface FormErrors {
-  title?: string;
-  vendor_id?: string;
-  subvendor_id?: string;
-  location?: string;
-  start_dte?: string;
-  end_dte?: string;
-  code?: string;
-  project?: string;
-}
+import { Toast } from "primereact/toast";
+import { toast } from "react-toastify";
+import { useSchedule } from "../hooks/use-schedule";
 
 interface ScheduleProps {
   filterIcon?: boolean;
@@ -52,535 +32,46 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
 }) => {
   const { query } = useRouter();
   const { id } = query;
-  const [content, setContent] = useState<ContentItem[]>([]);
-  const [eventItem, setEventItem] = useState<EventsItem[]>([]);
-  const [vendorOptions, setVendorOptions] = useState<any>([]);
-  const [subvendorOptions, setSubvendorOptions] = useState<any>([]);
-
-  const [userLoggedInProfile, setUserLoggedInProfile] = useState<any>({});
-  useEffect(() => {
-    const content: any = ls.get("Profile", { decrypt: true });
-    setUserLoggedInProfile(content?.user?.user_profile);
-  }, []);
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        let fetchedContent;
-        if (isProjectPage === true && !!id) {
-          console.log("Fetching events for project", id);
-          fetchedContent = await getProjectsEvents(Number(id));
-        }
-        console.log("Events Fetched", fetchedContent);
-        setEventItem(fetchedContent || []);
-      } catch (err) {
-        console.error("Error fetching events:", err);
-      }
-    };
-
-    fetchEvents();
-  }, [isProjectPage, id]);
-
-  useEffect(() => {
-    getBusiness()
-      .then((fetchedContent: any) => {
-        // Filter and map data for vendors
-        const vendors = fetchedContent
-          .filter((business: any) => business.type === "Vendor")
-          .map((business: any) => ({
-            value: business.id,
-            label: business.organization_name,
-          }));
-
-        // Filter and map data for subvendors
-        const subvendors = fetchedContent
-          .filter((business: any) => business.type === "SubVendor")
-          .map((business: any) => ({
-            value: business.id,
-            label: business.organization_name,
-          }));
-
-        setVendorOptions(vendors);
-        setSubvendorOptions(subvendors);
-      })
-      .catch((err) => {
-        console.error("Error fetching business data:", err);
-      });
-  }, []);
-
-  const events = eventItem.map((item, index) => ({
-    id: `${item?.id}-${index}`, // Make unique by adding index
-    title: item.title,
-    start: item.start_dte,
-    end: item.start_dte,
-    end_date: item.end_dte,
-    vendor: item.vendor,
-    subvendor: item.subvendor,
-    location: item.location,
-    project: item.project,
-    code: item.code,
-  }));
-
-  const downloadFormDataAsICS = (
-    formData: any,
-    vendorOptions: { value: number; label: string }[],
-    subvendorOptions: { value: number; label: string }[],
-    filename = "event.ics"
-  ) => {
-    const findLabelByValue = (
-      options: { value: number; label: string }[],
-      value: number
-    ) => {
-      const found = options.find((option) => option.value === value);
-      return found ? found.label : value.toString();
-    };
-
-    const Vendor = formData.vendor_id
-      ? findLabelByValue(vendorOptions, formData.vendor_id)
-      : "";
-
-    const Subvendor = formData.subvendor_id
-      ? findLabelByValue(subvendorOptions, formData.subvendor_id)
-      : "";
-
-    const eventTitle = String(formData.title || "Untitled Event");
-    const eventDescription = String(
-      formData.description || `Vendor: ${Vendor}, Subvendor: ${Subvendor}`
-    );
-    const eventLocation = String(formData.location || "Online");
-    const organizerEmail = String(formData.email || "hi@pinegingr.com");
-
-    const startDateTime = formData.start
-      ? new Date(formData.start)
-      : new Date();
-
-    const startArray: [number, number, number, number, number] = [
-      startDateTime.getFullYear(),
-      startDateTime.getMonth() + 1,
-      startDateTime.getDate(),
-      startDateTime.getHours(),
-      startDateTime.getMinutes(),
-    ];
-
-    const event: EventAttributes = {
-      start: startArray,
-      startInputType: "local",
-      startOutputType: "utc",
-      duration: { hours: 1 },
-      title: eventTitle,
-      description: eventDescription,
-      location: eventLocation,
-      status: "CONFIRMED",
-      uid: `event-${Date.now()}`,
-      categories: ["Tech", "Virtual"],
-      htmlContent: `<strong>${eventTitle}</strong><br/>Vendor: ${Vendor}<br/>Subvendor: ${Subvendor}`,
-      organizer: {
-        name: Vendor,
-        email: organizerEmail,
-      },
-    };
-
-    createEvent(event, (error, value) => {
-      if (error) {
-        console.error(error);
-        toast.error("Failed to generate calendar file");
-        return;
-      }
-
-      const blob = new Blob([value], { type: "text/calendar;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-
-      link.setAttribute("href", url);
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      toast.success("Calendar invite downloaded");
-    });
-  };
-
-  const rescheduleEvent = () => {
-    const newErrors = {
-      code: "",
-    };
-
-    if (!formData.code) {
-      newErrors.code = "Product Code is required.";
-    }
-
-    setFormErrors(newErrors);
-    const hasErrors = Object.values(newErrors).some((error) => error !== "");
-
-    if (!hasErrors) {
-      const payload = {
-        event_id: formData.id,
-        start_dte: formData.start_dte,
-        end_dte: formData.end_dte,
-        code: formData.code,
-      };
-
-      RescheduleEvent(payload)
-        .then((response) => {
-          console.log(response);
-          setIsModalVisible(false);
-        })
-        .catch((err) => console.log(err));
-    }
-  };
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [viewOnly, setViewOnly] = useState(false);
-  const [filter, setisFilter] = useState(false);
-  const [formData, setFormData] = useState<any>({
-    id: "",
-    title: "",
-    vendor_id: "",
-    subvendor_id: "",
-    location: "",
-    start_dte: "",
-    end_dte: "",
-    code: "",
-    project: "",
+  const {
+    userLoggedInProfile,
+    isModalVisible,
+    setIsModalVisible,
+    viewOnly,
+    setViewOnly,
+    filter,
+    setisFilter,
+    deleteDialog,
+    setDeleteDialog,
+    scheduleIdToBeDeleted,
+    setScheduleIdToBeDeleted,
+    deleteLoading,
+    formData,
+    setFormData,
+    formErrors,
+    setFormErrors,
+    projectPin,
+    setProjectPin,
+    pinEntered,
+    setPinEntered,
+    pinError,
+    setPinError,
+    vendorOptions,
+    subvendorOptions,
+    events,
+    isLoading,
+    exportICS,
+    handleDelete,
+    handleDateClick,
+    handleCloseModal,
+    handleFormChange,
+    handleSelectChange,
+    handleFormSubmit,
+    rescheduleEvent,
+  } = useSchedule({
+    isProjectPage,
+    projectId: Number(id),
+    isDateClickEnabled,
   });
-
-  const [formErrors, setFormErrors] = useState<FormErrors>({
-    title: "",
-    start_dte: "",
-    end_dte: "",
-  });
-  const [projectPin, setProjectPin] = useState("");
-  const [pinEntered, setPinEntered] = useState("");
-  const [pinError, setPinError] = useState(false);
-  const [deleteDialog, setDeleteDialog] = useState(false);
-  const [scheduleIdToBeDeleted, setScheduleIdToBeDeleted] = useState<any>("");
-  const [deleteLoading, setDeleteLoading] = useState(false);
-
-  const findLabelByValue = (
-    options: { value: number; label: string }[],
-    value: number
-  ) => {
-    const found = options.find((option) => option.value === value);
-    return found ? found.label : value.toString();
-  };
-
-  const eventTitles: any = {
-    "Interview with Artist": {
-      type: "interview",
-      location: "Studio A",
-      link: "https://example.com/interview-call-sheet",
-    },
-    "Video Shoot": {
-      type: "shoot",
-      location: "Studio B",
-      link: "https://example.com/video-shoot-call-sheet",
-    },
-    "Live Performance": {
-      type: "performance",
-      location: "Venue X",
-      link: "https://example.com/live-performance-call-sheet",
-    },
-    "Rehearsal Session": {
-      type: "rehearsal",
-      location: "Studio C",
-      link: "https://example.com/rehearsal-call-sheet",
-    },
-    "Other Event": {
-      type: "other",
-      location: "Location Y",
-      link: "https://example.com/other-call-sheet",
-    },
-  };
-
-  const getEventDetails = () => {
-    const title = formData.title.trim();
-    const start = formData.start_dte;
-    const end = formData.end_dte;
-    const location = formData.location.trim();
-    const vendor = formData.vendor_id
-      ? findLabelByValue(vendorOptions, formData.vendor_id)
-      : "";
-    const subvendor = formData.subvendor_id
-      ? findLabelByValue(subvendorOptions, formData.subvendor_id)
-      : "";
-
-    if (!title || !start || !end || !location || !vendor || !subvendor) {
-      toast.error("Please fill in all fields");
-      return null;
-    }
-
-    const eventDetails = eventTitles[title] || { link: null };
-    return {
-      title,
-      start,
-      end,
-      extendedProps: {
-        location,
-        vendor,
-        subvendor,
-        callSheetLink: eventDetails.link,
-      },
-    };
-  };
-
-  const formatDateForICS = (dateString: any) => {
-    const date = new Date(dateString);
-    return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-  };
-
-  function formatDetails(eventDetails: any, includeICSLine: any) {
-    const currentDate = new Date().toLocaleString();
-    const startDate = new Date(eventDetails.start).toLocaleString(); // Only convert once
-
-    return (
-      `Hello,\n\n` +
-      `Find the call sheet for this event here: ${eventDetails.extendedProps.callSheetLink || "N/A"}\n\n` +
-      `Title: ${eventDetails.title}\n` +
-      `Date: ${startDate}\n` +
-      `Location: ${eventDetails.extendedProps.location}\n` +
-      `Vendor: ${eventDetails.extendedProps.vendor}\n` +
-      `Subvendor: ${eventDetails.extendedProps.subvendor}\n\n` +
-      `*********\n\n` +
-      `For more information on best practices for schedules visit pinegingr.com/faqs.\n` +
-      `Please be punctual, rescheduling fees apply for certain event types and timelines. For further inquiries, contact hi@pinegingr.com.\n\n` +
-      `*********\n\n` +
-      `Auto-generated on arroweye.pro on ${currentDate}.\n` +
-      (includeICSLine ? `(Kindly attach the .ICS calendar invite)` : "")
-    ); // Conditionally add ICS line
-  }
-
-  const exportICS = () => {
-    const eventDetails = getEventDetails();
-    if (!eventDetails) return;
-
-    const startDate = formatDateForICS(eventDetails.start);
-    const endDate = formatDateForICS(eventDetails.end);
-    const description = formatDetails(eventDetails, false).replace(
-      /\n/g,
-      "\\n"
-    );
-
-    const icsData = [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "BEGIN:VEVENT",
-      `SUMMARY:${eventDetails.title}`,
-      `DTSTART:${startDate}`,
-      `DTEND:${endDate}`,
-      `LOCATION:${eventDetails.extendedProps.location}`,
-      `DESCRIPTION:${description}`,
-      "END:VEVENT",
-      "END:VCALENDAR",
-    ].join("\n");
-
-    const blob = new Blob([icsData], { type: "text/calendar" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "event.ics";
-    toast.success("Calender invite is downloaded");
-    link.click();
-  };
-
-  const handleDelete = (eventID: number) => {
-    setDeleteLoading(true);
-    deleteEvents(eventID)
-      .then(() => {
-        setDeleteLoading(false);
-        getProjectsEvents(Number(id))
-          .then((newEvents) => setEventItem(newEvents || []))
-          .catch((err) => console.log(err));
-        setDeleteDialog(false);
-        setIsModalVisible(false);
-      })
-      .catch((err) => {
-        setDeleteLoading(false);
-        console.error("Error fetching business data:", err);
-      });
-  };
-  const handleDateClick = (info: DateClickArg) => {
-    if (!isDateClickEnabled) return;
-
-    const selectedDate = info.dateStr;
-    const currentDate = new Date().toISOString().split("T")[0];
-
-    if (selectedDate >= currentDate) {
-      // setSelectedDate(selectedDate);
-      setIsModalVisible(true);
-    } else {
-      alert(`You cannot set events in the past`);
-    }
-  };
-
-  const handleCloseModal = () => {
-    setViewOnly(false);
-    setIsModalVisible(false);
-    setFormData({
-      id: "",
-      title: "",
-      vendor_id: "",
-      subvendor_id: "",
-      location: "",
-      start_dte: "",
-      end_dte: "",
-      code: "",
-      project: "",
-    });
-  };
-
-  const formatDateToString = (dateStr: string) => {
-    if (!dateStr) return "";
-    const date = new Date(dateStr);
-    return date.toISOString();
-  };
-
-  const handleFormChange = (e: any) => {
-    const { name, value } = e.target;
-    setFormData((prevData: any) => {
-      const newData = { ...prevData, [name]: value };
-
-      // Clear end_dte error if start_dte is changed
-      if (name === "start_dte") {
-        setFormErrors((prev) => ({
-          ...prev,
-          end_dte: newData.end_dte ? validateDates(value, newData.end_dte) : "",
-        }));
-      }
-
-      // Validate end_dte when it's changed
-      if (name === "end_dte") {
-        setFormErrors((prev) => ({
-          ...prev,
-          end_dte: validateDates(newData.start_dte, value),
-        }));
-      }
-
-      return newData;
-    });
-  };
-
-  const validateDates = (startDate: string, endDate: string): string => {
-    if (!startDate || !endDate) return "";
-
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    if (end < start) {
-      return "End date cannot be before start date";
-    }
-    return "";
-  };
-
-  const handleSelectChange = ({ name, value }: any) => {
-    console.log(`Updating select ${name} with value:`, value); // Debug log
-    setFormData((prevData: any) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleFormSubmit = async (e: any) => {
-    e.preventDefault();
-
-    const newErrors = {
-      title: "",
-      vendor_id: "",
-      subvendor_id: "",
-      location: "",
-      start_dte: "",
-      end_dte: "",
-      code: "",
-      project: "",
-    };
-
-    // Validation
-    if (!formData.title.trim()) {
-      newErrors.title = "Event Title is required.";
-    }
-
-    if (!formData.vendor_id) {
-      newErrors.vendor_id = "Vendor is required.";
-    }
-
-    if (!formData.subvendor_id) {
-      newErrors.subvendor_id = "Sub Vendor is required.";
-    }
-
-    if (!formData.location) {
-      newErrors.location = "Location is required.";
-    }
-
-    if (!formData.start_dte) {
-      newErrors.start_dte = "Start Date is required.";
-    }
-
-    if (!formData.code) {
-      newErrors.code = "Product Code is required.";
-    }
-
-    if (!formData.end_dte) {
-      newErrors.end_dte = "End Date is required.";
-    } else {
-      const dateError = validateDates(formData.start_dte, formData.end_dte);
-      if (dateError) {
-        newErrors.end_dte = dateError;
-      }
-    }
-
-    // if (formData.code) {
-    //   if (formData.code.length > 6) {
-    //     newErrors.code = "Code must be less than or equal to 6 characters.";
-    //   }
-    // }
-
-    setFormErrors(newErrors);
-
-    const hasErrors = Object.values(newErrors).some((error) => error !== "");
-
-    if (!hasErrors) {
-      try {
-        // Format dates to ISO strings
-        const updatedFormData = {
-          ...formData,
-          vendor_id: formData.vendor_id ? parseInt(formData.vendor_id) : null,
-          subvendor_id: formData.subvendor_id
-            ? parseInt(formData.subvendor_id)
-            : null,
-          start_dte: formatDateToString(formData.start_dte),
-          end_dte: formatDateToString(formData.end_dte),
-        };
-
-        console.log("Submitting form data:", updatedFormData);
-
-        await CreateEvent(updatedFormData);
-
-        const newEvent = {
-          id: (content.length + 1).toString(),
-          title: formData.title,
-          start_dte: updatedFormData.start_dte,
-          end_dte: updatedFormData.end_dte,
-        };
-
-        setContent((prevEvents) => [...prevEvents, newEvent]);
-
-        // Reset form
-        setFormData({
-          id: "",
-          title: "",
-          vendor_id: "",
-          subvendor_id: "",
-          location: "",
-          start_dte: "",
-          end_dte: "",
-          code: "",
-          project: "",
-        });
-        setIsModalVisible(false);
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-    }
-  };
 
   return (
     <div>
