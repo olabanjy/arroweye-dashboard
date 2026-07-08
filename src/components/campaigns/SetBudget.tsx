@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { fundCampaignWallet, getCampaignWallet } from "@/services";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/auth-context";
+import { useQuery } from "@tanstack/react-query";
 
 const PRICE_PER_TOKEN = 2500; // ₦ per token
 const MIN_TOKENS = 1;
@@ -31,17 +32,16 @@ export default function SetBudget({
 
   const router = useRouter();
 
-  const [availableBalance, setAvailableBalance] = useState(0);
+  const { data: walletData, refetch: refetchWallet } = useQuery({
+    queryKey: ["wallet"],
+    queryFn: getCampaignWallet,
+  });
+
+  const availableBalance = Number(walletData?.available_balance) || 0;
 
   useEffect(() => {
-    getCampaignWallet()
-      .then((data: any) => {
-        setAvailableBalance(Number(data?.available_balance) || 0);
-      })
-      .catch((err) => {
-        console.error("Failed to load wallet balance:", err);
-      });
-  }, [refreshToken]);
+    refetchWallet();
+  }, [refreshToken, refetchWallet]);
 
   const needsTopUp = tokens > availableBalance;
 

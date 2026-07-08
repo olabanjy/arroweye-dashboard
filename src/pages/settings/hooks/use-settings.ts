@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { Toast } from "primereact/toast";
 import { useAuth } from "@/context/auth-context";
+import { useQuery } from "@tanstack/react-query";
+import { getLoggedInUser } from "@/services";
 
 export const useSettings = () => {
-  const { userProfile } = useAuth();
+  const { userProfile, user } = useAuth();
   const toastRef = useRef<Toast>(null);
 
   const [userName, setUserName] = useState("");
@@ -12,13 +14,42 @@ export const useSettings = () => {
   const [phone, setPhone] = useState("aE!st9023");
   const [toggleNotifications, setToggleNotifications] = useState(false);
 
+  // Fetch the fresh profile data using React Query
+  const { data: meData } = useQuery({
+    queryKey: ["me"],
+    queryFn: getLoggedInUser,
+  });
+
   useEffect(() => {
-    if (userProfile) {
-      setUserName(userProfile.fullname || "");
-      setEmail(userProfile.staff_email || "");
-      setLabelName(userProfile.business_name || "");
+    // Determine the active profile object (React Query response, auth context fallback)
+    const profile = meData?.user_profile || user?.user_profile || meData || user;
+    if (profile) {
+      setUserName(
+        profile.fullname ||
+          profile.fullName ||
+          profile.name ||
+          meData?.fullname ||
+          user?.fullname ||
+          ""
+      );
+      setEmail(
+        profile.staff_email ||
+          profile.email ||
+          meData?.email ||
+          user?.email ||
+          ""
+      );
+      setLabelName(profile.business_name || "");
+      
+      const uniqueId =
+        meData?.unique_id ||
+        meData?.id ||
+        user?.id ||
+        profile.id ||
+        "aE!st9023";
+      setPhone(String(uniqueId));
     }
-  }, [userProfile]);
+  }, [meData, user, userProfile]);
 
   const handleCopy = (value: string) => {
     navigator.clipboard

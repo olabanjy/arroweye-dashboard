@@ -1,212 +1,48 @@
-import React, { useEffect, useRef, useState } from "react";
-import ls from "localstorage-slim";
+import React from "react";
 import DashboardLayout from "@/pages/dashboard/layout";
 import Head from "next/head";
 import { Input } from "@/components/ui/input";
 import { PromotionGrid } from "@/components/campaigns/PromotionGrid";
-import {
-  createCampaignDraft,
-  getCampaignSongISRC,
-  getCampaignWallet,
-  getPromoterPlans,
-  launchCampaignFully,
-} from "@/services";
-import { BadgeCheck, RefreshCcw, Zap } from "lucide-react";
-import { toast } from "react-toastify";
+import { BadgeCheck, RefreshCcw } from "lucide-react";
 import Modal from "@/pages/component/Modal";
-import { useRouter } from "next/router";
 import Link from "next/link";
-import { useIsrcUpcValidator } from "../hooks/use-isrc-upc-validator";
-
+import { usePromoterSetup } from "./hooks/use-promoter-setup";
 
 const PromoterCampaign = () => {
-  const router = useRouter();
-  const [walletDetails, setWalletDetails] = useState<any>({});
-  const [promotersData, setPromotersData] = useState<any>([]);
-  const [editBeforeLaunchModal, setEditBeforeLaunchModal] = useState(false);
-  const [loadingCampaignSong, setLoadingCampaignSong] = useState(false);
-  const [loadingCampaignCreation, setLoadingCampaignCreation] = useState(false);
-  const [startDate, setStartDate] = useState<string>("");
-  const [campaignSongDetails, setCampaignSongDetails] = useState<any>(null);
-  const [totalTokens, setTotalTokens] = useState<number>(0);
-  const [totalDJs, setTotalDJs] = useState<number>(0);
-  const [totalAudienceReach, setTotalAudienceReach] = useState<number>(0);
-  const [selectedPromotion, setSelectedPromotion] = useState<any>(null);
-  const [campaignPayload, setCampaignPayload] = useState<{
-    accept_terms: boolean;
-    aggregator_plan_id: number;
-    cluster_ids: number[];
-  } | null>(null);
-  const [search, setSearch] = useState<string | undefined>("");
-  const [draftId, setDraftId] = useState<number | null>(null);
-
-  useEffect(() => {
-    getPromoterPlans()
-      .then((fetchedContent: any) => {
-        setPromotersData(fetchedContent?.results);
-      })
-      .catch((err) => {
-        console.log("ERR", err);
-      });
-  }, []);
-
-  useEffect(() => {
-    getCampaignWallet()
-      .then((fetchedContent: any) => {
-        setWalletDetails(fetchedContent);
-      })
-      .catch((err) => {
-        console.log("ERR", err);
-      });
-  }, []);
-
   const {
-    value: isrc,
-    setValue: setIsrc,
-    error: validationError,
-    isValid: isIsrcValid,
-    isValidating: isIsrcValidating,
-  } = useIsrcUpcValidator("");
+    editBeforeLaunchModal,
+    setEditBeforeLaunchModal,
+    loadingCampaignSong,
+    loadingCampaignCreation,
+    startDate,
+    setStartDate,
+    campaignSongDetails,
+    totalTokens,
+    setTotalTokens,
+    totalDJs,
+    setTotalDJs,
+    totalAudienceReach,
+    setTotalAudienceReach,
+    selectedPromotion,
+    setSelectedPromotion,
+    campaignPayload,
+    promotersData,
+    walletDetails,
+    isrc,
+    setIsrc,
+    validationError,
+    isIsrcValid,
+    isIsrcValidating,
+    startOver,
+    resetPlan,
+    handlePlanSelected,
+    handleCreateCampaignDraft,
+    handleLaunchCampaign,
+    search,
+    setSearch,
+    handleSearch,
+  } = usePromoterSetup();
 
-  const startOver = () => {
-    setTotalAudienceReach(0);
-    setSelectedPromotion(null);
-    setCampaignPayload(null);
-    setStartDate("");
-    setCampaignSongDetails(null);
-    setIsrc("");
-  };
-
-  const resetPlan = () => {
-    setCampaignPayload(null);
-    setTotalDJs(0);
-    setTotalTokens(0);
-  };
-
-  const fetchSong = async (value: string) => {
-    if (!value) return;
-
-    setLoadingCampaignSong(true);
-
-    try {
-      const fetchedContent = await getCampaignSongISRC(value);
-
-      if (fetchedContent?.song) {
-        setCampaignSongDetails(fetchedContent.song);
-      } else {
-        setCampaignSongDetails({ error: "No song Found" });
-      }
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoadingCampaignSong(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isIsrcValid && isrc) {
-      fetchSong(isrc);
-    } else {
-      setCampaignSongDetails(null);
-    }
-  }, [isIsrcValid, isrc]);
-
-  const handleCreateCampaignDraft = async () => {
-    const createDraftToast = toast.loading("Creating Campaign...");
-    setLoadingCampaignCreation(true);
-
-    await createCampaignDraft({
-      song_isrc: campaignSongDetails?.isrc,
-      song_upc: campaignSongDetails?.upc,
-      song_title: campaignSongDetails?.title,
-      song_artist: campaignSongDetails?.artist,
-      song_artwork: campaignSongDetails?.artwork,
-      // target_audience_reach: totalAudienceReach,
-      start_date: startDate,
-      mode: "aggregator",
-    })
-      .then((result) => {
-        if (!result) {
-          toast.update(createDraftToast, {
-            render: "Campaign Creation Failed, kindly try again",
-            type: "error",
-            isLoading: false,
-            autoClose: 3000,
-          });
-          setLoadingCampaignCreation(false);
-          return;
-        }
-        setDraftId(result?.id ?? null);
-        toast.update(createDraftToast, {
-          render:
-            "Campaign Created Successfully, feel free to edit selection before Launch",
-          type: "info",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        setEditBeforeLaunchModal(true);
-        setLoadingCampaignCreation(false);
-      })
-      .catch((err) => {
-        console.error("Error submitting form:", err);
-        toast.update(createDraftToast, {
-          render: "Campaign Created Failed, kindly try again",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        setLoadingCampaignCreation(false);
-      });
-  };
-
-  const handleLaunchCampaign = async () => {
-    const createToast = toast.loading("Creating Campaign...");
-
-    const fallbackDraft: any = ls.get("LastCampaignDraft", { decrypt: true });
-    const campaignId = draftId ?? fallbackDraft?.id;
-
-    if (!campaignId) {
-      toast.update(createToast, {
-        render: "No campaign draft found. Please create the campaign first.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      setLoadingCampaignCreation(false);
-      return;
-    }
-
-    const payload = campaignPayload;
-
-    await launchCampaignFully(campaignId, payload)
-      .then(() => {
-        toast.update(createToast, {
-          render: "Campaign Launched Successfully",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        setLoadingCampaignCreation(false);
-        setEditBeforeLaunchModal(false);
-        setTimeout(() => {
-          router.push("/campaigns");
-        }, 3000);
-      })
-      .catch((err) => {
-        console.error("Error submitting form:", err);
-        toast.update(createToast, {
-          render: "Campaign Launch Failed, kindly try again",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        setLoadingCampaignCreation(false);
-      });
-  };
-
-  const handlePlanSelected = (payload: typeof campaignPayload) => {
-    setCampaignPayload(payload);
-  };
 
   return (
     <>
@@ -314,7 +150,7 @@ const PromoterCampaign = () => {
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      getPromoterPlans({ search });
+                      handleSearch();
                     }
                   }}
                 />
