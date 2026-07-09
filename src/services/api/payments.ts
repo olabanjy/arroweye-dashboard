@@ -75,13 +75,13 @@ export const CreateService = async (payload: unknown): Promise<void> => {
       ApiRequestResponse<ApiResponse>
     >({
       method: "POST",
-      url: `/api/v1/projects/general/service/`,
+      url: `/api/v1/payments/service/`,
       data: payload,
       requireToken: true,
     });
 
     console.log(response);
-    toast.success("Creation successful!");
+    toast.success("Service Created Successful!");
   } catch (error: unknown) {
     return;
   }
@@ -93,13 +93,14 @@ export const CreateInvoice = async (payload: unknown): Promise<void> => {
       ApiRequestResponse<ApiResponse>
     >({
       method: "POST",
-      url: `/api/v1/projects/general/invoice/`,
+      url: `/api/v1/payments/invoice/create/`,
       data: payload,
       requireToken: true,
     });
 
     console.log(response);
-    toast.success("Creation successful!");
+    toast.success("Invoice Created Successful!");
+    window.location.reload();
   } catch (error: unknown) {
     return;
   }
@@ -109,7 +110,7 @@ export const getInvoice = async (): Promise<ContentItem[] | null> => {
   try {
     const response = await apiRequest({
       method: "GET",
-      url: `/api/v1/projects/general/invoice/`,
+      url: `/api/v1/payments/invoice/`,
       data: null,
       requireToken: true,
     });
@@ -132,7 +133,7 @@ export const getService = async (): Promise<ContentItem[] | null> => {
   try {
     const response = await apiRequest({
       method: "GET",
-      url: `/api/v1/projects/general/service/`,
+      url: `/api/v1/payments/service/`,
       data: null,
       requireToken: true,
     });

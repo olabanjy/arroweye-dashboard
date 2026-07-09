@@ -52,7 +52,7 @@ export const getProjectsEvents = async (id: number): Promise<any | null> => {
   try {
     const response = await apiRequest({
       method: "GET",
-      url: `/api/v1/projects/${id}/schedule/events/`,
+      url: `/api/v1/projects/${id}/events/`,
       data: null,
       requireToken: true,
     });

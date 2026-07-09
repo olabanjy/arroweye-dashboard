@@ -1,5 +1,9 @@
 import apiRequest from "@/Server/Api";
 import { toast } from "react-toastify";
+import ls from "localstorage-slim";
+
+if (typeof window !== "undefined" && window?.localStorage)
+  ls.config.storage = localStorage;
 
 interface ApiResponse {
   action: string;
@@ -93,27 +97,40 @@ export const CreateDspStats = async (
 
 export const getAirPlayStats = async ({
   id,
-  startDate,
-  endDate,
+  weeks = "",
+  lifetime = "",
+  channels = "",
+  country = "",
 }: {
   id: number;
-  startDate?: string;
-  endDate?: string;
+  weeks?: string;
+  lifetime?: string;
+  channels?: string;
+  country?: string;
 }): Promise<any | null> => {
   try {
-    let url = `/api/v1/projects/${id}/airplay-stats/`;
-    if (startDate && endDate) {
-      url += `?start_date=${startDate}&end_date=${endDate}`;
-    }
+    const params: Record<string, string | number> = { id };
+    if (weeks) params.weeks = weeks;
+    if (lifetime) params.lifetime = lifetime;
+    if (country) params.country = country;
+    if (channels) params.channels = channels;
 
-    const response = await apiRequest({
+    const response = await apiRequest<any>({
       method: "GET",
-      url,
+      url: `/api/v1/projects/${id}/get-airplay-stats/`,
+      params,
       data: null,
       requireToken: true,
     });
 
-    return response as any;
+    if (response && typeof response === "object") {
+      const airPlayStats: any = response;
+      ls.set(`AirPlayStats_${id}`, airPlayStats, { encrypt: true });
+      return airPlayStats;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
   } catch (error: unknown) {
     return null;
   }
@@ -121,27 +138,40 @@ export const getAirPlayStats = async ({
 
 export const getSocialMediaStats = async ({
   id,
-  startDate,
-  endDate,
+  weeks = "",
+  lifetime = "",
+  channels = "",
+  country = "",
 }: {
   id: number;
-  startDate?: string;
-  endDate?: string;
+  weeks?: string;
+  lifetime?: string;
+  channels?: string;
+  country?: string;
 }): Promise<any | null> => {
   try {
-    let url = `/api/v1/projects/${id}/social-media-stats/`;
-    if (startDate && endDate) {
-      url += `?start_date=${startDate}&end_date=${endDate}`;
-    }
+    const params: Record<string, string | number> = { id };
+    if (weeks) params.weeks = weeks;
+    if (lifetime) params.lifetime = lifetime;
+    if (country) params.country = country;
+    if (channels) params.channels = channels;
 
-    const response = await apiRequest({
+    const response = await apiRequest<any>({
       method: "GET",
-      url,
+      url: `/api/v1/projects/${id}/get-social-media-stats/`,
+      params,
       data: null,
       requireToken: true,
     });
 
-    return response as any;
+    if (response && typeof response === "object") {
+      const airPlayStats: any = response;
+      ls.set(`AirPlayStats_${id}`, airPlayStats, { encrypt: true });
+      return airPlayStats;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
   } catch (error: unknown) {
     return null;
   }
@@ -149,27 +179,40 @@ export const getSocialMediaStats = async ({
 
 export const getDSPStats = async ({
   id,
-  startDate,
-  endDate,
+  weeks = "",
+  lifetime = "",
+  channels = "",
+  country = "",
 }: {
   id: number;
-  startDate?: string;
-  endDate?: string;
+  weeks?: string;
+  lifetime?: string;
+  channels?: string;
+  country?: string;
 }): Promise<any | null> => {
   try {
-    let url = `/api/v1/projects/${id}/dsp-stats/`;
-    if (startDate && endDate) {
-      url += `?start_date=${startDate}&end_date=${endDate}`;
-    }
+    const params: Record<string, string | number> = { id };
+    if (weeks) params.weeks = weeks;
+    if (lifetime) params.lifetime = lifetime;
+    if (country) params.country = country;
+    if (channels) params.channels = channels;
 
-    const response = await apiRequest({
+    const response = await apiRequest<any>({
       method: "GET",
-      url,
+      url: `/api/v1/projects/${id}/get-dsp-stats/`,
+      params,
       data: null,
       requireToken: true,
     });
 
-    return response as any;
+    if (response && typeof response === "object") {
+      const airPlayStats: any = response;
+      ls.set(`AirPlayStats_${id}`, airPlayStats, { encrypt: true });
+      return airPlayStats;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
   } catch (error: unknown) {
     return null;
   }
@@ -177,27 +220,40 @@ export const getDSPStats = async ({
 
 export const getAudienceStats = async ({
   id,
-  startDate,
-  endDate,
+  weeks = "",
+  lifetime = "",
+  channels = "",
+  country = "",
 }: {
   id: number;
-  startDate?: string;
-  endDate?: string;
+  weeks?: string;
+  lifetime?: string;
+  channels?: string;
+  country?: string;
 }): Promise<any | null> => {
   try {
-    let url = `/api/v1/projects/${id}/audience-target-reach-stats/`;
-    if (startDate && endDate) {
-      url += `?start_date=${startDate}&end_date=${endDate}`;
-    }
+    const params: Record<string, string | number> = { id };
+    if (weeks) params.weeks = weeks;
+    if (lifetime) params.lifetime = lifetime;
+    if (country) params.country = country;
+    if (channels) params.channels = channels;
 
-    const response = await apiRequest({
+    const response = await apiRequest<any>({
       method: "GET",
-      url,
+      url: `/api/v1/projects/${id}/audience-stats/`,
+      params,
       data: null,
       requireToken: true,
     });
 
-    return response as any;
+    if (response && typeof response === "object") {
+      const airPlayStats: any = response;
+      ls.set(`AirPlayStats_${id}`, airPlayStats, { encrypt: true });
+      return airPlayStats;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
   } catch (error: unknown) {
     return null;
   }
@@ -205,27 +261,40 @@ export const getAudienceStats = async ({
 
 export const geteSMActionStats = async ({
   id,
-  startDate,
-  endDate,
+  weeks = "",
+  lifetime = "",
+  channels = "",
+  country = "",
 }: {
   id: number;
-  startDate?: string;
-  endDate?: string;
+  weeks?: string;
+  lifetime?: string;
+  channels?: string;
+  country?: string;
 }): Promise<any | null> => {
   try {
-    let url = `/api/v1/projects/${id}/sm-action-stats/`;
-    if (startDate && endDate) {
-      url += `?start_date=${startDate}&end_date=${endDate}`;
-    }
+    const params: Record<string, string | number> = { id };
+    if (weeks) params.weeks = weeks;
+    if (lifetime) params.lifetime = lifetime;
+    if (country) params.country = country;
+    if (channels) params.channels = channels;
 
-    const response = await apiRequest({
+    const response = await apiRequest<any>({
       method: "GET",
-      url,
+      url: `/api/v1/projects/${id}/sm-actions-stats/`,
+      params,
       data: null,
       requireToken: true,
     });
 
-    return response as any;
+    if (response && typeof response === "object") {
+      const airPlayStats: any = response;
+      ls.set(`AirPlayStats_${id}`, airPlayStats, { encrypt: true });
+      return airPlayStats;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
   } catch (error: unknown) {
     return null;
   }
@@ -233,27 +302,40 @@ export const geteSMActionStats = async ({
 
 export const geteDSPPerformanceStats = async ({
   id,
-  startDate,
-  endDate,
+  weeks = "",
+  lifetime = "",
+  channels = "",
+  country = "",
 }: {
   id: number;
-  startDate?: string;
-  endDate?: string;
+  weeks?: string;
+  lifetime?: string;
+  channels?: string;
+  country?: string;
 }): Promise<any | null> => {
   try {
-    let url = `/api/v1/projects/${id}/dsp-performance-stats/`;
-    if (startDate && endDate) {
-      url += `?start_date=${startDate}&end_date=${endDate}`;
-    }
+    const params: Record<string, string | number> = { id };
+    if (weeks) params.weeks = weeks;
+    if (lifetime) params.lifetime = lifetime;
+    if (country) params.country = country;
+    if (channels) params.channels = channels;
 
-    const response = await apiRequest({
+    const response = await apiRequest<any>({
       method: "GET",
-      url,
+      url: `/api/v1/projects/${id}/dsp-performance-stats/`,
+      params,
       data: null,
       requireToken: true,
     });
 
-    return response as any;
+    if (response && typeof response === "object") {
+      const airPlayStats: any = response;
+      ls.set(`AirPlayStats_${id}`, airPlayStats, { encrypt: true });
+      return airPlayStats;
+    } else {
+      console.error("Invalid DSP stats response structure:", response);
+      return null;
+    }
   } catch (error: unknown) {
     return null;
   }

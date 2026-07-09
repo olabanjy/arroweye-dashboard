@@ -70,7 +70,7 @@ export const getBusinessStaff = async (id: number): Promise<any | null> => {
   try {
     const response = await apiRequest({
       method: "GET",
-      url: `/api/v1/ums/staff/?business_id=${id}`,
+      url: `/api/v1/org/business/${id}/staff/`,
       requireToken: true,
     });
 

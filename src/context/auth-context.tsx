@@ -1,6 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+} from "react";
 import ls from "localstorage-slim";
 import { useRouter } from "next/router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface UserProfile {
   fullname: string;
@@ -8,6 +13,7 @@ interface UserProfile {
   role: string;
   business_name: string;
   business_type: string;
+  id?: string | number;
 }
 
 interface User {
@@ -16,6 +22,8 @@ interface User {
   user_profile?: UserProfile;
   created?: string;
   last_login?: string;
+  email?: string;
+  id?: string | number;
 }
 
 interface AuthContextType {
@@ -31,44 +39,32 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const loadAuthData = () => {
-      try {
-        const content: any = ls.get("Profile", { decrypt: true });
-        if (content) {
-          setUser(content.user || null);
-          setToken(content.token || content.access || null);
-        }
-      } catch (error) {
-        console.error("Failed to load auth data from storage", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadAuthData();
-  }, []);
+  const { data, isLoading } = useQuery<any>({
+    queryKey: ["auth", "session"],
+    queryFn: async () => ls.get("Profile", { decrypt: true }),
+    staleTime: Infinity,
+  });
 
   const login = (authData: any) => {
     ls.set("Profile", authData, { encrypt: true });
-    setUser(authData.user || null);
-    setToken(authData.token || authData.access || null);
+    queryClient.setQueryData(["auth", "session"], authData);
     router.push("/campaigns");
   };
 
   const logout = () => {
     ls.remove("Profile");
-    setUser(null);
-    setToken(null);
+    queryClient.setQueryData(["auth", "session"], null);
     router.push("/login");
   };
 
+  const user = data?.user || null;
+  const token = data?.token || data?.access || null;
   const userProfile = user?.user_profile || null;
   const isAdvertiser = user?.user_type === "Advertiser";
   const isAuthenticated = !!token;
