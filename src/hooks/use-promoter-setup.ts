@@ -10,7 +10,7 @@ import {
   getPromoterPlans,
   launchCampaignFully,
 } from "@/services";
-import { useIsrcUpcValidator } from "../../hooks/use-isrc-upc-validator";
+import { useIsrcUpcValidator } from "./use-isrc-upc-validator";
 
 export const usePromoterSetup = () => {
   const router = useRouter();

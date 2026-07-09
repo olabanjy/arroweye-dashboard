@@ -9,7 +9,7 @@ import AutomateClusterModal from "@/components/campaigns/AutomateClusterModal";
 import Link from "next/link";
 import Image from "next/image";
 import Modal from "@/pages/component/Modal";
-import { useCustomSetup } from "./hooks/use-custom-setup";
+import { useCustomSetup } from "../../../../hooks/use-custom-setup";
 
 const CustomCampaign = () => {
   const {
@@ -78,20 +78,29 @@ const CustomCampaign = () => {
                 />
                 {(loadingCampaignSong || isIsrcValidating) && (
                   <span className="italic absolute top-14 text-sm mt-2 truncate w-full block">
-                    {isIsrcValidating ? "Validating code..." : "Loading Song...."}
+                    {isIsrcValidating
+                      ? "Validating code..."
+                      : "Loading Song...."}
                   </span>
                 )}
-                {!loadingCampaignSong && !isIsrcValidating && validationError && (
-                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
-                    {validationError}
-                  </p>
-                )}
-                {!loadingCampaignSong && !isIsrcValidating && !validationError && campaignSongDetails?.error && (
-                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
-                    {campaignSongDetails?.error}
-                  </p>
-                )}
-                {!loadingCampaignSong && !isIsrcValidating && !validationError &&
+                {!loadingCampaignSong &&
+                  !isIsrcValidating &&
+                  validationError && (
+                    <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
+                      {validationError}
+                    </p>
+                  )}
+                {!loadingCampaignSong &&
+                  !isIsrcValidating &&
+                  !validationError &&
+                  campaignSongDetails?.error && (
+                    <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
+                      {campaignSongDetails?.error}
+                    </p>
+                  )}
+                {!loadingCampaignSong &&
+                  !isIsrcValidating &&
+                  !validationError &&
                   campaignSongDetails?.artist &&
                   campaignSongDetails?.title && (
                     <div

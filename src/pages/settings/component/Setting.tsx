@@ -2,7 +2,7 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Toast } from "primereact/toast";
 import { LuCopy } from "react-icons/lu";
-import { useSettings } from "../hooks/use-settings";
+import { useSettings } from "@/hooks/use-settings";
 
 const Setting = () => {
   const {

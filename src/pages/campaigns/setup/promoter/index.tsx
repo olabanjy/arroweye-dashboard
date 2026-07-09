@@ -6,7 +6,7 @@ import { PromotionGrid } from "@/components/campaigns/PromotionGrid";
 import { BadgeCheck, RefreshCcw } from "lucide-react";
 import Modal from "@/pages/component/Modal";
 import Link from "next/link";
-import { usePromoterSetup } from "./hooks/use-promoter-setup";
+import { usePromoterSetup } from "../../../../hooks/use-promoter-setup";
 
 const PromoterCampaign = () => {
   const {
@@ -43,7 +43,6 @@ const PromoterCampaign = () => {
     handleSearch,
   } = usePromoterSetup();
 
-
   return (
     <>
       <Head>
@@ -71,20 +70,29 @@ const PromoterCampaign = () => {
                 />
                 {(loadingCampaignSong || isIsrcValidating) && (
                   <span className="italic absolute top-14 text-sm mt-2 truncate w-full block">
-                    {isIsrcValidating ? "Validating code..." : "Loading Song...."}
+                    {isIsrcValidating
+                      ? "Validating code..."
+                      : "Loading Song...."}
                   </span>
                 )}
-                {!loadingCampaignSong && !isIsrcValidating && validationError && (
-                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
-                    {validationError}
-                  </p>
-                )}
-                {!loadingCampaignSong && !isIsrcValidating && !validationError && campaignSongDetails?.error && (
-                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
-                    {campaignSongDetails?.error}
-                  </p>
-                )}
-                {!loadingCampaignSong && !isIsrcValidating && !validationError &&
+                {!loadingCampaignSong &&
+                  !isIsrcValidating &&
+                  validationError && (
+                    <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
+                      {validationError}
+                    </p>
+                  )}
+                {!loadingCampaignSong &&
+                  !isIsrcValidating &&
+                  !validationError &&
+                  campaignSongDetails?.error && (
+                    <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
+                      {campaignSongDetails?.error}
+                    </p>
+                  )}
+                {!loadingCampaignSong &&
+                  !isIsrcValidating &&
+                  !validationError &&
                   campaignSongDetails?.artist &&
                   campaignSongDetails?.title && (
                     <div

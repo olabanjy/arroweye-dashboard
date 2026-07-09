@@ -6,7 +6,7 @@ import { IoMdInformationCircle } from "react-icons/io";
 import { InputSwitch } from "primereact/inputswitch";
 import { IoReload } from "react-icons/io5";
 import { Toast } from "primereact/toast";
-import { useLogin } from "@/pages/login/hooks/use-login";
+import { useLogin } from "@/hooks/use-login";
 
 const Login = () => {
   const toast = useRef<Toast>(null);
@@ -46,7 +46,12 @@ const Login = () => {
       <div className="relative z-10 max-w-6xl w-full px-4 font-IBM">
         <div className=" grid place-items-center lg:flex items-center lg:justify-between h-full gap-[20px]">
           {/* <Image src="/aestudio.svg" alt="Logo" width={230} height={87} /> */}
-          <Image src="https://res.cloudinary.com/dyueswnzk/image/upload/v1759782808/aestudio-new_usstzj.svg" alt="Logo" width={230} height={87} />
+          <Image
+            src="https://res.cloudinary.com/dyueswnzk/image/upload/v1759782808/aestudio-new_usstzj.svg"
+            alt="Logo"
+            width={230}
+            height={87}
+          />
           <div className="w-full max-w-[400px] bg-white  rounded-[10px] pb-[56px]">
             <div className=" bg-[#1473E6] px-[27px] py-[23px] rounded-t-[10px] text-[#FFFFFF]">
               <div className=" flex items-center gap-[14px]">

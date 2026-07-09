@@ -17,7 +17,7 @@ import { Tooltip } from "@/pages/drops";
 import { cn, hasAccessNoVendor } from "@/lib/utils";
 import { Toast } from "primereact/toast";
 import { toast } from "react-toastify";
-import { useSchedule } from "../hooks/use-schedule";
+import { useSchedule } from "@/hooks/use-schedule";
 
 interface ScheduleProps {
   filterIcon?: boolean;
@@ -232,7 +232,7 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
                     <div className="bg-white border border-black text-sm rounded-[8px] p-4">
                       {
                         vendorOptions.find(
-                          (option: any) => option.value === formData.vendor_id
+                          (option: any) => option.value === formData.vendor_id,
                         )?.label
                       }
                     </div>
@@ -256,7 +256,7 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
                       {
                         subvendorOptions.find(
                           (option: any) =>
-                            option.value === formData.subvendor_id
+                            option.value === formData.subvendor_id,
                         )?.label
                       }
                     </div>
@@ -486,7 +486,7 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
           autoComplete="new-password"
           className={cn(
             "mt-2 block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-[8px]",
-            pinError && "border-red-500 focus:ring-red-500"
+            pinError && "border-red-500 focus:ring-red-500",
           )}
           placeholder={"Enter Pin"}
           value={pinEntered}

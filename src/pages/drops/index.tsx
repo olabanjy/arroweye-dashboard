@@ -14,7 +14,7 @@ import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Head from "next/head";
-import { useDrops } from "./hooks/use-drops";
+import { useDrops } from "../../hooks/use-drops";
 
 const colors = [
   "bg-red-500",

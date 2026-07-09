@@ -12,7 +12,7 @@ import {
   getSystemAudienceReach,
   getCampaignSongISRC,
 } from "@/services";
-import { useIsrcUpcValidator } from "../../hooks/use-isrc-upc-validator";
+import { useIsrcUpcValidator } from "./use-isrc-upc-validator";
 import { DJCardProps } from "@/components/campaigns/Djcard";
 
 export interface DistrictEntry {
@@ -31,10 +31,14 @@ export const useCustomSetup = () => {
   const [draftId, setDraftId] = useState<number | null>(null);
   const [startDate, setStartDate] = useState<string>("");
   const [campaignSongDetails, setCampaignSongDetails] = useState<any>(null);
-  const [selectedClusterId, setSelectedClusterId] = useState<number | null>(null);
+  const [selectedClusterId, setSelectedClusterId] = useState<number | null>(
+    null,
+  );
   const [search, setSearch] = useState("");
   const [djSpins, setDjSpins] = useState<Record<number, number>>({});
-  const [selectedDistricts, setSelectedDistricts] = useState<Record<number, DistrictEntry>>({});
+  const [selectedDistricts, setSelectedDistricts] = useState<
+    Record<number, DistrictEntry>
+  >({});
 
   // 1. Fetch Clusters via React Query
   const { data: clustersData } = useQuery({
@@ -90,7 +94,8 @@ export const useCustomSetup = () => {
     queryFn: getSystemAudienceReach,
   });
 
-  const totalAudienceReach = systemReachData?.system_target_audience_reach || "";
+  const totalAudienceReach =
+    systemReachData?.system_target_audience_reach || "";
 
   // 4. Input Validator Hook
   const {
@@ -194,14 +199,16 @@ export const useCustomSetup = () => {
   const totalTokens = useMemo(() => {
     let total = 0;
 
-    Object.entries(selectedDistricts).forEach(([districtIdStr, district]: any) => {
-      district.djs.forEach((dj: any) => {
-        const spinKey = `${districtIdStr}-${dj.id}`;
-        const spins = djSpins[spinKey as any] || 0;
+    Object.entries(selectedDistricts).forEach(
+      ([districtIdStr, district]: any) => {
+        district.djs.forEach((dj: any) => {
+          const spinKey = `${districtIdStr}-${dj.id}`;
+          const spins = djSpins[spinKey as any] || 0;
 
-        total += dj.tokensPerSpin * spins;
-      });
-    });
+          total += dj.tokensPerSpin * spins;
+        });
+      },
+    );
 
     return total;
   }, [selectedDistricts, djSpins]);
@@ -210,16 +217,17 @@ export const useCustomSetup = () => {
   const reachValue = useMemo(() => {
     return (
       Number(
-        String(calculateAudienceReach(selectedDistricts, djSpins as any)).replace(
-          /,/g,
-          "",
-        ),
+        String(
+          calculateAudienceReach(selectedDistricts, djSpins as any),
+        ).replace(/,/g, ""),
       ) || 0
     );
   }, [selectedDistricts, djSpins, calculateAudienceReach]);
 
   const reachPercentage =
-    totalReachNumber > 0 ? Math.min((reachValue / totalReachNumber) * 100, 100) : 0;
+    totalReachNumber > 0
+      ? Math.min((reachValue / totalReachNumber) * 100, 100)
+      : 0;
 
   const startOver = useCallback(() => {
     setSelectedDistricts({});
@@ -443,7 +451,11 @@ export const useCustomSetup = () => {
       return;
     }
 
-    const payload = buildCampaignPayload(selectedDistricts, djSpins as any, true);
+    const payload = buildCampaignPayload(
+      selectedDistricts,
+      djSpins as any,
+      true,
+    );
 
     try {
       const result = await launchCampaignFully(campaignId, payload);

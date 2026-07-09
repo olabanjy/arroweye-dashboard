@@ -9,14 +9,13 @@ import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { GoArrowUpRight } from "react-icons/go";
 import { PiCalendarPlus } from "react-icons/pi";
-import { useRouter } from "next/router";
 import AutocompleteInput from "./Autocomplete";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/pages/drops";
 import { cn, hasAccessNoVendor } from "@/lib/utils";
 import { Toast } from "primereact/toast";
 import { toast } from "react-toastify";
-import { useSchedule } from "../hooks/use-schedule";
+import { useSchedule } from "@/hooks/use-schedule";
 
 interface ScheduleProps {
   filterIcon?: boolean;

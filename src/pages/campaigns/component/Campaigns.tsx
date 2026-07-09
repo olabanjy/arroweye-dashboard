@@ -7,7 +7,7 @@ import { MdOutlineModeEditOutline } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/pages/drops/component/Pagination";
-import { useCampaigns } from "../hooks/use-campaigns";
+import { useCampaigns } from "../../../hooks/use-campaigns";
 
 interface ProjectsProps {
   filterVisible: boolean;
