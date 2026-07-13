@@ -180,10 +180,7 @@ const ProjectDetails = () => {
       campaignStaffAction(Number(id), payload)
         .then((response) => {
           if (response) {
-            getSingleProject(Number(id)).then((fetchedContent) => {
-              setContent(fetchedContent);
-              setSubVendorStaff(fetchedContent?.watchers);
-            });
+            refreshContent();
             setVisible(false);
             setNameDialogVisible(false);
             setAddUserFormData({
@@ -226,10 +223,7 @@ const ProjectDetails = () => {
             project_id: id,
           });
 
-          getSingleProject(Number(id)).then((fetchedContent) => {
-            setContent(fetchedContent);
-            setSubVendorStaff(fetchedContent?.watchers);
-          });
+          refreshContent();
         })
         .catch((err) => {
           if (err.response) {
@@ -265,10 +259,7 @@ const ProjectDetails = () => {
     campaignStaffAction(Number(id), payload)
       .then((response) => {
         console.log(response);
-        getSingleProject(Number(id)).then((fetchedContent) => {
-          setContent(fetchedContent);
-          setSubVendorStaff(fetchedContent?.watchers);
-        });
+        refreshContent();
         setDeleteModal(false);
         setSelectedUser(null);
         toast.success("User removed successfully!");
@@ -288,10 +279,7 @@ const ProjectDetails = () => {
     campaignStaffAction(Number(id), payload)
       .then((response) => {
         console.log(response);
-        getSingleProject(Number(id)).then((fetchedContent) => {
-          setContent(fetchedContent);
-          setSubVendorStaff(fetchedContent?.watchers);
-        });
+        refreshContent();
         setAdjustmentModalVisible(false);
         setSelectedUser(null);
         toast.success("User role updated successfully!");
@@ -331,32 +319,23 @@ const ProjectDetails = () => {
     setAdjustmentModalVisible(true);
   };
 
-  useEffect(() => {
-    if (isAdvertiser === null) return;
-
+  const refreshContent = () => {
+    if (isAdvertiser === null || !id) return;
     if (isAdvertiser) {
-      return;
-    }
-    if (!!id) {
+      getSingleCampaign(Number(id)).then((fetchedContent) => {
+        console.log("fetchedContent", fetchedContent);
+        setContent(fetchedContent);
+      });
+    } else {
       getSingleProject(Number(id)).then((fetchedContent) => {
         setSubVendorStaff(fetchedContent?.watchers);
         setContent(fetchedContent);
       });
     }
-  }, [id, isAdvertiser]);
+  };
 
   useEffect(() => {
-    if (isAdvertiser === null) return;
-
-    if (!isAdvertiser) {
-      return;
-    }
-    if (!!id) {
-      getSingleCampaign(Number(id)).then((fetchedContent) => {
-        console.log("fetchedContent", fetchedContent);
-        setContent(fetchedContent);
-      });
-    }
+    refreshContent();
   }, [id, isAdvertiser]);
 
   useEffect(() => {
@@ -657,7 +636,7 @@ const ProjectDetails = () => {
 
             {(hasAccess(userLoggedInProfile, ["Manager"]) || isAdvertiser) && (
               <div className="">
-                <ProjectSingleInsight isAdvertiser={isAdvertiser} />
+                <ProjectSingleInsight isAdvertiser={isAdvertiser} content={content} />
               </div>
             )}
           </div>
@@ -798,6 +777,8 @@ const ProjectDetails = () => {
                 handleDownloadPage={handleDownloadPDF}
                 handleDownloadData={handleExportCSV}
                 isAdvertiser={isAdvertiser}
+                content={content}
+                refreshContent={refreshContent}
               />
               <div className="  ">
                 <ScheduleProject
@@ -1062,7 +1043,7 @@ const ProjectDetails = () => {
 
           {!isAdvertiser && (
             <div className="mb-[100px]">
-              <DropsList isAdvertiser={isAdvertiser} />
+              <DropsList isAdvertiser={isAdvertiser} content={content} />
             </div>
           )}
         </div>

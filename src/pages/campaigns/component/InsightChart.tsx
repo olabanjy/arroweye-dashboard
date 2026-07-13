@@ -12,7 +12,6 @@ import AddDataDsp from "./AddDataDsp";
 import { useRouter } from "next/router";
 import { ContentItem } from "@/types/contents";
 import {
-  getSingleProject,
   sendProjectEmail,
   getAirPlayStats,
   getSocialMediaStats,
@@ -80,6 +79,8 @@ interface InsightChartProps {
   handleDownloadPage?: () => void;
   handleDownloadData?: () => void;
   isAdvertiser: boolean | null;
+  content: any;
+  refreshContent: () => void;
 }
 
 const InsightChart: React.FC<InsightChartProps> = ({
@@ -87,6 +88,8 @@ const InsightChart: React.FC<InsightChartProps> = ({
   handleDownloadPage,
   handleDownloadData,
   isAdvertiser,
+  content,
+  refreshContent,
 }) => {
   const [initialTab, setInitialTab] = useState<any>("moments");
   const [addDataModal, setAddDataModal] = useState(false);
@@ -111,9 +114,8 @@ const InsightChart: React.FC<InsightChartProps> = ({
 
   const { query } = useRouter();
 
-  const [content, setContent] = useState<any | null>(null);
-  const [media, setMedia] = useState<any | null>([]);
-  const [mediaLoading, setMediaLoading] = useState(true);
+  const media = content?.media || [];
+  const mediaLoading = !content;
   const { id } = query;
 
   const [airplayChannelsFilters, setairplayChannelsFilters] = useState({
@@ -147,23 +149,6 @@ const InsightChart: React.FC<InsightChartProps> = ({
     weeks: "",
     lifetime: "",
   });
-
-  useEffect(() => {
-    if (isAdvertiser === null) return;
-
-    if (isAdvertiser) {
-      return;
-    }
-    if (!!id) {
-      setMediaLoading(true);
-      getSingleProject(Number(id))
-        .then((fetchedContent) => {
-          setContent(fetchedContent);
-          setMedia(fetchedContent?.media);
-        })
-        .finally(() => setMediaLoading(false));
-    }
-  }, [id, isAdvertiser]);
 
   useEffect(() => {
     if (!!id) {
@@ -443,11 +428,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
         },
       );
     }
-    if (!!id) {
-      getSingleProject(Number(id)).then((fetchedContent) => {
-        setContent(fetchedContent);
-      });
-    }
+    refreshContent();
   };
 
   const onAddDataSuccess = () => {
@@ -462,11 +443,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
         },
       );
     }
-    if (!!id) {
-      getSingleProject(Number(id)).then((fetchedContent) => {
-        setContent(fetchedContent);
-      });
-    }
+    refreshContent();
   };
   const onAddDataDspSuccess = () => {
     if (!!id) {
@@ -478,11 +455,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
         toast.info("DSP stats updated");
       });
     }
-    if (!!id) {
-      getSingleProject(Number(id)).then((fetchedContent) => {
-        setContent(fetchedContent);
-      });
-    }
+    refreshContent();
   };
 
   return (

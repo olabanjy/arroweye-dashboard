@@ -3,7 +3,6 @@ import DropZoneInput from "./DropZoneInput";
 import AssetsNotificationCard from "@/pages/dashboard/component/AssetsNotificationCard";
 import DropForm from "./DropForm";
 import { ContentItem } from "@/types/contents";
-import { getSingleProject } from "@/services";
 import { useRouter } from "next/router";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "react-toastify";
@@ -12,8 +11,14 @@ import SecurityNotificationCard from "@/pages/dashboard/component/SecurityNotifi
 import PaymentMomentNotificationCard from "@/pages/dashboard/component/payments/PaymentMomentNotificationCard";
 import MilestoneNotificationCard from "@/pages/dashboard/component/MilestoneNotificationCard";
 
-const DropsList: React.FC<{ isAdvertiser: boolean | null }> = ({
+interface DropsListProps {
+  isAdvertiser: boolean | null;
+  content: any;
+}
+
+const DropsList: React.FC<DropsListProps> = ({
   isAdvertiser,
+  content,
 }) => {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [dropzoneData, setDropzoneData] = useState<ContentItem | null>(null);
@@ -37,18 +42,15 @@ const DropsList: React.FC<{ isAdvertiser: boolean | null }> = ({
   };
 
   useEffect(() => {
-    if (isAdvertiser === null) return;
+    if (content && !dropzoneData) {
+      setDropzoneData(content);
+      setPin(content?.pin);
+    }
+  }, [content, dropzoneData]);
 
-    if (isAdvertiser) {
-      return;
-    }
-    if (!!id) {
-      getSingleProject(Number(id)).then((fetchedContent: any) => {
-        setDropzoneData(fetchedContent);
-        setPin(fetchedContent?.pin);
-      });
-    }
-  }, [id, isAdvertiser]);
+  useEffect(() => {
+    setDropzoneData(null);
+  }, [id]);
 
   const formatRelativeDate = (dateString: string) => {
     const date = new Date(dateString);
