@@ -8,7 +8,7 @@ import { BadgeCheck, RefreshCcw, Zap } from "lucide-react";
 import AutomateClusterModal from "@/components/campaigns/AutomateClusterModal";
 import Link from "next/link";
 import Image from "next/image";
-import Modal from "@/pages/component/Modal";
+import Modal from "@/components/modal";
 import { useCustomSetup } from "../../../../hooks/use-custom-setup";
 
 const CustomCampaign = () => {

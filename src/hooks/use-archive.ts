@@ -59,4 +59,3 @@ export const useArchive = ({ searchValue }: UseArchiveProps) => {
     handleCopyPin,
   };
 };
-  

@@ -34,7 +34,7 @@ import ScheduleProject from "../schedule/component/ScheduleProject";
 import EmailInputWithSuggestions from "./component/EmailInputWithSuggestions";
 import { hasAccess } from "@/lib/utils";
 import CampaignInsightAdvertiser from "./component/CampaignInsightAdvertiser";
-import NoNetwork from "../component/no-network";
+import NoNetwork from "@/components/no-network";
 
 interface User {
   id: string;

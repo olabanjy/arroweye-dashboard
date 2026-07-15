@@ -4,7 +4,7 @@ import Head from "next/head";
 import { Input } from "@/components/ui/input";
 import { PromotionGrid } from "@/components/campaigns/PromotionGrid";
 import { BadgeCheck, RefreshCcw } from "lucide-react";
-import Modal from "@/pages/component/Modal";
+import Modal from "@/components/modal";
 import Link from "next/link";
 import { usePromoterSetup } from "../../../../hooks/use-promoter-setup";
 
