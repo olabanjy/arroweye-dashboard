@@ -13,7 +13,7 @@ import MilestoneNotificationCard from "@/pages/dashboard/component/MilestoneNoti
 
 interface DropsListProps {
   isAdvertiser: boolean | null;
-  content: any;
+  content?: any;
 }
 
 const DropsList: React.FC<DropsListProps> = ({

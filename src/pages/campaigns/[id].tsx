@@ -34,6 +34,7 @@ import ScheduleProject from "../schedule/component/ScheduleProject";
 import EmailInputWithSuggestions from "./component/EmailInputWithSuggestions";
 import { hasAccess } from "@/lib/utils";
 import CampaignInsightAdvertiser from "./component/CampaignInsightAdvertiser";
+import NoNetwork from "../component/no-network";
 
 interface User {
   id: string;
@@ -76,6 +77,7 @@ const ProjectDetails = () => {
   const [deleteModal, setDeleteModal] = useState(false);
 
   const [isAdvertiser, setIsAdvertiser] = useState<boolean | null>(null);
+  const [hasNetworkError, setHasNetworkError] = useState(false);
 
   const showDialog = () => {
     setVisible(true);
@@ -321,16 +323,29 @@ const ProjectDetails = () => {
 
   const refreshContent = () => {
     if (isAdvertiser === null || !id) return;
+    setHasNetworkError(false);
     if (isAdvertiser) {
-      getSingleCampaign(Number(id)).then((fetchedContent) => {
-        console.log("fetchedContent", fetchedContent);
-        setContent(fetchedContent);
-      });
+      getSingleCampaign(Number(id))
+        .then((fetchedContent) => {
+          console.log("fetchedContent", fetchedContent);
+          setContent(fetchedContent);
+        })
+        .catch((err) => {
+          if (!err.response || err.code === "ERR_NETWORK" || err.code === "ECONNABORTED" || err.message?.includes("timeout")) {
+            setHasNetworkError(true);
+          }
+        });
     } else {
-      getSingleProject(Number(id)).then((fetchedContent) => {
-        setSubVendorStaff(fetchedContent?.watchers);
-        setContent(fetchedContent);
-      });
+      getSingleProject(Number(id))
+        .then((fetchedContent) => {
+          setSubVendorStaff(fetchedContent?.watchers);
+          setContent(fetchedContent);
+        })
+        .catch((err) => {
+          if (!err.response || err.code === "ERR_NETWORK" || err.code === "ECONNABORTED" || err.message?.includes("timeout")) {
+            setHasNetworkError(true);
+          }
+        });
     }
   };
 
@@ -518,11 +533,14 @@ const ProjectDetails = () => {
         </title>
       </Head>
       <DashboardLayout withBorder={false}>
-        <div
-          id="pdf-content"
-          className=" relative "
-          style={{ marginBottom: "80px" }}
-        >
+        {hasNetworkError ? (
+          <NoNetwork onReconnect={refreshContent} />
+        ) : (
+          <div
+            id="pdf-content"
+            className=" relative "
+            style={{ marginBottom: "80px" }}
+          >
           <div className="flex flex-col gap-2">
             <div className="text-[#919393] flex items-center gap-[5px] text-[0.875rem]">
               <p className=" uppercase text-[#5e5e5e] tracking-[.1rem]">
@@ -1046,7 +1064,8 @@ const ProjectDetails = () => {
               <DropsList isAdvertiser={isAdvertiser} content={content} />
             </div>
           )}
-        </div>
+          </div>
+        )}
       </DashboardLayout>
     </>
   );

@@ -10,7 +10,7 @@ import { Id as ToastId } from "react-toastify";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN as string,
-  timeout: 20000,
+  timeout: 120000,
   headers: {
     "Content-Type": "application/json",
   },

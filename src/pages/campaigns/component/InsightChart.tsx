@@ -78,9 +78,9 @@ interface InsightChartProps {
   editMode?: boolean;
   handleDownloadPage?: () => void;
   handleDownloadData?: () => void;
-  isAdvertiser: boolean | null;
-  content: any;
-  refreshContent: () => void;
+  isAdvertiser?: boolean | null;
+  content?: any;
+  refreshContent?: () => void;
 }
 
 const InsightChart: React.FC<InsightChartProps> = ({
@@ -428,7 +428,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
         },
       );
     }
-    refreshContent();
+    refreshContent?.();
   };
 
   const onAddDataSuccess = () => {
@@ -443,7 +443,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
         },
       );
     }
-    refreshContent();
+    refreshContent?.();
   };
   const onAddDataDspSuccess = () => {
     if (!!id) {
@@ -455,7 +455,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
         toast.info("DSP stats updated");
       });
     }
-    refreshContent();
+    refreshContent?.();
   };
 
   return (
