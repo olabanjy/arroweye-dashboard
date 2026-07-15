@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Table from "./Table";
 import { IoIosAddCircle, IoMdCheckmark } from "react-icons/io";
-import Modal from "@/pages/component/Modal";
+import Modal from "@/components/modal";
 import { LuUserMinus } from "react-icons/lu";
-import { getBusiness } from "@/services/api";
+import { getBusiness } from "@/services";
 import { StaffItem } from "@/types/contents";
 
 const Users = () => {

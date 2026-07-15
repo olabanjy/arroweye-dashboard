@@ -1,10 +1,10 @@
 import { FC, ReactNode, useEffect } from "react";
 import { useRouter } from "next/router";
-import ls from "localstorage-slim";
 import Sidebar from "@/pages/dashboard/component/Sidebar";
 import TopNav from "@/pages/dashboard/component/topNav";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "@/context/auth-context";
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,14 +13,13 @@ interface LayoutProps {
 
 const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
   const router = useRouter();
-  useEffect(() => {
-    const content: any = ls.get("Profile", { decrypt: true });
-    const token = content?.access;
+  const { isAuthenticated, isLoading } = useAuth();
 
-    if (!token) {
-      window.location.href = "/login";
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/login");
     }
-  }, []);
+  }, [isLoading, isAuthenticated]);
 
   return (
     <div className="flex h-screen overflow-hidden">

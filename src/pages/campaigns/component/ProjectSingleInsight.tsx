@@ -1,44 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import InsightCard from "./InsightCard";
-import { getSingleCampaign, getSingleProject } from "@/services/api";
 import { ContentItem } from "@/types/contents";
-import { useRouter } from "next/router";
 
-const ProjectSingleInsight: React.FC<{ isAdvertiser: boolean | null }> = ({
+interface ProjectSingleInsightProps {
+  isAdvertiser: boolean | null;
+  content: ContentItem | null;
+}
+
+const ProjectSingleInsight: React.FC<ProjectSingleInsightProps> = ({
   isAdvertiser,
+  content,
 }) => {
-  const { query } = useRouter();
-
-  const [content, setContent] = useState<ContentItem | null>(null);
-  const { id } = query;
-
-  useEffect(() => {
-    if (isAdvertiser === null) return;
-
-    if (isAdvertiser) {
-      return;
-    }
-    if (!!id) {
-      getSingleProject(Number(id)).then((fetchedContent) => {
-        setContent(fetchedContent);
-      });
-    }
-  }, [id, isAdvertiser]);
-
-  useEffect(() => {
-    if (isAdvertiser === null) return;
-
-    if (!isAdvertiser) {
-      return;
-    }
-    if (!!id) {
-      getSingleCampaign(Number(id)).then((fetchedContent) => {
-        setContent(fetchedContent);
-      });
-    }
-  }, [id, isAdvertiser]);
 
   function formatNumber(num: any) {
     if (num >= 1000000) {

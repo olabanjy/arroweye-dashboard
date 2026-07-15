@@ -1,38 +1,21 @@
-import React, { useState, useRef, useEffect } from "react";
-import ls from "localstorage-slim";
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Toast } from "primereact/toast";
-import { InputSwitch } from "primereact/inputswitch";
 import { LuCopy } from "react-icons/lu";
+import { useSettings } from "@/hooks/use-settings";
 
 const Setting = () => {
-  const [email, setEmail] = useState("example@mail.com");
-  const [userName, setUserName] = useState("David Jones");
-  const [labelName, setLabelName] = useState("");
-  const [phone, setPhone] = useState("aE!st9023");
-  const [toggleNotifications, setToggleNotifications] = useState(false);
-  const toast = useRef<Toast>(null);
-
-  const handleCopy = (value: string) => {
-    navigator.clipboard
-      .writeText(value)
-      .then(() => {
-        toast.current?.show({
-          severity: "success",
-          summary: "Success",
-          detail: "Copied to clipboard!",
-          life: 3000,
-        });
-      })
-      .catch(() => {
-        toast.current?.show({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to copy!",
-          life: 3000,
-        });
-      });
-  };
+  const {
+    userName,
+    setUserName,
+    email,
+    setEmail,
+    phone,
+    setPhone,
+    toggleNotifications,
+    toastRef,
+    handleCopy,
+  } = useSettings();
 
   const renderCopyInput = (
     label: string,
@@ -76,16 +59,9 @@ const Setting = () => {
     </div>
   );
 
-  useEffect(() => {
-    const userProfile: any = ls.get("Profile", { decrypt: true });
-    setUserName(userProfile?.user?.user_profile?.fullname);
-    setEmail(userProfile?.user?.user_profile?.staff_email);
-    setLabelName(userProfile?.user?.user_profile?.business_name);
-  }, []);
-
   return (
     <div>
-      <Toast ref={toast} className=" font-IBM" />
+      <Toast ref={toastRef} className=" font-IBM" />
       <style>
         {`
           .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider,

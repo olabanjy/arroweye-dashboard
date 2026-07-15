@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { markNotificationsAsRead } from "@/services/api";
+import { markNotificationsAsRead } from "@/services";
 import PaymentMomentNotificationCard from "./PaymentMomentNotificationCard";
 
 const PaymentsNotification: React.FC<any> = ({
@@ -10,12 +10,12 @@ const PaymentsNotification: React.FC<any> = ({
 }) => {
   // Track which notifications have been viewed in this session
   const [viewedNotifications, setViewedNotifications] = useState<Set<number>>(
-    new Set()
+    new Set(),
   );
 
   // Store references to each notification element
   const notificationRefs = useRef<Map<number, HTMLDivElement | null>>(
-    new Map()
+    new Map(),
   );
 
   // Store the notification data for lookup
@@ -42,7 +42,7 @@ const PaymentsNotification: React.FC<any> = ({
     // Skip if already marked as viewed in this session or if read is already true
     if (viewedNotifications.has(itemId) || (item && item.read === true)) {
       console.log(
-        `Skipping notification ${itemId} - already read: ${item?.read}`
+        `Skipping notification ${itemId} - already read: ${item?.read}`,
       );
       return;
     }
@@ -105,7 +105,7 @@ const PaymentsNotification: React.FC<any> = ({
           if (entry.isIntersecting) {
             // Get the notification ID from the data attribute
             const itemId = Number(
-              entry.target.getAttribute("data-notification-id")
+              entry.target.getAttribute("data-notification-id"),
             );
             if (!itemId) return;
 
@@ -120,7 +120,7 @@ const PaymentsNotification: React.FC<any> = ({
               markAsRead(itemId);
             } else {
               console.log(
-                `Notification ${itemId} is visible but already read: ${item?.read}`
+                `Notification ${itemId} is visible but already read: ${item?.read}`,
               );
             }
 
@@ -129,7 +129,7 @@ const PaymentsNotification: React.FC<any> = ({
           }
         });
       },
-      { threshold: 0.5 } // Trigger when at least 50% of the item is visible
+      { threshold: 0.5 }, // Trigger when at least 50% of the item is visible
     );
 
     // Observe all notification elements that need tracking
@@ -142,7 +142,7 @@ const PaymentsNotification: React.FC<any> = ({
         const element = notificationRefs.current.get(item.id);
         if (element) {
           console.log(
-            `Setting up observer for notification ${item.id} (read: ${item.read})`
+            `Setting up observer for notification ${item.id} (read: ${item.read})`,
           );
           observer.observe(element);
         }
@@ -173,7 +173,7 @@ const PaymentsNotification: React.FC<any> = ({
   // Function to store refs for each notification element
   const setNotificationRef = (
     element: HTMLDivElement | null,
-    itemId: number
+    itemId: number,
   ) => {
     if (element) {
       notificationRefs.current.set(itemId, element);

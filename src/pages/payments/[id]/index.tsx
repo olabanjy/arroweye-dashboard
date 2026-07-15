@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Logo from "@assets/arroreyelogoSm.svg";
 import Image from "next/image";
-import { getPaymentInvoice } from "@/services/api";
+import { getPaymentInvoice } from "@/services";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
 import { format, parseISO } from "date-fns";

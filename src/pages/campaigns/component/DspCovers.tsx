@@ -1,6 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import { CreateMedia } from "@/services/api";
+import { CreateMedia } from "@/services";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -20,7 +20,7 @@ const DspCovers = () => {
     console.log("FIles", e.target.files);
     const uploadedFiles = e.target.files ? Array.from(e.target.files) : [];
     const validFiles = uploadedFiles.filter((file) =>
-      file.type.startsWith("image/")
+      file.type.startsWith("image/"),
     );
 
     if (validFiles.length !== uploadedFiles.length) {
@@ -62,7 +62,7 @@ const DspCovers = () => {
         console.log(item.file);
         const base64 = await convertFileToBase64(item.file);
         return base64;
-      })
+      }),
     );
 
     const payload = {

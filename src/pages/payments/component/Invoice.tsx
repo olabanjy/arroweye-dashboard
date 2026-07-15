@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Table from "./Table";
 import { BsTrash } from "react-icons/bs";
 import { TbCurrencyDollar } from "react-icons/tb";
-import { getInvoice, initializePayment } from "@/services/api";
+import { getInvoice, initializePayment } from "@/services";
 import { ContentItem } from "@/types/contents";
 import Link from "next/link";
 import { toast } from "react-toastify";
@@ -49,7 +49,7 @@ const Invoice = ({ amountFilter, statusFilter, searchText }: any) => {
 
   const [content, setContent] = useState<ContentItem[] | null>(null);
   const [filteredContent, setFilteredContent] = useState<ContentItem[] | null>(
-    null
+    null,
   );
 
   const [email, setEmail] = useState("");
@@ -138,12 +138,12 @@ const Invoice = ({ amountFilter, statusFilter, searchText }: any) => {
     const popup = window.open(
       authorizationUrl,
       "paystack-payment",
-      "width=500,height=600,scrollbars=yes,resizable=yes,location=yes"
+      "width=500,height=600,scrollbars=yes,resizable=yes,location=yes",
     );
 
     if (!popup || popup.closed || typeof popup.closed === "undefined") {
       toast.warning(
-        "Popup blocked! Please allow popups for this site and try again."
+        "Popup blocked! Please allow popups for this site and try again.",
       );
       return;
     }

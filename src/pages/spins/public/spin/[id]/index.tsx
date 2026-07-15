@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
-import { getSpinsNotificationPublic } from "@/services/api";
+import { getSpinsNotificationPublic } from "@/services";
 import { useRouter } from "next/router";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "react-toastify";

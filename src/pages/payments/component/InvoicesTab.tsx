@@ -8,7 +8,7 @@ import { SelectInput } from "@/components/ui/selectinput";
 import Users from "./Users";
 import { Dialog } from "primereact/dialog";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
-import { CreateBusiness } from "@/services/api";
+import { CreateBusiness } from "@/services";
 import { DropDownInput } from "@/components/ui/dropdownInput";
 import CompanyDetailsForm from "./CompanyDetailsForm";
 
@@ -49,7 +49,7 @@ const InvoicesTab = () => {
   // };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => {

@@ -4,12 +4,7 @@ import { Dialog } from "primereact/dialog";
 import { FiInfo } from "react-icons/fi";
 import { PiCalendarPlus } from "react-icons/pi";
 import { ContentItem } from "@/types/contents";
-import {
-  CreateDspStats,
-  CreateMetric,
-  getDsp,
-  getMetric,
-} from "@/services/api";
+import { CreateDspStats, CreateMetric, getDsp, getMetric } from "@/services";
 import AppleMusicData from "./AppleMusicData";
 import SpotifyData from "./SpotifyData";
 import YoutubeData from "./YoutubeData";
@@ -89,7 +84,7 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
   }, []);
 
   const dspMetrics = content?.find(
-    (dsp: any) => dsp.name === activeDetailsTab
+    (dsp: any) => dsp.name === activeDetailsTab,
   )?.metrics;
 
   const customOptions = [
@@ -178,16 +173,16 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
   const updateAddDspData = (
     index: number,
     field: keyof AddDspData,
-    value: string | number
+    value: string | number,
   ) => {
     setAddDspData((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
     );
   };
 
   const processDSPData = (items: any[]) => {
     const filteredItems = items.filter(
-      (item) => item?.dsp?.name === activeDetailsTab
+      (item) => item?.dsp?.name === activeDetailsTab,
     );
 
     if (filteredItems.length === 0) return [];
@@ -283,7 +278,7 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -379,7 +374,7 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
                                 updateAddDspData(
                                   index,
                                   "metric_id",
-                                  selectedValue
+                                  selectedValue,
                                 );
                               }
                             }}
@@ -404,12 +399,12 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
                                   updateAddDspData(
                                     index,
                                     week as keyof AddDspData,
-                                    e.target.value
+                                    e.target.value,
                                   )
                                 }
                               />
                             </div>
-                          )
+                          ),
                         )}
                       </div>
 

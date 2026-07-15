@@ -1,9 +1,7 @@
-import { clearLS } from "@/lib/utils";
-import ls from "localstorage-slim";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import {
   MdArrowForward,
@@ -19,13 +17,14 @@ import {
   MdGavel,
 } from "react-icons/md";
 import { TfiMore } from "react-icons/tfi";
+import { useAuth } from "@/context/auth-context";
 
 const Sidebar: FC = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
-  const [userRole, setUserRole] = useState("");
-  const [isAdvertiser, setIsAdvertiser] = useState(false);
+  const { isAdvertiser, userProfile, logout } = useAuth();
+  const userRole = userProfile?.role || "";
   const router = useRouter();
 
   const isActive = (path: string) => {
@@ -34,22 +33,6 @@ const Sidebar: FC = () => {
   const toggleResourcesSidebar = () => {
     setIsResourcesOpen(!isResourcesOpen);
   };
-
-  const logout = () => {
-    clearLS();
-    router.push("/login").then(() => {
-      window.location.reload();
-    });
-  };
-
-  useEffect(() => {
-    const content: any = ls.get("Profile", { decrypt: true });
-    console.log("CONTENT FOR LOGGED IN USER", content);
-    setUserRole(content?.user?.user_profile?.role);
-    if (content?.user?.user_type === "Advertiser") {
-      setIsAdvertiser(true);
-    }
-  }, []);
 
   return (
     <div>

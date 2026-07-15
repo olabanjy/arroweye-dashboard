@@ -6,7 +6,7 @@ import MileStonesNotification from "./milestones/MileStonesNotification";
 import SecurityNotification from "./security/SecurityNotification";
 import AssetsNotification from "./assets/AssetsNotification";
 import PaymentsNotification from "./payments/PaymentsNotification";
-import { getLoggedInUser } from "@/services/api";
+import { getLoggedInUser } from "@/services";
 import { useRouter } from "next/router";
 
 const TopNav: FC = () => {
@@ -55,7 +55,7 @@ const TopNav: FC = () => {
           security: [],
           assets: [],
           payments: [],
-        }
+        },
       );
 
       setNotifications(groupedNotifications);
@@ -69,7 +69,7 @@ const TopNav: FC = () => {
     }
 
     const arrayKeys = Object.keys(notification).filter(
-      (key) => Array.isArray(notification[key]) && notification[key].length > 0
+      (key) => Array.isArray(notification[key]) && notification[key].length > 0,
     );
 
     if (arrayKeys.length === 0) {

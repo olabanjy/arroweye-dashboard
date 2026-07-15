@@ -17,7 +17,7 @@ import {
   getBusinessStaff,
   getSingleCampaign,
   getSingleProject,
-} from "@/services/api";
+} from "@/services";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
 import ProjectSingleInsight from "./component/ProjectSingleInsight";
@@ -34,6 +34,7 @@ import ScheduleProject from "../schedule/component/ScheduleProject";
 import EmailInputWithSuggestions from "./component/EmailInputWithSuggestions";
 import { hasAccess } from "@/lib/utils";
 import CampaignInsightAdvertiser from "./component/CampaignInsightAdvertiser";
+import NoNetwork from "@/components/no-network";
 
 interface User {
   id: string;
@@ -76,6 +77,7 @@ const ProjectDetails = () => {
   const [deleteModal, setDeleteModal] = useState(false);
 
   const [isAdvertiser, setIsAdvertiser] = useState<boolean | null>(null);
+  const [hasNetworkError, setHasNetworkError] = useState(false);
 
   const showDialog = () => {
     setVisible(true);
@@ -180,10 +182,7 @@ const ProjectDetails = () => {
       campaignStaffAction(Number(id), payload)
         .then((response) => {
           if (response) {
-            getSingleProject(Number(id)).then((fetchedContent) => {
-              setContent(fetchedContent);
-              setSubVendorStaff(fetchedContent?.watchers);
-            });
+            refreshContent();
             setVisible(false);
             setNameDialogVisible(false);
             setAddUserFormData({
@@ -226,10 +225,7 @@ const ProjectDetails = () => {
             project_id: id,
           });
 
-          getSingleProject(Number(id)).then((fetchedContent) => {
-            setContent(fetchedContent);
-            setSubVendorStaff(fetchedContent?.watchers);
-          });
+          refreshContent();
         })
         .catch((err) => {
           if (err.response) {
@@ -265,10 +261,7 @@ const ProjectDetails = () => {
     campaignStaffAction(Number(id), payload)
       .then((response) => {
         console.log(response);
-        getSingleProject(Number(id)).then((fetchedContent) => {
-          setContent(fetchedContent);
-          setSubVendorStaff(fetchedContent?.watchers);
-        });
+        refreshContent();
         setDeleteModal(false);
         setSelectedUser(null);
         toast.success("User removed successfully!");
@@ -288,10 +281,7 @@ const ProjectDetails = () => {
     campaignStaffAction(Number(id), payload)
       .then((response) => {
         console.log(response);
-        getSingleProject(Number(id)).then((fetchedContent) => {
-          setContent(fetchedContent);
-          setSubVendorStaff(fetchedContent?.watchers);
-        });
+        refreshContent();
         setAdjustmentModalVisible(false);
         setSelectedUser(null);
         toast.success("User role updated successfully!");
@@ -331,32 +321,36 @@ const ProjectDetails = () => {
     setAdjustmentModalVisible(true);
   };
 
-  useEffect(() => {
-    if (isAdvertiser === null) return;
-
+  const refreshContent = () => {
+    if (isAdvertiser === null || !id) return;
+    setHasNetworkError(false);
     if (isAdvertiser) {
-      return;
+      getSingleCampaign(Number(id))
+        .then((fetchedContent) => {
+          console.log("fetchedContent", fetchedContent);
+          setContent(fetchedContent);
+        })
+        .catch((err) => {
+          if (!err.response || err.code === "ERR_NETWORK" || err.code === "ECONNABORTED" || err.message?.includes("timeout")) {
+            setHasNetworkError(true);
+          }
+        });
+    } else {
+      getSingleProject(Number(id))
+        .then((fetchedContent) => {
+          setSubVendorStaff(fetchedContent?.watchers);
+          setContent(fetchedContent);
+        })
+        .catch((err) => {
+          if (!err.response || err.code === "ERR_NETWORK" || err.code === "ECONNABORTED" || err.message?.includes("timeout")) {
+            setHasNetworkError(true);
+          }
+        });
     }
-    if (!!id) {
-      getSingleProject(Number(id)).then((fetchedContent) => {
-        setSubVendorStaff(fetchedContent?.watchers);
-        setContent(fetchedContent);
-      });
-    }
-  }, [id, isAdvertiser]);
+  };
 
   useEffect(() => {
-    if (isAdvertiser === null) return;
-
-    if (!isAdvertiser) {
-      return;
-    }
-    if (!!id) {
-      getSingleCampaign(Number(id)).then((fetchedContent) => {
-        console.log("fetchedContent", fetchedContent);
-        setContent(fetchedContent);
-      });
-    }
+    refreshContent();
   }, [id, isAdvertiser]);
 
   useEffect(() => {
@@ -539,11 +533,14 @@ const ProjectDetails = () => {
         </title>
       </Head>
       <DashboardLayout withBorder={false}>
-        <div
-          id="pdf-content"
-          className=" relative "
-          style={{ marginBottom: "80px" }}
-        >
+        {hasNetworkError ? (
+          <NoNetwork onReconnect={refreshContent} />
+        ) : (
+          <div
+            id="pdf-content"
+            className=" relative "
+            style={{ marginBottom: "80px" }}
+          >
           <div className="flex flex-col gap-2">
             <div className="text-[#919393] flex items-center gap-[5px] text-[0.875rem]">
               <p className=" uppercase text-[#5e5e5e] tracking-[.1rem]">
@@ -657,7 +654,7 @@ const ProjectDetails = () => {
 
             {(hasAccess(userLoggedInProfile, ["Manager"]) || isAdvertiser) && (
               <div className="">
-                <ProjectSingleInsight isAdvertiser={isAdvertiser} />
+                <ProjectSingleInsight isAdvertiser={isAdvertiser} content={content} />
               </div>
             )}
           </div>
@@ -798,6 +795,8 @@ const ProjectDetails = () => {
                 handleDownloadPage={handleDownloadPDF}
                 handleDownloadData={handleExportCSV}
                 isAdvertiser={isAdvertiser}
+                content={content}
+                refreshContent={refreshContent}
               />
               <div className="  ">
                 <ScheduleProject
@@ -1062,10 +1061,11 @@ const ProjectDetails = () => {
 
           {!isAdvertiser && (
             <div className="mb-[100px]">
-              <DropsList isAdvertiser={isAdvertiser} />
+              <DropsList isAdvertiser={isAdvertiser} content={content} />
             </div>
           )}
-        </div>
+          </div>
+        )}
       </DashboardLayout>
     </>
   );

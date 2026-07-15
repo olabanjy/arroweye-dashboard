@@ -12,7 +12,7 @@ const ProjectTab = () => {
 
       <div>
         {activeTab === "Manage" && (
-          <div className="">
+        <div className="">
             {" "}
             <Manage />
             <InvoicesTab />

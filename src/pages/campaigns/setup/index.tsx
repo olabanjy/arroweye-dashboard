@@ -5,7 +5,7 @@ import AddCampaign from "@/components/campaigns/AddCampaign";
 import SetBudget from "@/components/campaigns/SetBudget";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import { verifyWalletPayment } from "@/services/api";
+import { verifyWalletPayment } from "@/services";
 
 const Setup = () => {
   const router = useRouter();

@@ -7,7 +7,7 @@ import {
   CreateSocialStats,
   getMetric,
   getSocialMedia,
-} from "@/services/api";
+} from "@/services";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
 import { Dialog } from "primereact/dialog";
@@ -118,7 +118,7 @@ const TwitterData = ({ metrics }: any) => {
         totalServices: totals.totalServices + 1,
       };
     },
-    { totalSpins: 0, totalServices: 0 }
+    { totalSpins: 0, totalServices: 0 },
   );
 
   const handleProjectSubmit = (e: React.FormEvent) => {
@@ -152,7 +152,7 @@ const TwitterData = ({ metrics }: any) => {
     setProjectErrors(newErrors);
 
     const hasErrors = newErrors.sm_data.some((service) =>
-      Object.values(service).some((value) => value !== null)
+      Object.values(service).some((value) => value !== null),
     );
 
     if (!hasErrors) {
@@ -229,7 +229,7 @@ const TwitterData = ({ metrics }: any) => {
       const indexToRemove = items.findIndex((item) => item.id === id);
 
       const updatedServices = prevData.sm_data.filter(
-        (_, index) => index !== indexToRemove
+        (_, index) => index !== indexToRemove,
       );
 
       setTotalImpressions(0);
@@ -282,7 +282,7 @@ const TwitterData = ({ metrics }: any) => {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -329,7 +329,7 @@ const TwitterData = ({ metrics }: any) => {
                                 ...i,
                                 metric_id: selectedValue,
                               }
-                            : i
+                            : i,
                         );
 
                         setItems(updatedItems);
@@ -347,11 +347,11 @@ const TwitterData = ({ metrics }: any) => {
 
                         const newTotalImpressions = updatedServices.reduce(
                           (sum) => sum + 0,
-                          0
+                          0,
                         );
                         const newTotalAudience = updatedServices.reduce(
                           (sum) => sum + 0,
-                          0
+                          0,
                         );
 
                         setTotalImpressions(newTotalImpressions);
@@ -378,7 +378,7 @@ const TwitterData = ({ metrics }: any) => {
                       const updatedWeek1 = e.target.value;
 
                       const updatedItems = items.map((i) =>
-                        i.id === item.id ? { ...i, week_1: updatedWeek1 } : i
+                        i.id === item.id ? { ...i, week_1: updatedWeek1 } : i,
                       );
                       setItems(updatedItems);
 
@@ -411,7 +411,7 @@ const TwitterData = ({ metrics }: any) => {
                       const updatedWeek2 = e.target.value;
 
                       const updatedItems = items.map((i) =>
-                        i.id === item.id ? { ...i, week_2: updatedWeek2 } : i
+                        i.id === item.id ? { ...i, week_2: updatedWeek2 } : i,
                       );
                       setItems(updatedItems);
 
@@ -444,7 +444,7 @@ const TwitterData = ({ metrics }: any) => {
                       const updatedWeek3 = e.target.value;
 
                       const updatedItems = items.map((i) =>
-                        i.id === item.id ? { ...i, week_3: updatedWeek3 } : i
+                        i.id === item.id ? { ...i, week_3: updatedWeek3 } : i,
                       );
                       setItems(updatedItems);
 
@@ -477,7 +477,7 @@ const TwitterData = ({ metrics }: any) => {
                       const updatedWeek4 = e.target.value;
 
                       const updatedItems = items.map((i) =>
-                        i.id === item.id ? { ...i, week_4: updatedWeek4 } : i
+                        i.id === item.id ? { ...i, week_4: updatedWeek4 } : i,
                       );
                       setItems(updatedItems);
 

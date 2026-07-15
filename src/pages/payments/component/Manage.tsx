@@ -8,7 +8,7 @@ import {
   CreateService,
   getBusiness,
   getService,
-} from "@/services/api";
+} from "@/services";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { ContentItem } from "@/types/contents";
 import { hasAccess, hasAccessExceptVendorManager } from "@/lib/utils";
@@ -108,7 +108,7 @@ const Manage = () => {
 
     setProjectFormData((prevData) => {
       const updatedServices = prevData.services.filter(
-        (_, index) => index !== items.findIndex((item) => item.id === id)
+        (_, index) => index !== items.findIndex((item) => item.id === id),
       );
       return {
         ...prevData,
@@ -173,7 +173,7 @@ const Manage = () => {
   });
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -259,7 +259,7 @@ const Manage = () => {
     const subtotal = items.reduce(
       (sum, item) =>
         sum + parseFloat(item.cost.toString()) * (item.quantity || 1),
-      0
+      0,
     );
     const customCost = subtotal;
 
@@ -317,7 +317,7 @@ const Manage = () => {
         return (
           value as { service_id: string | null; quantity: number | null }[]
         ).some(
-          (service) => service.service_id !== null || service.quantity !== null
+          (service) => service.service_id !== null || service.quantity !== null,
         );
       }
       return value !== "" && value !== null;
@@ -353,7 +353,7 @@ const Manage = () => {
         sum +
         (item.cost ? parseFloat(item.cost.toString()) : 0) *
           (item.quantity || 1),
-      0
+      0,
     );
 
     const serviceCharge = subtotal * 0.15;
@@ -531,7 +531,7 @@ const Manage = () => {
                           onChange={(value: string | number) => {
                             const selectedValue = Number(value);
                             const selectedOption = customOptions.find(
-                              (opt) => opt.value === selectedValue
+                              (opt) => opt.value === selectedValue,
                             );
 
                             console.log(selectedOption);
@@ -546,7 +546,7 @@ const Manage = () => {
                                       service_id: selectedValue,
                                       cost: selectedOption?.cost || "",
                                     }
-                                  : i
+                                  : i,
                               );
                               setItems(updatedItems);
 
@@ -587,7 +587,7 @@ const Manage = () => {
                           const updatedCost = e.target.value;
 
                           const updatedItems = items.map((i) =>
-                            i.id === item.id ? { ...i, cost: updatedCost } : i
+                            i.id === item.id ? { ...i, cost: updatedCost } : i,
                           );
                           setItems(updatedItems);
 
@@ -621,7 +621,7 @@ const Manage = () => {
                           const updatedItems = items.map((i) =>
                             i.id === item.id
                               ? { ...i, quantity: updatedQuantity }
-                              : i
+                              : i,
                           );
                           setItems(updatedItems);
 

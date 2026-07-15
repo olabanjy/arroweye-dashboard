@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import ls from "localstorage-slim";
 import { Input } from "@/components/ui/input";
-import { fundCampaignWallet, getCampaignWallet } from "@/services/api";
+import { fundCampaignWallet, getCampaignWallet } from "@/services";
 import { useRouter } from "next/router";
+import { useAuth } from "@/context/auth-context";
+import { useQuery } from "@tanstack/react-query";
 
 const PRICE_PER_TOKEN = 2500; // ₦ per token
 const MIN_TOKENS = 1;
@@ -15,25 +17,31 @@ export default function SetBudget({
 }: {
   refreshToken?: number;
 }) {
-  const [tokens, setTokens] = useState(340);
+  const { user } = useAuth();
+  const [tokens, setTokens] = useState(10);
   const [email, setEmail] = useState("");
   const [accepted, setAccepted] = useState(false);
-  const [budgetInput, setBudgetInput] = useState("850,000");
-  const [tokenInput, setTokenInput] = useState("340");
+  const [budgetInput, setBudgetInput] = useState("25,000");
+  const [tokenInput, setTokenInput] = useState("10");
+
+  useEffect(() => {
+    if (user?.user_profile?.staff_email) {
+      setEmail(user.user_profile.staff_email);
+    }
+  }, [user]);
 
   const router = useRouter();
 
-  const [availableBalance, setAvailableBalance] = useState(0);
+  const { data: walletData, refetch: refetchWallet } = useQuery({
+    queryKey: ["wallet"],
+    queryFn: getCampaignWallet,
+  });
+
+  const availableBalance = Number(walletData?.available_balance) || 0;
 
   useEffect(() => {
-    getCampaignWallet()
-      .then((data: any) => {
-        setAvailableBalance(Number(data?.available_balance) || 0);
-      })
-      .catch((err) => {
-        console.error("Failed to load wallet balance:", err);
-      });
-  }, [refreshToken]);
+    refetchWallet();
+  }, [refreshToken, refetchWallet]);
 
   const needsTopUp = tokens > availableBalance;
 
@@ -78,6 +86,12 @@ export default function SetBudget({
     const newErrors: typeof errors = {};
     const budgetNum = parseInt(budgetInput.replace(/[^0-9]/g, ""), 10);
 
+    if (!email) {
+      newErrors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
     if (!budgetInput || isNaN(budgetNum) || budgetNum < MIN_AMOUNT)
       newErrors.budget = `Minimum amount is ₦${formatBudget(MIN_AMOUNT)}.`;
 
@@ -108,11 +122,19 @@ export default function SetBudget({
   };
 
   const handleContinue = () => {
-    if (!accepted) {
-      setErrors({ terms: "You must accept the terms of service." });
-      return;
+    const newErrors: typeof errors = {};
+
+    if (!email) {
+      newErrors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Please enter a valid email address.";
     }
-    setErrors({});
+
+    if (!accepted) newErrors.terms = "You must accept the terms of service.";
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
     router.push("/campaigns/setup?showModal=true");
   };
 
@@ -120,7 +142,7 @@ export default function SetBudget({
 
   return (
     <div className="bg-[#f0f0ef] p-4 sm:p-7">
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         .budget-card {
           background: #ffffff;
           box-shadow: 0 2px 24px 0 rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04);
@@ -194,8 +216,7 @@ export default function SetBudget({
           border-radius: 50%;
           background: white;
         }
-
-      `}</style>
+      `}} />
       <div className="flex justify-center items-center gap-2 mb-7 my-10">
         <p>Set Budget</p>
         <div className="h-[1px] w-8 bg-[#A3A3A3]" />

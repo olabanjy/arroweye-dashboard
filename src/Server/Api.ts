@@ -1,4 +1,3 @@
-import { RootState, store } from "@/store/store";
 import ls from "localstorage-slim";
 import axios, {
   AxiosRequestConfig,
@@ -11,7 +10,7 @@ import { Id as ToastId } from "react-toastify";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN as string,
-  timeout: 20000,
+  timeout: 120000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -23,7 +22,6 @@ console.log("Base URL:", process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN);
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (!config.headers["skipAuth"]) {
-      const state: RootState = store.getState();
       const content: any = ls.get("Profile", { decrypt: true });
       const token = content?.access;
 
