@@ -70,15 +70,10 @@ const SpinsNotification = () => {
         <title>Spins - Arroweye</title>
       </Head>
 
-      <div className="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center">
-        <Image
-          src="/spinsbg.png"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
+      <div
+        style={{ backgroundImage: "url(/spinsbg.jpeg)" }}
+        className="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center"
+      >
         <div
           className="relative z-10 flex items-center justify-center w-[338px] h-[174px] bg-center bg-no-repeat"
           style={{ backgroundImage: "url(/Notificationheader.png)" }}
