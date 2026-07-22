@@ -228,7 +228,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
         onHide={onHide}
         breakpoints={{ "960px": "75vw", "640px": "100vw" }}
         style={{ width: "40vw" }}
-        className="font-IBM !overflow-y-auto"
+        className="font-SansFlex !overflow-y-auto"
       >
         <div className="border pb-[20px]">
           <div className="text-[16px] font-[400] grid grid-cols-2 items-center">
@@ -342,7 +342,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                     )}
                   </div>
 
-                  <p className="text-[16px] font-[600] text-[#212529] font-IBM ">
+                  <p className="text-[16px] font-[600] text-[#212529] font-SansFlex ">
                     Logo
                   </p>
                   <div className="relative">
@@ -368,13 +368,13 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                   <button
                     // type="submit"
                     onClick={handleSaveClick}
-                    className="font-IBM  text-[14px] text-white hover:text-[#000000] bg-[#000000] border border-[#000000] hover:bg-[#ffffff] hover:border-[#000000] py-[8px] px-[20px] rounded "
+                    className="font-SansFlex  text-[14px] text-white hover:text-[#000000] bg-[#000000] border border-[#000000] hover:bg-[#ffffff] hover:border-[#000000] py-[8px] px-[20px] rounded "
                   >
                     Save
                   </button>
                   <button
                     onClick={handleEditClick}
-                    className="font-IBM  text-[14px] text-white hover:text-[#000000] bg-[#000000] border border-[#000000] hover:bg-[#ffffff] hover:border-[#000000] py-[8px] px-[20px] rounded"
+                    className="font-SansFlex  text-[14px] text-white hover:text-[#000000] bg-[#000000] border border-[#000000] hover:bg-[#ffffff] hover:border-[#000000] py-[8px] px-[20px] rounded"
                   >
                     Edit
                   </button>
@@ -390,7 +390,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
               <div className="grid gap-[10px] relative z-10">
                 <>
                   <div className=" space-y-[5px]">
-                    <p className="text-[16px] font-[600] text-[#212529] font-IBM ">
+                    <p className="text-[16px] font-[600] text-[#212529] font-SansFlex ">
                       Local Transfer
                     </p>
 
@@ -429,7 +429,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                   </div>
 
                   <div className="space-y-[5px]">
-                    <p className="text-[16px] font-[600] text-[#212529] font-IBM ">
+                    <p className="text-[16px] font-[600] text-[#212529] font-SansFlex ">
                       Foreign Transfer
                     </p>
                     <div>
@@ -467,7 +467,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                   </div>
 
                   <div className="space-y-[5px]">
-                    <p className="text-[16px] font-[600] text-[#212529] font-IBM ">
+                    <p className="text-[16px] font-[600] text-[#212529] font-SansFlex ">
                       Bitcoin Wallet
                     </p>
                     <div>
@@ -493,13 +493,13 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
                   <button
                     // type="submit"
                     onClick={handlePaymentSaveClick}
-                    className="font-IBM  text-[14px] text-white hover:text-[#000000] bg-[#000000] border border-[#000000] hover:bg-[#ffffff] hover:border-[#000000] py-[8px] px-[20px] rounded "
+                    className="font-SansFlex  text-[14px] text-white hover:text-[#000000] bg-[#000000] border border-[#000000] hover:bg-[#ffffff] hover:border-[#000000] py-[8px] px-[20px] rounded "
                   >
                     Save
                   </button>
                   <button
                     onClick={handlePaymentEditClick}
-                    className="font-IBM  text-[14px] text-white hover:text-[#000000] bg-[#000000] border border-[#000000] hover:bg-[#ffffff] hover:border-[#000000] py-[8px] px-[20px] rounded"
+                    className="font-SansFlex  text-[14px] text-white hover:text-[#000000] bg-[#000000] border border-[#000000] hover:bg-[#ffffff] hover:border-[#000000] py-[8px] px-[20px] rounded"
                   >
                     Edit
                   </button>

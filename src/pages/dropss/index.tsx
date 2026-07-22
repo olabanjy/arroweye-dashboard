@@ -60,7 +60,7 @@ const Drops = () => {
                     {user.initials}
                   </p>
 
-                  <div className="font-IBM absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 bg-black text-white text-xs  px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 text-nowrap">
+                  <div className="font-SansFlex absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 bg-black text-white text-xs  px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 text-nowrap">
                     {user.fullName}
                   </div>
                 </div>
@@ -93,7 +93,7 @@ const Drops = () => {
           className="custom-dialog-overlay"
         >
           {selectedUser && (
-            <div className="space-y-4 font-IBM">
+            <div className="space-y-4 font-SansFlex">
               <p className="text-[30px] text-[#212529] font-[600]">
                 {selectedUser.fullName}
               </p>

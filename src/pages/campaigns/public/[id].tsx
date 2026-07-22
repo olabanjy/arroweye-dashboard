@@ -42,12 +42,12 @@ const ProjectDetailsPublic = () => {
               {users.map((user, index) => (
                 <div key={index} className="relative group">
                   <p
-                    className=" font-IBM bg-red-500 text-white rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer"
+                    className=" font-SansFlex bg-red-500 text-white rounded-full p-4 w-[50px] h-[50px] flex items-center justify-center text-center cursor-pointer"
                     onClick={() => handleUserClick(user)}
                   >
                     {user.initials}
                   </p>
-                  <div className="absolute bottom-[-30px] left-0 bg-black text-white text-xs p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity font-IBM">
+                  <div className="absolute bottom-[-30px] left-0 bg-black text-white text-xs p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity font-SansFlex">
                     {user.fullName}
                   </div>
                 </div>

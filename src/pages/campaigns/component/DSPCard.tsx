@@ -75,9 +75,9 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
   };
 
   return (
-    <div className="space-y-[20px] flex flex-col justify-between font-IBM">
+    <div className="space-y-[20px] flex flex-col justify-between font-SansFlex">
       <div>
-        <p className="text-[11px] font-semibold tracking-widest text-gray-400 uppercase font-IBM mb-2">
+        <p className="text-[11px] font-semibold tracking-widest text-gray-400 uppercase font-SansFlex mb-2">
           DSP
         </p>
         <p className="text-[44px] font-extrabold text-gray-900 leading-none">
@@ -86,7 +86,7 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
       </div>
 
       <div>
-        <p className="text-[11px] font-bold tracking-widest text-gray-900 uppercase mb-3 font-IBM">
+        <p className="text-[11px] font-bold tracking-widest text-gray-900 uppercase mb-3 font-SansFlex">
           Top DSPs
         </p>
         {hasData ? (

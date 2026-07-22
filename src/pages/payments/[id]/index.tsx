@@ -74,7 +74,7 @@ const Invoice = () => {
       <Head>
         <title>{content?.project?.title} - Arroweye</title>
       </Head>
-      <div className="mt-20 flex items-center justify-center h-full bg-[#ffffff] font-IBM">
+      <div className="mt-20 flex items-center justify-center h-full bg-[#ffffff] font-SansFlex">
         <div
           id="invoice"
           className="w-[400px] px-6 py-[20px] bg-white rounded-2xl shadow-custom shadow-slate-400"

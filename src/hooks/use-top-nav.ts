@@ -117,7 +117,9 @@ export const useTopNav = () => {
 
   useEffect(() => {
     const unreadIds = getUnreadNotificationIds(notifications);
-    const hasNewUnread = Array.from(unreadIds).some((id) => !knownUnreadIds.has(id));
+    const hasNewUnread = Array.from(unreadIds).some(
+      (id) => !knownUnreadIds.has(id),
+    );
 
     if (hasNewUnread) {
       setHasOpenedNotifications(false);

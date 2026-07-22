@@ -643,7 +643,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
               ]}
               additionalContent={
                 <div className="hidden">
-                  <p className=" text-start font-[400] text-[8px] font-IBM">
+                  <p className=" text-start font-[400] text-[8px] font-SansFlex">
                     TOP TERRITORIES
                   </p>
                   <div className="flex gap-4 mt-2 relative">
@@ -692,7 +692,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
         <div className="fixed bottom-[90px] lg:left-32 right-0 flex justify-center z-30 w-full">
           <div className="bg-none p-[8px] flex items-center gap-[10px] max-w-[500px] w-full relative">
             <button
-              className="font-IBM text-[28px] z-10 absolute top-0 right-2 text-gray-500 hover:text-gray-700"
+              className="font-SansFlex text-[28px] z-10 absolute top-0 right-2 text-gray-500 hover:text-gray-700"
               onClick={() => setOpenChatModal(false)}
             >
               &times;
@@ -700,7 +700,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
             <div className="bg-white border border-gray-300  p-inputgroup py-[10px] mt-8 mb-2 flex flex-row justify-between items-center">
               <Input
                 placeholder="hello@arroweye.pro"
-                className="w-full lg:min-w-[400px] border-none shadow-none focus:ring-0 focus:outline-none placeholder:font-IBM"
+                className="w-full lg:min-w-[400px] border-none shadow-none focus:ring-0 focus:outline-none placeholder:font-SansFlex"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -762,19 +762,19 @@ const InsightChart: React.FC<InsightChartProps> = ({
           className="custom-dialog-overlay"
         >
           <div className="space-y-[30px] p-4">
-            <p className="text-center text-[18px] font-[400] font-IBM text-[#000000]">
+            <p className="text-center text-[18px] font-[400] font-SansFlex text-[#000000]">
               Select your preferred format
             </p>
 
             <div className="grid grid-cols-1 gap-[10px] pb-5 px-10">
               {/* <div
-                className="font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center"
+                className="font-SansFlex border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center"
                 onClick={() => handleDownloadPage && handleDownloadPage()}
               >
                 PDF
               </div> */}
               <div
-                className="font-IBM border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center"
+                className="font-SansFlex border rounded-[8px] border-black hover:border-blue-500 h-[200px] flex items-center justify-center"
                 onClick={() => handleDownloadData && handleDownloadData()}
               >
                 CSV

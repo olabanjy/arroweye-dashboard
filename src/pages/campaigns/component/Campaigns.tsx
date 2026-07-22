@@ -237,8 +237,8 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           style={{ width: "30vw" }}
           className="custom-dialog-overlay"
         >
-          <div className="space-y-4 font-IBM">
-            <p className="text-[16px] font-[400] font-IBM">
+          <div className="space-y-4 font-SansFlex">
+            <p className="text-[16px] font-[400] font-SansFlex">
               Are you sure you want to archive this item?
             </p>
 

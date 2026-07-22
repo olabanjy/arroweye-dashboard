@@ -209,7 +209,7 @@ const RadioData = () => {
         <div className="mt-[20px] flex items-center space-x-2">
           <button
             type="submit"
-            className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-none py-[8px] px-[20px] rounded"
+            className="font-SansFlex text-[14px] text-white hover:text-[#ffffff] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-none py-[8px] px-[20px] rounded"
           >
             Save
           </button>

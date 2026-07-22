@@ -183,7 +183,7 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
 
   return (
     <div className="w-full max-h-[600px] space-y-[20px]">
-      <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-IBM uppercase">
+      <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-SansFlex uppercase">
         {MomentsTitle}
       </p>
 
@@ -239,7 +239,7 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
           <div className="flex items-center gap-2 w-full">
             {watchButtonText && (
               <button
-                className="p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[16px] font-[500] flex-grow rounded-full bg-black text-white text-center"
+                className="p-2 cursor-pointer hover:bg-orange-500 font-SansFlex text-[16px] font-[500] flex-grow rounded-full bg-black text-white text-center"
                 onClick={() =>
                   window.open(videoUrls[currentVideoIndex], "_blank")
                 }
@@ -251,7 +251,7 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
 
             {downloadIcon && watchButtonText && (
               <button
-                className="bg-black hover:bg-orange-500 font-IBM text-[16px] font-medium text-white p-[11px] rounded-full inline-flex"
+                className="bg-black hover:bg-orange-500 font-SansFlex text-[16px] font-medium text-white p-[11px] rounded-full inline-flex"
                 onClick={() =>
                   window.open(videoUrls[currentVideoIndex], "_blank")
                 }
@@ -263,12 +263,12 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
           </div>
         )}
         {hasData && assetsButton && (
-          <p className="p-2 cursor-pointer text-[16px] font-[500] font-IBM w-full rounded text-center hover:bg-orange-500 bg-black text-white">
+          <p className="p-2 cursor-pointer text-[16px] font-[500] font-SansFlex w-full rounded text-center hover:bg-orange-500 bg-black text-white">
             {assetsButton}
           </p>
         )}
         <button
-          className="p-2 font-IBM text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
+          className="p-2 font-SansFlex text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
           onClick={() => downloadCSV(csvData)}
           // disabled={!reportUrls[currentVideoIndex]}
         >
@@ -281,7 +281,7 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
         {radioButtonText &&
           userLoggedInProfile.business_type === "SubVendor" && (
             <button
-              className={`p-2 mt-[20px] cursor-pointer text-[16px] font-[500] font-IBM w-full rounded-full text-center ${
+              className={`p-2 mt-[20px] cursor-pointer text-[16px] font-[500] font-SansFlex w-full rounded-full text-center ${
                 outline
                   ? "border border-black text-black hover:bg-black hover:text-white"
                   : "hover:bg-orange-500 bg-black text-white"
@@ -313,7 +313,7 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
           style={{ width: "30vw" }}
           className="custom-dialog"
         >
-          <div className="bg-white p-4 rounded-lg space-y-4 font-IBM">
+          <div className="bg-white p-4 rounded-lg space-y-4 font-SansFlex">
             {!showPinInput ? (
               <>
                 {mostRecentUnclaimedGift ? (
@@ -334,7 +334,7 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
                       </span>{" "}
                     </p>
                     <button
-                      className="p-2 font-IBM text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
+                      className="p-2 font-SansFlex text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
                       onClick={handleRedeemClick}
                     >
                       Redeem Gift
@@ -368,7 +368,7 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
                       Thank you for your participation in the campaign!
                     </p>
                     <button
-                      className="p-2 font-IBM text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-gray-700 bg-gray-500 inline-flex items-center gap-2 justify-center"
+                      className="p-2 font-SansFlex text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-gray-700 bg-gray-500 inline-flex items-center gap-2 justify-center"
                       onClick={() => setClaimRewardDialog(false)}
                     >
                       Close
@@ -384,7 +384,7 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
                   work!
                 </p>
                 <button
-                  className="p-2 font-IBM text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
+                  className="p-2 font-SansFlex text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
                   onClick={() => setClaimRewardDialog(false)}
                 >
                   Close
@@ -412,13 +412,13 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
                 </div>
                 <div className="flex space-x-2">
                   <button
-                    className="p-2 font-IBM text-[16px] font-[500] flex-1 rounded-full text-white text-center cursor-pointer hover:bg-gray-700 bg-gray-500 inline-flex items-center gap-2 justify-center"
+                    className="p-2 font-SansFlex text-[16px] font-[500] flex-1 rounded-full text-white text-center cursor-pointer hover:bg-gray-700 bg-gray-500 inline-flex items-center gap-2 justify-center"
                     onClick={() => setShowPinInput(false)}
                   >
                     Back
                   </button>
                   <button
-                    className="p-2 font-IBM text-[16px] font-[500] flex-1 rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
+                    className="p-2 font-SansFlex text-[16px] font-[500] flex-1 rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
                     onClick={verifyPin}
                   >
                     Submit

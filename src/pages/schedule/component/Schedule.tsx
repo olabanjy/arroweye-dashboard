@@ -385,7 +385,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                       window.open(`/campaigns/${formData?.project}`);
                     }}
                   >
-                    <p className="bg-[#000] hover:bg-orange-500 text-[#fff] rounded-full h-[40px] w-[40px] flex items-center justify-center cursor-pointer font-IBM">
+                    <p className="bg-[#000] hover:bg-orange-500 text-[#fff] rounded-full h-[40px] w-[40px] flex items-center justify-center cursor-pointer font-SansFlex">
                       <GoArrowUpRight size={24} />
                     </p>
 
@@ -478,7 +478,7 @@ const Schedule: React.FC<ScheduleProps> = ({
           name="projectPin"
           autoComplete="new-password"
           className={cn(
-            "mt-2 block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-[8px]",
+            "mt-2 block w-full border font-SansFlex border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-[8px]",
             pinError && "border-red-500 focus:ring-red-500",
           )}
           placeholder={"Enter Pin"}

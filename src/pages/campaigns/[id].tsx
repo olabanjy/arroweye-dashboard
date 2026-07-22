@@ -333,7 +333,12 @@ const ProjectDetails = () => {
           setContent(fetchedContent);
         })
         .catch((err) => {
-          if (!err.response || err.code === "ERR_NETWORK" || err.code === "ECONNABORTED" || err.message?.includes("timeout")) {
+          if (
+            !err.response ||
+            err.code === "ERR_NETWORK" ||
+            err.code === "ECONNABORTED" ||
+            err.message?.includes("timeout")
+          ) {
             setHasNetworkError(true);
           }
         });
@@ -344,7 +349,12 @@ const ProjectDetails = () => {
           setContent(fetchedContent);
         })
         .catch((err) => {
-          if (!err.response || err.code === "ERR_NETWORK" || err.code === "ECONNABORTED" || err.message?.includes("timeout")) {
+          if (
+            !err.response ||
+            err.code === "ERR_NETWORK" ||
+            err.code === "ECONNABORTED" ||
+            err.message?.includes("timeout")
+          ) {
             setHasNetworkError(true);
           }
         });
@@ -550,203 +560,441 @@ const ProjectDetails = () => {
             className=" relative "
             style={{ marginBottom: "80px" }}
           >
-          <div className="flex flex-col gap-2">
-            <div className="text-[#919393] flex items-center gap-[5px] text-[0.875rem]">
-              <p className=" uppercase text-[#5e5e5e] tracking-[.1rem]">
-                {content?.vendor?.organization_name || content?.campaign?.mode}
-              </p>
-              <p className="uppercase p-[4px] border border-[#d5d9db] bg-[#f7fcff] rounded tracking-[.1rem]">
-                {content?.subvendor?.organization_name ||
-                  content?.campaign?.song_artist}
-              </p>
-            </div>
-            <div className="pr-[40px] mb-5">
-              {toggleNotifications ? (
-                <div className="flex items-center">
-                  <div className="">
-                    <input
-                      type="text"
-                      className="font-[900] text-[45px] text-[#000000] focus:outline-none"
-                      value={content?.title}
-                      onChange={(e) => {
-                        setContent({ ...content, title: e.target.value });
-                        setShowIcons(true);
-                      }}
-                    />
-                    {showIcons && (
-                      <div className="flex items-center gap-[5px] my-[20px]">
-                        <FaCheckCircle
-                          size={24}
-                          className="text-blue-500 cursor-pointer"
-                          onClick={() => {
-                            setShowIcons(false);
-                          }}
-                        />
-                        <GiCancel
-                          size={24}
-                          className="text-red-500 cursor-pointer"
-                          onClick={() => {
-                            setContent({ ...content, title: originalTitle });
-                            setShowIcons(false);
-                          }}
-                        />
+            <div className="flex flex-col gap-2">
+              <div className="text-[#919393] flex items-center gap-[5px] text-[0.875rem]">
+                <p className=" uppercase text-[#5e5e5e] tracking-[.1rem]">
+                  {content?.vendor?.organization_name ||
+                    content?.campaign?.mode}
+                </p>
+                <p className="uppercase p-[4px] border border-[#d5d9db] bg-[#f7fcff] rounded tracking-[.1rem]">
+                  {content?.subvendor?.organization_name ||
+                    content?.campaign?.song_artist}
+                </p>
+              </div>
+              <div className="pr-[40px] mb-5">
+                {toggleNotifications ? (
+                  <div className="flex items-center">
+                    <div className="">
+                      <input
+                        type="text"
+                        className="font-[900] text-[45px] text-[#000000] focus:outline-none"
+                        value={content?.title}
+                        onChange={(e) => {
+                          setContent({ ...content, title: e.target.value });
+                          setShowIcons(true);
+                        }}
+                      />
+                      {showIcons && (
+                        <div className="flex items-center gap-[5px] my-[20px]">
+                          <FaCheckCircle
+                            size={24}
+                            className="text-blue-500 cursor-pointer"
+                            onClick={() => {
+                              setShowIcons(false);
+                            }}
+                          />
+                          <GiCancel
+                            size={24}
+                            className="text-red-500 cursor-pointer"
+                            onClick={() => {
+                              setContent({ ...content, title: originalTitle });
+                              setShowIcons(false);
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="font-[900] text-[45px] text-[#000000] flex-grow">
+                    {content?.title || content?.campaign?.song_title}
+                  </p>
+                )}
+
+                <div className="my-[20px] gap-[20px] flex-wrap flex items-center justify-between">
+                  <div className="flex space-x-[5px]">
+                    {subvendorStaff?.map((user: any, index: any) => (
+                      <div key={index} className="relative group">
+                        <p
+                          className={`${predefinedColors[index % predefinedColors.length]}  tracking-[.2rem]  text-[12px] font-[700] font-Poppins rounded-full h-[50px] w-[50px] flex items-center justify-center text-white text-center cursor-pointer`}
+                          onClick={() => handleUserClick(user)}
+                        >
+                          {user?.user_profile?.fullname
+                            ?.slice(0, 2)
+                            .toUpperCase()}
+                        </p>
+
+                        <div className="font-SansFlex absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 bg-black text-white text-xs  px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 text-nowrap">
+                          {user?.user_profile?.fullname}
+                        </div>
+                      </div>
+                    ))}
+
+                    {hasAccess(userLoggedInProfile, ["Manager"]) && (
+                      <div className="relative group">
+                        <p
+                          className="bg-[#ffdead] text-[#000000] rounded-full w-[50px] h-[50px] flex items-center justify-center  text-center cursor-pointer"
+                          onClick={showDialog}
+                        >
+                          <HiOutlineUserAdd size={14} />
+                        </p>
                       </div>
                     )}
                   </div>
-                </div>
-              ) : (
-                <p className="font-[900] text-[45px] text-[#000000] flex-grow">
-                  {content?.title || content?.campaign?.song_title}
-                </p>
-              )}
-
-              <div className="my-[20px] gap-[20px] flex-wrap flex items-center justify-between">
-                <div className="flex space-x-[5px]">
-                  {subvendorStaff?.map((user: any, index: any) => (
-                    <div key={index} className="relative group">
-                      <p
-                        className={`${predefinedColors[index % predefinedColors.length]}  tracking-[.2rem]  text-[12px] font-[700] font-Poppins rounded-full h-[50px] w-[50px] flex items-center justify-center text-white text-center cursor-pointer`}
-                        onClick={() => handleUserClick(user)}
-                      >
-                        {user?.user_profile?.fullname
-                          ?.slice(0, 2)
-                          .toUpperCase()}
-                      </p>
-
-                      <div className="font-IBM absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 bg-black text-white text-xs  px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 text-nowrap">
-                        {user?.user_profile?.fullname}
-                      </div>
-                    </div>
-                  ))}
 
                   {hasAccess(userLoggedInProfile, ["Manager"]) && (
-                    <div className="relative group">
-                      <p
-                        className="bg-[#ffdead] text-[#000000] rounded-full w-[50px] h-[50px] flex items-center justify-center  text-center cursor-pointer"
-                        onClick={showDialog}
-                      >
-                        <HiOutlineUserAdd size={14} />
-                      </p>
+                    <div className="relative">
+                      {toggleNotifications && (
+                        <div className="fixed top-0 left-0 w-full h-[50px] flex items-center justify-center bg-blue-500 text-white text-[15px] font-[500] font-SansFlex z-[9999999]">
+                          Edit mode
+                        </div>
+                      )}
+
+                      <div className="flex items-center space-x-4">
+                        <p className="font-SansFlex font-[400] text-[16px]">
+                          Edit mode
+                        </p>
+                        <InputSwitch
+                          id="phone"
+                          checked={toggleNotifications}
+                          onChange={(e) => {
+                            if (e.value) {
+                              setEditMode(true);
+                            } else {
+                              setEditModeOff(true);
+                            }
+                          }}
+                          className="custom-switch"
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
+              </div>
 
-                {hasAccess(userLoggedInProfile, ["Manager"]) && (
-                  <div className="relative">
-                    {toggleNotifications && (
-                      <div className="fixed top-0 left-0 w-full h-[50px] flex items-center justify-center bg-blue-500 text-white text-[15px] font-[500] font-IBM z-[9999999]">
-                        Edit mode
-                      </div>
-                    )}
+              {(hasAccess(userLoggedInProfile, ["Manager"]) ||
+                isAdvertiser) && (
+                <div className="">
+                  <ProjectSingleInsight
+                    isAdvertiser={isAdvertiser}
+                    content={content}
+                  />
+                </div>
+              )}
+            </div>
 
-                    <div className="flex items-center space-x-4">
-                      <p className="font-IBM font-[400] text-[16px]">
-                        Edit mode
-                      </p>
-                      <InputSwitch
-                        id="phone"
-                        checked={toggleNotifications}
+            <form onSubmit={handleAddUserSubmit}>
+              <div
+                className={`custom-dialog-overlay ${
+                  visible
+                    ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+                    : "hidden"
+                }`}
+              >
+                <Dialog
+                  header={
+                    <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#212529] !font-[500] relative">
+                      + <span>ADD MEMBERS</span>
+                    </div>
+                  }
+                  visible={visible}
+                  onHide={hideDialog}
+                  breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+                  style={{ width: "40vw" }}
+                  className="custom-dialog-overlay"
+                >
+                  <div className="space-y-4">
+                    <p className="text-4xl font-bold text-[#000]">
+                      Collaborate
+                    </p>
+                    <div>
+                      <EmailInputWithSuggestions
+                        staffDetails={staffSuggestions}
+                        value={addUserFormData.email}
+                        name="email"
                         onChange={(e) => {
-                          if (e.value) {
-                            setEditMode(true);
-                          } else {
-                            setEditModeOff(true);
-                          }
+                          setUseWatchersEndpoint(false);
+                          const modifiedEvent = {
+                            ...e,
+                            target: {
+                              ...e.target,
+                              name: "email",
+                            },
+                          };
+                          handleAddUserInputChange(modifiedEvent);
                         }}
-                        className="custom-switch"
+                        onStaffSelect={handleStaffSelect}
+                        error={addUserErrors.email}
+                        placeholder="Add email"
+                        required
+                      />
+                    </div>
+                    <div
+                      className="flex items-center gap-[5px] cursor-pointer"
+                      onClick={handleAddContactClick}
+                    >
+                      <IoMdAddCircleOutline size={20} />
+                      <p>Add Contact</p>
+                      {addUserErrors.fullname && (
+                        <p className="font-SansFlex text-sm text-red-500">
+                          {addUserErrors.fullname}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex gap-[10px] items-end">
+                      <div className=" w-full">
+                        <SelectInput
+                          name="role"
+                          value={addUserFormData.role}
+                          onChange={handleAddUserInputChange2}
+                          placeholder="Choose Role"
+                          options={[
+                            { value: "Manager", label: "Manager" },
+                            { value: "Supervisor", label: "Supervisor" },
+                            { value: "Agent", label: "Agent" },
+                          ]}
+                          error={addUserErrors.role}
+                        />
+                      </div>
+                      <button
+                        onClick={handleAddUserSubmit}
+                        // disabled={isAddUserLoading}
+                        className=" text-[14px] bg-[#000] hover:bg-orange-500 w-full py-[15px] px-[12px] h-full rounded-full flex items-center justify-center space-x-2"
+                      >
+                        <IoIosAdd className="text-white" />
+                        <span className="text-white">Add </span>
+                      </button>
+                    </div>
+                  </div>
+                </Dialog>
+              </div>
+
+              <div
+                className={`custom-dialog-overlay ${
+                  nameDialogVisible
+                    ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+                    : "hidden"
+                }`}
+              >
+                <Dialog
+                  visible={nameDialogVisible}
+                  onHide={hideNameDialog}
+                  breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+                  style={{ width: "50vw" }}
+                  className="custom-dialog-overlay"
+                >
+                  <div className="space-y-4">
+                    <div>
+                      <Input
+                        type="text"
+                        required
+                        name="fullname"
+                        label="Enter Full Name"
+                        value={addUserFormData.fullname}
+                        onChange={handleAddUserInputChange}
+                        error={addUserErrors.fullname}
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        label="Cancel"
+                        icon="pi pi-times"
+                        className="rounded-full"
+                        onClick={hideNameDialog}
+                      />
+                      <Button
+                        label="Submit"
+                        icon="pi pi-check"
+                        className="rounded-full"
+                        onClick={hideNameDialog}
+                        disabled={!addUserFormData.fullname}
                       />
                     </div>
                   </div>
-                )}
+                </Dialog>
               </div>
-            </div>
-
-            {(hasAccess(userLoggedInProfile, ["Manager"]) || isAdvertiser) && (
-              <div className="">
-                <ProjectSingleInsight isAdvertiser={isAdvertiser} content={content} />
-              </div>
+            </form>
+            {hasAccess(userLoggedInProfile, ["Manager", "Supervisor"]) && (
+              <>
+                <InsightChart
+                  editMode={toggleNotifications}
+                  handleDownloadPage={handleDownloadPDF}
+                  handleDownloadData={handleExportCSV}
+                  isAdvertiser={isAdvertiser}
+                  content={content}
+                  refreshContent={refreshContent}
+                />
+                <div className="  ">
+                  <ScheduleProject
+                    filterIcon={false}
+                    isDateClickEnabled={false}
+                    isProjectPage={true}
+                  />
+                </div>
+              </>
             )}
-          </div>
 
-          <form onSubmit={handleAddUserSubmit}>
+            {isAdvertiser && <CampaignInsightAdvertiser content={content} />}
+
             <div
               className={`custom-dialog-overlay ${
-                visible
+                selectedUser
                   ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
                   : "hidden"
               }`}
             >
               <Dialog
                 header={
-                  <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#212529] !font-[500] relative">
-                    + <span>ADD MEMBERS</span>
+                  <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
+                    <Tooltip info="Staff user information" />
+
+                    <span>MEMBER INFORMATION</span>
                   </div>
                 }
-                visible={visible}
-                onHide={hideDialog}
+                visible={selectedUser !== null}
+                onHide={() => setSelectedUser(null)}
                 breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-                style={{ width: "40vw" }}
+                style={{ width: "30vw" }}
+                headerClassName=" text-[12px] text-[#212529] font-[500]"
+                className="custom-dialog-overlay font-SansFlex"
+              >
+                {selectedUser && (
+                  <div className="space-y-4 font-SansFlex">
+                    <p className="text-[30px] text-[#212529] font-[600]">
+                      {selectedUser.fullname}
+                    </p>
+                    <div className=" ">
+                      <p className="text-[16px] font-[400] text-[#212529]">
+                        Email{" "}
+                      </p>
+                      <p className=" font-[600] text-[16px] text-[#212529]">
+                        {" "}
+                        {selectedUser.staff_email}
+                      </p>
+                    </div>
+                    <div className=" text-[16px] font-[400] ">
+                      <p className="text-[#212529]">Role </p>
+                      <p className=" text-[#01a733] font-[600]">
+                        {selectedUser.role}
+                      </p>
+                    </div>
+                    <div className=" text-[16px] font-[400] text-[#212529]">
+                      <p className=" text-[#212529]">Member since </p>
+                      <p className=" font-[600]">{selectedUser.member_since}</p>
+                    </div>
+                    <div className=" text-[16px] font-[400] text-[#212529]">
+                      <p className="text-[#212529]">Last Login</p>
+                      <p className=" font-[600]">{selectedUser.last_login}</p>
+                    </div>
+
+                    {hasAccess(userLoggedInProfile, ["Manager"]) && (
+                      <div className=" ">
+                        <div
+                          className=" px-[16px] py-[8px] rounded bg-black text-white inline-block cursor-pointer mt-[10px]"
+                          onClick={() => setDeleteModal(true)}
+                        >
+                          <FaUserMinus />
+                        </div>
+
+                        <div
+                          className=" px-[16px] py-[8px] text-black inline-block cursor-pointer"
+                          onClick={handleAdjustmentClick}
+                        >
+                          <HiAdjustmentsHorizontal />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className=" hidden">
+                      <div className="flex justify-end space-x-2">
+                        <Button
+                          label="Close"
+                          icon="pi pi-times"
+                          className="rounded-full"
+                          onClick={() => setSelectedUser(null)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </Dialog>
+            </div>
+            <div
+              className={`custom-dialog-overlay ${
+                adjustmentModalVisible
+                  ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+                  : "hidden"
+              }`}
+            >
+              <Dialog
+                header={
+                  <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
+                    <Tooltip info="Staff user Access" />
+
+                    <span>MEMBER ACCESS</span>
+                  </div>
+                }
+                visible={adjustmentModalVisible}
+                onHide={() => setAdjustmentModalVisible(false)}
+                breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+                style={{ width: "30vw" }}
                 className="custom-dialog-overlay"
               >
-                <div className="space-y-4">
-                  <p className="text-4xl font-bold text-[#000]">Collaborate</p>
-                  <div>
-                    <EmailInputWithSuggestions
-                      staffDetails={staffSuggestions}
-                      value={addUserFormData.email}
-                      name="email"
-                      onChange={(e) => {
-                        setUseWatchersEndpoint(false);
-                        const modifiedEvent = {
-                          ...e,
-                          target: {
-                            ...e.target,
-                            name: "email",
-                          },
-                        };
-                        handleAddUserInputChange(modifiedEvent);
-                      }}
-                      onStaffSelect={handleStaffSelect}
-                      error={addUserErrors.email}
-                      placeholder="Add email"
-                      required
+                <div className="space-y-4 font-SansFlex">
+                  <div className="w-full">
+                    <SelectInput
+                      name="role"
+                      value={addUserFormData.role}
+                      onChange={handleAddUserInputChange2}
+                      // labelText="Choose Role"
+                      options={[
+                        { value: "Manager", label: "Manager" },
+                        { value: "Supervisor", label: "Supervisor" },
+                        { value: "Agent", label: "Agent" },
+                      ]}
                     />
                   </div>
-                  <div
-                    className="flex items-center gap-[5px] cursor-pointer"
-                    onClick={handleAddContactClick}
-                  >
-                    <IoMdAddCircleOutline size={20} />
-                    <p>Add Contact</p>
-                    {addUserErrors.fullname && (
-                      <p className="font-IBM text-sm text-red-500">
-                        {addUserErrors.fullname}
-                      </p>
-                    )}
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      label="Save"
+                      onClick={() => handleCampaignActionUpdate()}
+                      className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
+                    />
                   </div>
-                  <div className="flex gap-[10px] items-end">
-                    <div className=" w-full">
-                      <SelectInput
-                        name="role"
-                        value={addUserFormData.role}
-                        onChange={handleAddUserInputChange2}
-                        placeholder="Choose Role"
-                        options={[
-                          { value: "Manager", label: "Manager" },
-                          { value: "Supervisor", label: "Supervisor" },
-                          { value: "Agent", label: "Agent" },
-                        ]}
-                        error={addUserErrors.role}
-                      />
-                    </div>
-                    <button
-                      onClick={handleAddUserSubmit}
-                      // disabled={isAddUserLoading}
-                      className=" text-[14px] bg-[#000] hover:bg-orange-500 w-full py-[15px] px-[12px] h-full rounded-full flex items-center justify-center space-x-2"
-                    >
-                      <IoIosAdd className="text-white" />
-                      <span className="text-white">Add </span>
-                    </button>
+                </div>
+              </Dialog>
+            </div>
+            <div
+              className={`custom-dialog-overlay ${
+                deleteModal
+                  ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+                  : "hidden"
+              }`}
+            >
+              <Dialog
+                visible={deleteModal}
+                onHide={() => setDeleteModal(false)}
+                breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+                style={{ width: "30vw" }}
+                className="custom-dialog-overlay"
+              >
+                <div className="space-y-4 font-SansFlex">
+                  <p className="text-[16px] font-[400] font-SansFlex">
+                    Are you sure you want to remove this profile from this
+                    project?
+                  </p>
+
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      label="OK"
+                      onClick={() => handleCampaignActionRemove()}
+                      className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
+                    />
+                    <Button
+                      label="Cancel"
+                      onClick={() => setDeleteModal(false)}
+                      className="px-[16px] py-[8px] text-white rounded-full bg-slate-500"
+                    />
                   </div>
                 </div>
               </Dialog>
@@ -754,325 +1002,95 @@ const ProjectDetails = () => {
 
             <div
               className={`custom-dialog-overlay ${
-                nameDialogVisible
+                editMode
                   ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
                   : "hidden"
               }`}
             >
               <Dialog
-                visible={nameDialogVisible}
-                onHide={hideNameDialog}
+                visible={editMode}
+                onHide={() => setEditMode(false)}
                 breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-                style={{ width: "50vw" }}
+                style={{ width: "30vw" }}
                 className="custom-dialog-overlay"
               >
-                <div className="space-y-4">
-                  <div>
-                    <Input
-                      type="text"
-                      required
-                      name="fullname"
-                      label="Enter Full Name"
-                      value={addUserFormData.fullname}
-                      onChange={handleAddUserInputChange}
-                      error={addUserErrors.fullname}
-                    />
-                  </div>
+                <div className="space-y-4 font-SansFlex">
+                  <p className="text-[16px] font-[400]">
+                    Do you want to switch to edit mode?
+                  </p>
+
                   <div className="flex justify-end space-x-2">
                     <Button
-                      label="Cancel"
-                      icon="pi pi-times"
-                      className="rounded-full"
-                      onClick={hideNameDialog}
+                      label="Yes"
+                      onClick={() => {
+                        setEditMode(false);
+                        setToggleNotifications(true);
+                      }}
+                      className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
                     />
+
                     <Button
-                      label="Submit"
-                      icon="pi pi-check"
-                      className="rounded-full"
-                      onClick={hideNameDialog}
-                      disabled={!addUserFormData.fullname}
+                      label="No"
+                      onClick={() => {
+                        setEditMode(false);
+                        setToggleNotifications(false);
+                      }}
+                      className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
                     />
                   </div>
                 </div>
               </Dialog>
             </div>
-          </form>
-          {hasAccess(userLoggedInProfile, ["Manager", "Supervisor"]) && (
-            <>
-              <InsightChart
-                editMode={toggleNotifications}
-                handleDownloadPage={handleDownloadPDF}
-                handleDownloadData={handleExportCSV}
-                isAdvertiser={isAdvertiser}
-                content={content}
-                refreshContent={refreshContent}
-              />
-              <div className="  ">
-                <ScheduleProject
-                  filterIcon={false}
-                  isDateClickEnabled={false}
-                  isProjectPage={true}
-                />
-              </div>
-            </>
-          )}
 
-          {isAdvertiser && <CampaignInsightAdvertiser content={content} />}
-
-          <div
-            className={`custom-dialog-overlay ${
-              selectedUser
-                ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
-                : "hidden"
-            }`}
-          >
-            <Dialog
-              header={
-                <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
-                  <Tooltip info="Staff user information" />
-
-                  <span>MEMBER INFORMATION</span>
-                </div>
-              }
-              visible={selectedUser !== null}
-              onHide={() => setSelectedUser(null)}
-              breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-              style={{ width: "30vw" }}
-              headerClassName=" text-[12px] text-[#212529] font-[500]"
-              className="custom-dialog-overlay font-IBM"
+            <div
+              className={`custom-dialog-overlay ${
+                editModeOff
+                  ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+                  : "hidden"
+              }`}
             >
-              {selectedUser && (
-                <div className="space-y-4 font-IBM">
-                  <p className="text-[30px] text-[#212529] font-[600]">
-                    {selectedUser.fullname}
+              <Dialog
+                visible={editModeOff}
+                onHide={() => setEditModeOff(false)}
+                breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+                style={{ width: "30vw" }}
+                className="custom-dialog-overlay"
+              >
+                <div className="space-y-4 font-SansFlex">
+                  <p className="text-[16px] font-[400]">
+                    Make sure all your changes are saved before you proceed.
+                    Please note that any unsaved changes will be lost
+                    permanently.
                   </p>
-                  <div className=" ">
-                    <p className="text-[16px] font-[400] text-[#212529]">
-                      Email{" "}
-                    </p>
-                    <p className=" font-[600] text-[16px] text-[#212529]">
-                      {" "}
-                      {selectedUser.staff_email}
-                    </p>
-                  </div>
-                  <div className=" text-[16px] font-[400] ">
-                    <p className="text-[#212529]">Role </p>
-                    <p className=" text-[#01a733] font-[600]">
-                      {selectedUser.role}
-                    </p>
-                  </div>
-                  <div className=" text-[16px] font-[400] text-[#212529]">
-                    <p className=" text-[#212529]">Member since </p>
-                    <p className=" font-[600]">{selectedUser.member_since}</p>
-                  </div>
-                  <div className=" text-[16px] font-[400] text-[#212529]">
-                    <p className="text-[#212529]">Last Login</p>
-                    <p className=" font-[600]">{selectedUser.last_login}</p>
-                  </div>
 
-                  {hasAccess(userLoggedInProfile, ["Manager"]) && (
-                    <div className=" ">
-                      <div
-                        className=" px-[16px] py-[8px] rounded bg-black text-white inline-block cursor-pointer mt-[10px]"
-                        onClick={() => setDeleteModal(true)}
-                      >
-                        <FaUserMinus />
-                      </div>
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      label="Yes"
+                      onClick={() => {
+                        setEditModeOff(false);
+                        setToggleNotifications(false);
+                      }}
+                      className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
+                    />
 
-                      <div
-                        className=" px-[16px] py-[8px] text-black inline-block cursor-pointer"
-                        onClick={handleAdjustmentClick}
-                      >
-                        <HiAdjustmentsHorizontal />
-                      </div>
-                    </div>
-                  )}
-
-                  <div className=" hidden">
-                    <div className="flex justify-end space-x-2">
-                      <Button
-                        label="Close"
-                        icon="pi pi-times"
-                        className="rounded-full"
-                        onClick={() => setSelectedUser(null)}
-                      />
-                    </div>
+                    <Button
+                      label="No"
+                      onClick={() => {
+                        setEditModeOff(false);
+                        setToggleNotifications(true);
+                      }}
+                      className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
+                    />
                   </div>
                 </div>
-              )}
-            </Dialog>
-          </div>
-          <div
-            className={`custom-dialog-overlay ${
-              adjustmentModalVisible
-                ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
-                : "hidden"
-            }`}
-          >
-            <Dialog
-              header={
-                <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
-                  <Tooltip info="Staff user Access" />
-
-                  <span>MEMBER ACCESS</span>
-                </div>
-              }
-              visible={adjustmentModalVisible}
-              onHide={() => setAdjustmentModalVisible(false)}
-              breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-              style={{ width: "30vw" }}
-              className="custom-dialog-overlay"
-            >
-              <div className="space-y-4 font-IBM">
-                <div className="w-full">
-                  <SelectInput
-                    name="role"
-                    value={addUserFormData.role}
-                    onChange={handleAddUserInputChange2}
-                    // labelText="Choose Role"
-                    options={[
-                      { value: "Manager", label: "Manager" },
-                      { value: "Supervisor", label: "Supervisor" },
-                      { value: "Agent", label: "Agent" },
-                    ]}
-                  />
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    label="Save"
-                    onClick={() => handleCampaignActionUpdate()}
-                    className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
-                  />
-                </div>
-              </div>
-            </Dialog>
-          </div>
-          <div
-            className={`custom-dialog-overlay ${
-              deleteModal
-                ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
-                : "hidden"
-            }`}
-          >
-            <Dialog
-              visible={deleteModal}
-              onHide={() => setDeleteModal(false)}
-              breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-              style={{ width: "30vw" }}
-              className="custom-dialog-overlay"
-            >
-              <div className="space-y-4 font-IBM">
-                <p className="text-[16px] font-[400] font-IBM">
-                  Are you sure you want to remove this profile from this
-                  project?
-                </p>
-
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    label="OK"
-                    onClick={() => handleCampaignActionRemove()}
-                    className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
-                  />
-                  <Button
-                    label="Cancel"
-                    onClick={() => setDeleteModal(false)}
-                    className="px-[16px] py-[8px] text-white rounded-full bg-slate-500"
-                  />
-                </div>
-              </div>
-            </Dialog>
-          </div>
-
-          <div
-            className={`custom-dialog-overlay ${
-              editMode
-                ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
-                : "hidden"
-            }`}
-          >
-            <Dialog
-              visible={editMode}
-              onHide={() => setEditMode(false)}
-              breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-              style={{ width: "30vw" }}
-              className="custom-dialog-overlay"
-            >
-              <div className="space-y-4 font-IBM">
-                <p className="text-[16px] font-[400]">
-                  Do you want to switch to edit mode?
-                </p>
-
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    label="Yes"
-                    onClick={() => {
-                      setEditMode(false);
-                      setToggleNotifications(true);
-                    }}
-                    className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
-                  />
-
-                  <Button
-                    label="No"
-                    onClick={() => {
-                      setEditMode(false);
-                      setToggleNotifications(false);
-                    }}
-                    className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
-                  />
-                </div>
-              </div>
-            </Dialog>
-          </div>
-
-          <div
-            className={`custom-dialog-overlay ${
-              editModeOff
-                ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
-                : "hidden"
-            }`}
-          >
-            <Dialog
-              visible={editModeOff}
-              onHide={() => setEditModeOff(false)}
-              breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-              style={{ width: "30vw" }}
-              className="custom-dialog-overlay"
-            >
-              <div className="space-y-4 font-IBM">
-                <p className="text-[16px] font-[400]">
-                  Make sure all your changes are saved before you proceed.
-                  Please note that any unsaved changes will be lost permanently.
-                </p>
-
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    label="Yes"
-                    onClick={() => {
-                      setEditModeOff(false);
-                      setToggleNotifications(false);
-                    }}
-                    className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
-                  />
-
-                  <Button
-                    label="No"
-                    onClick={() => {
-                      setEditModeOff(false);
-                      setToggleNotifications(true);
-                    }}
-                    className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
-                  />
-                </div>
-              </div>
-            </Dialog>
-          </div>
-
-          {!isAdvertiser && (
-            <div className="mb-[100px]">
-              <DropsList isAdvertiser={isAdvertiser} content={content} />
+              </Dialog>
             </div>
-          )}
+
+            {!isAdvertiser && (
+              <div className="mb-[100px]">
+                <DropsList isAdvertiser={isAdvertiser} content={content} />
+              </div>
+            )}
           </div>
         )}
       </DashboardLayout>

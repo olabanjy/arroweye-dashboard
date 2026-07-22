@@ -44,7 +44,7 @@ interface ChartDataItem {
 const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-[25px] top-0 transform ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-IBM">
+    <div className="absolute left-[25px] top-0 transform ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-SansFlex">
       <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
       {info}
     </div>
@@ -108,7 +108,7 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
   ];
 
   return (
-    <div className="space-y-5 font-IBM w-full">
+    <div className="space-y-5 font-SansFlex w-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
           <p className="!text-[12px] font-[400] tracking-[.1rem]">{title}</p>
@@ -129,7 +129,7 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
       </div>
 
       <div className="flex items-center gap-2">
-        <p className="text-2xl lg:text-[56px] font-[600] font-IBM">
+        <p className="text-2xl lg:text-[56px] font-[600] font-SansFlex">
           {!!value && formatNumber(value)}
         </p>
         {Number(value) > 1000 && <Tooltip info={value.toLocaleString()} />}
@@ -192,7 +192,7 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="tooltip-content font-IBM">
+                        <div className="tooltip-content font-SansFlex">
                           <p>{`${payload[0].payload.name}: ${payload[0].value}`}</p>
                         </div>
                       );

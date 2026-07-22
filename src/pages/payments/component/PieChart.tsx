@@ -36,7 +36,7 @@ interface InsightChartProps<TFilters extends ChartFilterState> {
 const TooltipComponent = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-full top-0 transform  ml-1 hidden w-60 p-2 text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-IBM">
+    <div className="absolute left-full top-0 transform  ml-1 hidden w-60 p-2 text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-SansFlex">
       <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black  border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
       {info}
     </div>
@@ -93,7 +93,7 @@ const PieChart = <TFilters extends ChartFilterState = ChartFilterState>({
   ];
 
   return (
-    <div className="space-y-[20px] font-IBM">
+    <div className="space-y-[20px] font-SansFlex">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
           <p className="!text-[12px] font-[400] tracking-[.1rem]">{title}</p>
@@ -124,7 +124,7 @@ const PieChart = <TFilters extends ChartFilterState = ChartFilterState>({
       </div>
 
       <div className="flex items-center gap-2 ">
-        <p className="text-2xl lg:text-[56px] font-[600] font-IBM">
+        <p className="text-2xl lg:text-[56px] font-[600] font-SansFlex">
           {!!value && formatNumber(value)}
         </p>
         {Number(value) > 1000 && (
@@ -132,12 +132,12 @@ const PieChart = <TFilters extends ChartFilterState = ChartFilterState>({
         )}
       </div>
       <div>
-        <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-IBM">
+        <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-SansFlex">
           {valuePlaceHolder}
         </p>
 
         {defaultChartData && (
-          <div className="w-full h-[300px] font-IBM">
+          <div className="w-full h-[300px] font-SansFlex">
             <Pie
               data={defaultChartData}
               options={{

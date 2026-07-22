@@ -51,8 +51,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router]);
 
   useEffect(() => {
-    if (isPublicShellRoute)
-      return;
+    if (isPublicShellRoute) return;
 
     let timeout: NodeJS.Timeout;
 
@@ -120,7 +119,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <div className=" font-IBM relative">
+        <div className=" font-SansFlex relative">
           {!isPublicShellRoute && <ScrollToTopButton />}
 
           <Component {...pageProps} />

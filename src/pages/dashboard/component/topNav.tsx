@@ -6,7 +6,7 @@ import MileStonesNotification from "./milestones/MileStonesNotification";
 import SecurityNotification from "./security/SecurityNotification";
 import AssetsNotification from "./assets/AssetsNotification";
 import PaymentsNotification from "./payments/PaymentsNotification";
-import { useTopNav } from "./hooks/use-top-nav";
+import { useTopNav } from "@/hooks/use-top-nav";
 
 const TopNav: FC = () => {
   const {
@@ -207,7 +207,7 @@ const TopNav: FC = () => {
                 {activeMainTab === "drops" && activeInnerTab === "assets" && (
                   <div className="bg-black px-4 py-[4px] rounded text-center mx-4 mb-4">
                     <button
-                      className="text-white font-medium text-[14px] w-full font-IBM"
+                      className="text-white font-medium text-[14px] w-full font-SansFlex"
                       onClick={() => router.push("/drops")}
                     >
                       View All Assets

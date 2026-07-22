@@ -6,7 +6,7 @@ import Archive from "./Archive";
 
 const InvoicesTab: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"Campaigns" | "Archive">(
-    "Campaigns"
+    "Campaigns",
   );
   const [filter, setFilter] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<string>("");
@@ -44,11 +44,11 @@ const InvoicesTab: React.FC = () => {
 
           <div className="flex-grow ">
             <div className="flex items-center justify-end gap-[10px]">
-              <div className="flex-grow font-IBM">
+              <div className="flex-grow font-SansFlex">
                 <Input
                   type="text"
                   placeholder="Search by title, label and artist..."
-                  className=" w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
+                  className=" w-full rounded-full font-SansFlex placeholder:font-SansFlex text-[17px] placeholder:text-[17px]"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                 />

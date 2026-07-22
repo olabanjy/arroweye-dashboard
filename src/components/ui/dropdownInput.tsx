@@ -5,7 +5,7 @@ import { FiInfo, FiEye, FiEyeOff } from "react-icons/fi";
 const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-[25px] top-0 transform  ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-IBM">
+    <div className="absolute left-[25px] top-0 transform  ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-SansFlex">
       <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black  border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
       {info}
     </div>
@@ -38,7 +38,7 @@ const useValidation = (validate: InputProps["validate"]) => {
       }
       return true;
     },
-    [validate]
+    [validate],
   );
 
   const getValidationError = useCallback(() => {
@@ -64,13 +64,13 @@ const DropDownInput = React.forwardRef<HTMLInputElement, InputProps>(
       selectedValue,
       ...props
     },
-    ref
+    ref,
   ) => {
     const initialOption = options.find(
-      (option) => option.value === selectedValue
+      (option) => option.value === selectedValue,
     );
     const [inputValue, setInputValue] = useState<string>(
-      initialOption?.email || ""
+      initialOption?.email || "",
     );
     const [validationError, setValidationError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -121,7 +121,7 @@ const DropDownInput = React.forwardRef<HTMLInputElement, InputProps>(
     const inputType = type === "password" && showPassword ? "text" : type;
 
     return (
-      <div className="flex flex-col space-y-2 font-IBM">
+      <div className="flex flex-col space-y-2 font-SansFlex">
         <div className="flex items-center space-x-2">
           {label && (
             <label
@@ -140,7 +140,7 @@ const DropDownInput = React.forwardRef<HTMLInputElement, InputProps>(
             className={cn(
               "block w-full rounded-[8px] border border-black bg-white px-4 py-[8px] h-[50px]  text-gray-900 shadow-sm  dark:text-white  text-[14px] font-[400]",
               (error || validationError) && "border-red-500 focus:ring-red-500",
-              className
+              className,
             )}
             value={inputValue}
             onBlur={handleBlur}
@@ -168,10 +168,10 @@ const DropDownInput = React.forwardRef<HTMLInputElement, InputProps>(
                   onClick={() => handleOptionSelect(option.value, option.email)}
                   className="grid gap-[6px] px-4 py-2 text-sm text-gray-900 cursor-pointer hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
                 >
-                  <p className="font-[600] text-[14px] font-IBM text-[#212529]">
+                  <p className="font-[600] text-[14px] font-SansFlex text-[#212529]">
                     {option.label}
                   </p>
-                  <p className="text-[14px] font-[400] text-[#212529] font-IBM">
+                  <p className="text-[14px] font-[400] text-[#212529] font-SansFlex">
                     {option.email}
                   </p>
                 </div>
@@ -189,7 +189,7 @@ const DropDownInput = React.forwardRef<HTMLInputElement, InputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 DropDownInput.displayName = "DropDownInput";

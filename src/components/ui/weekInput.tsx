@@ -29,7 +29,7 @@ const useValidation = (validate: InputProps["validate"]) => {
       }
       return true;
     },
-    [validate]
+    [validate],
   );
 
   const getValidationError = useCallback(() => {
@@ -55,7 +55,7 @@ const WeekInput = React.forwardRef<HTMLInputElement, InputProps>(
       placeholder,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [inputValue, setInputValue] = useState<string>("");
     const [validationError, setValidationError] = useState<string | null>(null);
@@ -78,12 +78,12 @@ const WeekInput = React.forwardRef<HTMLInputElement, InputProps>(
     const inputType = type === "password" ? "text" : type;
 
     return (
-      <div className="flex flex-col space-y-2 font-IBM">
+      <div className="flex flex-col space-y-2 font-SansFlex">
         <div className="relative">
           <p
             className={cn(
               "absolute rounded-t-[8px] bg-[#000000] top-0 left-0 flex w-full items-center justify-center  text-[9px] font-[700] text-[#888888]  dark:text-gray-400",
-              labelClassName
+              labelClassName,
             )}
           >
             {label}
@@ -92,10 +92,10 @@ const WeekInput = React.forwardRef<HTMLInputElement, InputProps>(
             type={inputType}
             ref={ref}
             className={cn(
-              "block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white disabled:bg-gray-300",
+              "block w-full border font-SansFlex border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white disabled:bg-gray-300",
               rounded ? "rounded-full" : "rounded-[8px]",
               (error || validationError) && "border-red-500 focus:ring-red-500",
-              className
+              className,
             )}
             placeholder={placeholder}
             value={inputValue}
@@ -110,14 +110,14 @@ const WeekInput = React.forwardRef<HTMLInputElement, InputProps>(
         {(error || validationError) && (
           <p
             id={props.id ? `${props.id}-error` : undefined}
-            className="font-IBM text-sm text-red-500"
+            className="font-SansFlex text-sm text-red-500"
           >
             {error || validationError}
           </p>
         )}
       </div>
     );
-  }
+  },
 );
 
 WeekInput.displayName = "WeekInput";

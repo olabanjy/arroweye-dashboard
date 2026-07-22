@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-[25px] top-0 transform  ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-IBM">
+    <div className="absolute left-[25px] top-0 transform  ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-SansFlex">
       <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
       {info}
     </div>
@@ -44,7 +44,7 @@ const useValidation = (validate: InputProps["validate"]) => {
       }
       return true;
     },
-    [validate]
+    [validate],
   );
 
   const getValidationError = useCallback(() => {
@@ -75,7 +75,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       name,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [validationError, setValidationError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -122,14 +122,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputType = type === "password" && showPassword ? "text" : type;
 
     return (
-      <div className="flex flex-col space-y-2 font-IBM">
+      <div className="flex flex-col space-y-2 font-SansFlex">
         <div className="flex items-center space-x-2">
           {label && (
             <label
               htmlFor={props.id}
               className={cn(
                 "tracking-[.1rem] text-[12px] font-[400] text-[#212529] leading-[18px]",
-                labelClassName
+                labelClassName,
               )}
             >
               {label}
@@ -142,10 +142,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             selected={value ? new Date(value) : null}
             onChange={handleDateChange}
             className={cn(
-              "block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white",
+              "block w-full border font-SansFlex border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white",
               rounded ? "rounded-full" : "rounded-[8px]",
               (error || validationError) && "border-red-500 focus:ring-red-500",
-              className
+              className,
             )}
             disabled={disabled}
             dateFormat="yyyy-MM-dd HH:mm"
@@ -160,11 +160,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               type={inputType}
               ref={ref}
               className={cn(
-                "block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white",
+                "block w-full border font-SansFlex border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white",
                 rounded ? "rounded-full" : "rounded-[8px]",
                 (error || validationError) &&
                   "border-red-500 focus:ring-red-500",
-                className
+                className,
               )}
               placeholder={placeholder}
               value={value}
@@ -191,14 +191,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {(error || validationError) && (
           <p
             id={props.id ? `${props.id}-error` : undefined}
-            className="font-IBM text-sm text-red-500"
+            className="font-SansFlex text-sm text-red-500"
           >
             {error || validationError}
           </p>
         )}
       </div>
     );
-  }
+  },
 );
 
 Input.displayName = "Input";
