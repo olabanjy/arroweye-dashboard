@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import Slider from "react-slick";
 import { MdOutlineFileDownload } from "react-icons/md";
-import Image from "next/image";
 import { HiMiniArrowLeft, HiMiniArrowRight } from "react-icons/hi2";
 import { FaRegCirclePlay } from "react-icons/fa6";
 import JSZip from "jszip";
@@ -20,7 +19,7 @@ interface MomentSliderCardProps {
   MomentsTitle?: string;
   assetsButton?: string;
   additionalContent?: React.ReactNode;
-  csvData?: any;
+  csvData?: Record<string, unknown>;
   loading?: boolean;
 }
 
@@ -92,7 +91,15 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
     }
   };
 
-  const downloadCSV = (data: any, filename = "DSPData.csv") => {
+  const downloadCSV = (
+    data: Record<string, unknown> | undefined,
+    filename = "DSPData.csv"
+  ) => {
+    if (!data) {
+      toast.error("No data to download");
+      return;
+    }
+
     const headers = Object.keys(data).join(",") + "\n";
     const values = Object.values(data).join(",") + "\n";
 
@@ -137,25 +144,20 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
                     width={500}
                     height={400}
                   />
-                  <a
-                    // href={
-                    //   links[index].startsWith("http")
-                    //     ? links[index]
-                    //     : `https://${links[index]}`
-                    // }
-                    href=""
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-[#ffffff] text-[#000000] text-[12px] font-[400] rounded-full px-3 py-1"
-                  >
-                    <div className="flex items-center justify-center gap-[5px]">
-                      <FaRegCirclePlay />
-                      Listen
-                    </div>
-                  </a>
                 </div>
               ))}
             </Slider>{" "}
+            <a
+              href=""
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-4 left-1/2 z-10 transform -translate-x-1/2 bg-[#ffffff] text-[#000000] text-[12px] font-[400] rounded-full px-3 py-1"
+            >
+              <div className="flex items-center justify-center gap-[5px]">
+                <FaRegCirclePlay />
+                Listen
+              </div>
+            </a>
             <div
               className="absolute right-[15px] top-1/2 transform -translate-y-1/2 cursor-pointer z-10 bg-opacity-50 bg-black rounded-full p-3"
               onClick={() => sliderRef.current?.slickNext()}

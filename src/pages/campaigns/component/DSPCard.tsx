@@ -25,6 +25,7 @@ const DSP_COLORS: Record<string, string> = {
 };
 
 const DEFAULT_COLOR = "#a3a3a3";
+const CHART_FONT_FAMILY = "IBM Plex Sans, sans-serif";
 
 const formatNumber = (n: number) => {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -74,9 +75,9 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
   };
 
   return (
-    <div className="space-y-[20px] flex flex-col justify-between">
+    <div className="space-y-[20px] flex flex-col justify-between font-IBM">
       <div>
-        <p className="text-[11px] font-semibold tracking-widest text-gray-400 uppercase font-sansFlex mb-2">
+        <p className="text-[11px] font-semibold tracking-widest text-gray-400 uppercase font-IBM mb-2">
           DSP
         </p>
         <p className="text-[44px] font-extrabold text-gray-900 leading-none">
@@ -85,7 +86,7 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
       </div>
 
       <div>
-        <p className="text-[11px] font-bold tracking-widest text-gray-900 uppercase mb-3 font-sansFlex">
+        <p className="text-[11px] font-bold tracking-widest text-gray-900 uppercase mb-3 font-IBM">
           Top DSPs
         </p>
         {hasData ? (
@@ -97,13 +98,21 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
             >
               <XAxis
                 dataKey="name"
-                tick={{ fontSize: 11, fill: "#999" }}
+                tick={{
+                  fontSize: 11,
+                  fill: "#999",
+                  fontFamily: CHART_FONT_FAMILY,
+                }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
                 tickFormatter={formatYAxis}
-                tick={{ fontSize: 10, fill: "#bbb" }}
+                tick={{
+                  fontSize: 10,
+                  fill: "#bbb",
+                  fontFamily: CHART_FONT_FAMILY,
+                }}
                 axisLine={false}
                 tickLine={false}
                 width={60}
@@ -113,6 +122,7 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
                 contentStyle={{
                   borderRadius: 8,
                   fontSize: 12,
+                  fontFamily: CHART_FONT_FAMILY,
                   border: "1px solid #eee",
                 }}
               />

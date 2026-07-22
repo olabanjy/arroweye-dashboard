@@ -293,12 +293,6 @@ const Moments = () => {
             >
               {isUploading ? "Uploading..." : "Save"}
             </button>
-            <button
-              type="button"
-              className="font-IBM text-[14px] text-white hover:text-[#ffffff] bg-[#1f9abd] hover:bg-gray-200 hover:border-none py-[8px] px-[20px] rounded-full"
-            >
-              Watch demo
-            </button>
           </div>
         </div>
       </form>

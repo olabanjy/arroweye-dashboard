@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React from "react";
 import { FiInfo } from "react-icons/fi";
 import { SelectInput } from "@/components/ui/selectinput";
 import { Pie } from "react-chartjs-2";
@@ -13,7 +13,15 @@ import { formatNumber } from "@/lib/utils";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-interface InsightChartProps {
+const CHART_FONT_FAMILY = "IBM Plex Sans, sans-serif";
+
+type ChartFilterState = {
+  channels?: string;
+  weeks?: string;
+  lifetime?: string;
+};
+
+interface InsightChartProps<TFilters extends ChartFilterState> {
   title: string;
   value: number | string;
   percentageChange?: string;
@@ -22,7 +30,7 @@ interface InsightChartProps {
   chartData?: ChartData<"pie", number[], string>;
   valuePlaceHolder?: string;
   info?: string;
-  setFilters?: any;
+  setFilters?: React.Dispatch<React.SetStateAction<TFilters>>;
 }
 
 const TooltipComponent = ({ info }: { info: string }) => (
@@ -35,7 +43,7 @@ const TooltipComponent = ({ info }: { info: string }) => (
   </div>
 );
 
-const PieChart: FC<InsightChartProps> = ({
+const PieChart = <TFilters extends ChartFilterState = ChartFilterState>({
   title,
   value,
   selectOptions,
@@ -44,7 +52,7 @@ const PieChart: FC<InsightChartProps> = ({
   info,
   valuePlaceHolder,
   setFilters,
-}) => {
+}: InsightChartProps<TFilters>) => {
   const defaultChartData: ChartData<"pie", number[], string> = chartData || {
     labels: ["Radio", "Cable", "TV", "DJ"],
     datasets: [
@@ -85,7 +93,7 @@ const PieChart: FC<InsightChartProps> = ({
   ];
 
   return (
-    <div className="space-y-[20px]">
+    <div className="space-y-[20px] font-IBM">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
           <p className="!text-[12px] font-[400] tracking-[.1rem]">{title}</p>
@@ -98,10 +106,10 @@ const PieChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={options}
                 placeholder="Channels"
-                onChange={(value: any) => {
-                  setFilters((prevFilters: any) => ({
+                onChange={(value) => {
+                  setFilters?.((prevFilters) => ({
                     ...prevFilters,
-                    channels: value,
+                    channels: String(value),
                   }));
                 }}
               />
@@ -116,7 +124,7 @@ const PieChart: FC<InsightChartProps> = ({
       </div>
 
       <div className="flex items-center gap-2 ">
-        <p className="text-2xl lg:text-[56px] font-[600] font-sansFlex">
+        <p className="text-2xl lg:text-[56px] font-[600] font-IBM">
           {!!value && formatNumber(value)}
         </p>
         {Number(value) > 1000 && (
@@ -124,12 +132,12 @@ const PieChart: FC<InsightChartProps> = ({
         )}
       </div>
       <div>
-        <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-sansFlex">
+        <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-IBM">
           {valuePlaceHolder}
         </p>
 
         {defaultChartData && (
-          <div className="w-full h-[300px] font-sansFlex">
+          <div className="w-full h-[300px] font-IBM">
             <Pie
               data={defaultChartData}
               options={{
@@ -140,11 +148,17 @@ const PieChart: FC<InsightChartProps> = ({
                     position: "top",
                     labels: {
                       boxWidth: 15,
-                      font: { size: 12 },
+                      font: { size: 12, family: CHART_FONT_FAMILY },
                     },
                   },
                   tooltip: {
                     enabled: true,
+                    titleFont: {
+                      family: CHART_FONT_FAMILY,
+                    },
+                    bodyFont: {
+                      family: CHART_FONT_FAMILY,
+                    },
                     callbacks: {
                       label: function (tooltipItem) {
                         const dataset =
@@ -173,10 +187,10 @@ const PieChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={weeksOptions}
                 placeholder="Weeks"
-                onChange={(value: any) => {
-                  setFilters((prevFilters: any) => ({
+                onChange={(value) => {
+                  setFilters?.((prevFilters) => ({
                     ...prevFilters,
-                    weeks: value,
+                    weeks: String(value),
                   }));
                 }}
               />
@@ -190,10 +204,10 @@ const PieChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={months}
                 placeholder="Lifetime"
-                onChange={(value: any) => {
-                  setFilters((prevFilters: any) => ({
+                onChange={(value) => {
+                  setFilters?.((prevFilters) => ({
                     ...prevFilters,
-                    lifetime: value,
+                    lifetime: String(value),
                   }));
                 }}
               />

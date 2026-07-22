@@ -68,7 +68,7 @@ const CostPerReachCard: React.FC<Props> = ({
   };
 
   return (
-    <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] font-sansFlex hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+    <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] font-IBM hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
       {/* Header */}
       <div>
         <p className="text-[11px] font-semibold tracking-widest text-gray-400 uppercase mb-2">

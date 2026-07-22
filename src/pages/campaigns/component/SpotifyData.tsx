@@ -533,9 +533,6 @@ const SpotifyData = () => {
           >
             Save
           </button>
-          <button className="font-IBM  text-[14px] text-white hover:text-[#ffffff] bg-[#1f9abd]  hover:bg-gray-200 hover:border-none py-[8px] px-[20px] rounded ">
-            Watch demo
-          </button>
         </div>
 
         <div className="mt-[20px] items-center grid sm:grid-cols-2 md:grid-cols-3 space-y-2">

@@ -25,7 +25,7 @@ const ProjectSingleInsight: React.FC<ProjectSingleInsightProps> = ({
   }
 
   return (
-    <div className="mt-[20px] relative font-sansFlex">
+    <div className="mt-[20px] relative font-IBM">
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[10px] 2xl:gap-[20px] relative">
         <div className="w-full">
           <InsightCard

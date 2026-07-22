@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { FaRegBell } from "react-icons/fa";
 import { IoIosClose, IoIosRefresh } from "react-icons/io";
 import CampaignNotifications from "./campaigns/CampaignNotifications";
@@ -6,101 +6,24 @@ import MileStonesNotification from "./milestones/MileStonesNotification";
 import SecurityNotification from "./security/SecurityNotification";
 import AssetsNotification from "./assets/AssetsNotification";
 import PaymentsNotification from "./payments/PaymentsNotification";
-import { getLoggedInUser } from "@/services";
-import { useRouter } from "next/router";
+import { useTopNav } from "./hooks/use-top-nav";
 
 const TopNav: FC = () => {
-  const router = useRouter();
-  const [notifications, setNotifications] = useState<any>({
-    campaigns: [],
-    milestones: [],
-    security: [],
-    assets: [],
-    payments: [],
-  });
-  const [notificationScrolled, setNotificationScrolled] = useState(false);
-  const [notificationLoading, setNotificationLoading] = useState(false);
-  const [allNotificationsRead, setAllNotificationsRead] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeMainTab, setActiveMainTab] = useState("updates");
-  const [activeInnerTab, setActiveInnerTab] = useState("campaign");
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const handleMainTabClick = (tab: string) => {
-    setActiveMainTab(tab);
-    setActiveInnerTab(tab === "updates" ? "campaign" : "assets");
-  };
-
-  const handleInnerTabClick = (tab: string) => {
-    setActiveInnerTab(tab);
-  };
-
-  useEffect(() => {
-    setNotificationLoading(true);
-    getLoggedInUser().then((user) => {
-      const groupedNotifications = user.notifications.reduce(
-        (acc: any, notification: any) => {
-          const type = notification.type.toLowerCase();
-          return {
-            ...acc,
-            [type]: [...(acc[type] || []), notification],
-          };
-        },
-        {
-          campaigns: [],
-          milestones: [],
-          security: [],
-          assets: [],
-          payments: [],
-        },
-      );
-
-      setNotifications(groupedNotifications);
-      setNotificationLoading(false);
-    });
-  }, [notificationScrolled]);
-
-  const areAllItemsReadInAllArrays = (notification: any): boolean => {
-    if (!notification) {
-      return true;
-    }
-
-    const arrayKeys = Object.keys(notification).filter(
-      (key) => Array.isArray(notification[key]) && notification[key].length > 0,
-    );
-
-    if (arrayKeys.length === 0) {
-      return true;
-    }
-
-    for (const key of arrayKeys) {
-      const array = notification[key];
-
-      const hasReadableItems = array.some((item: any) => "read" in item);
-
-      if (hasReadableItems) {
-        const allRead = array.every((item: any) => {
-          return !("read" in item) || item.read === true;
-        });
-
-        if (!allRead) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  };
-
-  useEffect(() => {
-    console.log("NOTIFFS", notifications);
-    const allRead = areAllItemsReadInAllArrays(notifications);
-    setAllNotificationsRead(allRead);
-    console.log("ALL READ", allRead);
-  }, [notifications]);
+  const {
+    router,
+    notifications,
+    notificationScrolled,
+    notificationLoading,
+    allNotificationsRead,
+    isSidebarOpen,
+    activeMainTab,
+    activeInnerTab,
+    toggleSidebar,
+    handleMainTabClick,
+    handleInnerTabClick,
+    setNotificationScrolled,
+    hasOpenedNotifications,
+  } = useTopNav();
 
   return (
     <div className="relative">
@@ -112,14 +35,17 @@ const TopNav: FC = () => {
             onClick={toggleSidebar}
           >
             <FaRegBell size={27} />
-            {!allNotificationsRead && (
+            {!allNotificationsRead && !hasOpenedNotifications && (
               <div className="w-2 h-2 bg-[#ffa500] absolute top-0 right-0 rounded-full" />
             )}
           </div>
 
           {isSidebarOpen && (
             <div className=" ">
-              <div className="absolute top-[35px] right-0 w-[350px] h-screen bg-white shadow-lg z-50 border border-gray-200 rounded-[8px] flex flex-col scrollbar-hide scrollbar-hide::-webkit-scrollbar">
+              <div
+                id="notification-sidebar"
+                className="absolute top-[35px] right-0 w-[350px] h-screen bg-white shadow-lg z-50 border border-gray-200 rounded-[8px] flex flex-col scrollbar-hide scrollbar-hide::-webkit-scrollbar"
+              >
                 <div className="sticky top-0 z-50">
                   <div className="flex items-center text-[#000000] justify-between p-4 border-b bg-[#f4faff]">
                     <div className="flex items-center gap-[20px] text-[16px]">

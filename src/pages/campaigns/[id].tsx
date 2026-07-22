@@ -17,6 +17,8 @@ import {
   getBusinessStaff,
   getSingleCampaign,
   getSingleProject,
+  getStoredSingleCampaign,
+  getStoredSingleProject,
 } from "@/services";
 import { ContentItem } from "@/types/contents";
 import { useRouter } from "next/router";
@@ -321,10 +323,10 @@ const ProjectDetails = () => {
     setAdjustmentModalVisible(true);
   };
 
-  const refreshContent = () => {
-    if (isAdvertiser === null || !id) return;
+  const refreshContent = (advertiser: boolean | null = isAdvertiser) => {
+    if (advertiser === null || !id) return;
     setHasNetworkError(false);
-    if (isAdvertiser) {
+    if (advertiser) {
       getSingleCampaign(Number(id))
         .then((fetchedContent) => {
           console.log("fetchedContent", fetchedContent);
@@ -350,19 +352,26 @@ const ProjectDetails = () => {
   };
 
   useEffect(() => {
-    refreshContent();
-  }, [id, isAdvertiser]);
+    if (!id) return;
+    const profile: any = ls.get("Profile", { decrypt: true });
+    console.log("content", profile);
+    setUserLoggedInProfile(profile?.user?.user_profile);
+    const advertiser = profile?.user?.user_type === "Advertiser";
+    setIsAdvertiser(advertiser);
 
-  useEffect(() => {
-    const content: any = ls.get("Profile", { decrypt: true });
-    console.log("content", content);
-    setUserLoggedInProfile(content?.user?.user_profile);
-    if (content?.user?.user_type === "Advertiser") {
-      setIsAdvertiser(true);
-    } else {
-      setIsAdvertiser(false);
+    // ponytail: optimistically fill from cache so the insight cards render
+    // data on first paint instead of zeros, then network result overwrites.
+    const cached = advertiser
+      ? getStoredSingleCampaign(Number(id))
+      : getStoredSingleProject();
+    if (cached) {
+      setContent(cached);
+      if (!advertiser) setSubVendorStaff((cached as any)?.watchers);
     }
-  }, []);
+
+    refreshContent(advertiser);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   useEffect(() => {
     if (!!content?.subvendor?.id) {

@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React from "react";
 import { FiInfo } from "react-icons/fi";
 import { SelectInput } from "@/components/ui/selectinput";
 import {
@@ -14,7 +14,14 @@ import {
 import { ChartData } from "chart.js";
 import { formatNumber } from "@/lib/utils";
 
-interface InsightChartProps {
+const CHART_FONT_FAMILY = "IBM Plex Sans, sans-serif";
+
+type ChartFilterState = {
+  weeks?: string;
+  lifetime?: string;
+};
+
+interface InsightChartProps<TFilters extends ChartFilterState> {
   title: string;
   value: number | string;
   percentageChange?: string;
@@ -24,7 +31,7 @@ interface InsightChartProps {
   valuePlaceholder?: string;
   info?: string;
   placeholder?: string;
-  setFilters?: any;
+  setFilters?: React.Dispatch<React.SetStateAction<TFilters>>;
 }
 
 interface ChartDataItem {
@@ -49,7 +56,7 @@ const generateDynamicColor = (index: number) => {
   return `hsl(${hue}, 70%, 70%)`;
 };
 
-const ColumnChart: FC<InsightChartProps> = ({
+const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
   title,
   value,
   selectOptions,
@@ -59,7 +66,7 @@ const ColumnChart: FC<InsightChartProps> = ({
   valuePlaceholder,
   info,
   setFilters,
-}) => {
+}: InsightChartProps<TFilters>) => {
   const formatDataForRecharts = (): ChartDataItem[] => {
     if (!chartData?.labels || !chartData.datasets[0].data) return [];
 
@@ -155,7 +162,11 @@ const ColumnChart: FC<InsightChartProps> = ({
                   dataKey="name"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: "#666" }}
+                  tick={{
+                    fontSize: 12,
+                    fill: "#666",
+                    fontFamily: CHART_FONT_FAMILY,
+                  }}
                   interval={0}
                   angle={-45}
                   textAnchor="end"
@@ -164,7 +175,11 @@ const ColumnChart: FC<InsightChartProps> = ({
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: "#666" }}
+                  tick={{
+                    fontSize: 12,
+                    fill: "#666",
+                    fontFamily: CHART_FONT_FAMILY,
+                  }}
                 />
                 <RechartsTooltip
                   wrapperStyle={{
@@ -172,11 +187,12 @@ const ColumnChart: FC<InsightChartProps> = ({
                     borderRadius: "4px",
                     padding: "10px",
                     fontSize: "12px",
+                    fontFamily: CHART_FONT_FAMILY,
                   }}
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="tooltip-content">
+                        <div className="tooltip-content font-IBM">
                           <p>{`${payload[0].payload.name}: ${payload[0].value}`}</p>
                         </div>
                       );
@@ -208,10 +224,10 @@ const ColumnChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={weeksOptions}
                 placeholder="Weeks"
-                onChange={(value: any) => {
-                  setFilters((prevFilters: any) => ({
+                onChange={(value) => {
+                  setFilters?.((prevFilters) => ({
                     ...prevFilters,
-                    weeks: value,
+                    weeks: String(value),
                   }));
                 }}
               />
@@ -225,10 +241,10 @@ const ColumnChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={months}
                 placeholder="Lifetime"
-                onChange={(value: any) => {
-                  setFilters((prevFilters: any) => ({
+                onChange={(value) => {
+                  setFilters?.((prevFilters) => ({
                     ...prevFilters,
-                    lifetime: value,
+                    lifetime: String(value),
                   }));
                 }}
               />

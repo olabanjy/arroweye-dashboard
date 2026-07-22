@@ -252,7 +252,7 @@
 
 // export default DoughnutChart;
 
-import React, { FC } from "react";
+import React from "react";
 import { FiInfo } from "react-icons/fi";
 import { SelectInput } from "@/components/ui/selectinput";
 import { Doughnut } from "react-chartjs-2";
@@ -267,7 +267,15 @@ import { formatNumber } from "@/lib/utils";
 
 ChartJS.register(ArcElement, ChartTooltip, Legend);
 
-interface InsightChartProps {
+const CHART_FONT_FAMILY = "IBM Plex Sans, sans-serif";
+
+type ChartFilterState = {
+  country?: string;
+  weeks?: string;
+  lifetime?: string;
+};
+
+interface InsightChartProps<TFilters extends ChartFilterState> {
   title: string;
   value: number | string;
   percentageChange?: string;
@@ -278,20 +286,20 @@ interface InsightChartProps {
   valuePlaceholder?: string;
   info?: string;
   placeholder?: string;
-  setFilters?: any;
+  setFilters?: React.Dispatch<React.SetStateAction<TFilters>>;
 }
 
-const Tooltip = ({ info }: { info: any }) => (
+const Tooltip = ({ info }: { info: string | number }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-full top-0 transform  ml-1 hidden w-60 p-2 text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-sansFlex">
+    <div className="absolute left-full top-0 transform  ml-1 hidden w-60 p-2 text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-IBM">
       <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black  border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
       {info}
     </div>
   </div>
 );
 
-const DoughnutChart: FC<InsightChartProps> = ({
+const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
   title,
   value,
   selectOptions,
@@ -302,7 +310,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
   // maxWidth = "400px",
   info,
   setFilters,
-}) => {
+}: InsightChartProps<TFilters>) => {
   const weeksOptions = [
     { value: "", label: "Weeks" },
     { value: "1", label: "Week 1" },
@@ -329,7 +337,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
 
   return (
     <div
-      className={`space-y-[20px] font-sansFlex w-full`}
+      className={`space-y-[20px] font-IBM w-full`}
       // style={{ maxWidth, width: "100%" }}
     >
       <div className="flex items-center justify-between">
@@ -344,10 +352,10 @@ const DoughnutChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={options}
                 placeholder={placeholder}
-                onChange={(value: any) => {
-                  setFilters((prevFilters: any) => ({
+                onChange={(value) => {
+                  setFilters?.((prevFilters) => ({
                     ...prevFilters,
-                    country: value,
+                    country: String(value),
                   }));
                 }}
               />
@@ -362,7 +370,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
       </div>
 
       <div className="flex items-center gap-2">
-        <p className="text-2xl lg:text-[56px] font-[600] font-sansFlex">
+        <p className="text-2xl lg:text-[56px] font-[600] font-IBM">
           {!!value && formatNumber(value)}
         </p>
         {Number(value) > 1000 && <Tooltip info={value.toLocaleString()} />}
@@ -373,7 +381,7 @@ const DoughnutChart: FC<InsightChartProps> = ({
         </p>
 
         {chartData && (
-          <div className="w-full h-[300px] font-sansFlex">
+          <div className="w-full h-[300px] font-IBM">
             <Doughnut
               data={chartData}
               options={{
@@ -384,10 +392,16 @@ const DoughnutChart: FC<InsightChartProps> = ({
                     position: "top",
                     labels: {
                       boxWidth: 15,
-                      font: { size: 12 },
+                      font: { size: 12, family: CHART_FONT_FAMILY },
                     },
                   },
                   tooltip: {
+                    titleFont: {
+                      family: CHART_FONT_FAMILY,
+                    },
+                    bodyFont: {
+                      family: CHART_FONT_FAMILY,
+                    },
                     callbacks: {
                       label: function (context) {
                         const label = context.label || "";
@@ -411,10 +425,10 @@ const DoughnutChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={weeksOptions}
                 placeholder="Weeks"
-                onChange={(value: any) => {
-                  setFilters((prevFilters: any) => ({
+                onChange={(value) => {
+                  setFilters?.((prevFilters) => ({
                     ...prevFilters,
-                    weeks: value,
+                    weeks: String(value),
                   }));
                 }}
               />
@@ -428,10 +442,10 @@ const DoughnutChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={months}
                 placeholder="Lifetime"
-                onChange={(value: any) => {
-                  setFilters((prevFilters: any) => ({
+                onChange={(value) => {
+                  setFilters?.((prevFilters) => ({
                     ...prevFilters,
-                    lifetime: value,
+                    lifetime: String(value),
                   }));
                 }}
               />

@@ -254,6 +254,7 @@ export const getSingleCampaign = async (
 
     if (response) {
       const contentItem: ContentItem = response;
+      ls.set(`SingleCampaign:${id}`, contentItem, { encrypt: true });
       return contentItem;
     } else {
       console.error("Invalid Project item structure:", response);
@@ -262,6 +263,11 @@ export const getSingleCampaign = async (
   } catch (error: unknown) {
     return null;
   }
+};
+
+export const getStoredSingleCampaign = (id: number): ContentItem | null => {
+  const content = ls.get(`SingleCampaign:${id}`, { decrypt: true });
+  return content as ContentItem;
 };
 
 export const ClaimReward = async (payload: unknown): Promise<void> => {

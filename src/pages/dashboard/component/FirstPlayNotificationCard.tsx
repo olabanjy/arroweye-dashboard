@@ -8,21 +8,27 @@ interface FirstPlayNotificationCardProps {
   highlight?: string;
   onDownload: () => void;
   onShare: () => void;
-  actions: any;
+  actions?: NotificationAction[];
   iconClass?: string;
   read?: boolean;
 }
+
+type NotificationAction = {
+  type: string;
+  url: string;
+};
 
 const FirstPlayNotificationCard: FC<FirstPlayNotificationCardProps> = ({
   timeAgo,
   message,
   highlight,
-  onDownload,
-  onShare,
   actions,
   iconClass,
   read,
 }) => {
+  const getSpinUrl = (url: string) =>
+    url.replace(/\/spins\/spin\/([^/?#]+)/, "/spins/$1");
+
   const handleCopyLink = (link: string) => {
     navigator.clipboard.writeText(link).then(() => {
       toast.success("Link has been copied!", {
@@ -66,12 +72,18 @@ const FirstPlayNotificationCard: FC<FirstPlayNotificationCardProps> = ({
         </p>
         {!!actions && actions.length > 0 && (
           <div className="flex items-center gap-[10px] mt-[14px] text-[16px]">
-            {actions.map((action: any) =>
+            {actions.map((action) =>
               action.type === "Share" ? (
                 <div
                   key={action.type}
                   className="h-8 rounded px-[10px] py-[8px] border bg-white flex items-center justify-center cursor-pointer"
-                  onClick={() => handleCopyLink(action.url)}
+                  onClick={() =>
+                    handleCopyLink(
+                      iconClass === "mdi mdi-album #088cff"
+                        ? getSpinUrl(action.url)
+                        : action.url,
+                    )
+                  }
                 >
                   <p className="text-black">Share</p>
                 </div>
@@ -109,7 +121,7 @@ const FirstPlayNotificationCard: FC<FirstPlayNotificationCardProps> = ({
 
                     window.dispatchEvent(new Event("spinNotificationUpdate"));
 
-                    window.open(action.url, "_blank");
+                    window.open(getSpinUrl(action.url), "_blank");
                   }}
                 >
                   View
