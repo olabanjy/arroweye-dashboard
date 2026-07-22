@@ -70,12 +70,17 @@ const SpinsNotification = () => {
         <title>Spins - Arroweye</title>
       </Head>
 
-      <div
-        className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center"
-        style={{ backgroundImage: "url(/spinsbg.png)" }}
-      >
+      <div className="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center">
+        <Image
+          src="/spinsbg.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
         <div
-          className="flex items-center justify-center w-[338px] h-[174px]"
+          className="relative z-10 flex items-center justify-center w-[338px] h-[174px] bg-center bg-no-repeat"
           style={{ backgroundImage: "url(/Notificationheader.png)" }}
         >
           <Image
@@ -85,7 +90,7 @@ const SpinsNotification = () => {
             height={86}
           />
         </div>
-        <div className="bg-[#252525] min-w-[338px] max-w-[338px] p-5">
+        <div className="relative z-10 bg-[#252525] min-w-[338px] max-w-[338px] p-5">
           <div className="flex justify-between">
             <Image
               src="/albumicon.svg"

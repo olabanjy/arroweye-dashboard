@@ -53,7 +53,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
         disabled={isDisabled}
-        style={{ fontFamily: "IBM Plex Sans" }}
+        style={{ fontFamily: "Google Sans Flex" }}
       >
         {!isLoading && (label || "Button")}
         {isLoading && loadingText && <span className="">{loadingText}</span>}

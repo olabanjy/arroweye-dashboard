@@ -538,10 +538,7 @@ const SpinsTableComponent: React.FC = () => {
   ];
 
   return (
-    <div
-      className="min-h-screen bg-white font-sans"
-      style={{ fontFamily: "IBM Plex Sans" }}
-    >
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b">
         <div className="flex items-center gap-4">

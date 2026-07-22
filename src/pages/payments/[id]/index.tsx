@@ -55,7 +55,7 @@ const Invoice = () => {
                 background: #ffffff;
                 border-radius: 20px;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                font-family: 'IBM Plex Sans', sans-serif;
+                font-family: 'Google Sans Flex', sans-serif;
               }
             </style>
           </head>
