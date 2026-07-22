@@ -28,6 +28,11 @@ export default function App({ Component, pageProps }: AppProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isIdle, setIsIdle] = useState(false);
   const router = useRouter();
+  const isPublicShellRoute =
+    router.pathname === "/login" ||
+    router.pathname === "/spins" ||
+    router.pathname === "/spins/[id]" ||
+    router.pathname === "/";
   BProgress.configure({ showSpinner: false });
 
   useEffect(() => {
@@ -46,12 +51,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router]);
 
   useEffect(() => {
-    if (
-      router.pathname === "/login" ||
-      router.pathname === "/spins" ||
-      router.pathname === "/"
-    )
-      return;
+    if (isPublicShellRoute) return;
 
     let timeout: NodeJS.Timeout;
 
@@ -77,7 +77,7 @@ export default function App({ Component, pageProps }: AppProps) {
       window.removeEventListener("keydown", resetIdleTimer);
       window.removeEventListener("click", resetIdleTimer);
     };
-  }, [router.pathname]);
+  }, [isPublicShellRoute]);
 
   useEffect(() => {
     if (isIdle) {
@@ -119,8 +119,8 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <div className=" font-IBM relative">
-          {router.pathname !== "/spins" && <ScrollToTopButton />}
+        <div className=" font-SansFlex relative">
+          {!isPublicShellRoute && <ScrollToTopButton />}
 
           <Component {...pageProps} />
           <ToastContainer />

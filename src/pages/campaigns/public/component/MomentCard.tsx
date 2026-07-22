@@ -91,7 +91,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
 
   return (
     <div className="w-full max-h-[600px] space-y-[20px]">
-      <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-IBM uppercase">
+      <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-SansFlex uppercase">
         {MomentsTitle}
       </p>
 
@@ -147,7 +147,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
           <div className="flex items-center gap-2 w-full">
             {watchButtonText && (
               <button
-                className="p-2 cursor-pointer hover:bg-orange-500 font-IBM text-[16px] font-[500] flex-grow rounded-full bg-black text-white text-center"
+                className="p-2 cursor-pointer hover:bg-orange-500 font-SansFlex text-[16px] font-[500] flex-grow rounded-full bg-black text-white text-center"
                 onClick={() =>
                   window.open(videoUrls[currentVideoIndex], "_blank")
                 }
@@ -159,7 +159,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
 
             {downloadIcon && watchButtonText && (
               <button
-                className="bg-black hover:bg-orange-500 font-IBM text-[16px] font-medium text-white p-[11px] rounded-full inline-flex"
+                className="bg-black hover:bg-orange-500 font-SansFlex text-[16px] font-medium text-white p-[11px] rounded-full inline-flex"
                 onClick={() =>
                   window.open(videoUrls[currentVideoIndex], "_blank")
                 }
@@ -171,12 +171,12 @@ const MomentCard: React.FC<MomentCardProps> = ({
           </div>
         )}
         {hasData && assetsButton && (
-          <p className="p-2 cursor-pointer text-[16px] font-[500] font-IBM w-full rounded text-center hover:bg-orange-500 bg-black text-white">
+          <p className="p-2 cursor-pointer text-[16px] font-[500] font-SansFlex w-full rounded text-center hover:bg-orange-500 bg-black text-white">
             {assetsButton}
           </p>
         )}
         <button
-          className="p-2 font-IBM text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
+          className="p-2 font-SansFlex text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
           onClick={() => downloadCSV(csvData)}
           // disabled={!reportUrls[currentVideoIndex]}
         >
@@ -188,7 +188,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
 
         {radioButtonText && (
           <button
-            className={`p-2 mt-[20px] cursor-pointer text-[16px] font-[500] font-IBM w-full rounded-full text-center ${
+            className={`p-2 mt-[20px] cursor-pointer text-[16px] font-[500] font-SansFlex w-full rounded-full text-center ${
               outline
                 ? "border border-black text-black hover:bg-black hover:text-white"
                 : "hover:bg-orange-500 bg-black text-white"

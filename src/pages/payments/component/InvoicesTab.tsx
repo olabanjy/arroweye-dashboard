@@ -126,7 +126,7 @@ const InvoicesTab = () => {
   }, []);
 
   return (
-    <div className=" font-IBM mt-[50px]">
+    <div className=" font-SansFlex mt-[50px]">
       <div className="grid md:flex items-center gap-[20px] md:gap-[40px] mb-[16px]">
         <div className="flex gap-[20px] items-center">
           <button
@@ -162,7 +162,7 @@ const InvoicesTab = () => {
                   placeholder="Search by title, label and artist..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
-                  className="w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
+                  className="w-full rounded-full font-SansFlex placeholder:font-SansFlex text-[17px] placeholder:text-[17px]"
                 />
               </div>
             )}
@@ -258,7 +258,7 @@ const InvoicesTab = () => {
             className="scrollbar-hide scrollbar-hide::-webkit-scrollbar"
           >
             <div className=" grid gap-[10px] relative z-10">
-              <p className="text-[30px] font-[600] text-[#212529] font-IBM hidden">
+              <p className="text-[30px] font-[600] text-[#212529] font-SansFlex hidden">
                 Collaborate
               </p>
               <div>
@@ -314,7 +314,7 @@ const InvoicesTab = () => {
                     placeholder="Full Name"
                     value={formData.fullname}
                     onChange={handleInputChange}
-                    className=" font-IBM text-[17px]"
+                    className=" font-SansFlex text-[17px]"
                   />
                   {errors.fullname && (
                     <p className="text-red-500 text-xs">{errors.fullname}</p>
@@ -352,7 +352,7 @@ const InvoicesTab = () => {
                   <div className="flex justify-end space-x-2">
                     <button
                       type="submit"
-                      className=" font-IBM h-[50px] text-[14px] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-orange-500 w-full py-[12px] px-[12px] rounded-full flex items-center justify-center space-x-2"
+                      className=" font-SansFlex h-[50px] text-[14px] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-orange-500 w-full py-[12px] px-[12px] rounded-full flex items-center justify-center space-x-2"
                     >
                       <IoIosAdd className="text-white" />
                       <span className="text-white">Add User</span>

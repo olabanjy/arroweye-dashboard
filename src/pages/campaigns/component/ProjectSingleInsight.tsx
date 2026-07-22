@@ -13,7 +13,6 @@ const ProjectSingleInsight: React.FC<ProjectSingleInsightProps> = ({
   isAdvertiser,
   content,
 }) => {
-
   function formatNumber(num: any) {
     if (num >= 1000000) {
       return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
@@ -25,7 +24,7 @@ const ProjectSingleInsight: React.FC<ProjectSingleInsightProps> = ({
   }
 
   return (
-    <div className="mt-[20px] relative font-sansFlex">
+    <div className="mt-[20px] relative font-SansFlex">
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[10px] 2xl:gap-[20px] relative">
         <div className="w-full">
           <InsightCard

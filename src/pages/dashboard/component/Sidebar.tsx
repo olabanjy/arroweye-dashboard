@@ -73,7 +73,6 @@ const Sidebar: FC = () => {
             isCollapsed ? "p-[25px]" : "p-[50px]"
           }`}
         >
-     
           <span className="relative inline-flex items-center justify-center">
             <span className="block group-hover:opacity-0 transition-opacity">
               <Image
@@ -86,12 +85,17 @@ const Sidebar: FC = () => {
             </span>
 
             <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-[#17954c]">
-              <svg width={28} height={28} viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width={28}
+                height={28}
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M6,2H18A2,2 0 0,1 20,4V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2M6,8V16H10V8H6Z" />
               </svg>
             </span>
 
-            <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 hidden whitespace-nowrap p-[8px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-50 shadow-lg font-IBM">
+            <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 hidden whitespace-nowrap p-[8px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-50 shadow-lg font-SansFlex">
               <span className="absolute right-full top-1/2 -translate-y-1/2 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black" />
               {isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             </span>

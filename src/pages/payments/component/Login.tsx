@@ -31,7 +31,7 @@ const Login = () => {
 
   return (
     <div className="h-screen flex items-center justify-center relative">
-      <Toast ref={toast} className="font-IBM" />
+      <Toast ref={toast} className="font-SansFlex" />
       {randomBgImage && (
         <Image
           src={randomBgImage}
@@ -43,7 +43,7 @@ const Login = () => {
         />
       )}
       <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-20"></div>
-      <div className="relative z-10 max-w-6xl w-full px-4 font-IBM">
+      <div className="relative z-10 max-w-6xl w-full px-4 font-SansFlex">
         <div className=" grid place-items-center lg:flex items-center lg:justify-between h-full gap-[20px]">
           {/* <Image src="/aestudio.svg" alt="Logo" width={230} height={87} /> */}
           <Image

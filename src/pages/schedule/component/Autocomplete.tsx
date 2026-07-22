@@ -238,7 +238,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
           {suggestions.map((option, index) => (
             <div
               key={index}
-              className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-[14px] font-IBM"
+              className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-[14px] font-SansFlex"
               onClick={() => handleOptionClick(option)}
             >
               {option}

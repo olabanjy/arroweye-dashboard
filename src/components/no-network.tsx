@@ -10,7 +10,7 @@ const NoNetwork: React.FC<NoNetworkProps> = ({ onReconnect }) => {
   const { isChecking, handleRetry } = useNoNetwork(onReconnect);
 
   return (
-    <div className="w-full min-h-[450px] flex items-center justify-center font-IBM select-none py-12">
+    <div className="w-full min-h-[450px] flex items-center justify-center font-SansFlex select-none py-12">
       <div className="w-full max-w-sm px-6 text-center">
         {/* Minimal Outline Icon */}
         <div className="mb-6 flex justify-center text-[#7c7e81]">
@@ -18,12 +18,13 @@ const NoNetwork: React.FC<NoNetworkProps> = ({ onReconnect }) => {
         </div>
 
         {/* High-contrast Typography matching system scheme */}
-        <h2 className="text-[20px] font-[600] text-[#212529] tracking-tight mb-2 font-IBM">
+        <h2 className="text-[20px] font-[600] text-[#212529] tracking-tight mb-2 font-SansFlex">
           No Internet Connection
         </h2>
 
-        <p className="text-[14px] text-[#7c7e81] leading-relaxed mb-8 font-IBM">
-          We couldn't connect to the server. Please check your Wi-Fi or cellular connection and try again.
+        <p className="text-[14px] text-[#7c7e81] leading-relaxed mb-8 font-SansFlex">
+          We couldn't connect to the server. Please check your Wi-Fi or cellular
+          connection and try again.
         </p>
 
         {/* System styled green button */}

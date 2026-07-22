@@ -10,7 +10,7 @@
   font-family: "IBM Plex Sans" !important;
   color: #7c7e81 !important;
   text-shadow: none !important;
-}
+} 
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;

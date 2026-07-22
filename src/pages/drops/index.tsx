@@ -42,7 +42,7 @@ interface User {
 export const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-[25px] top-0 transform  ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-IBM">
+    <div className="absolute left-[25px] top-0 transform  ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-SansFlex">
       <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black  border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
       {info}
     </div>
@@ -99,7 +99,7 @@ const AssetsLibrary = () => {
               <Input
                 type="text"
                 placeholder="Search..."
-                className="w-full rounded-full font-IBM placeholder:font-IBM text-[17px] placeholder:text-[17px]"
+                className="w-full rounded-full font-SansFlex placeholder:font-SansFlex text-[17px] placeholder:text-[17px]"
                 value={filters.search}
                 onChange={(e: any) => updateFilters("search", e.target.value)}
               />
@@ -324,7 +324,7 @@ const AssetsLibrary = () => {
             headerClassName=" tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400]"
           >
             {selectedUser && (
-              <div className="space-y-4 text-[#000] font-IBM">
+              <div className="space-y-4 text-[#000] font-SansFlex">
                 <p className="text-[30px] font-[600]">
                   {selectedUser.user.user_profile.fullname}
                 </p>
@@ -366,7 +366,7 @@ const AssetsLibrary = () => {
                   <p className="font-[600]">
                     {format(
                       parseISO(selectedUser.user.last_login),
-                      "dd MMM yyyy"
+                      "dd MMM yyyy",
                     )}
                   </p>
                 </div>
@@ -392,8 +392,8 @@ const AssetsLibrary = () => {
               name="projectPin"
               autoComplete="new-password"
               className={cn(
-                "mt-1 block w-full border font-IBM border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-[8px]",
-                pinError && "border-red-500 focus:ring-red-500"
+                "mt-1 block w-full border font-SansFlex border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-[8px]",
+                pinError && "border-red-500 focus:ring-red-500",
               )}
               placeholder={"Enter Pin"}
               value={pinEntered}

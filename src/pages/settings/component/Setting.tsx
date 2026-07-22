@@ -61,7 +61,7 @@ const Setting = () => {
 
   return (
     <div>
-      <Toast ref={toastRef} className=" font-IBM" />
+      <Toast ref={toastRef} className=" font-SansFlex" />
       <style>
         {`
           .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider,

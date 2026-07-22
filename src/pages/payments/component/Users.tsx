@@ -96,14 +96,14 @@ const Users = () => {
           onClose={() => setIsModalOpen(false)}
           maxWidth="max-w-[300px]"
         >
-          <p className="text-[#7c7e81] text-[14px] uppercase font-IBM">
+          <p className="text-[#7c7e81] text-[14px] uppercase font-SansFlex">
             Member Information
           </p>
           <div className="space-y-[20px] my-[20px]">
-            <p className="text-2xl font-bold font-IBM">
+            <p className="text-2xl font-bold font-SansFlex">
               {selectedUser.staff[0].fullname}
             </p>
-            <div className="space-y-[10px] font-IBM">
+            <div className="space-y-[10px] font-SansFlex">
               <div>
                 <p className="text-[#818486]">Email</p>
                 <p>{selectedUser.staff[0].staff_email || " "}</p>

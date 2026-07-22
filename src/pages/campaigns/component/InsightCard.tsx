@@ -17,10 +17,10 @@ interface InsightCardProps {
   currency?: any;
 }
 
- const Tooltip = ({ info }: { info: string }) => (
+const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-[25px] top-0 transform  ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-IBM">
+    <div className="absolute left-[25px] top-0 transform  ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-SansFlex">
       <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black  border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
       {info}
     </div>
@@ -44,14 +44,14 @@ const InsightCard: FC<InsightCardProps> = ({
     <div
       className={`relative h-max border px-[20px] pt-[34px] rounded-[8px] space-y-[20px] w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500 ${extraClass}`}
     >
-      <div className="flex items-center gap-[5px] text-[#7a8081] font-sansFlex">
+      <div className="flex items-center gap-[5px] text-[#7a8081] font-SansFlex">
         <p className="text-[12px] font-[400] tracking-[.1rem]">{title}</p>
         {info && <Tooltip info={info} />}
       </div>
 
       <div className="flex flex-row items-center h-[6rem] overflow-x-auto overflow-y-hidden">
         <p
-          className="text-2xl lg:text-[56px] font-[600] font-sansFlex"
+          className="text-2xl lg:text-[56px] font-[600] font-SansFlex"
           style={{ fontSize: !!maxValue ? "35px" : "" }}
         >
           {currency}

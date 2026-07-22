@@ -123,8 +123,12 @@ export const handleApiError = (
     const errorData = error.response?.data;
 
     // Check for offline / network / timeout errors
-    const isNetworkError = !error.response || error.code === "ERR_NETWORK" || error.message === "Network Error";
-    const isTimeout = error.code === "ECONNABORTED" || error.message?.includes("timeout");
+    const isNetworkError =
+      !error.response ||
+      error.code === "ERR_NETWORK" ||
+      error.message === "Network Error";
+    const isTimeout =
+      error.code === "ECONNABORTED" || error.message?.includes("timeout");
 
     if (isNetworkError || isTimeout) {
       if (typeof window !== "undefined") {
@@ -138,7 +142,8 @@ export const handleApiError = (
 
     // ✅ ALWAYS handle auth first
     if (status === 401) {
-      errorMessage = "Authentication required. Please log in again.";
+      //no need to render error message, just redirect to login
+      // errorMessage = "Authentication required. Please log in again.";
       redirectToLogin();
     } else if (status === 403) {
       errorMessage =

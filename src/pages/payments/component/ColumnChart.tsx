@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React from "react";
 import { FiInfo } from "react-icons/fi";
 import { SelectInput } from "@/components/ui/selectinput";
 import {
@@ -14,7 +14,14 @@ import {
 import { ChartData } from "chart.js";
 import { formatNumber } from "@/lib/utils";
 
-interface InsightChartProps {
+const CHART_FONT_FAMILY = "IBM Plex Sans, sans-serif";
+
+type ChartFilterState = {
+  weeks?: string;
+  lifetime?: string;
+};
+
+interface InsightChartProps<TFilters extends ChartFilterState> {
   title: string;
   value: number | string;
   percentageChange?: string;
@@ -24,7 +31,7 @@ interface InsightChartProps {
   valuePlaceholder?: string;
   info?: string;
   placeholder?: string;
-  setFilters?: any;
+  setFilters?: React.Dispatch<React.SetStateAction<TFilters>>;
 }
 
 interface ChartDataItem {
@@ -37,7 +44,7 @@ interface ChartDataItem {
 const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-[25px] top-0 transform ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-IBM">
+    <div className="absolute left-[25px] top-0 transform ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-SansFlex">
       <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
       {info}
     </div>
@@ -49,7 +56,7 @@ const generateDynamicColor = (index: number) => {
   return `hsl(${hue}, 70%, 70%)`;
 };
 
-const ColumnChart: FC<InsightChartProps> = ({
+const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
   title,
   value,
   selectOptions,
@@ -59,7 +66,7 @@ const ColumnChart: FC<InsightChartProps> = ({
   valuePlaceholder,
   info,
   setFilters,
-}) => {
+}: InsightChartProps<TFilters>) => {
   const formatDataForRecharts = (): ChartDataItem[] => {
     if (!chartData?.labels || !chartData.datasets[0].data) return [];
 
@@ -101,7 +108,7 @@ const ColumnChart: FC<InsightChartProps> = ({
   ];
 
   return (
-    <div className="space-y-5 font-IBM w-full">
+    <div className="space-y-5 font-SansFlex w-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
           <p className="!text-[12px] font-[400] tracking-[.1rem]">{title}</p>
@@ -122,7 +129,7 @@ const ColumnChart: FC<InsightChartProps> = ({
       </div>
 
       <div className="flex items-center gap-2">
-        <p className="text-2xl lg:text-[56px] font-[600] font-IBM">
+        <p className="text-2xl lg:text-[56px] font-[600] font-SansFlex">
           {!!value && formatNumber(value)}
         </p>
         {Number(value) > 1000 && <Tooltip info={value.toLocaleString()} />}
@@ -155,7 +162,11 @@ const ColumnChart: FC<InsightChartProps> = ({
                   dataKey="name"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: "#666" }}
+                  tick={{
+                    fontSize: 12,
+                    fill: "#666",
+                    fontFamily: CHART_FONT_FAMILY,
+                  }}
                   interval={0}
                   angle={-45}
                   textAnchor="end"
@@ -164,7 +175,11 @@ const ColumnChart: FC<InsightChartProps> = ({
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: "#666" }}
+                  tick={{
+                    fontSize: 12,
+                    fill: "#666",
+                    fontFamily: CHART_FONT_FAMILY,
+                  }}
                 />
                 <RechartsTooltip
                   wrapperStyle={{
@@ -172,11 +187,12 @@ const ColumnChart: FC<InsightChartProps> = ({
                     borderRadius: "4px",
                     padding: "10px",
                     fontSize: "12px",
+                    fontFamily: CHART_FONT_FAMILY,
                   }}
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="tooltip-content">
+                        <div className="tooltip-content font-SansFlex">
                           <p>{`${payload[0].payload.name}: ${payload[0].value}`}</p>
                         </div>
                       );
@@ -208,10 +224,10 @@ const ColumnChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={weeksOptions}
                 placeholder="Weeks"
-                onChange={(value: any) => {
-                  setFilters((prevFilters: any) => ({
+                onChange={(value) => {
+                  setFilters?.((prevFilters) => ({
                     ...prevFilters,
-                    weeks: value,
+                    weeks: String(value),
                   }));
                 }}
               />
@@ -225,10 +241,10 @@ const ColumnChart: FC<InsightChartProps> = ({
                 rounded={true}
                 options={months}
                 placeholder="Lifetime"
-                onChange={(value: any) => {
-                  setFilters((prevFilters: any) => ({
+                onChange={(value) => {
+                  setFilters?.((prevFilters) => ({
                     ...prevFilters,
-                    lifetime: value,
+                    lifetime: String(value),
                   }));
                 }}
               />

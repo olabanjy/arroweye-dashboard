@@ -133,7 +133,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           className="custom-dialog-overlay"
         >
           <div className="space-y-4">
-            <p className="text-[16px] font-[400] font-IBM">
+            <p className="text-[16px] font-[400] font-SansFlex">
               Are you sure you want to unarchive this item?
             </p>
 

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { HiMiniChevronUpDown } from "react-icons/hi2";
 import { FiInfo } from "react-icons/fi";
@@ -29,9 +30,12 @@ const SelectInput: React.FC<DropdownInputProps> = ({
   rounded,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   const [selectedValue, setSelectedValue] = useState<string | number>(
-    value || ""
+    value || "",
   );
+  const triggerRef = useRef<HTMLDivElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (value !== undefined) {
@@ -48,11 +52,58 @@ const SelectInput: React.FC<DropdownInputProps> = ({
   };
 
   const selectedLabel = options.find(
-    (opt) => opt.value === selectedValue
+    (opt) => opt.value === selectedValue,
   )?.label;
 
+  const updateDropdownPosition = () => {
+    const rect = triggerRef.current?.getBoundingClientRect();
+
+    if (!rect) return;
+
+    const gap = 4;
+    const maxMenuHeight = 240;
+    const bottomSpace = window.innerHeight - rect.bottom;
+    const shouldOpenUp = bottomSpace < maxMenuHeight && rect.top > bottomSpace;
+
+    setDropdownStyle({
+      left: rect.left,
+      top: shouldOpenUp
+        ? Math.max(gap, rect.top - maxMenuHeight - gap)
+        : rect.bottom + gap,
+      width: rect.width,
+    });
+  };
+
+  useEffect(() => {
+    if (!isOpen || !triggerRef.current) return;
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      if (
+        triggerRef.current?.contains(target) ||
+        menuRef.current?.contains(target)
+      ) {
+        return;
+      }
+
+      setIsOpen(false);
+    };
+
+    updateDropdownPosition();
+    document.addEventListener("mousedown", handleOutsideClick);
+    window.addEventListener("resize", updateDropdownPosition);
+    window.addEventListener("scroll", updateDropdownPosition, true);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      window.removeEventListener("resize", updateDropdownPosition);
+      window.removeEventListener("scroll", updateDropdownPosition, true);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="flex flex-col space-y-2 font-IBM">
+    <div className="flex flex-col space-y-2 font-SansFlex">
       <div className="flex items-center space-x-2">
         {label && (
           <label className="tracking-[.1rem] text-[12px] font-[400] text-[#212529] leading-[18px]">
@@ -71,16 +122,23 @@ const SelectInput: React.FC<DropdownInputProps> = ({
 
       <div className="relative">
         <div
-          onClick={() => setIsOpen(!isOpen)}
+          ref={triggerRef}
+          onClick={() => {
+            if (!isOpen) {
+              updateDropdownPosition();
+            }
+
+            setIsOpen(!isOpen);
+          }}
           className={cn(
-            "relative block w-full border font-IBM border-black bg-white pl-4 pr-10  text-gray-900 shadow-sm cursor-pointer focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
+            "relative block w-full border font-SansFlex border-black bg-white pl-4 pr-10  text-gray-900 shadow-sm cursor-pointer focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-blue-300",
             rounded
               ? "rounded-full py-[5px] text-[14px] "
               : "rounded-[8px] text-[14px] py-[2px] flex items-center  h-[51px]",
-            error && "border-red-500 focus:ring-red-500"
+            error && "border-red-500 focus:ring-red-500",
           )}
         >
-          <div className="flex items-center text-[14px] font-IBM">
+          <div className="flex items-center text-[14px] font-SansFlex">
             <span>{selectedLabel || placeholder}</span>
           </div>
 
@@ -93,23 +151,30 @@ const SelectInput: React.FC<DropdownInputProps> = ({
           </div>
         </div>
 
-        {isOpen && (
-          <div className="absolute left-0 mt-1 bg-white shadow-lg rounded-[8px] z-10 dark:bg-gray-900 w-full max-h-60 overflow-y-auto scrollbar-hide scrollbar-hide::-webkit-scrollbar">
-            {options.map((option) => (
-              <div
-                key={option.value}
-                onClick={() => handleSelect(option.value)}
-                className={cn(
-                  "px-[16px] py-2 text-[14px] font-IBM text-gray-900 cursor-pointer hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700",
-                  selectedValue === option.value &&
-                    "bg-gray-100 dark:bg-gray-700"
-                )}
-              >
-                {option.label}
-              </div>
-            ))}
-          </div>
-        )}
+        {isOpen &&
+          typeof document !== "undefined" &&
+          createPortal(
+            <div
+              ref={menuRef}
+              style={dropdownStyle}
+              className="fixed z-[9999] bg-white shadow-lg rounded-[8px] dark:bg-gray-900 max-h-60 overflow-y-auto scrollbar-hide scrollbar-hide::-webkit-scrollbar"
+            >
+              {options.map((option) => (
+                <div
+                  key={option.value}
+                  onClick={() => handleSelect(option.value)}
+                  className={cn(
+                    "px-[16px] py-2 text-[14px] font-SansFlex text-gray-900 cursor-pointer hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700",
+                    selectedValue === option.value &&
+                      "bg-gray-100 dark:bg-gray-700",
+                  )}
+                >
+                  {option.label}
+                </div>
+              ))}
+            </div>,
+            document.body,
+          )}
       </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
