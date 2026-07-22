@@ -13,7 +13,7 @@ import { formatNumber } from "@/lib/utils";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const CHART_FONT_FAMILY = "IBM Plex Sans, sans-serif";
+const CHART_FONT_FAMILY = "Google Sans Flex, sans-serif";
 
 type ChartFilterState = {
   channels?: string;

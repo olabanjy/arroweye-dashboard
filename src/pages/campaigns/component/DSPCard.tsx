@@ -25,7 +25,7 @@ const DSP_COLORS: Record<string, string> = {
 };
 
 const DEFAULT_COLOR = "#a3a3a3";
-const CHART_FONT_FAMILY = "IBM Plex Sans, sans-serif";
+const CHART_FONT_FAMILY = "SansFLex, sans-serif";
 
 const formatNumber = (n: number) => {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
