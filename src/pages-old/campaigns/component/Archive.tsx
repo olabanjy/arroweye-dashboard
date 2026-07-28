@@ -1,0 +1,167 @@
+import React from "react";
+import Table from "./Table";
+import { SelectInput } from "@/components/ui/selectinput";
+import { Dialog } from "primereact/dialog";
+import { Button } from "@/components/ui/button";
+import { useArchive } from "../../../hooks/use-archive";
+
+interface ProjectsProps {
+  filterVisible: boolean;
+  searchValue: string;
+}
+
+const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
+  const {
+    editMode,
+    setEditMode,
+    isArchiving,
+    setIsArchiving,
+    copiedPin,
+    isLoading,
+    filteredContent,
+    handleArchiveSubmit,
+    handleCopyPin,
+  } = useArchive({ searchValue });
+
+  const headers: { content: string; align: "left" | "center" | "right" }[] = [
+    { content: "Campaigns", align: "left" },
+    { content: "Label", align: "left" },
+    { content: "Artist", align: "left" },
+    { content: "Start Date", align: "left" },
+    // { content: "Code", align: "center" },
+    { content: "Pin", align: "center" },
+    { content: "Action", align: "center" },
+  ];
+
+  return (
+    <div className="">
+      {filterVisible && (
+        <div className="text-center flex flex-wrap items-end gap-[5px] md:gap-[10px] my-4">
+          <div className="max-w-[150px] w-full rounded-full">
+            <SelectInput
+              rounded={true}
+              options={[
+                { value: "", label: "Investment" },
+                { value: "htl", label: "High to Low" },
+                { value: "lth", label: "Low to High" },
+              ]}
+            />
+          </div>
+          <div className="max-w-[150px] w-full rounded-full">
+            <SelectInput
+              rounded={true}
+              options={[
+                { value: "", label: "Revenue" },
+                { value: "htl", label: "High to Low" },
+                { value: "lth", label: "Low to High" },
+              ]}
+            />
+          </div>
+          <p className="max-w-[150px] w-full cursor-pointer text-[14px] rounded-full px-[10px] py-[5px] hover:bg-orange-500 bg-[#000000] text-white inline">
+            Clear Filters
+          </p>
+        </div>
+      )}
+
+      <div className="mt-[20px]">
+        {isLoading ? (
+          <div className="flex h-[50vh] flex-col items-center justify-center text-center">
+            <div className="my-[32px]">
+              <p className="text-[20px] font-[600] text-grey-400">Loading...</p>
+            </div>
+          </div>
+        ) : (
+          <Table
+            headers={headers}
+            rows={filteredContent?.map((item, index) => ({
+              data: [
+                item?.title,
+                item?.vendor?.organization_name,
+                item?.subvendor?.organization_name,
+                item?.created?.slice(0, 10) || "2025-01-13",
+                // item?.code,
+                <div
+                  className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500] w-[150px] md:w-full whitespace-nowrap"
+                  key={"code"}
+                  onClick={() => handleCopyPin(String(item?.pin ?? ""))}
+                >
+                  {copiedPin === String(item?.pin) ? "Copied!" : "Copy PIN"}
+                </div>,
+                <button
+                  key={`manage-button-${index}`}
+                  className={`p-[8px] text-blue-600 hover:text-blue-800 ${
+                    isArchiving === String(item.id) ? "opacity-50" : ""
+                  }`}
+                  onClick={() => {
+                    setEditMode(true);
+                    setIsArchiving(String(item.id));
+                  }}
+                  disabled={isArchiving === String(item.id)}
+                >
+                  Restore
+                </button>,
+              ],
+            }))}
+            emptyState={
+              <div className="flex h-[50vh] flex-col items-center justify-center text-center">
+                <div className="my-[32px]">
+                  <p className="text-[20px] font-[600] text-grey-400">
+                    No Data
+                  </p>
+                </div>
+              </div>
+            }
+          />
+        )}
+      </div>
+
+      <div
+        className={`custom-dialog-overlay ${
+          editMode
+            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
+            : "hidden"
+        }`}
+      >
+        <Dialog
+          visible={editMode}
+          onHide={() => {
+            setEditMode(false);
+            setIsArchiving(null);
+          }}
+          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+          style={{ width: "30vw" }}
+          className="custom-dialog-overlay"
+        >
+          <div className="space-y-4">
+            <p className="text-[16px] font-[400] font-SansFlex">
+              Are you sure you want to unarchive this item?
+            </p>
+
+            <div className="flex justify-end space-x-2">
+              <Button
+                label="Yes"
+                onClick={async () => {
+                  if (isArchiving) {
+                    await handleArchiveSubmit(isArchiving, false);
+                  }
+                }}
+                className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
+              />
+
+              <Button
+                label="No"
+                onClick={() => {
+                  setEditMode(false);
+                  setIsArchiving(null);
+                }}
+                className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
+              />
+            </div>
+          </div>
+        </Dialog>
+      </div>
+    </div>
+  );
+};
+
+export default Archive;

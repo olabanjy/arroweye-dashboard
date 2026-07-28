@@ -1,0 +1,99 @@
+"use client";
+
+import React from "react";
+import InsightCard from "./InsightCard";
+import { ContentItem } from "@/types/contents";
+
+interface ProjectSingleInsightProps {
+  isAdvertiser: boolean | null;
+  content: ContentItem | null;
+}
+
+const ProjectSingleInsight: React.FC<ProjectSingleInsightProps> = ({
+  isAdvertiser,
+  content,
+}) => {
+  function formatNumber(num: any) {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
+    }
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K";
+    }
+    return num.toString();
+  }
+
+  return (
+    <div className="mt-[20px] relative font-SansFlex">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[10px] 2xl:gap-[20px] relative">
+        <div className="w-full">
+          <InsightCard
+            title="TOTAL INVESTMENT"
+            currency={<>{!isAdvertiser ? "$" : "₦"}</>}
+            value={
+              !isAdvertiser
+                ? formatNumber(content?.total_investment || 0)
+                : formatNumber(content?.kpis?.total_investment_naira || 0)
+            }
+            extraClass="h-[220px]"
+            percentageColor="#11cc48"
+            info="This represents the total amount invoiced for executing this campaign. You can download the invoice under the 'Payments' section."
+          />
+        </div>
+        <div className=" w-full">
+          <InsightCard
+            title="TOTAL REVENUE"
+            currency={<>{!isAdvertiser ? "$" : "₦"}</>}
+            value={
+              !isAdvertiser
+                ? formatNumber(content?.total_revenue?.minimum || 0)
+                : formatNumber(content?.kpis?.estimated_revenue_min_naira || 0)
+            }
+            maxValue={
+              !isAdvertiser
+                ? formatNumber(content?.total_revenue?.maximum || 0)
+                : formatNumber(content?.kpis?.estimated_revenue_max_naira || 0)
+            }
+            extraClass="h-[220px]"
+            percentageChange={content?.total_revenue?.percentage}
+            percentageColor={
+              content?.total_revenue?.change === "increase"
+                ? "#11cc48"
+                : "#ff4d4f"
+            }
+            increaseType={content?.total_revenue?.change}
+            info="This is the estimated revenue range generated from streams, purchases, and views for this campaign. These figures are estimates; please confirm the actual revenue with your distributor."
+          />
+        </div>
+
+        <div className="w-full">
+          <InsightCard
+            title={!isAdvertiser ? "AUDIENCE GROWTH" : "SHAZAMS"}
+            value={
+              !isAdvertiser
+                ? content?.total_audience_growth?.value
+                  ? `+ ${formatNumber(content?.total_audience_growth?.value)}`
+                  : "0"
+                : content?.kpis?.shazams_count
+            }
+            extraClass="h-[220px]"
+            percentageChange={content?.total_audience_growth?.percentage}
+            percentageColor={
+              content?.total_audience_growth?.change === "increase"
+                ? "#11cc48"
+                : "#ff4d4f"
+            }
+            increaseType={content?.total_audience_growth?.change}
+            info={
+              !isAdvertiser
+                ? "The total number of followers, subscribers, and audience members who engaged with your channels during this campaign."
+                : "The total number of Shazams during this campaign"
+            }
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProjectSingleInsight;

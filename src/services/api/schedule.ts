@@ -1,6 +1,6 @@
-import ls from "localstorage-slim";
 import apiRequest from "@/Server/Api";
-import { EventsItem, ContentItem } from "@/types/contents";
+import { ContentItem, EventsItem } from "@/types/contents";
+import ls from "localstorage-slim";
 
 if (typeof window !== "undefined" && window?.localStorage)
   ls.config.storage = localStorage;

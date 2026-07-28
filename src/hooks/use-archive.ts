@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProjects, archiveProject } from "@/services";
+import { archiveProject, getProjects } from "../services";
 
 interface UseArchiveProps {
   searchValue: string;

@@ -1,6 +1,6 @@
-import ls from "localstorage-slim";
 import apiRequest from "@/Server/Api";
 import { ContentItem } from "@/types/contents";
+import ls from "localstorage-slim";
 
 if (typeof window !== "undefined" && window?.localStorage)
   ls.config.storage = localStorage;
@@ -27,7 +27,7 @@ export const getProjectNotifications = async (
   }
 };
 
-export const getNotification = async (): Promise<ContentItem[] | null> => {
+export const getNotification = async (): Promise<ContentItem[] | null> => { 
   try {
     const response = await apiRequest({
       method: "GET",

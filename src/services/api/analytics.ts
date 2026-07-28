@@ -1,6 +1,6 @@
-import apiRequest from "@/Server/Api";
 import { toast } from "react-toastify";
 import ls from "localstorage-slim";
+import apiRequest from "@/Server/Api";
 
 if (typeof window !== "undefined" && window?.localStorage)
   ls.config.storage = localStorage;

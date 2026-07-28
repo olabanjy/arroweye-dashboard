@@ -1,16 +1,15 @@
 "use client";
-import { useRef } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+
 import Image from "next/image";
 import { IoMdInformationCircle } from "react-icons/io";
 import { InputSwitch } from "primereact/inputswitch";
 import { IoReload } from "react-icons/io5";
-import { Toast } from "primereact/toast";
+import { Toaster } from "sonner";
 import { useLogin } from "@/hooks/use-login";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const Login = () => {
-  const toast = useRef<Toast>(null);
   const {
     isLoginLoading,
     isOtpLoading,
@@ -28,22 +27,24 @@ const Login = () => {
     handleOtpInputChange,
     handleLoginSubmit,
     handleOtpSubmit,
-  } = useLogin({ toastRef: toast });
+  } = useLogin();
 
   return (
     <div className="h-screen flex items-center justify-center relative">
-      <Toast ref={toast} className="font-SansFlex" />
+      <Toaster richColors position="top-right" />
       {randomBgImage && (
         <Image
           src={randomBgImage}
           alt="background"
-          priority={true}
+          fill
+          priority
+          sizes="100vw"
           className={`absolute top-0 left-0 w-full h-full object-cover transition-all duration-500 ${
             isBlurred ? "blur-[10px]" : "blur-none"
           }`}
         />
       )}
-      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-20"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-black/20"></div>
       <div className="relative z-10 max-w-6xl w-full px-4 font-SansFlex">
         <div className=" grid place-items-center lg:flex items-center lg:justify-between h-full gap-[20px]">
           {/* <Image src="/aestudio.svg" alt="Logo" width={230} height={87} /> */}
@@ -53,13 +54,11 @@ const Login = () => {
             width={230}
             height={87}
           />
-          <div className="w-full max-w-[400px] bg-white  rounded-[10px] pb-[56px]">
+          <div className="w-full max-w-[400px] bg-white rounded-[10px] pb-[56px]">
             <div className=" bg-[#1473E6] px-[27px] py-[23px] rounded-t-[10px] text-[#FFFFFF]">
               <div className=" flex items-center gap-[14px]">
                 <IoMdInformationCircle size={24} />{" "}
-                <p className="text-[16px] font-[600]">
-                  Please verify your credentials{" "}
-                </p>
+                <p className="text-[16px]">Please verify your credentials </p>
               </div>
             </div>
 
@@ -70,35 +69,22 @@ const Login = () => {
                   onSubmit={handleLoginSubmit}
                 >
                   <Input
+                    rounded={true}
                     type="email"
                     name="email"
                     placeholder="hi@arroweye.pro"
                     value={loginFormData.email}
                     onChange={handleLoginInputChange}
-                    // error={loginErrors.email}
+                    error={loginErrors.email}
                     className="w-full text-center font-medium text-[#323131] text-[15px]"
                   />
-                  <div className=" flex items-center justify-between">
-                    <div className=" flex  items-center gap-[12px]">
-                      <InputSwitch
-                        id="phone"
-                        checked={toggleNotifications}
-                        onChange={(e) => setToggleNotifications(e.value)}
-                        className="custom-switch"
-                      />
-
-                      <p className="  text-[14px] text-[#605C5C]">
-                        Store Credentials
-                      </p>
-                    </div>
+                  <div className=" flex items-center justify-end">
                     <Button
-                      label="Send OTP"
-                      isLoading={isLoginLoading}
                       disabled={isLoginLoading}
-                      loadingText="Sending"
-                      type="submit"
-                      className="rounded-full bg-[#000000] font-bold text-[14px]"
-                    />
+                      className="rounded-full bg-[#000000] p-5 font-bold text-white hover:bg-[#000000]"
+                    >
+                      {isLoginLoading ? "Sending" : "Send OTP"}
+                    </Button>
                   </div>
                 </form>
               ) : (
@@ -107,11 +93,13 @@ const Login = () => {
                   onSubmit={handleOtpSubmit}
                 >
                   <Input
+                    rounded={true}
                     type="text"
                     name="otp"
                     placeholder="Enter OTP"
                     value={otpFormData.otp}
                     onChange={handleOtpInputChange}
+                    error={otpErrors.otp}
                     className="w-full text-center font-medium text-[#323131]"
                   />
 
@@ -126,13 +114,11 @@ const Login = () => {
                       </p>
                     </div>
                     <Button
-                      label="Verify OTP"
-                      isLoading={isOtpLoading}
                       disabled={isOtpLoading}
-                      loadingText="Verifying"
-                      type="submit"
-                      className="rounded-full bg-[#000000] font-bold text-[14px]  "
-                    />
+                      className="rounded-full bg-[#000000] p-5 font-bold text-white hover:bg-[#000000]"
+                    >
+                      {isOtpLoading ? "Verifying" : "Verify OTP"}
+                    </Button>
                   </div>
                 </form>
               )}

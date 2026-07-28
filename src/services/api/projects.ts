@@ -1,7 +1,8 @@
-import ls from "localstorage-slim";
 import apiRequest from "@/Server/Api";
-import { toast } from "react-toastify";
 import { ContentItem } from "@/types/contents";
+import ls from "localstorage-slim";
+
+import { toast } from "react-toastify";
 
 if (typeof window !== "undefined" && window?.localStorage)
   ls.config.storage = localStorage;
