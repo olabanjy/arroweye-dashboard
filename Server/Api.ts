@@ -37,7 +37,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 axiosInstance.interceptors.response.use(
@@ -49,7 +49,7 @@ axiosInstance.interceptors.response.use(
       console.log(error);
     }
     return Promise.reject(error);
-  },
+  }
 );
 
 interface ApiRequestParams {

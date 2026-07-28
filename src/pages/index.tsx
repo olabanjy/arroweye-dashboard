@@ -1,9 +1,12 @@
-import LoginPage from "./login";
+import { GetServerSideProps } from "next";
 
 export default function Home() {
-  return (
-    <div className="">
-      <LoginPage />
-    </div>
-  );
+  return null;
 }
+
+export const getServerSideProps: GetServerSideProps = async () => ({
+  redirect: {
+    destination: "/login",
+    permanent: false,
+  },
+});

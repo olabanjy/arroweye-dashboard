@@ -606,7 +606,7 @@ const ProjectDetails = () => {
                     </div>
                   </div>
                 ) : (
-                  <p className="font-[900] text-[45px] text-[#000000] flex-grow">
+                  <p className="font-[700] text-[45px] text-[#000000] flex-grow">
                     {content?.title || content?.campaign?.song_title}
                   </p>
                 )}

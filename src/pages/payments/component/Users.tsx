@@ -94,7 +94,7 @@ const Users = () => {
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          maxWidth="max-w-[300px]"
+          maxWidth="max-w-[300px]" 
         >
           <p className="text-[#7c7e81] text-[14px] uppercase font-SansFlex">
             Member Information

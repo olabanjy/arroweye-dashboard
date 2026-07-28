@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StaticImageData } from "next/image";
 import { Toast } from "primereact/toast";
 import { LoginEP, VerifyLogin } from "@/services";
-import { useAuth } from "@/context/auth-session";
+import { useAuth } from "@/context/auth-context";
 
 import Bg1 from "@assets/image (1).webp";
 import Bg2 from "@assets/image (2).webp";

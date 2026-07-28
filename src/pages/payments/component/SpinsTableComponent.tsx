@@ -279,7 +279,7 @@ const SpinsTableComponent: React.FC = () => {
     setSortConfig({ column, direction });
   };
 
-  const getMovementPill = (growth: number): JSX.Element => {
+  const getMovementPill = (growth: number): React.ReactElement => {
     if (!growth) {
       return (
         <span className="px-3 py-1.5 rounded-full text-xs font-black bg-gray-100 text-gray-600">
@@ -311,7 +311,7 @@ const SpinsTableComponent: React.FC = () => {
     );
   };
 
-  const getStatusPill = (status: string): JSX.Element => {
+  const getStatusPill = (status: string): React.ReactElement => {
     const styles: Record<string, string> = {
       NEW: "bg-sky-500 text-white",
       HOT: "bg-orange-500 text-white",
