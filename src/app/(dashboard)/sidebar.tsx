@@ -160,7 +160,9 @@ const NavItem = ({
             <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-6">
               {icon}
             </span>
-            <span className="group-data-[collapsible=icon]:hidden">{label}</span>
+            <span className="group-data-[collapsible=icon]:hidden">
+              {label}
+            </span>
           </Link>
         </SidebarMenuButton>
       ) : (
@@ -386,7 +388,9 @@ const CampaignsSidebarContent = () => {
                     <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-6">
                       <MdPersonOutline size={SIDEBAR_ICON_SIZE} />
                     </span>
-                    <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{displayName}</span>
+                    <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">
+                      {displayName}
+                    </span>
                     <MdKeyboardArrowRight
                       size={18}
                       className="ml-auto transition-transform duration-200 group-data-[state=open]/menu-button:rotate-[-90deg] group-data-[collapsible=icon]:hidden"

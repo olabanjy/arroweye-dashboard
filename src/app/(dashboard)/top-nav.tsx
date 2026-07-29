@@ -8,11 +8,11 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import CampaignNotifications from "./notifications/campaigns/CampaignNotifications";
-import MileStonesNotification from "./notifications/milestones/MileStonesNotification";
-import SecurityNotification from "./notifications/security/SecurityNotification";
-import AssetsNotification from "./notifications/assets/AssetsNotification";
-import PaymentsNotification from "./notifications/payments/PaymentsNotification";
+import CampaignNotifications from "./campaigns/notifications/campaigns/CampaignNotifications";
+import MileStonesNotification from "./campaigns/notifications/milestones/MileStonesNotification";
+import SecurityNotification from "./campaigns/notifications/security/SecurityNotification";
+import AssetsNotification from "./campaigns/notifications/assets/AssetsNotification";
+import PaymentsNotification from "./campaigns/notifications/payments/PaymentsNotification";
 import { useTopNav } from "@/hooks/use-top-nav";
 
 const TopNav: FC = () => {

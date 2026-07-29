@@ -2,9 +2,22 @@
 
 import { ReactNode, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider, useTheme } from "next-themes";
+import { Toaster } from "sonner";
 import { AppAuthProvider } from "./auth-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+
+function AppToaster() {
+  const { resolvedTheme } = useTheme();
+
+  return (
+    <Toaster
+      richColors
+      position="top-right"
+      theme={resolvedTheme === "dark" ? "dark" : "light"}
+    />
+  );
+}
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
@@ -14,6 +27,7 @@ export function Providers({ children }: { children: ReactNode }) {
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <TooltipProvider>
           <AppAuthProvider>{children}</AppAuthProvider>
+          <AppToaster />
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>

@@ -6,7 +6,7 @@ import { PromotionGrid } from "@/components/campaigns/PromotionGrid";
 import { BadgeCheck, RefreshCcw } from "lucide-react";
 import Modal from "@/components/modal";
 import Link from "next/link";
-import { usePromoterSetup } from "../../../../hooks/use-promoter-setup";
+import { usePromoterSetup } from "../../../../../hooks/use-promoter-setup";
 
 const PromoterCampaign = () => {
   const {

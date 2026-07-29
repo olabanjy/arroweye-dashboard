@@ -7,7 +7,7 @@ import {
 import { SelectInput } from "@/components/ui/selectinput";
 import { Dialog } from "primereact/dialog";
 import { Button } from "@/components/ui/button";
-import { useArchive } from "../../../hooks/use-archive";
+import { useArchive } from "../../../../hooks/use-archive";
 
 interface ProjectsProps {
   filterVisible: boolean;

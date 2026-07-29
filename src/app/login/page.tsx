@@ -4,7 +4,6 @@ import Image from "next/image";
 import { IoMdInformationCircle } from "react-icons/io";
 import { InputSwitch } from "primereact/inputswitch";
 import { IoReload } from "react-icons/io5";
-import { Toaster } from "sonner";
 import { useLogin } from "@/hooks/use-login";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,7 +30,6 @@ const Login = () => {
 
   return (
     <div className="h-screen flex items-center justify-center relative">
-      <Toaster richColors position="top-right" />
       {randomBgImage && (
         <Image
           src={randomBgImage}

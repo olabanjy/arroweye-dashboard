@@ -1,5 +1,7 @@
 import React from "react";
-import { GrFormPreviousLink, GrFormNextLink } from "react-icons/gr";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
   currentPage: number;
@@ -25,24 +27,32 @@ const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-center gap-2 mt-4">
-      <button
+    <div className="mt-4 flex items-center justify-center gap-2">
+      <Button
+        type="button"
+        variant="outline"
+        size="icon-lg"
+        aria-label="Previous page"
         onClick={handlePrev}
         disabled={currentPage === 1}
-        className="px-4 py-2 bg-gray-300 rounded-full disabled:opacity-50"
+        className="rounded-full"
       >
-        <GrFormPreviousLink />
-      </button>
-      <p className="text-sm">
+        <ChevronLeft />
+      </Button>
+      <p className="text-sm text-muted-foreground">
         Page {currentPage} of {totalPages}
       </p>
-      <button
+      <Button
+        type="button"
+        variant="outline"
+        size="icon-lg"
+        aria-label="Next page"
         onClick={handleNext}
         disabled={currentPage === totalPages}
-        className="px-4 py-2 bg-gray-300 rounded-full disabled:opacity-50"
+        className="rounded-full"
       >
-        <GrFormNextLink />
-      </button>
+        <ChevronRight />
+      </Button>
     </div>
   );
 };
