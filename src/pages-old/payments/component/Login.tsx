@@ -132,7 +132,6 @@ const Login = () => {
                       label="Verify OTP"
                       isLoading={isOtpLoading}
                       disabled={isOtpLoading}
-                      variant="primary"
                       loadingText="Verifying"
                       type="submit"
                       className="rounded-full bg-[#000000] font-bold text-[14px]  "

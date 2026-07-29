@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProjects, getCreatedCampaigns, archiveProject } from "@/services";
@@ -110,24 +110,27 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
     fetchCampaigns();
   }, [isAuthLoading, isAdvertiser, currentPage]);
 
-  const handleCopyPin = (pin: string) => {
+  const handleCopyPin = useCallback((pin: string) => {
     navigator.clipboard.writeText(pin);
     setCopiedPin(pin);
     setTimeout(() => setCopiedPin(null), 2000);
-  };
+  }, []);
 
-  const handleArchiveSubmit = async (projectId: number) => {
-    try {
-      setIsArchiving(projectId);
-      await archiveProject(projectId, { archived: true });
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-      setEditMode(false);
-    } catch (error) {
-      console.error(`Error archiving project ${projectId}:`, error);
-    } finally {
-      setIsArchiving(null);
-    }
-  };
+  const handleArchiveSubmit = useCallback(
+    async (projectId: number) => {
+      try {
+        setIsArchiving(projectId);
+        await archiveProject(projectId, { archived: true });
+        queryClient.invalidateQueries({ queryKey: ["projects"] });
+        setEditMode(false);
+      } catch (error) {
+        console.error(`Error archiving project ${projectId}:`, error);
+      } finally {
+        setIsArchiving(null);
+      }
+    },
+    [queryClient],
+  );
 
   const filteredContent = content
     .filter(

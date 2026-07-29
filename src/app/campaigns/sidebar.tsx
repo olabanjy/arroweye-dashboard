@@ -10,6 +10,7 @@ import {
   MdCampaign,
   MdGavel,
   MdHelpOutline,
+  MdKeyboardArrowRight,
   MdLogout,
   MdPayment,
   MdSchool,
@@ -83,7 +84,14 @@ const SidebarLogo = () => {
   );
 };
 
-const NavItem = ({ href, label, icon, active, tooltip, onClick }: NavItemProps) => {
+const NavItem = ({
+  href,
+  label,
+  icon,
+  active,
+  tooltip,
+  onClick,
+}: NavItemProps) => {
   const button = (
     <SidebarMenuButton
       tooltip={tooltip ?? label}
@@ -96,7 +104,7 @@ const NavItem = ({ href, label, icon, active, tooltip, onClick }: NavItemProps) 
     >
       <span
         className={cn(
-          "size-1 rounded-full bg-transparent group-data-[collapsible=icon]:hidden",
+          "size-1 rounded-full cursor-pointer bg-transparent group-data-[collapsible=icon]:hidden",
           active && "bg-[#17954c]",
         )}
       />
@@ -120,7 +128,7 @@ const NavItem = ({ href, label, icon, active, tooltip, onClick }: NavItemProps) 
           <Link href={href}>
             <span
               className={cn(
-                "size-1 rounded-full bg-transparent group-data-[collapsible=icon]:hidden",
+                "size-1 rounded-full cursor-pointer bg-transparent group-data-[collapsible=icon]:hidden",
                 active && "bg-[#17954c]",
               )}
             />
@@ -240,38 +248,55 @@ const CampaignsSidebarContent = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       tooltip="Resources"
+                      aria-controls="resources-sidebar-menu"
+                      aria-expanded={isResourcesOpen}
                       data-open={isResourcesOpen}
                       onClick={() => setIsResourcesOpen((open) => !open)}
                       className="h-10 text-[14px] text-black hover:bg-sidebar-accent"
                     >
                       <span className="size-1 rounded-full bg-transparent group-data-[collapsible=icon]:hidden" />
                       <MdSchool size={22} className="text-black" />
-                      <span>Resources</span>
+                      <span className="flex-1">Resources</span>
+                      <MdKeyboardArrowRight
+                        size={18}
+                        className={cn(
+                          "ml-auto text-black transition-transform duration-300 ease-out group-data-[collapsible=icon]:hidden",
+                          isResourcesOpen && "rotate-90",
+                        )}
+                      />
                     </SidebarMenuButton>
 
-                    {isResourcesOpen && (
-                      <SidebarMenuSub>
-                        {externalResources.map((resource) => (
-                          <SidebarMenuSubItem key={resource.label}>
-                            <SidebarMenuSubButton
-                              asChild
-                              onClick={() =>
-                                window.open(
-                                  resource.href,
-                                  "_blank",
-                                  "noopener,noreferrer",
-                                )
-                              }
-                            >
-                              <button type="button">
-                                {resource.icon}
-                                <span>{resource.label}</span>
-                              </button>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    )}
+                    <SidebarMenuSub
+                      id="resources-sidebar-menu"
+                      aria-hidden={!isResourcesOpen}
+                      className={cn(
+                        "overflow-hidden transition-[max-height,opacity,padding,border-color] duration-300 ease-out",
+                        isResourcesOpen
+                          ? "max-h-32 opacity-100"
+                          : "max-h-0 border-transparent py-0 opacity-0 pointer-events-none",
+                      )}
+                    >
+                      {externalResources.map((resource) => (
+                        <SidebarMenuSubItem key={resource.label}>
+                          <SidebarMenuSubButton
+                            asChild
+                            tabIndex={isResourcesOpen ? 0 : -1}
+                            onClick={() =>
+                              window.open(
+                                resource.href,
+                                "_blank",
+                                "noopener,noreferrer",
+                              )
+                            }
+                          >
+                            <button type="button">
+                              {resource.icon}
+                              <span>{resource.label}</span>
+                            </button>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
                   </SidebarMenuItem>
                 )}
 

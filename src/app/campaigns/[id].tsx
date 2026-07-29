@@ -616,7 +616,7 @@ const ProjectDetails = () => {
                     {subvendorStaff?.map((user: any, index: any) => (
                       <div key={index} className="relative group">
                         <p
-                          className={`${predefinedColors[index % predefinedColors.length]}  tracking-[.2rem]  text-[12px] font-[700] font-Poppins rounded-full h-[50px] w-[50px] flex items-center justify-center text-white text-center cursor-pointer`}
+                          className={`${predefinedColors[index % predefinedColors.length]}  tracking-[.2rem]  text-[12px] font-[700] font-SansFlex rounded-full h-[50px] w-[50px] flex items-center justify-center text-white text-center cursor-pointer`}
                           onClick={() => handleUserClick(user)}
                         >
                           {user?.user_profile?.fullname

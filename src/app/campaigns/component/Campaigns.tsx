@@ -1,5 +1,9 @@
-import React, { useState } from "react";
-import Table from "./Table";
+import React, { useMemo } from "react";
+import {
+  Table,
+  type TableHeader,
+  type TableRow,
+} from "@/components/campaigns/table";
 import { BsTrash } from "react-icons/bs";
 import { SelectInput } from "@/components/ui/selectinput";
 import Link from "next/link";
@@ -13,6 +17,31 @@ interface ProjectsProps {
   filterVisible: boolean;
   searchValue: string;
 }
+
+const PROJECT_HEADERS: TableHeader[] = [
+  { content: "Campaigns", align: "left" },
+  { content: "Label", align: "left" },
+  { content: "Artist", align: "left" },
+  { content: "Start Date", align: "left" },
+  { content: "Pin", align: "center" },
+  { content: "Manage", align: "center" },
+  { content: "Action", align: "center" },
+];
+
+const ADVERTISER_HEADERS: TableHeader[] = [
+  { content: "Campaigns", align: "left" },
+  { content: "Artist", align: "left" },
+  { content: "Start Date", align: "left" },
+  { content: "Manage", align: "center" },
+];
+
+const TableEmptyState = ({ label }: { label: string }) => (
+  <div className="flex h-[50vh] flex-col items-center justify-center text-center">
+    <div className="my-8">
+      <p className="text-[20px] font-semibold text-grey-400">{label}</p>
+    </div>
+  </div>
+);
 
 const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const {
@@ -36,25 +65,95 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
     filteredCampaignList,
   } = useCampaigns({ searchValue });
 
-  const headers: { content: string; align: "left" | "center" | "right" }[] = [
-    { content: "Campaigns", align: "left" },
-    { content: "Label", align: "left" },
-    { content: "Artist", align: "left" },
-    { content: "Start Date", align: "left" },
-    { content: "Pin", align: "center" },
-    { content: "Manage", align: "center" },
-    { content: "Action", align: "center" },
-  ];
-  const campaignHeaders: {
-    content: string;
-    align: "left" | "center" | "right";
-  }[] = [
-    { content: "Campaigns", align: "left" },
-    { content: "Song", align: "left" },
-    { content: "Artist", align: "left" },
-    { content: "Start Date", align: "left" },
-    { content: "Manage", align: "center" },
-  ];
+  const projectRows = useMemo<TableRow[]>(
+    () =>
+      filteredContent
+        ?.slice()
+        .reverse()
+        .map((item, index) => ({
+          id: item.id ?? index,
+          data: [
+            <div key={`project-title-${item.id ?? index}`}>
+              <Link href={`/campaigns/${item.id}`}>{item?.title}</Link>
+            </div>,
+            item?.subvendor?.organization_name,
+            item?.artist_name,
+            item?.created?.slice(0, 10) || "2025-01-13",
+            <button
+              type="button"
+              className="w-[150px] cursor-pointer whitespace-nowrap rounded border bg-white p-2 text-center font-medium md:w-full"
+              key={`project-pin-${item.id ?? index}`}
+              onClick={() => handleCopyPin(String(item?.pin ?? ""))}
+            >
+              {copiedPin === String(item?.pin) ? "Copied!" : "Copy PIN"}
+            </button>,
+            <Link
+              href={`/campaigns/${item.id}`}
+              key={`project-manage-${item.id ?? index}`}
+            >
+              <div className="flex justify-center text-black">
+                <span className="sr-only">
+                  Manage {item?.title ?? "campaign"}
+                </span>
+                <MdOutlineModeEditOutline size={20} aria-hidden="true" />
+              </div>
+            </Link>,
+            <div
+              key={`project-actions-${item.id ?? index}`}
+              className="flex justify-center gap-2"
+            >
+              <button
+                type="button"
+                aria-label={`Archive ${item?.title ?? "campaign"}`}
+                className={`rounded-full text-black ${
+                  isArchiving === item.id ? "opacity-50" : ""
+                }`}
+                onClick={() => {
+                  setEditMode(true);
+                  setIsArchiving(typeof item.id === "number" ? item.id : null);
+                }}
+                disabled={isArchiving === item.id}
+              >
+                <BsTrash size={20} aria-hidden="true" />
+              </button>
+            </div>,
+          ],
+        })) ?? [],
+    [
+      copiedPin,
+      filteredContent,
+      handleCopyPin,
+      isArchiving,
+      setEditMode,
+      setIsArchiving,
+    ],
+  );
+
+  const advertiserRows = useMemo<TableRow[]>(
+    () =>
+      filteredCampaignList?.map((item, index) => ({
+        id: item.id ?? index,
+        data: [
+          <div key={`campaign-title-${item.id ?? index}`}>
+            <Link href={`/campaigns/${item.id}`}>{item.song_title}</Link>
+          </div>,
+          item.song_artist,
+          item.start_date,
+          <Link
+            href={`/campaigns/${item.id}`}
+            key={`campaign-manage-${item.id ?? index}`}
+          >
+            <div className="flex justify-center text-black">
+              <span className="sr-only">
+                Manage {item.song_title ?? "campaign"}
+              </span>
+              <MdOutlineModeEditOutline size={20} aria-hidden="true" />
+            </div>
+          </Link>,
+        ],
+      })) ?? [],
+    [filteredCampaignList],
+  );
 
   return (
     <>
@@ -95,118 +194,35 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           </p>
         </div>
       )}
-      <div className="mt-[20px]">
+      <div className="mt-5">
         {!isAdvertiser && (
           <Table
+            aria-label="Campaign projects"
             highlightFirstCell={true}
-            headers={headers}
-            rows={filteredContent
-              ?.slice()
-              .reverse()
-              .map((item, index) => ({
-                data: [
-                  <div key={`manage-button-${index}`}>
-                    <Link href={`/campaigns/${item.id}`}>{item?.title}</Link>
-                  </div>,
-                  item?.subvendor?.organization_name,
-                  item?.artist_name,
-                  item?.created?.slice(0, 10) || "2025-01-13",
-                  <div
-                    className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500] w-[150px] md:w-full whitespace-nowrap"
-                    key={"code"}
-                    onClick={() => handleCopyPin(String(item?.pin ?? ""))}
-                  >
-                    {copiedPin === String(item?.pin) ? "Copied!" : "Copy PIN"}
-                  </div>,
-                  <Link
-                    href={`/campaigns/${item.id}`}
-                    key={`manage-button-${index}`}
-                  >
-                    <div className="flex justify-center">
-                      <button className="text-[#000000] rounded-full">
-                        <MdOutlineModeEditOutline size={20} />
-                      </button>
-                    </div>
-                  </Link>,
-                  <div
-                    key={`action-buttons-${index}`}
-                    className="flex justify-center gap-2"
-                  >
-                    <button
-                      className={`text-[#000000] rounded-full ${isArchiving === item.id ? "opacity-50" : ""}`}
-                      onClick={() => {
-                        setEditMode(true);
-                        setIsArchiving(
-                          typeof item.id === "number" ? item.id : null,
-                        );
-                      }}
-                      disabled={isArchiving === item.id}
-                    >
-                      <BsTrash size={20} />
-                    </button>
-                  </div>,
-                ],
-              }))}
+            headers={PROJECT_HEADERS}
+            rows={projectRows}
             emptyState={
-              isLoading ? (
-                <div className="flex h-[50vh] flex-col items-center justify-center text-center">
-                  <div className="my-[32px]">
-                    <p className="text-[20px] font-[600] text-grey-400">
-                      Loading...
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex h-[50vh] flex-col items-center justify-center text-center">
-                  <div className="my-[32px]">
-                    <p className="text-[20px] font-[600] text-grey-400">
-                      No Data
-                    </p>
-                  </div>
-                </div>
-              )
+              <TableEmptyState label={isLoading ? "Loading..." : "No Data"} />
             }
           />
         )}
 
         {isAdvertiser && (
-          <div>
+          <div className="relative">
             {isLoading && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60 rounded-md">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#31bc86] border-t-transparent" />
               </div>
             )}
             <Table
+              aria-label="Created campaigns"
               highlightFirstCell={true}
-              headers={campaignHeaders}
-              rows={filteredCampaignList?.map((item) => ({
-                data: [
-                  <div key={`title-${item.id}`}>
-                    <Link href={`/campaigns/${item.id}`}>
-                      {item.song_title}
-                    </Link>
-                  </div>,
-                  item.song_title,
-                  item.song_artist,
-                  item.start_date,
-                  <Link
-                    href={`/campaigns/${item.id}`}
-                    key={`manage-${item.id}`}
-                  >
-                    <div className="flex justify-center">
-                      <button className="text-[#000000] rounded-full">
-                        <MdOutlineModeEditOutline size={20} />
-                      </button>
-                    </div>
-                  </Link>,
-                ],
-              }))}
+              headers={ADVERTISER_HEADERS}
+              rows={advertiserRows}
               emptyState={
-                <div className="flex h-[50vh] flex-col items-center justify-center text-center">
-                  <p className="text-[20px] font-[600] text-grey-400">
-                    No Campaigns
-                  </p>
-                </div>
+                <TableEmptyState
+                  label={isLoading ? "Loading..." : "No Campaigns"}
+                />
               }
             />
             <Pagination
@@ -250,7 +266,9 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                   }
                 }}
                 className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
-              />
+              >
+                Yes
+              </Button>
 
               <Button
                 onClick={() => {
@@ -258,7 +276,9 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                   setIsArchiving(null);
                 }}
                 className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
-              />
+              >
+                No
+              </Button>
             </div>
           </div>
         </Dialog>

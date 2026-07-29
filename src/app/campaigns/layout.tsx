@@ -2,9 +2,10 @@
 import { FC, ReactNode, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAuth } from "@/context/auth-context";
+import { useAuth } from "@/context/auth-session";
 import Sidebar from "./sidebar";
-import { useRouter } from "next/navigation";
+import TopNav from "./top-nav";
+import { usePathname, useRouter } from "next/navigation";
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,6 +14,7 @@ interface LayoutProps {
 
 const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
@@ -26,17 +28,21 @@ const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
       <div className=" z-50">
         <Sidebar />
       </div>
-      {/* <div className="flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow">
+      <div className="flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow">
         <TopNav />
         <main
-          className={`flex-1 ${
-            withBorder ? "border border-gray-100" : ""
-          } ${router.pathname !== "/campaigns/spins-notifications" && router.pathname !== "/campaigns/setup/custom" && router.pathname !== "/campaigns/setup/promoter" ? "mx-[20px]" : ""} border-none rounded-[8px] mt-[20px]`}
+          className={`flex-1 ${withBorder ? "border border-gray-100" : ""} ${
+            pathname !== "/campaigns/spins-notifications" &&
+            pathname !== "/campaigns/setup/custom" &&
+            pathname !== "/campaigns/setup/promoter"
+              ? "mx-[20px]"
+              : ""
+          } border-none rounded-[8px] mt-[20px]`}
         >
           {children}
         </main>
         <ToastContainer />
-      </div> */}
+      </div>
     </div>
   );
 };

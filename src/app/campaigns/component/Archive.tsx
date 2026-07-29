@@ -1,5 +1,9 @@
-import React from "react";
-import Table from "./Table";
+import React, { useMemo } from "react";
+import {
+  Table,
+  type TableHeader,
+  type TableRow,
+} from "@/components/campaigns/table";
 import { SelectInput } from "@/components/ui/selectinput";
 import { Dialog } from "primereact/dialog";
 import { Button } from "@/components/ui/button";
@@ -9,6 +13,15 @@ interface ProjectsProps {
   filterVisible: boolean;
   searchValue: string;
 }
+
+const ARCHIVE_HEADERS: TableHeader[] = [
+  { content: "Campaigns", align: "left" },
+  { content: "Label", align: "left" },
+  { content: "Artist", align: "left" },
+  { content: "Start Date", align: "left" },
+  { content: "Pin", align: "center" },
+  { content: "Action", align: "center" },
+];
 
 const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const {
@@ -23,15 +36,48 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
     handleCopyPin,
   } = useArchive({ searchValue });
 
-  const headers: { content: string; align: "left" | "center" | "right" }[] = [
-    { content: "Campaigns", align: "left" },
-    { content: "Label", align: "left" },
-    { content: "Artist", align: "left" },
-    { content: "Start Date", align: "left" },
-    // { content: "Code", align: "center" },
-    { content: "Pin", align: "center" },
-    { content: "Action", align: "center" },
-  ];
+  const rows = useMemo<TableRow[]>(
+    () =>
+      filteredContent?.map((item, index) => ({
+        id: item.id ?? index,
+        data: [
+          item?.title,
+          item?.vendor?.organization_name,
+          item?.subvendor?.organization_name,
+          item?.created?.slice(0, 10) || "2025-01-13",
+          <button
+            type="button"
+            className="w-[150px] cursor-pointer whitespace-nowrap rounded border bg-white p-2 text-center font-medium md:w-full"
+            key={`archive-pin-${item.id ?? index}`}
+            onClick={() => handleCopyPin(String(item?.pin ?? ""))}
+          >
+            {copiedPin === String(item?.pin) ? "Copied!" : "Copy PIN"}
+          </button>,
+          <button
+            type="button"
+            key={`restore-button-${item.id ?? index}`}
+            className={`p-2 text-blue-600 hover:text-blue-800 ${
+              isArchiving === String(item.id) ? "opacity-50" : ""
+            }`}
+            onClick={() => {
+              setEditMode(true);
+              setIsArchiving(String(item.id));
+            }}
+            disabled={isArchiving === String(item.id)}
+          >
+            Restore
+          </button>,
+        ],
+      })) ?? [],
+    [
+      copiedPin,
+      filteredContent,
+      handleCopyPin,
+      isArchiving,
+      setEditMode,
+      setIsArchiving,
+    ],
+  );
 
   return (
     <div className="">
@@ -72,36 +118,9 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           </div>
         ) : (
           <Table
-            headers={headers}
-            rows={filteredContent?.map((item, index) => ({
-              data: [
-                item?.title,
-                item?.vendor?.organization_name,
-                item?.subvendor?.organization_name,
-                item?.created?.slice(0, 10) || "2025-01-13",
-                // item?.code,
-                <div
-                  className="p-[8px] text-center border bg-white rounded cursor-pointer font-[500] w-[150px] md:w-full whitespace-nowrap"
-                  key={"code"}
-                  onClick={() => handleCopyPin(String(item?.pin ?? ""))}
-                >
-                  {copiedPin === String(item?.pin) ? "Copied!" : "Copy PIN"}
-                </div>,
-                <button
-                  key={`manage-button-${index}`}
-                  className={`p-[8px] text-blue-600 hover:text-blue-800 ${
-                    isArchiving === String(item.id) ? "opacity-50" : ""
-                  }`}
-                  onClick={() => {
-                    setEditMode(true);
-                    setIsArchiving(String(item.id));
-                  }}
-                  disabled={isArchiving === String(item.id)}
-                >
-                  Restore
-                </button>,
-              ],
-            }))}
+            aria-label="Archived campaigns"
+            headers={ARCHIVE_HEADERS}
+            rows={rows}
             emptyState={
               <div className="flex h-[50vh] flex-col items-center justify-center text-center">
                 <div className="my-[32px]">
@@ -139,23 +158,25 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
 
             <div className="flex justify-end space-x-2">
               <Button
-                label="Yes"
                 onClick={async () => {
                   if (isArchiving) {
                     await handleArchiveSubmit(isArchiving, false);
                   }
                 }}
                 className="px-[16px] py-[8px] text-white rounded-full bg-blue-500"
-              />
+              >
+                Yes
+              </Button>
 
               <Button
-                label="No"
                 onClick={() => {
                   setEditMode(false);
                   setIsArchiving(null);
                 }}
                 className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
-              />
+              >
+                No
+              </Button>
             </div>
           </div>
         </Dialog>

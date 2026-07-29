@@ -14,7 +14,7 @@ const Manage = () => {
 
   return (
     <div className="my-[20px]">
-      <div className=" hidden">
+      <div className="">
         <div className="grid md:grid-cols-2 items-center gap-[20px]">
           <div className="max-w-[400px] w-full">
             <Input

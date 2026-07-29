@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { IoFilter } from "react-icons/io5";
-import Campaigns from "./Campaigns";
 import Archive from "./Archive";
+import Campaigns from "./campaigns";
 
 const InvoicesTab: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"Campaigns" | "Archive">(
@@ -17,15 +17,15 @@ const InvoicesTab: React.FC = () => {
   }, [activeTab]);
 
   return (
-    <div className="lg:p-[20px] ">
+    <div className="lg:p-5 ">
       <div className=" ">
-        <div className="grid md:flex items-center gap-[20px] md:gap-[40px]">
-          <div className="flex gap-[20px] items-center  ">
+        <div className="grid md:flex items-center gap-[20px] md:gap-10">
+          <div className="flex gap-5 items-center  ">
             <button
-              className={`pb-[10px] text-[18px] transition-all duration-300 ${
+              className={`pb-2.5 text-[18px] transition-all duration-300 ${
                 activeTab === "Campaigns"
-                  ? "border-b border-[#17845a] text-[#17845a] font-[400]"
-                  : "font-[400]"
+                  ? "border-b border-[#17845a] text-[#17845a] font-normal"
+                  : "font-normal"
               }`}
               onClick={() => setActiveTab("Campaigns")}
             >
@@ -34,8 +34,8 @@ const InvoicesTab: React.FC = () => {
             <button
               className={`pb-[10px] text-[18px] transition-all duration-300 ${
                 activeTab === "Archive"
-                  ? "border-b border-[#17845a] text-[#17845a] font-[400]"
-                  : "font-[400]"
+                  ? "border-b border-[#17845a] text-[#17845a] font-normal"
+                  : "font-normal"
               }`}
               onClick={() => setActiveTab("Archive")}
             >
@@ -43,9 +43,9 @@ const InvoicesTab: React.FC = () => {
             </button>
           </div>
 
-          <div className="flex-grow ">
+          <div className="grow">
             <div className="flex items-center justify-end gap-[10px]">
-              <div className="flex-grow font-SansFlex">
+              <div className="grow font-SansFlex">
                 <Input
                   type="text"
                   placeholder="Search by title, label and artist..."
