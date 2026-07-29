@@ -13,6 +13,7 @@ import { SelectInput } from "@/components/ui/selectinput";
 import { useRouter } from "next/router";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { Input } from "@/components/ui/input";
+import { useParams } from "next/navigation";
 
 interface CompanyDetailsFormProps {
   visible: boolean;
@@ -53,8 +54,7 @@ const AddDataDsp: React.FC<CompanyDetailsFormProps> = ({
   onAddDataSuccess,
   existingDSPData,
 }) => {
-  const { query } = useRouter();
-  const { id } = query;
+ const { id } = useParams<{ id: string }>();
   const [activeDetailsTab, setActiveDetailsTab] = useState<string>("");
   const [content, setContent] = useState<any[] | null>(null);
   const [metric, setMetric] = useState<any>(null);

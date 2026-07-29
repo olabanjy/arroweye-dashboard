@@ -1,15 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import PieChart from "@/pages/payments/component/PieChart";
 import { ChartData } from "chart.js";
-import DoughnutChart from "@/pages/payments/component/Doughnut";
+import DoughnutChart from "../payments/component/Doughnut";
 import MomentCard from "../public/component/MomentCard";
 import MomentSliderCard from "../public/component/MomentSliderCard";
 import AddData from "./AddData";
 import AddMedia from "./AddMedia";
 import AddDataSocials from "./AddDataSocials";
 import AddDataDsp from "./AddDataDsp";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 import { ContentItem } from "@/types/contents";
 import {
   sendProjectEmail,
@@ -20,7 +19,6 @@ import {
   geteSMActionStats,
   geteDSPPerformanceStats,
 } from "@/services";
-import ColumnChart from "@/pages/payments/component/ColumnChart";
 import { Dialog } from "primereact/dialog";
 import { Input } from "@/components/ui/input";
 import { VscSend } from "react-icons/vsc";
@@ -30,6 +28,8 @@ import { toast } from "react-toastify";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import MomentCardRewards from "../public/component/MomentCardRewards";
+import ColumnChart from "../payments/component/ColumnChart";
+import PieChart from "../payments/component/PieChart";
 
 const selectOptions = [
   [
@@ -112,11 +112,9 @@ const InsightChart: React.FC<InsightChartProps> = ({
   const [recapMediaData, setRecapMediaData] = useState<any>([]);
   const [dspMediaData, setDspMediaData] = useState<any>([]);
 
-  const { query } = useRouter();
-
   const media = content?.media || [];
   const mediaLoading = !content;
-  const { id } = query;
+  const { id } = useParams<{ id: string }>();
 
   const [airplayChannelsFilters, setairplayChannelsFilters] = useState({
     country: "",
@@ -462,7 +460,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
     <div ref={targetRef}>
       <div className="mt-[20px] mb-[80px]">
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px] w-full">
-          <div className="border p-[20px] w-full rounded-[8px] space-y-[20px]  hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+          <div className="border p-[20px] w-full rounded-[8px] space-y-[20px]  hover:bg-green-500/5 hover:border hover:border-green-500">
             {editMode && (
               <div className=" space-y-[20px]">
                 <p
@@ -523,7 +521,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
               loading={mediaLoading}
             />
           </div>
-          <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+          <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] hover:bg-green-500/5 hover:border hover:border-green-500">
             {editMode && (
               <div className=" space-y-[20px]">
                 <p
@@ -583,7 +581,7 @@ const InsightChart: React.FC<InsightChartProps> = ({
               loading={mediaLoading}
             />
           </div>
-          <div className="border p-[20px]  rounded-[8px] space-y-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+          <div className="border p-[20px]  rounded-[8px] space-y-[20px] hover:bg-green-500/5 hover:border hover:border-green-500">
             {editMode && (
               <div className=" space-y-[20px]">
                 <p

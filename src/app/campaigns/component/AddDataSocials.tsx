@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import { SelectInput } from "@/components/ui/selectinput";
 import { Input } from "@/components/ui/input";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
+import { useParams } from "next/navigation";
 
 interface Item {
   id: number;
@@ -75,9 +76,7 @@ const AddDataSocials: React.FC<CompanyDetailsFormProps> = ({
   const [activeDetailsTab, setActiveDetailsTab] = useState<string>("");
   const [content, setContent] = useState<any[] | null>(null);
   const [processedData, setProcessedData] = useState<any[]>([]);
-
-  const { query } = useRouter();
-  const { id } = query;
+  const { id } = useParams<{ id: string }>();
   const [totalImpressions, setTotalImpressions] = useState(0);
   const [totalAudience, setTotalAudience] = useState(0);
 

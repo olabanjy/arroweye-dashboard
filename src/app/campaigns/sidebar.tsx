@@ -3,16 +3,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FC, ReactNode, useState } from "react";
+import { useTheme } from "next-themes";
+import { CSSProperties, FC, ReactNode, useState } from "react";
 import {
   MdAddCircleOutline,
   MdCalendarMonth,
   MdCampaign,
+  MdComputer,
+  MdDarkMode,
   MdGavel,
   MdHelpOutline,
   MdKeyboardArrowRight,
+  MdLightMode,
   MdLogout,
   MdPayment,
+  MdPersonOutline,
   MdSchool,
   MdSettings,
   MdWaterDrop,
@@ -37,6 +42,18 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-session";
 
@@ -49,6 +66,10 @@ type NavItemProps = {
   onClick?: () => void;
 };
 
+const SIDEBAR_ICON_SIZE = 24;
+const SIDEBAR_SUB_ICON_SIZE = 20;
+const SIDEBAR_COLLAPSED_WIDTH = "4.75rem";
+
 const SidebarLogo = () => {
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
@@ -60,7 +81,7 @@ const SidebarLogo = () => {
       aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       className={cn(
         "group flex w-full items-center justify-center border-b border-sidebar-border outline-none transition-all",
-        isCollapsed ? "p-4" : "p-[50px]",
+        isCollapsed ? "p-6" : "p-[50px]",
       )}
     >
       <span className="relative inline-flex items-center justify-center">
@@ -98,7 +119,8 @@ const NavItem = ({
       isActive={active}
       onClick={onClick}
       className={cn(
-        "h-10 text-[14px] text-black hover:bg-sidebar-accent",
+        "h-10 text-lg text-sidebar-foreground hover:bg-sidebar-accent",
+        "group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!",
         active && "font-[500]",
       )}
     >
@@ -108,8 +130,10 @@ const NavItem = ({
           active && "bg-[#17954c]",
         )}
       />
-      {icon}
-      <span>{label}</span>
+      <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-6">
+        {icon}
+      </span>
+      <span className="group-data-[collapsible=icon]:hidden">{label}</span>
     </SidebarMenuButton>
   );
 
@@ -121,7 +145,8 @@ const NavItem = ({
           tooltip={tooltip ?? label}
           isActive={active}
           className={cn(
-            "h-10 text-[14px] text-black hover:bg-sidebar-accent",
+            "h-10 text-lg text-sidebar-foreground hover:bg-sidebar-accent",
+            "group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!",
             active && "font-[500]",
           )}
         >
@@ -132,8 +157,10 @@ const NavItem = ({
                 active && "bg-[#17954c]",
               )}
             />
-            {icon}
-            <span>{label}</span>
+            <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-6">
+              {icon}
+            </span>
+            <span className="group-data-[collapsible=icon]:hidden">{label}</span>
           </Link>
         </SidebarMenuButton>
       ) : (
@@ -147,28 +174,60 @@ const externalResources = [
   {
     label: "FAQs",
     href: "https://arroweye.substack.com/",
-    icon: <MdHelpOutline size={22} className="text-black" />,
+    icon: <MdHelpOutline size={SIDEBAR_ICON_SIZE} />,
   },
   {
     label: "Learn",
     href: "https://butta.cocoa.house/",
-    icon: <MdSchool size={22} className="text-black" />,
+    icon: <MdSchool size={SIDEBAR_ICON_SIZE} />,
   },
   {
     label: "Legal",
     href: "http://arroweye.pro/legal",
-    icon: <MdGavel size={22} className="text-black" />,
+    icon: <MdGavel size={SIDEBAR_ICON_SIZE} />,
+  },
+];
+
+const themeOptions = [
+  {
+    label: "Light",
+    value: "light",
+    icon: MdLightMode,
+  },
+  {
+    label: "Dark",
+    value: "dark",
+    icon: MdDarkMode,
+  },
+  {
+    label: "System",
+    value: "system",
+    icon: MdComputer,
   },
 ];
 
 const CampaignsSidebarContent = () => {
+  const { state, setOpen } = useSidebar();
   const pathname = usePathname();
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
-  const { isAdvertiser, userProfile, logout } = useAuth();
+  const { isAdvertiser, user, userProfile, logout } = useAuth();
+  const { theme, setTheme } = useTheme();
   const userRole = userProfile?.role || "";
+  const displayName =
+    userProfile?.fullname || user?.email || userProfile?.role || "Account";
 
   const isActive = (path: string) => {
     return pathname === path || pathname.startsWith(`${path}/`);
+  };
+
+  const handleResourcesClick = () => {
+    if (state === "collapsed") {
+      setOpen(true);
+      setIsResourcesOpen(true);
+      return;
+    }
+
+    setIsResourcesOpen((open) => !open);
   };
 
   return (
@@ -177,7 +236,7 @@ const CampaignsSidebarContent = () => {
 
       <UISidebar
         collapsible="icon"
-        className="z-40 border-slate-100 bg-white text-black"
+        className="z-40 border-sidebar-border bg-sidebar text-sidebar-foreground"
       >
         <SidebarHeader className="p-0">
           <SidebarLogo />
@@ -195,7 +254,7 @@ const CampaignsSidebarContent = () => {
                   href="/campaigns"
                   label="Campaigns"
                   active={isActive("/campaigns")}
-                  icon={<MdCampaign size={22} className="text-black" />}
+                  icon={<MdCampaign size={SIDEBAR_ICON_SIZE} />}
                 />
 
                 {isActive("/campaigns") && isAdvertiser && (
@@ -207,8 +266,8 @@ const CampaignsSidebarContent = () => {
                       >
                         <Link href="/campaigns/setup">
                           <MdAddCircleOutline
-                            size={18}
-                            className="text-gray-500"
+                            size={SIDEBAR_SUB_ICON_SIZE}
+                            className="text-sidebar-foreground/70"
                           />
                           <span>Setup Campaign</span>
                         </Link>
@@ -222,7 +281,7 @@ const CampaignsSidebarContent = () => {
                     href="/drops"
                     label="Drops"
                     active={isActive("/drops")}
-                    icon={<MdWaterDrop size={22} className="text-black" />}
+                    icon={<MdWaterDrop size={SIDEBAR_ICON_SIZE} />}
                   />
                 )}
 
@@ -231,7 +290,7 @@ const CampaignsSidebarContent = () => {
                     href="/payments"
                     label="Payments"
                     active={isActive("/payments")}
-                    icon={<MdPayment size={22} className="text-black" />}
+                    icon={<MdPayment size={SIDEBAR_ICON_SIZE} />}
                   />
                 )}
 
@@ -240,7 +299,7 @@ const CampaignsSidebarContent = () => {
                     href="/schedule"
                     label="Schedule"
                     active={isActive("/schedule")}
-                    icon={<MdCalendarMonth size={22} className="text-black" />}
+                    icon={<MdCalendarMonth size={SIDEBAR_ICON_SIZE} />}
                   />
                 )}
 
@@ -251,16 +310,20 @@ const CampaignsSidebarContent = () => {
                       aria-controls="resources-sidebar-menu"
                       aria-expanded={isResourcesOpen}
                       data-open={isResourcesOpen}
-                      onClick={() => setIsResourcesOpen((open) => !open)}
-                      className="h-10 text-[14px] text-black hover:bg-sidebar-accent"
+                      onClick={handleResourcesClick}
+                      className="h-10 text-[14px] text-sidebar-foreground hover:bg-sidebar-accent group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!"
                     >
                       <span className="size-1 rounded-full bg-transparent group-data-[collapsible=icon]:hidden" />
-                      <MdSchool size={22} className="text-black" />
-                      <span className="flex-1">Resources</span>
+                      <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-6">
+                        <MdSchool size={SIDEBAR_ICON_SIZE} />
+                      </span>
+                      <span className="flex-1 group-data-[collapsible=icon]:hidden">
+                        Resources
+                      </span>
                       <MdKeyboardArrowRight
                         size={18}
                         className={cn(
-                          "ml-auto text-black transition-transform duration-300 ease-out group-data-[collapsible=icon]:hidden",
+                          "ml-auto transition-transform duration-300 ease-out group-data-[collapsible=icon]:hidden",
                           isResourcesOpen && "rotate-90",
                         )}
                       />
@@ -304,20 +367,81 @@ const CampaignsSidebarContent = () => {
                   href="/settings"
                   label="Settings"
                   active={isActive("/settings")}
-                  icon={<MdSettings size={22} className="text-black" />}
+                  icon={<MdSettings size={SIDEBAR_ICON_SIZE} />}
                 />
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter>
+        <SidebarFooter className="border-t border-sidebar-border">
           <SidebarMenu>
-            <NavItem
-              label="Logout"
-              onClick={logout}
-              icon={<MdLogout size={22} className="text-black" />}
-            />
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    tooltip="Account"
+                    className="h-11 rounded-[8px] text-sidebar-foreground hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!"
+                  >
+                    <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-6">
+                      <MdPersonOutline size={SIDEBAR_ICON_SIZE} />
+                    </span>
+                    <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{displayName}</span>
+                    <MdKeyboardArrowRight
+                      size={18}
+                      className="ml-auto transition-transform duration-200 group-data-[state=open]/menu-button:rotate-[-90deg] group-data-[collapsible=icon]:hidden"
+                    />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  align="start"
+                  className="w-[--radix-popper-anchor-width] min-w-56 rounded-[8px] p-1.5"
+                >
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger className="rounded-[6px]">
+                      <MdLightMode size={16} />
+                      <span>Theme</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent
+                      sideOffset={8}
+                      className="min-w-40 rounded-[8px] p-1.5"
+                    >
+                      <DropdownMenuRadioGroup
+                        value={theme ?? "system"}
+                        onValueChange={setTheme}
+                      >
+                        {themeOptions.map((option) => {
+                          const Icon = option.icon;
+
+                          return (
+                            <DropdownMenuRadioItem
+                              key={option.value}
+                              value={option.value}
+                              className="rounded-[6px]"
+                            >
+                              <Icon size={16} />
+                              <span>{option.label}</span>
+                            </DropdownMenuRadioItem>
+                          );
+                        })}
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem
+                    onClick={logout}
+                    variant="destructive"
+                    className="rounded-[6px]"
+                  >
+                    <MdLogout size={16} />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>
 
@@ -329,7 +453,14 @@ const CampaignsSidebarContent = () => {
 
 const Sidebar: FC = () => {
   return (
-    <SidebarProvider defaultOpen>
+    <SidebarProvider
+      defaultOpen
+      style={
+        {
+          "--sidebar-width-icon": SIDEBAR_COLLAPSED_WIDTH,
+        } as CSSProperties
+      }
+    >
       <CampaignsSidebarContent />
     </SidebarProvider>
   );

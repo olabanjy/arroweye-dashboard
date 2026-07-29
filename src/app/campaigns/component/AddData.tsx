@@ -12,6 +12,7 @@ import { WeekInput } from "@/components/ui/weekInput";
 import { SelectInput } from "@/components/ui/selectinput";
 import { Input } from "@/components/ui/input";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
+import { useParams } from "next/navigation";
 
 interface CompanyDetailsFormProps {
   visible: boolean;
@@ -54,8 +55,7 @@ const AddData: React.FC<CompanyDetailsFormProps> = ({
   onAddDataSuccess,
   existingAirPlayData,
 }) => {
-  const { query } = useRouter();
-  const { id } = query;
+  const { id } = useParams<{ id: string }>();
   const [activeDetailsTab, setActiveDetailsTab] = useState("Radio");
   const [stations, setStations] = useState<ContentItem[]>([]);
   const [isAddNewService, setIsAddNewService] = useState(false);

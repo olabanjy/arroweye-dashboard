@@ -1,8 +1,6 @@
-import React, { useRef } from "react";
-import Slider from "react-slick";
+import React, { useEffect, useState } from "react";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { HiMiniArrowLeft, HiMiniArrowRight } from "react-icons/hi2";
-import { FaRegCirclePlay } from "react-icons/fa6";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
@@ -26,7 +24,7 @@ interface MomentSliderCardProps {
 
 const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
   images,
-  // links,
+  links,
   watchButtonText,
   downloadButtonText = "Download Data",
   radioButtonText,
@@ -39,18 +37,36 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
   csvData,
   loading = false,
 }) => {
-  const sliderRef = useRef<Slider | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const hasData = (images?.length ?? 0) > 0;
 
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    arrows: false,
+  useEffect(() => {
+    if (!hasData) {
+      setCurrentImageIndex(0);
+      return;
+    }
+
+    setCurrentImageIndex((index) => Math.min(index, images.length - 1));
+  }, [hasData, images.length]);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+
+    const interval = window.setInterval(() => {
+      setCurrentImageIndex((index) => (index + 1) % images.length);
+    }, 3000);
+
+    return () => window.clearInterval(interval);
+  }, [images.length]);
+
+  const showPreviousImage = () => {
+    setCurrentImageIndex((index) =>
+      index === 0 ? images.length - 1 : index - 1,
+    );
+  };
+
+  const showNextImage = () => {
+    setCurrentImageIndex((index) => (index + 1) % images.length);
   };
 
   const downloadAllDspFiles = async (fileUrls: string[]) => {
@@ -118,7 +134,7 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
   };
 
   return (
-    <div className="w-full max-h-[600px] space-y-[20px]">
+    <div className="w-full space-y-[20px]">
       <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-SansFlex uppercase">
         {MomentsTitle}
       </p>
@@ -126,35 +142,66 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
       {loading ? (
         <div className="h-[400px] w-full rounded bg-gray-200 animate-pulse" />
       ) : hasData ? (
-        <div className="relative">
-          <>
-            {" "}
-            <div
-              className="absolute left-[15px] top-1/2 transform -translate-y-1/2 cursor-pointer z-10 bg-opacity-50 bg-black rounded-full p-3"
-              onClick={() => sliderRef.current?.slickPrev()}
+        <div className="relative w-full px-12 md:px-20">
+          {images.length > 1 && (
+            <button
+              type="button"
+              aria-label="Previous image"
+              className="absolute left-0 top-1/2 z-10 flex size-14 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-[#7d837d] text-white transition-colors hover:bg-[#626862] md:size-[62px]"
+              onClick={showPreviousImage}
             >
-              <HiMiniArrowLeft className="text-white text-[14px]" />
-            </div>{" "}
-            <Slider ref={sliderRef} {...sliderSettings}>
-              {images?.map((image, index) => (
-                <Link href="/" key={index} className="relative w-full h-[400px]">
-                  <img
-                    src={image}
-                    alt={`Slide ${index + 1}`}
-                    className="object-contain w-full h-full rounded"
-                    width={500}
-                    height={400}
-                  />
-                </Link>
-              ))}
-            </Slider>{" "}
+              <HiMiniArrowLeft className="text-[22px]" />
+            </button>
+          )}
+
+          <div className="mx-auto h-[400px] w-full max-w-[640px] overflow-hidden rounded bg-gray-50 md:h-[640px]">
             <div
-              className="absolute right-[15px] top-1/2 transform -translate-y-1/2 cursor-pointer z-10 bg-opacity-50 bg-black rounded-full p-3"
-              onClick={() => sliderRef.current?.slickNext()}
+              className="flex h-full transition-transform duration-500 ease-in-out will-change-transform"
+              style={{
+                transform: `translate3d(-${currentImageIndex * 100}%, 0, 0)`,
+              }}
             >
-              <HiMiniArrowRight className="text-white text-[14px]" />
+              {images.map((image, index) =>
+                links?.[index] ? (
+                  <Link
+                    href={links[index]}
+                    key={`${image}-${index}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block h-full w-full shrink-0"
+                  >
+                    <img
+                      src={image}
+                      alt={`Slide ${index + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </Link>
+                ) : (
+                  <div
+                    key={`${image}-${index}`}
+                    className="h-full w-full shrink-0"
+                  >
+                    <img
+                      src={image}
+                      alt={`Slide ${index + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ),
+              )}
             </div>
-          </>
+          </div>
+
+          {images.length > 1 && (
+            <button
+              type="button"
+              aria-label="Next image"
+              className="absolute right-0 top-1/2 z-10 flex size-14 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-[#7d837d] text-white transition-colors hover:bg-[#626862] md:size-[62px]"
+              onClick={showNextImage}
+            >
+              <HiMiniArrowRight className="text-[22px]" />
+            </button>
+          )}
         </div>
       ) : null}
 
