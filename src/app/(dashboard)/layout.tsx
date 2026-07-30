@@ -5,7 +5,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "./sidebar";
 import TopNav from "./top-nav";
 import { usePathname } from "next/navigation";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useProtectedRoute } from "./hooks/use-protected-route";
 
 interface LayoutProps {
@@ -27,14 +26,14 @@ const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <ReactQueryDevtools />
+      
       <div className=" z-50">
         <Sidebar />
       </div>
       <div className="flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow">
         <TopNav />
         <main
-          className={`flex-1 ${withBorder ? "border border-gray-100" : ""} ${
+          className={`w-full max-w-7xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
             pathname !== "/campaigns/spins-notifications" &&
             pathname !== "/campaigns/setup/custom" &&
             pathname !== "/campaigns/setup/promoter"

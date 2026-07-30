@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { IoFilter } from "react-icons/io5";
 import Archive from "./Archive";
-import Campaigns from "./campaigns";
+import Campaigns from "./campaigns-table";
 
 const InvoicesTab: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"Campaigns" | "Archive">(

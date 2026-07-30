@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { cn } from "@/src/lib/utils";
+import { cn } from "@/lib/utils";
 import { FiInfo, FiEye, FiEyeOff } from "react-icons/fi";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";

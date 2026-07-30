@@ -64,7 +64,7 @@ const Table: React.FC<TableProps> = ({
             <tr>
               <td
                 colSpan={columnCount}
-                className="border border-grey-100 px-4 py-[11px] text-center"
+                className="border border-grey-100 dark:border-border px-4 py-[11px] text-center text-grey-400 dark:text-muted-foreground"
               >
                 {emptyState}
               </td>
@@ -74,7 +74,7 @@ const Table: React.FC<TableProps> = ({
               <tr
                 key={row.id ?? rowIndex}
                 className={cn(
-                  "text-[16px] font-normal text-grey-900",
+                  "text-[16px] font-normal text-grey-900 dark:text-foreground",
                   row.className,
                 )}
               >
@@ -82,10 +82,10 @@ const Table: React.FC<TableProps> = ({
                   <td
                     key={cellIndex}
                     className={cn(
-                      "border border-grey-100 px-4 py-[4px]",
+                      "border border-grey-100 dark:border-border px-4 py-[4px]",
                       highlightFirstCell && cellIndex === 0
                         ? "border-none bg-[#2ea879] text-white"
-                        : "bg-[#f5f5f5] text-[#212529]",
+                        : "bg-[#f5f5f5] dark:bg-card text-[#212529] dark:text-foreground",
                       getAlignmentClass(headers[cellIndex]?.align),
                     )}
                   >

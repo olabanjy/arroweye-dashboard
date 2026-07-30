@@ -47,7 +47,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           item?.created?.slice(0, 10) || "2025-01-13",
           <button
             type="button"
-            className="w-[150px] cursor-pointer whitespace-nowrap rounded border bg-white p-2 text-center font-medium md:w-full"
+            className="w-[150px] cursor-pointer whitespace-nowrap rounded border border-gray-200 dark:border-border bg-white dark:bg-muted p-2 text-center font-medium text-black dark:text-foreground md:w-full"
             key={`archive-pin-${item.id ?? index}`}
             onClick={() => handleCopyPin(String(item?.pin ?? ""))}
           >
@@ -56,7 +56,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           <button
             type="button"
             key={`restore-button-${item.id ?? index}`}
-            className={`p-2 text-blue-600 hover:text-blue-800 ${
+            className={`p-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 ${
               isArchiving === String(item.id) ? "opacity-50" : ""
             }`}
             onClick={() => {
@@ -103,7 +103,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
               ]}
             />
           </div>
-          <p className="max-w-[150px] w-full cursor-pointer text-[14px] rounded-full px-[10px] py-[5px] hover:bg-orange-500 bg-[#000000] text-white inline">
+          <p className="max-w-[150px] w-full cursor-pointer text-[14px] rounded-full px-[10px] py-[5px] hover:bg-orange-500 bg-[#000000] dark:bg-primary dark:text-primary-foreground text-white inline">
             Clear Filters
           </p>
         </div>
@@ -151,7 +151,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           style={{ width: "30vw" }}
           className="custom-dialog-overlay"
         >
-          <div className="space-y-4">
+          <div className="space-y-4 text-gray-950 dark:text-foreground">
             <p className="text-[16px] font-[400] font-SansFlex">
               Are you sure you want to unarchive this item?
             </p>
@@ -173,7 +173,7 @@ const Archive: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                   setEditMode(false);
                   setIsArchiving(null);
                 }}
-                className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
+                className="px-[16px] py-[8px] text-black dark:text-foreground rounded-full bg-slate-100 dark:bg-muted"
               >
                 No
               </Button>

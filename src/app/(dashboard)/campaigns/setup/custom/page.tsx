@@ -53,7 +53,7 @@ const CustomCampaign = () => {
 
   return (
     <>
-      <div className="bg-[#F6F6F6] h-max py-7 text-gray-950 dark:bg-background dark:text-foreground">
+      <div className="h-max py-7 bg-transparent text-gray-950 dark:text-foreground">
         <div className="flex justify-center items-center gap-2 mb-7">
           <Link href="/campaigns/setup">
             <p className="text-[#A3A3A3] dark:text-muted-foreground">
@@ -64,12 +64,12 @@ const CustomCampaign = () => {
           <p>Launch Campaign</p>
         </div>
 
-        <div className="bg-white py-8 mx-5 px-5 lg:px-14 dark:bg-card dark:border dark:border-border">
+        <div className="bg-transparent py-8 mx-5 px-5 lg:px-14">
           <div className="grid grid-cols-1 gap-[20px] items-center">
             <div className="relative">
               <Input
                 value={isrc}
-                className="border-[#9D9A9A]"
+                className="border-[#9D9A9A] dark:bg-transparent"
                 type="text"
                 placeholder="ISRC / UPC"
                 onChange={(e) => setIsrc(e.target.value)}
@@ -110,7 +110,7 @@ const CustomCampaign = () => {
                 )}
             </div>
           </div>
-          <div className="mt-8 py-[1px] sticky top-0 z-30 bg-white dark:bg-card">
+          <div className="mt-8 py-[1px] sticky top-0 z-30">
             <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12 dark:bg-muted dark:border-border">
               <div className="flex flex-col justify-between items-center min-h-[80px]">
                 <p className="text-lg font-medium text-center leading-tight">
@@ -158,7 +158,7 @@ const CustomCampaign = () => {
 
           <div className="my-4">
             <Input
-              className="border-[#9D9A9A]"
+              className="border-[#9D9A9A] dark:bg-transparent"
               type="search"
               placeholder={activePlaceholder}
               value={search}
@@ -220,7 +220,7 @@ const CustomCampaign = () => {
                       );
                     })
                   ) : (
-                    <p className="text-center py-5 text-gray-500">
+                    <p className="text-center py-5 text-gray-500 dark:text-muted-foreground">
                       No DJs found
                     </p>
                   )}
@@ -289,7 +289,7 @@ const CustomCampaign = () => {
                   name="startDate"
                   value={startDate}
                   placeholder="01/01/2034"
-                  className="w-full md:w-[260px]"
+                  className="w-full md:w-[260px] dark:bg-transparent"
                   onChange={(e) => setStartDate(e.target.value.split("T")[0])}
                 />
               </div>
@@ -395,7 +395,9 @@ const CustomCampaign = () => {
                     );
                   })
                 ) : (
-                  <p className="text-center py-5 text-gray-500">No DJs found</p>
+                  <p className="text-center py-5 text-gray-500 dark:text-muted-foreground">
+                    No DJs found
+                  </p>
                 )}
               </div>
             );

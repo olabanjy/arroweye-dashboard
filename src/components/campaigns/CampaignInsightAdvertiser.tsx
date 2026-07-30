@@ -1,7 +1,4 @@
 import React from "react";
-import MomentCard from "../public/component/MomentCard";
-import MomentCardRewards from "../public/component/MomentCardRewards";
-import MomentSliderCard from "../public/component/MomentSliderCard";
 import VerifiedSpinsCard from "./VerifiedSpins";
 import CostPerReachCard from "./TopLocations";
 import DSPCard from "./DSPCard";

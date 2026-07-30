@@ -6,6 +6,7 @@ import { ThemeProvider, useTheme } from "next-themes";
 import { Toaster } from "sonner";
 import { AppAuthProvider } from "./auth-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 function AppToaster() {
   const { resolvedTheme } = useTheme();
@@ -30,6 +31,7 @@ export function Providers({ children }: { children: ReactNode }) {
           <AppToaster />
         </TooltipProvider>
       </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

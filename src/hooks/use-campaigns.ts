@@ -35,13 +35,9 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
   const userRole = userProfile?.role || "";
 
   const [editMode, setEditMode] = useState(false);
-  const [isCampaignsLoading, setIsCampaignsLoading] = useState(false);
 
   const [copiedPin, setCopiedPin] = useState<string | null>(null);
-  const [campaignList, setCampaignList] = useState<CampaignListItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [isArchiving, setIsArchiving] = useState<number | null>(null);
 
   const [investmentFilter, setInvestmentFilter] = useState<any>("");
@@ -76,6 +72,16 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
     enabled: isAuthLoading === false && isAdvertiser === false,
   });
 
+  const { data: campaignsData, isLoading: isCampaignsLoading } = useQuery<{
+    results: CampaignListItem[];
+    pages: number;
+    count: number;
+  }>({
+    queryKey: ["campaigns", currentPage],
+    queryFn: () => getCreatedCampaigns(currentPage, PAGE_SIZE),
+    enabled: isAuthLoading === false && isAdvertiser === true,
+  });
+
   const isLoading = isAuthLoading
     ? true
     : isAdvertiser
@@ -83,32 +89,9 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
       : isProjectsLoading;
 
   const content: ContentItem[] = isAdvertiser ? [] : (projectsData ?? []);
-
-  useEffect(() => {
-    if (isAuthLoading) return;
-    if (!isAdvertiser) {
-      return;
-    }
-
-    const fetchCampaigns = async () => {
-      setIsCampaignsLoading(true);
-      try {
-        const fetchedContent = await getCreatedCampaigns(
-          currentPage,
-          PAGE_SIZE,
-        );
-        setCampaignList(fetchedContent?.results ?? []);
-        setTotalPages(fetchedContent?.pages ?? 1);
-        setTotalCount(fetchedContent?.count ?? 0);
-      } catch (error) {
-        console.error("Error fetching campaigns:", error);
-      } finally {
-        setIsCampaignsLoading(false);
-      }
-    };
-
-    fetchCampaigns();
-  }, [isAuthLoading, isAdvertiser, currentPage]);
+  const campaignList = campaignsData?.results ?? [];
+  const totalPages = campaignsData?.pages ?? 1;
+  const totalCount = campaignsData?.count ?? 0;
 
   const handleCopyPin = useCallback((pin: string) => {
     navigator.clipboard.writeText(pin);

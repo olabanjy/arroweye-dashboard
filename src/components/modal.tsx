@@ -21,11 +21,11 @@ const Modal: FC<ModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div
-        className={`relative w-full ${maxWidth} max-h-[90vh] overflow-y-auto p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800`}
+        className={`relative w-full ${maxWidth} max-h-[90vh] overflow-y-auto p-6 bg-white rounded-lg shadow-lg dark:bg-popover dark:text-popover-foreground`}
       >
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 dark:hover:text-gray-300"
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 dark:text-muted-foreground dark:hover:text-foreground"
         >
           <IoCloseSharp size={24} />
         </button>

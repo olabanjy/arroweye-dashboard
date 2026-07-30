@@ -43,6 +43,12 @@ const TableEmptyState = ({ label }: { label: string }) => (
   </div>
 );
 
+const TableSpinner = () => (
+  <div className="flex h-[30vh] items-center justify-center">
+    <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#31bc86] border-t-transparent" />
+  </div>
+);
+
 const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
   const {
     isLoading,
@@ -81,7 +87,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
             item?.created?.slice(0, 10) || "2025-01-13",
             <button
               type="button"
-              className="w-[150px] cursor-pointer whitespace-nowrap rounded border bg-white p-2 text-center font-medium md:w-full"
+              className="w-[150px] cursor-pointer whitespace-nowrap rounded border border-gray-200 dark:border-border bg-white dark:bg-muted p-2 text-center font-medium text-black dark:text-foreground md:w-full"
               key={`project-pin-${item.id ?? index}`}
               onClick={() => handleCopyPin(String(item?.pin ?? ""))}
             >
@@ -91,7 +97,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
               href={`/campaigns/${item.id}`}
               key={`project-manage-${item.id ?? index}`}
             >
-              <div className="flex justify-center text-black">
+              <div className="flex justify-center text-black dark:text-foreground">
                 <span className="sr-only">
                   Manage {item?.title ?? "campaign"}
                 </span>
@@ -105,7 +111,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
               <button
                 type="button"
                 aria-label={`Archive ${item?.title ?? "campaign"}`}
-                className={`rounded-full text-black ${
+                className={`rounded-full text-black dark:text-foreground ${
                   isArchiving === item.id ? "opacity-50" : ""
                 }`}
                 onClick={() => {
@@ -143,7 +149,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
             href={`/campaigns/${item.id}`}
             key={`campaign-manage-${item.id ?? index}`}
           >
-            <div className="flex justify-center text-black">
+            <div className="flex justify-center text-black dark:text-foreground">
               <span className="sr-only">
                 Manage {item.song_title ?? "campaign"}
               </span>
@@ -184,7 +190,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
             />
           </div>
           <p
-            className="max-w-[150px] w-full cursor-pointer text-[14px] rounded-full px-[10px] py-[5px] hover:bg-orange-500 bg-[#000000] text-white inline"
+            className="max-w-[150px] w-full cursor-pointer text-[14px] rounded-full px-[10px] py-[5px] hover:bg-orange-500 bg-[#000000] dark:bg-primary dark:text-primary-foreground text-white inline"
             onClick={() => {
               setInvestmentFilter("");
               setRevenueFilter("");
@@ -202,27 +208,28 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
             headers={PROJECT_HEADERS}
             rows={projectRows}
             emptyState={
-              <TableEmptyState label={isLoading ? "Loading..." : "No Data"} />
+              isLoading ? (
+                <TableSpinner />
+              ) : (
+                <TableEmptyState label="No Data" />
+              )
             }
           />
         )}
 
         {isAdvertiser && (
           <div className="relative">
-            {isLoading && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60 rounded-md">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#31bc86] border-t-transparent" />
-              </div>
-            )}
             <Table
               aria-label="Created campaigns"
               highlightFirstCell={true}
               headers={ADVERTISER_HEADERS}
               rows={advertiserRows}
               emptyState={
-                <TableEmptyState
-                  label={isLoading ? "Loading..." : "No Campaigns"}
-                />
+                isLoading ? (
+                  <TableSpinner />
+                ) : (
+                  <TableEmptyState label="No Campaigns" />
+                )
               }
             />
             <Pagination
@@ -253,7 +260,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           style={{ width: "30vw" }}
           className="custom-dialog-overlay"
         >
-          <div className="space-y-4 font-SansFlex">
+          <div className="space-y-4 font-SansFlex text-gray-950 dark:text-foreground">
             <p className="text-[16px] font-[400] font-SansFlex">
               Are you sure you want to archive this item?
             </p>
@@ -275,7 +282,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                   setEditMode(false);
                   setIsArchiving(null);
                 }}
-                className="px-[16px] py-[8px] text-[#000000] rounded-full bg-slate-100"
+                className="px-[16px] py-[8px] text-black dark:text-foreground rounded-full bg-slate-100 dark:bg-muted"
               >
                 No
               </Button>

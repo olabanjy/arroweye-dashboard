@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import DashboardLayout from "@/pages/dashboard/layout";
 import Head from "next/head";
 import Image from "next/image";
 
@@ -53,14 +52,14 @@ const SpinsNotifications = () => {
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener(
       "spinNotificationUpdate",
-      handleCustomStorageChange
+      handleCustomStorageChange,
     );
 
     return () => {
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener(
         "spinNotificationUpdate",
-        handleCustomStorageChange
+        handleCustomStorageChange,
       );
     };
   }, []);
@@ -70,38 +69,37 @@ const SpinsNotifications = () => {
       <Head>
         <title>Campaigns - Arroweye</title>
       </Head>
-      <DashboardLayout>
+
+      <div
+        className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center"
+        style={{ backgroundImage: "url(/spinsbg.png)" }}
+      >
         <div
-          className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center"
-          style={{ backgroundImage: "url(/spinsbg.png)" }}
+          className="flex items-center justify-center w-[338px] h-[174px]"
+          style={{ backgroundImage: "url(/Notificationheader.png)" }}
         >
-          <div
-            className="flex items-center justify-center w-[338px] h-[174px]"
-            style={{ backgroundImage: "url(/Notificationheader.png)" }}
-          >
+          <Image
+            src="/spinslogomodal.svg"
+            alt="spinslogo"
+            width={86}
+            height={86}
+          />
+        </div>
+        <div className="bg-[#252525] min-w-[338px] max-w-[338px] p-5">
+          <div className="flex justify-between">
             <Image
-              src="/spinslogomodal.svg"
-              alt="spinslogo"
-              width={86}
-              height={86}
+              src="/albumicon.svg"
+              alt="albumicon"
+              width={24}
+              height={24}
             />
+            <p className="text-[#B0B0B0] text-xs">{notification.timeAgo}</p>
           </div>
-          <div className="bg-[#252525] min-w-[338px] max-w-[338px] p-5">
-            <div className="flex justify-between">
-              <Image
-                src="/albumicon.svg"
-                alt="albumicon"
-                width={24}
-                height={24}
-              />
-              <p className="text-[#B0B0B0] text-xs">{notification.timeAgo}</p>
-            </div>
-            <div>
-              <p className="text-white mt-3 pl-1">{notification.content}</p>
-            </div>
+          <div>
+            <p className="text-white mt-3 pl-1">{notification.content}</p>
           </div>
         </div>
-      </DashboardLayout>
+      </div>
     </>
   );
 };
