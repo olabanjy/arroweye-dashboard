@@ -1,12 +1,10 @@
-import { useState, useEffect, useRef } from "react";
-import { Toast } from "primereact/toast";
+"use client";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/auth-context";
-import { useQuery } from "@tanstack/react-query";
-import { getLoggedInUser } from "@/services";
+import { toast } from "sonner";
 
 export const useSettings = () => {
   const { userProfile, user } = useAuth();
-  const toastRef = useRef<Toast>(null);
 
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
@@ -31,19 +29,13 @@ export const useSettings = () => {
     navigator.clipboard
       .writeText(value)
       .then(() => {
-        toastRef.current?.show({
-          severity: "success",
-          summary: "Success",
-          detail: "Copied to clipboard!",
-          life: 3000,
+        toast.success("Copied", {
+          description: "Copied to clipboard.",
         });
       })
       .catch(() => {
-        toastRef.current?.show({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to copy!",
-          life: 3000,
+        toast.error("Copy failed", {
+          description: "Failed to copy.",
         });
       });
   };
@@ -59,7 +51,6 @@ export const useSettings = () => {
     setPhone,
     toggleNotifications,
     setToggleNotifications,
-    toastRef,
     handleCopy,
   };
 };

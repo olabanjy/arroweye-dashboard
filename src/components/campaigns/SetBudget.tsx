@@ -1,8 +1,9 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import ls from "localstorage-slim";
 import { Input } from "@/components/ui/input";
 import { fundCampaignWallet, getCampaignWallet } from "@/services";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { useQuery } from "@tanstack/react-query";
 
@@ -141,90 +142,15 @@ export default function SetBudget({
   const handleSubmit = () => (needsTopUp ? handleBuyToken() : handleContinue());
 
   return (
-    <div className="bg-[#f0f0ef] p-4 sm:p-7">
-      <style dangerouslySetInnerHTML={{ __html: `
-        .budget-card {
-          background: #ffffff;
-          box-shadow: 0 2px 24px 0 rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04);
-        }
-
-        .counter-btn {
-          width: 48px;
-          height: 48px;
-          border-radius: 50%;
-          background: #111;
-          color: #fff;
-          font-size: 1.5rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: transform 0.12s ease, background 0.12s ease;
-          border: none;
-          flex-shrink: 0;
-          user-select: none;
-        }
-        .counter-btn:hover { background: #333; transform: scale(1.07); }
-        .counter-btn:active { transform: scale(0.95); }
-
-        .budget-display {
-          font-size: clamp(2rem, 6vw, 3.25rem);
-          font-weight: 500;
-          letter-spacing: -0.02em;
-          color: #111;
-          line-height: 1;
-        }
-
-        .buy-btn {
-          background: #111;
-          color: #fff;
-          border: none;
-          border-radius: 12px;
-          padding: 16px 40px;
-          font-size: 1.0625rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background 0.15s ease, transform 0.12s ease;
-          width: 100%;
-          max-width: 320px;
-          letter-spacing: 0.01em;
-        }
-        .buy-btn:hover { background: #2a2a2a; }
-        .buy-btn:active { transform: scale(0.98); }
-
-        .custom-checkbox {
-          width: 18px;
-          height: 18px;
-          border-radius: 50%;
-          border: 2px solid #bbb;
-          background: #fff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: border-color 0.15s, background 0.15s;
-          flex-shrink: 0;
-        }
-        .custom-checkbox.checked {
-          border-color: #111;
-          background: #111;
-        }
-        .custom-checkbox.checked::after {
-          content: '';
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: white;
-        }
-      `}} />
-      <div className="flex justify-center items-center gap-2 mb-7 my-10">
+    <div className="p-4 sm:p-7">
+      <div className="flex justify-center items-center gap-2 mb-7 my-10 text-gray-950 dark:text-foreground">
         <p>Set Budget</p>
-        <div className="h-[1px] w-8 bg-[#A3A3A3]" />
-        <p className="text-[#A3A3A3] cursor-not-allowed select-none">
+        <div className="h-[1px] w-8 bg-[#A3A3A3] dark:bg-border" />
+        <p className="text-[#A3A3A3] dark:text-muted-foreground cursor-not-allowed select-none">
           Launch Campaign
         </p>
       </div>
-      <div className="mt-10 mb-20 budget-card w-full px-6 py-10 sm:px-10 sm:py-12">
+      <div className="mt-10 mb-20 w-full px-6 py-10 sm:px-10 sm:py-12 text-gray-950 dark:text-foreground">
         {/* Email & Tokens row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <div>
@@ -233,6 +159,7 @@ export default function SetBudget({
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="dark:bg-transparent"
             />
             {errors.email && (
               <p className="text-red-500 text-xs mt-1">{errors.email}</p>
@@ -244,6 +171,7 @@ export default function SetBudget({
               inputMode="numeric"
               placeholder="Tokens"
               value={tokenInput}
+              className="dark:bg-transparent"
               onChange={(e) => {
                 const raw = e.target.value.replace(/[^0-9]/g, "");
                 setTokenInput(raw);
@@ -267,7 +195,7 @@ export default function SetBudget({
         {/* Budget counter */}
         <div className="flex items-center justify-center gap-5 sm:gap-8 mb-10 py-4">
           <button
-            className="counter-btn"
+            className="w-12 h-12 rounded-full bg-[#111] text-white text-2xl flex items-center justify-center cursor-pointer transition-[transform,background] duration-120 ease-out border-none shrink-0 select-none hover:bg-[#333] hover:scale-107 active:scale-95 dark:bg-primary dark:text-primary-foreground dark:hover:brightness-[0.92]"
             onClick={decrement}
             aria-label="Decrease"
           >
@@ -296,17 +224,18 @@ export default function SetBudget({
                 setTokenInput(String(newTokens));
                 setBudgetInput(formatBudget(clamped));
               }}
-              style={{ color: needsTopUp ? "#e11d48" : "#111" }}
-              className="budget-display text-center bg-transparent border-none outline-none w-full min-w-0"
+              className={`text-center bg-transparent border-none outline-none w-full min-w-0 text-[clamp(2rem,6vw,3.25rem)] font-medium tracking-[-0.02em] text-[#111] leading-none dark:text-foreground ${
+                needsTopUp ? "!text-rose-600 dark:!text-rose-400" : ""
+              }`}
             />
             {errors.budget && (
               <p className="text-red-500 text-xs mt-1">{errors.budget}</p>
             )}
-            <p className="text-xs text-[#999] mt-2">
+            <p className="text-xs text-[#999] dark:text-muted-foreground mt-2">
               Wallet balance: {formatBudget(availableBalance)} tokens
             </p>
             {needsTopUp && (
-              <p className="text-xs text-[#e11d48] mt-1">
+              <p className="text-xs text-[#e11d48] dark:text-rose-400 mt-1">
                 Exceeds your balance - buy{" "}
                 {formatBudget(tokens - availableBalance)} more token
                 {tokens - availableBalance === 1 ? "" : "s"} to cover this
@@ -315,7 +244,7 @@ export default function SetBudget({
             )}
           </div>
           <button
-            className="counter-btn"
+            className="w-12 h-12 rounded-full bg-[#111] text-white text-2xl flex items-center justify-center cursor-pointer transition-[transform,background] duration-120 ease-out border-none shrink-0 select-none hover:bg-[#333] hover:scale-107 active:scale-95 dark:bg-primary dark:text-primary-foreground dark:hover:brightness-[0.92]"
             onClick={increment}
             aria-label="Increase"
           >
@@ -326,29 +255,34 @@ export default function SetBudget({
         {/* CTA */}
         <div className="flex flex-col items-center gap-4">
           <button
-            className="buy-btn"
+            className="bg-[#111] text-white border-none rounded-xl py-4 px-10 text-[1.0625rem] font-semibold cursor-pointer transition-[background,transform] duration-150 ease-out w-full max-w-[320px] tracking-[0.01em] hover:bg-[#2a2a2a] active:scale-98 dark:bg-primary dark:text-primary-foreground dark:hover:brightness-[0.92] disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleSubmit}
             disabled={!accepted}
-            style={
-              !accepted ? { opacity: 0.5, cursor: "not-allowed" } : undefined
-            }
           >
             {needsTopUp ? "Buy Token" : "Continue"}
           </button>
           <label className="flex items-center gap-2.5 cursor-pointer select-none">
             <div
-              className={`custom-checkbox ${accepted ? "checked" : ""}`}
+              className={`w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center cursor-pointer transition-[border-color,background-color] duration-150 shrink-0 ${
+                accepted
+                  ? "border-[#111] bg-[#111] dark:border-primary dark:bg-primary"
+                  : "border-[#bbb] bg-white dark:border-border dark:bg-card"
+              }`}
               onClick={() => setAccepted((a) => !a)}
               role="checkbox"
               aria-checked={accepted}
               tabIndex={0}
               onKeyDown={(e) => e.key === " " && setAccepted((a) => !a)}
-            />
-            <span className="text-sm text-[#555]">
+            >
+              {accepted && (
+                <div className="w-[6px] h-[6px] rounded-full bg-white dark:bg-primary-foreground" />
+              )}
+            </div>
+            <span className="text-sm text-[#555] dark:text-muted-foreground">
               I accept the{" "}
               <a
                 href="#"
-                className="underline underline-offset-2 text-[#333] hover:text-[#111] transition-colors"
+                className="underline underline-offset-2 text-[#333] hover:text-[#111] dark:text-foreground transition-colors"
               >
                 terms of service
               </a>

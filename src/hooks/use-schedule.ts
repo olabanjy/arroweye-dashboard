@@ -1,6 +1,6 @@
+"use client";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 import {
   CreateEvent,
   deleteEvents,
@@ -12,6 +12,7 @@ import {
 import { useAuth } from "@/context/auth-context";
 import { DateClickArg } from "@fullcalendar/interaction";
 import { EventsItem } from "@/types/contents";
+import { toast } from "sonner";
 
 interface FormErrors {
   title?: string;

@@ -5,8 +5,8 @@ import axios, {
   InternalAxiosRequestConfig,
   AxiosHeaders,
 } from "axios";
-import { handleApiError } from "@/lib/utils";
 import { Id as ToastId } from "react-toastify";
+import { handleApiError } from "../lib/utils";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN as string,
@@ -37,7 +37,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 axiosInstance.interceptors.response.use(
@@ -49,7 +49,7 @@ axiosInstance.interceptors.response.use(
       console.log(error);
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 interface ApiRequestParams {

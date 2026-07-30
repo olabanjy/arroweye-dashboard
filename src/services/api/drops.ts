@@ -1,7 +1,7 @@
-import ls from "localstorage-slim";
 import apiRequest from "@/Server/Api";
 import { StaffItem } from "@/types/contents";
 import { DropzonePayload } from "@/types/dropzone";
+import ls from "localstorage-slim";
 
 if (typeof window !== "undefined" && window?.localStorage)
   ls.config.storage = localStorage;

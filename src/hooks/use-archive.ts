@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProjects, archiveProject } from "@/services";
+import { archiveProject, getProjects } from "../services";
 
 interface UseArchiveProps {
   searchValue: string;
@@ -25,27 +25,30 @@ export const useArchive = ({ searchValue }: UseArchiveProps) => {
       item.title?.toLowerCase().includes(searchValue.toLowerCase()),
     );
 
-  const handleArchiveSubmit = async (projectId: string, archive: boolean) => {
-    try {
-      setIsArchiving(projectId);
-      await archiveProject(Number(projectId), { archived: archive });
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-      setEditMode(false);
-    } catch (error) {
-      console.error(
-        `Error ${archive ? "archiving" : "unarchiving"} project ${projectId}:`,
-        error,
-      );
-    } finally {
-      setIsArchiving(null);
-    }
-  };
+  const handleArchiveSubmit = useCallback(
+    async (projectId: string, archive: boolean) => {
+      try {
+        setIsArchiving(projectId);
+        await archiveProject(Number(projectId), { archived: archive });
+        queryClient.invalidateQueries({ queryKey: ["projects"] });
+        setEditMode(false);
+      } catch (error) {
+        console.error(
+          `Error ${archive ? "archiving" : "unarchiving"} project ${projectId}:`,
+          error,
+        );
+      } finally {
+        setIsArchiving(null);
+      }
+    },
+    [queryClient],
+  );
 
-  const handleCopyPin = (pin: string) => {
+  const handleCopyPin = useCallback((pin: string) => {
     navigator.clipboard.writeText(pin);
     setCopiedPin(pin);
     setTimeout(() => setCopiedPin(null), 2000);
-  };
+  }, []);
 
   return {
     editMode,

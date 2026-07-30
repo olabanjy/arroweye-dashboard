@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { getLoggedInUser } from "@/services";
 
 export const useTopNav = () => {
@@ -20,14 +20,16 @@ export const useTopNav = () => {
   const [hasOpenedNotifications, setHasOpenedNotifications] = useState(false);
   const [knownUnreadIds, setKnownUnreadIds] = useState<Set<number>>(new Set());
 
+  const setNotificationsOpen = (open: boolean) => {
+    setIsSidebarOpen(open);
+
+    if (open) {
+      setHasOpenedNotifications(true);
+    }
+  };
+
   const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => {
-      const next = !prev;
-      if (next) {
-        setHasOpenedNotifications(true);
-      }
-      return next;
-    });
+    setNotificationsOpen(!isSidebarOpen);
   };
 
   const handleMainTabClick = (tab: string) => {
@@ -161,6 +163,7 @@ export const useTopNav = () => {
     isSidebarOpen,
     activeMainTab,
     activeInnerTab,
+    setNotificationsOpen,
     toggleSidebar,
     handleMainTabClick,
     handleInnerTabClick,

@@ -32,7 +32,7 @@ export default function PlanCard({
 
   const StatusLabel = () => (
     <span
-      className={`absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 whitespace-nowrap rounded-full border bg-white px-3 py-1 text-xs font-medium ${
+      className={`absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 whitespace-nowrap rounded-full border bg-white px-3 py-1 text-xs font-medium dark:bg-popover ${
         selected
           ? "border-[#E03131] text-[#E03131]"
           : "border-[#0B66D3] text-[#0B66D3]"
@@ -47,18 +47,20 @@ export default function PlanCard({
       {/* Desktop */}
       <div
         onClick={!isOnModal ? onToggle : undefined}
-        className={`relative hidden sm:flex justify-between items-center border rounded-2xl bg-white p-10 transition-all cursor-pointer ${selectedBorder}`}
+        className={`relative hidden sm:flex justify-between items-center border rounded-2xl bg-white p-10 transition-all cursor-pointer dark:bg-card dark:text-foreground ${selectedBorder}`}
       >
         {/* Left */}
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-[#0B66D3]">{title}</h2>
           </div>
-          <p className="text-[#666] mt-2">{location}</p>
+          <p className="text-[#666] mt-2 dark:text-muted-foreground">
+            {location}
+          </p>
           <p className="font-semibold mt-3">
             {spinsPerDj * djCount} Spins • {djCount} DJs
           </p>
-          <p className="text-[#7A7A7A] mt-3">
+          <p className="text-[#7A7A7A] mt-3 dark:text-muted-foreground">
             Audience Reach: {audienceReach.toLocaleString()}
           </p>
           <p className="mt-3">
@@ -80,12 +82,12 @@ export default function PlanCard({
           </p>
         </div>
         {/* Right */}
-        <div className="w-max border border-black rounded-2xl p-4">
+        <div className="w-max border border-black rounded-2xl p-4 dark:border-border">
           <p className="text-[11px] uppercase tracking-[2px] font-bold mb-3">
             Spins Per DJ
           </p>
           <div className="flex items-center">
-            <div className="w-[116px] h-[54px] border border-black rounded-2xl flex items-center justify-center text-[24px]">
+            <div className="w-[116px] h-[54px] border border-black rounded-2xl flex items-center justify-center text-[24px] dark:border-border">
               {spinsPerDj}
             </div>
           </div>
@@ -96,18 +98,20 @@ export default function PlanCard({
       {/* Mobile */}
       <div
         onClick={!isOnModal ? onToggle : undefined}
-        className={`relative sm:hidden border rounded-2xl bg-white p-5 transition-all cursor-pointer ${selectedBorder}`}
+        className={`relative sm:hidden border rounded-2xl bg-white p-5 transition-all cursor-pointer dark:bg-card dark:text-foreground ${selectedBorder}`}
       >
         <div className="flex justify-between items-start gap-4">
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold text-[#0B66D3]">{title}</h2>
             </div>
-            <p className="text-sm text-[#666] mt-1">{location}</p>
+            <p className="text-sm text-[#666] mt-1 dark:text-muted-foreground">
+              {location}
+            </p>
           </div>
         </div>
         <div className="mt-4">
-          <div className="border border-black rounded-xl p-3 inline-flex items-end">
+          <div className="border border-black rounded-xl p-3 inline-flex items-end dark:border-border">
             <div className="flex flex-col">
               <span className="text-[10px] uppercase tracking-widest font-bold">
                 Spins Per DJ
@@ -119,7 +123,7 @@ export default function PlanCard({
         <p className="font-bold mt-4">
           {spinsPerDj * djCount} Spins • {djCount} DJs
         </p>
-        <p className="text-gray-500 mt-2">
+        <p className="text-gray-500 mt-2 dark:text-muted-foreground">
           Audience Reach: {audienceReach.toLocaleString()}
         </p>
         <p className="mt-3 text-sm">

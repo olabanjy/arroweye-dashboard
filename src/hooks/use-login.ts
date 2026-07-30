@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { StaticImageData } from "next/image";
-import { Toast } from "primereact/toast";
-import { LoginEP, VerifyLogin } from "@/services";
-import { useAuth } from "@/context/auth-context";
+import { toast } from "sonner";
+import { useAuth } from "../context/auth-session";
+import { LoginEP, VerifyLogin } from "../services";
 
-import Bg1 from "@assets/image (1).webp";
-import Bg2 from "@assets/image (2).webp";
-import Bg3 from "@assets/image (3).webp";
-import Bg4 from "@assets/image (4).webp";
-import Bg5 from "@assets/image (5).webp";
-import Bg6 from "@assets/image (6).webp";
-import Bg7 from "@assets/image (7).webp";
-import Bg9 from "@assets/image (9).webp";
-import Bg13 from "@assets/image (13).webp";
-import Bg14 from "@assets/image (14).webp";
-
-const bgImages = [Bg1, Bg2, Bg3, Bg4, Bg5, Bg6, Bg7, Bg9, Bg13, Bg14];
+const bgImages = [
+  "/assets/image%20(1).webp",
+  "/assets/image%20(2).webp",
+  "/assets/image%20(3).webp",
+  "/assets/image%20(4).webp",
+  "/assets/image%20(5).webp",
+  "/assets/image%20(6).webp",
+  "/assets/image%20(7).webp",
+  "/assets/image%20(9).webp",
+  "/assets/image%20(13).webp",
+  "/assets/image%20(14).webp",
+];
 
 const getDeterministicBgImage = () => {
   const day = new Date().getUTCDate();
@@ -23,19 +22,17 @@ const getDeterministicBgImage = () => {
 };
 
 interface UseLoginProps {
-  toastRef: React.RefObject<Toast | null>;
+  toastRef?: unknown;
 }
 
-export const useLogin = ({ toastRef }: UseLoginProps) => {
+export const useLogin = (_props?: UseLoginProps) => {
   const { login } = useAuth();
 
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [isOtpLoading, setIsOtpLoading] = useState(false);
   const [toggleNotifications, setToggleNotifications] = useState(false);
 
-  const [randomBgImage] = useState<StaticImageData | string>(
-    getDeterministicBgImage(),
-  );
+  const [randomBgImage] = useState(getDeterministicBgImage());
   const [isBlurred, setIsBlurred] = useState(true);
 
   const [loginFormData, setLoginFormData] = useState({
@@ -112,6 +109,7 @@ export const useLogin = ({ toastRef }: UseLoginProps) => {
 
     if (newLoginErrors.email !== "") {
       setLoginErrors(newLoginErrors);
+      toast.error(newLoginErrors.email);
       setIsLoginLoading(false);
       return;
     }
@@ -120,25 +118,14 @@ export const useLogin = ({ toastRef }: UseLoginProps) => {
       .then((response) => {
         if (!response?.errorResponse) {
           setIsOtpSent(true);
-          toastRef.current?.show({
-            severity: "success",
-            summary: "Success",
-            detail: response.message,
-            life: 3000,
-            className: " bg-white border border-[#e0e0e0] !text-[#000000]",
-          });
+          toast.success(response?.message || "OTP sent successfully.");
         } else {
-          toastRef.current?.show({
-            severity: "error",
-            summary: "Login Failed",
-            detail: response.message,
-            life: 3000,
-            className: " bg-white border border-[#e0e0e0] !text-[#000000]",
-          });
+          toast.error(response?.message || "Login failed.");
         }
       })
       .catch((err) => {
         console.error("Error submitting form:", err.message || err);
+        toast.error("Unable to send OTP. Please try again.");
       })
       .finally(() => {
         setIsLoginLoading(false);
@@ -162,29 +149,18 @@ export const useLogin = ({ toastRef }: UseLoginProps) => {
     if (newLoginErrors.otp === "") {
       VerifyLogin({ token: otpFormData.otp })
         .then((response) => {
-          toastRef.current?.show({
-            severity: "success",
-            summary: "Success",
-            detail: "Verification successful!",
-            life: 3000,
-            className: " bg-white border border-[#e0e0e0] !text-[#000000]",
-          });
+          toast.success("Verification successful!");
           login(response);
         })
         .catch((err) => {
           console.error("Error verifying OTP:", err);
-          toastRef.current?.show({
-            severity: "error",
-            summary: "Verification Failed",
-            detail: "Failed to verify OTP. Please try again.",
-            life: 3000,
-            className: " bg-white border border-[#e0e0e0] !text-[#000000]",
-          });
+          toast.error("Failed to verify OTP. Please try again.");
         })
         .finally(() => {
           setIsOtpLoading(false);
         });
     } else {
+      toast.error(newLoginErrors.otp);
       setIsOtpLoading(false);
     }
   };

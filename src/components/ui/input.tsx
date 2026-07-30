@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { FiInfo, FiEye, FiEyeOff } from "react-icons/fi";
@@ -143,7 +144,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             onChange={handleDateChange}
             className={cn(
               "block w-full border font-SansFlex border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white",
-              rounded ? "rounded-full" : "rounded-[8px]",
+              rounded ? "rounded-full" : "rounded-md",
               (error || validationError) && "border-red-500 focus:ring-red-500",
               className,
             )}
@@ -161,7 +162,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               ref={ref}
               className={cn(
                 "block w-full border font-SansFlex border-black bg-white px-4 py-[8px] h-[50px] text-[14px] placeholder:text-[14px] font-[400] text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white",
-                rounded ? "rounded-full" : "rounded-[8px]",
+                rounded ? "rounded-full" : "rounded-md",
                 (error || validationError) &&
                   "border-red-500 focus:ring-red-500",
                 className,

@@ -1,7 +1,7 @@
-import ls from "localstorage-slim";
 import apiRequest from "@/Server/Api";
-import { toast } from "react-toastify";
 import { ContentItem } from "@/types/contents";
+import ls from "localstorage-slim";
+import { toast } from "react-toastify";
 
 if (typeof window !== "undefined" && window?.localStorage)
   ls.config.storage = localStorage;
@@ -152,9 +152,7 @@ export const getStoredService = (): ContentItem[] | null => {
   return content as ContentItem[];
 };
 
-export const getPaymentInvoice = async (
-  id: number,
-): Promise<any | null> => {
+export const getPaymentInvoice = async (id: number): Promise<any | null> => {
   try {
     const response = await apiRequest({
       method: "GET",

@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import React, { useState, useCallback, useEffect } from "react";
 import { FiInfo, FiEye, FiEyeOff } from "react-icons/fi";
 
 const Tooltip = ({ info }: { info: string }) => (

@@ -5,8 +5,8 @@ import ls from "localstorage-slim";
 import { toast, Id as ToastId } from "react-toastify";
 import axios from "axios";
 
-if (typeof window !== "undefined" && window?.localStorage)
-  ls.config.storage = localStorage;
+if (typeof window !== "undefined" && window?.sessionStorage)
+  ls.config.storage = sessionStorage;
 
 export const setLS = (key: string, value: unknown) => {
   return ls.set(key, value, { encrypt: true });
@@ -122,29 +122,10 @@ export const handleApiError = (
     const status = error.response?.status;
     const errorData = error.response?.data;
 
-    // Check for offline / network / timeout errors
-    const isNetworkError =
-      !error.response ||
-      error.code === "ERR_NETWORK" ||
-      error.message === "Network Error";
-    const isTimeout =
-      error.code === "ECONNABORTED" || error.message?.includes("timeout");
-
-    if (isNetworkError || isTimeout) {
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new Event("app-network-error"));
-      }
-      if (toastUpdateOptions) {
-        toast.dismiss(toastUpdateOptions.toastId);
-      }
-      return isTimeout ? "Connection timed out" : "Network Error";
-    }
-
     // ✅ ALWAYS handle auth first
     if (status === 401) {
-      //no need to render error message, just redirect to login
-      // errorMessage = "Authentication required. Please log in again.";
       redirectToLogin();
+      return "Authentication required. Please log in again.";
     } else if (status === 403) {
       errorMessage =
         "Access denied. You don't have permission for this action.";
