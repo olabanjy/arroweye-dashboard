@@ -42,7 +42,7 @@ const InsightCard: FC<InsightCardProps> = ({
 }) => {
   return (
     <div
-      className={`relative h-max border px-[20px] pt-[34px] rounded-[8px] space-y-[20px] w-full hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500 ${extraClass}`}
+      className={`relative h-max border px-[20px] pt-[34px] rounded-[8px] space-y-[20px] w-full hover:bg-green-500/5 hover:border hover:border-green-500 ${extraClass}`}
     >
       <div className="flex items-center gap-[5px] text-[#7a8081] font-SansFlex">
         <p className="text-[12px] font-[400] tracking-[.1rem]">{title}</p>

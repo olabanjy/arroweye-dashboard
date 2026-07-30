@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import DashboardLayout from "../../dashboard/layout";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
-import InsightChart from "../component/InsightChart";
-import Moments from "./component/Moments";
-import { Tooltip } from "@/pages/drops";
+import InsightChart from "@/components/campaigns/campaign-insights";
+import MomentCard from "@/components/campaigns/MomentCard";
+import MomentSliderCard from "@/components/campaigns/MomentSliderCard";
 
 const users = [
   { initials: "JJ", fullName: "John Jerome", email: "john@example.com" },
@@ -27,9 +26,9 @@ const ProjectDetailsPublic = () => {
   };
 
   return (
-    <DashboardLayout>
-      <div className="space-y-[20px]">
-        <div className="text-[#919393] flex items-center gap-[10px]">
+    <>
+      <div className="space-y-5">
+        <div className="text-[#919393] flex items-center gap-2.5">
           <p className="text-[#5e5e5e] text-[0.875rem]">KHAID</p>
           <p className="p-[4px] border border-[#d5d9db] bg-[#f7fcff] rounded">
             NEVILLE RECORDS
@@ -58,7 +57,38 @@ const ProjectDetailsPublic = () => {
 
         <div className=" ">
           <InsightChart />
-          <Moments />
+          <div className=" grid md:grid-cols-3 gap-[20px] place-items-center">
+            <MomentCard
+              videoUrls={["https://www.youtube.com/embed/L_kVchHsCYM"]}
+              reportUrls={[]}
+              videoTitle="How to use Chat GPT to generate social media captions"
+              watchButtonText="Watch Now"
+              downloadButtonText="Download Data"
+              radioButtonText="Radio Monitor"
+            />
+            <MomentCard
+              videoUrls={["https://www.youtube.com/embed/L_kVchHsCYM"]}
+              reportUrls={[]}
+              videoTitle="How to use Chat GPT to generate social media captions"
+              watchButtonText="Watch Now"
+              downloadButtonText="Download Data"
+            />
+            <MomentSliderCard
+              images={[
+                "https://via.placeholder.com/600x300",
+                "https://via.placeholder.com/600x300/111",
+                "https://via.placeholder.com/600x300/222",
+              ]}
+              watchButtonText="Watch Now"
+              downloadButtonText="Download Data"
+              radioButtonText="Option 1"
+              downloadIcon={true}
+              outline={true}
+              subText="Additional Information"
+              MomentsTitle="Moments"
+              assetsButton="Download Assets"
+            />
+          </div>
         </div>
       </div>
 
@@ -72,7 +102,7 @@ const ProjectDetailsPublic = () => {
         <Dialog
           header={
             <div className="flex items-center gap-2 tracking-[.1rem] text-[12px] text-[#7c7e81] !font-[400] relative">
-              <Tooltip info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted." />
+              {/* <Tooltip info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted." /> */}
 
               <span>MEMBER INFORMATION</span>
             </div>
@@ -117,7 +147,7 @@ const ProjectDetailsPublic = () => {
           )}
         </Dialog>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

@@ -68,20 +68,20 @@ const CostPerReachCard: React.FC<Props> = ({
   };
 
   return (
-    <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] font-SansFlex hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
+    <div className="border p-5 w-full rounded-xl space-y-5 font-SansFlex hover:bg-green-500/5 hover:border hover:border-green-500">
       {/* Header */}
       <div>
         <p className="text-[11px] font-semibold tracking-widest text-gray-400 uppercase mb-2">
           Cost Per Reach
         </p>
-        <p className="text-[44px] font-extrabold text-gray-900 leading-none">
+        <p className="text-[44px] font-extrabold text-primary leading-none">
           ₦{costPerReach.toFixed(2)}
         </p>
       </div>
 
       {/* Table */}
       <div>
-        <p className="text-[11px] font-bold tracking-widest text-gray-900 uppercase mb-2">
+        <p className="text-[11px] font-bold tracking-widest text-primary uppercase mb-2">
           Top Locations
         </p>
         <table className="w-full">

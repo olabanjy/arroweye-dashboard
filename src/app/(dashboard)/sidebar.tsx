@@ -66,8 +66,8 @@ type NavItemProps = {
   onClick?: () => void;
 };
 
-const SIDEBAR_ICON_SIZE = 24;
-const SIDEBAR_SUB_ICON_SIZE = 20;
+const SIDEBAR_ICON_SIZE = 18;
+const SIDEBAR_SUB_ICON_SIZE = 16;
 const SIDEBAR_COLLAPSED_WIDTH = "4.75rem";
 
 const SidebarLogo = () => {
@@ -130,7 +130,7 @@ const NavItem = ({
           active && "bg-[#17954c]",
         )}
       />
-      <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-6">
+      <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-[18px]!">
         {icon}
       </span>
       <span className="group-data-[collapsible=icon]:hidden">{label}</span>
@@ -157,7 +157,7 @@ const NavItem = ({
                 active && "bg-[#17954c]",
               )}
             />
-            <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-6">
+            <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-[18px]!">
               {icon}
             </span>
             <span className="group-data-[collapsible=icon]:hidden">
@@ -176,17 +176,17 @@ const externalResources = [
   {
     label: "FAQs",
     href: "https://arroweye.substack.com/",
-    icon: <MdHelpOutline size={SIDEBAR_ICON_SIZE} />,
+    icon: <MdHelpOutline size={SIDEBAR_SUB_ICON_SIZE} className="size-[16px]!" />,
   },
   {
     label: "Learn",
     href: "https://butta.cocoa.house/",
-    icon: <MdSchool size={SIDEBAR_ICON_SIZE} />,
+    icon: <MdSchool size={SIDEBAR_SUB_ICON_SIZE} className="size-[16px]!" />,
   },
   {
     label: "Legal",
     href: "http://arroweye.pro/legal",
-    icon: <MdGavel size={SIDEBAR_ICON_SIZE} />,
+    icon: <MdGavel size={SIDEBAR_SUB_ICON_SIZE} className="size-[16px]!" />,
   },
 ];
 
@@ -269,7 +269,7 @@ const CampaignsSidebarContent = () => {
                         <Link href="/campaigns/setup">
                           <MdAddCircleOutline
                             size={SIDEBAR_SUB_ICON_SIZE}
-                            className="text-sidebar-foreground/70"
+                            className="text-sidebar-foreground/70 size-[16px]!"
                           />
                           <span>Setup Campaign</span>
                         </Link>
@@ -316,7 +316,7 @@ const CampaignsSidebarContent = () => {
                       className="h-10 text-[14px] text-sidebar-foreground hover:bg-sidebar-accent group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!"
                     >
                       <span className="size-1 rounded-full bg-transparent group-data-[collapsible=icon]:hidden" />
-                      <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-6">
+                      <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-[18px]!">
                         <MdSchool size={SIDEBAR_ICON_SIZE} />
                       </span>
                       <span className="flex-1 group-data-[collapsible=icon]:hidden">
@@ -385,15 +385,15 @@ const CampaignsSidebarContent = () => {
                     tooltip="Account"
                     className="h-11 rounded-[8px] text-sidebar-foreground hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!"
                   >
-                    <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-6">
-                      <MdPersonOutline size={SIDEBAR_ICON_SIZE} />
+                    <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-[18px]!">
+                      <MdPersonOutline size={SIDEBAR_ICON_SIZE} className="size-[18px]!" />
                     </span>
                     <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">
                       {displayName}
                     </span>
                     <MdKeyboardArrowRight
                       size={18}
-                      className="ml-auto transition-transform duration-200 group-data-[state=open]/menu-button:rotate-[-90deg] group-data-[collapsible=icon]:hidden"
+                      className="ml-auto size-[18px]! transition-transform duration-200 group-data-[state=open]/menu-button:rotate-[-90deg] group-data-[collapsible=icon]:hidden"
                     />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
@@ -404,7 +404,7 @@ const CampaignsSidebarContent = () => {
                 >
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger className="rounded-[6px]">
-                      <MdLightMode size={16} />
+                      <MdLightMode size={SIDEBAR_ICON_SIZE} className="size-[18px]!" />
                       <span>Theme</span>
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent
@@ -424,7 +424,7 @@ const CampaignsSidebarContent = () => {
                               value={option.value}
                               className="rounded-[6px]"
                             >
-                              <Icon size={16} />
+                              <Icon size={SIDEBAR_ICON_SIZE} className="size-[18px]!" />
                               <span>{option.label}</span>
                             </DropdownMenuRadioItem>
                           );
@@ -440,7 +440,7 @@ const CampaignsSidebarContent = () => {
                     variant="destructive"
                     className="rounded-[6px]"
                   >
-                    <MdLogout size={16} />
+                    <MdLogout size={SIDEBAR_ICON_SIZE} className="size-[18px]!" />
                     <span>Logout</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>

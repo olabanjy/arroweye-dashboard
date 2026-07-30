@@ -6,7 +6,7 @@ import InvoicesTab from "./component/InvoicesTab";
 import Insight from "./component/Insight";
 
 const Campaigns = () => {
-  const [activeTab, setActiveTab] = useState("Manage");
+  const [activeTab, setActiveTab] = useState("manage");
   return (
     <>
       <Head>
@@ -17,7 +17,7 @@ const Campaigns = () => {
         <div className="flex gap-2.5 items-center mb-4 lg:ml-5"></div>
 
         <div>
-          {activeTab === "Manage" && (
+          {activeTab === "manage" && (
             <div className="">
               {/* <Manage /> */}
 
@@ -25,7 +25,7 @@ const Campaigns = () => {
               <InvoicesTab />
             </div>
           )}
-          {activeTab === "Insights" && <Insight />}
+          {activeTab === "insights" && <Insight />}
         </div>
       </div>
     </>

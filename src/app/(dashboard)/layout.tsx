@@ -6,6 +6,7 @@ import { useAuth } from "@/context/auth-session";
 import Sidebar from "./sidebar";
 import TopNav from "./top-nav";
 import { usePathname, useRouter } from "next/navigation";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 interface LayoutProps {
   children: ReactNode;
@@ -25,6 +26,7 @@ const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
 
   return (
     <div className="flex h-screen overflow-hidden">
+      <ReactQueryDevtools />
       <div className=" z-50">
         <Sidebar />
       </div>

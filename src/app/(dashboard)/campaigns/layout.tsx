@@ -7,7 +7,7 @@ interface LayoutProps {
 }
 
 const CampaignsLayout: FC<LayoutProps> = ({ children }) => {
-  return <div className="flex h-screen overflow-hidden">{children}</div>;
+  return children;
 };
 
 export default CampaignsLayout;

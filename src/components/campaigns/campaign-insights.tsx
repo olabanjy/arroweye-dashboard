@@ -1,9 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { ChartData } from "chart.js";
-import DoughnutChart from "../payments/component/Doughnut";
-import MomentCard from "../public/component/MomentCard";
-import MomentSliderCard from "../public/component/MomentSliderCard";
 import AddData from "./AddData";
 import AddMedia from "./AddMedia";
 import AddDataSocials from "./AddDataSocials";
@@ -27,9 +24,12 @@ import getDarkerColor from "@/lib/getDarkerColor";
 import { toast } from "react-toastify";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import MomentCardRewards from "../public/component/MomentCardRewards";
-import ColumnChart from "../payments/component/ColumnChart";
-import PieChart from "../payments/component/PieChart";
+import DoughnutChart from "@/app/(dashboard)/campaigns/payments/component/Doughnut";
+import ColumnChart from "@/app/(dashboard)/campaigns/payments/component/ColumnChart";
+import PieChart from "@/app/(dashboard)/campaigns/payments/component/PieChart";
+import MomentCardRewards from "./MomentCardRewards";
+import MomentCard from "./MomentCard";
+import MomentSliderCard from "./MomentSliderCard";
 
 const selectOptions = [
   [
@@ -83,7 +83,7 @@ interface InsightChartProps {
   refreshContent?: () => void;
 }
 
-const InsightChart: React.FC<InsightChartProps> = ({
+const CampaignInsights: React.FC<InsightChartProps> = ({
   editMode = false,
   handleDownloadPage,
   handleDownloadData,
@@ -785,4 +785,4 @@ const InsightChart: React.FC<InsightChartProps> = ({
   );
 };
 
-export default InsightChart;
+export default CampaignInsights;

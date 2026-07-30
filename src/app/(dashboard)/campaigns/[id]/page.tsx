@@ -29,11 +29,11 @@ import jsPDF from "jspdf";
 import { toast } from "react-toastify";
 import { hasAccess } from "@/lib/utils";
 import NoNetwork from "@/components/no-network";
-import ProjectSingleInsight from "../component/ProjectSingleInsight";
 import ScheduleProject from "@/components/campaigns/schedule/component/ScheduleProject";
-import CampaignInsightAdvertiser from "../component/CampaignInsightAdvertiser";
-import InsightChart from "../component/InsightChart";
-import EmailInputWithSuggestions from "../component/EmailInputWithSuggestions";
+import ProjectSingleInsight from "@/components/campaigns/ProjectSingleInsight";
+import EmailInputWithSuggestions from "@/components/campaigns/EmailInputWithSuggestions";
+import CampaignInsightAdvertiser from "@/components/campaigns/CampaignInsightAdvertiser";
+import CampaignInsights from "@/components/campaigns/campaign-insights";
 
 interface User {
   id: string;
@@ -808,7 +808,7 @@ const ProjectDetails = () => {
           </form>
           {hasAccess(userLoggedInProfile, ["Manager", "Supervisor"]) && (
             <>
-              <InsightChart
+              <CampaignInsights
                 editMode={toggleNotifications}
                 handleDownloadPage={handleDownloadPDF}
                 handleDownloadData={handleExportCSV}
@@ -826,7 +826,7 @@ const ProjectDetails = () => {
             </>
           )}
 
-          {isAdvertiser && <CampaignInsightAdvertiser content={content} />}
+          {!isAdvertiser && <CampaignInsightAdvertiser content={content} />}
 
           <div
             className={`custom-dialog-overlay ${
