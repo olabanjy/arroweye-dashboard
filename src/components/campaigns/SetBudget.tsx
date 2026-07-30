@@ -142,13 +142,17 @@ export default function SetBudget({
   const handleSubmit = () => (needsTopUp ? handleBuyToken() : handleContinue());
 
   return (
-    <div className="bg-[#f0f0ef] p-4 sm:p-7">
+    <div className="bg-[#f0f0ef] p-4 sm:p-7 dark:bg-background">
       <style
         dangerouslySetInnerHTML={{
           __html: `
         .budget-card {
           background: #ffffff;
           box-shadow: 0 2px 24px 0 rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04);
+        }
+        .dark .budget-card {
+          background: var(--card);
+          box-shadow: 0 0 0 1px var(--border);
         }
 
         .counter-btn {
@@ -169,6 +173,11 @@ export default function SetBudget({
         }
         .counter-btn:hover { background: #333; transform: scale(1.07); }
         .counter-btn:active { transform: scale(0.95); }
+        .dark .counter-btn {
+          background: var(--primary);
+          color: var(--primary-foreground);
+        }
+        .dark .counter-btn:hover { filter: brightness(0.92); }
 
         .budget-display {
           font-size: clamp(2rem, 6vw, 3.25rem);
@@ -176,6 +185,9 @@ export default function SetBudget({
           letter-spacing: -0.02em;
           color: #111;
           line-height: 1;
+        }
+        .dark .budget-display {
+          color: var(--foreground);
         }
 
         .buy-btn {
@@ -194,6 +206,11 @@ export default function SetBudget({
         }
         .buy-btn:hover { background: #2a2a2a; }
         .buy-btn:active { transform: scale(0.98); }
+        .dark .buy-btn {
+          background: var(--primary);
+          color: var(--primary-foreground);
+        }
+        .dark .buy-btn:hover { filter: brightness(0.92); }
 
         .custom-checkbox {
           width: 18px;
@@ -212,6 +229,14 @@ export default function SetBudget({
           border-color: #111;
           background: #111;
         }
+        .dark .custom-checkbox {
+          border-color: var(--border);
+          background: var(--card);
+        }
+        .dark .custom-checkbox.checked {
+          border-color: var(--primary);
+          background: var(--primary);
+        }
         .custom-checkbox.checked::after {
           content: '';
           width: 6px;
@@ -219,17 +244,20 @@ export default function SetBudget({
           border-radius: 50%;
           background: white;
         }
+        .dark .custom-checkbox.checked::after {
+          background: var(--primary-foreground);
+        }
       `,
         }}
       />
-      <div className="flex justify-center items-center gap-2 mb-7 my-10">
+      <div className="flex justify-center items-center gap-2 mb-7 my-10 text-gray-950 dark:text-foreground">
         <p>Set Budget</p>
-        <div className="h-[1px] w-8 bg-[#A3A3A3]" />
-        <p className="text-[#A3A3A3] cursor-not-allowed select-none">
+        <div className="h-[1px] w-8 bg-[#A3A3A3] dark:bg-border" />
+        <p className="text-[#A3A3A3] dark:text-muted-foreground cursor-not-allowed select-none">
           Launch Campaign
         </p>
       </div>
-      <div className="mt-10 mb-20 budget-card w-full px-6 py-10 sm:px-10 sm:py-12">
+      <div className="mt-10 mb-20 budget-card w-full px-6 py-10 sm:px-10 sm:py-12 text-gray-950 dark:text-foreground">
         {/* Email & Tokens row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <div>
@@ -301,17 +329,18 @@ export default function SetBudget({
                 setTokenInput(String(newTokens));
                 setBudgetInput(formatBudget(clamped));
               }}
-              style={{ color: needsTopUp ? "#e11d48" : "#111" }}
-              className="budget-display text-center bg-transparent border-none outline-none w-full min-w-0"
+              className={`budget-display text-center bg-transparent border-none outline-none w-full min-w-0 ${
+                needsTopUp ? "!text-rose-600 dark:!text-rose-400" : ""
+              }`}
             />
             {errors.budget && (
               <p className="text-red-500 text-xs mt-1">{errors.budget}</p>
             )}
-            <p className="text-xs text-[#999] mt-2">
+            <p className="text-xs text-[#999] dark:text-muted-foreground mt-2">
               Wallet balance: {formatBudget(availableBalance)} tokens
             </p>
             {needsTopUp && (
-              <p className="text-xs text-[#e11d48] mt-1">
+              <p className="text-xs text-[#e11d48] dark:text-rose-400 mt-1">
                 Exceeds your balance - buy{" "}
                 {formatBudget(tokens - availableBalance)} more token
                 {tokens - availableBalance === 1 ? "" : "s"} to cover this
@@ -349,11 +378,11 @@ export default function SetBudget({
               tabIndex={0}
               onKeyDown={(e) => e.key === " " && setAccepted((a) => !a)}
             />
-            <span className="text-sm text-[#555]">
+            <span className="text-sm text-[#555] dark:text-muted-foreground">
               I accept the{" "}
               <a
                 href="#"
-                className="underline underline-offset-2 text-[#333] hover:text-[#111] transition-colors"
+                className="underline underline-offset-2 text-[#333] hover:text-[#111] dark:text-foreground transition-colors"
               >
                 terms of service
               </a>

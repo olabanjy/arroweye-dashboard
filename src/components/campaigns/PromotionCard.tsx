@@ -20,11 +20,11 @@ export function PromotionCard({
   return (
     <div
       onClick={onClick}
-      className="rounded-xl border bg-white overflow-hidden shadow-sm cursor-pointer"
+      className="rounded-xl border bg-white overflow-hidden shadow-sm cursor-pointer dark:bg-card dark:border-border dark:text-foreground"
     >
       {/* Top gradient */}
       <div className="h-32 bg-gradient-to-b from-black to-gray-500 flex items-center justify-center">
-        <div className="h-16 w-16 rounded-full bg-white flex items-center justify-center text-lg font-semibold">
+        <div className="h-16 w-16 rounded-full bg-white flex items-center justify-center text-lg font-semibold text-gray-950 dark:bg-popover dark:text-foreground">
           {initials}
         </div>
       </div>
@@ -37,7 +37,7 @@ export function PromotionCard({
         </div>
 
         <p className="mt-2 font-medium">{djs}</p>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 dark:text-muted-foreground">
           Campaigns Completed:{" "}
           <span className="font-semibold">{campaigns}</span>
         </p>

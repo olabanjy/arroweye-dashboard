@@ -63,8 +63,10 @@ export default function PromotionPlans({
       {!isModalPage && (
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">
-            <span className="text-[#8A8A8A]">{promotion.display_name}</span> /
-            Plans
+            <span className="text-[#8A8A8A] dark:text-muted-foreground">
+              {promotion.display_name}
+            </span>{" "}
+            / Plans
           </h1>
           <button onClick={onBack} className="flex items-center gap-2 text-xl">
             <ArrowLeft size={20} />

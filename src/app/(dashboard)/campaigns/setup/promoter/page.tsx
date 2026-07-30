@@ -1,5 +1,6 @@
+"use client";
+
 import React from "react";
-import Head from "next/head";
 import { Input } from "@/components/ui/input";
 import { PromotionGrid } from "@/components/campaigns/PromotionGrid";
 import { BadgeCheck, RefreshCcw } from "lucide-react";
@@ -44,20 +45,18 @@ const PromoterCampaign = () => {
 
   return (
     <>
-      <Head>
-        <title>Promoter Campaigns - Arroweye</title>
-      </Head>
-
-      <div className="bg-[#F6F6F6] py-7">
+      <div className="bg-[#F6F6F6] py-7 text-gray-950 dark:bg-background dark:text-foreground">
         <div className="flex justify-center items-center gap-2 mb-7">
           <Link href="/campaigns/setup">
-            <p className="text-[#A3A3A3]">Set Budget</p>
+            <p className="text-[#A3A3A3] dark:text-muted-foreground">
+              Set Budget
+            </p>
           </Link>
-          <div className="h-[1px] w-8 bg-[#A3A3A3]" />
+          <div className="h-[1px] w-8 bg-[#A3A3A3] dark:bg-border" />
           <p>Launch Campaign</p>
         </div>
 
-        <div className="bg-white py-8 mx-5 px-5 lg:px-14">
+        <div className="bg-white py-8 mx-5 px-5 lg:px-14 dark:bg-card dark:border dark:border-border">
           <div className="grid grid-cols-1 gap-[20px] items-center">
             <div className="relative">
               <Input
@@ -104,8 +103,8 @@ const PromoterCampaign = () => {
             </div>
           </div>
 
-          <div className="mt-8 py-[1px] sticky top-0 z-30 bg-white">
-            <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12">
+          <div className="mt-8 py-[1px] sticky top-0 z-30 bg-white dark:bg-card">
+            <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12 dark:bg-muted dark:border-border">
               <div className="flex flex-col justify-between items-center min-h-[80px]">
                 <p className="text-lg font-medium text-center leading-tight">
                   TOTAL TOKENS
@@ -178,7 +177,7 @@ const PromoterCampaign = () => {
                 {/* Actions (Automate + Start Over) */}
                 <div className="flex gap-3 order-1 md:order-1">
                   <button
-                    className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-black text-white font-medium"
+                    className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-black text-white font-medium dark:bg-primary dark:text-primary-foreground"
                     onClick={startOver}
                   >
                     <RefreshCcw size={16} />
@@ -188,7 +187,7 @@ const PromoterCampaign = () => {
 
                 {/* Date Input */}
                 <div className="flex flex-col order-2 md:order-2 w-full md:w-auto">
-                  <label className="text-xs font-semibold tracking-wide text-gray-600 mb-1 md:mb-2">
+                  <label className="text-xs font-semibold tracking-wide text-gray-600 mb-1 md:mb-2 dark:text-muted-foreground">
                     START DATE
                   </label>
                   <Input
@@ -245,7 +244,7 @@ const PromoterCampaign = () => {
           />
         </div>
 
-        <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12">
+        <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12 dark:bg-muted dark:border-border">
           <div className="flex flex-col justify-between items-center min-h-[30px]">
             <p className="text-xs font-medium text-center leading-tight">
               TOTAL TOKENS

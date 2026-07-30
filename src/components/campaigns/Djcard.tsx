@@ -65,7 +65,7 @@ function InfoTooltip() {
       <button
         ref={btnRef}
         onClick={handleToggle}
-        className="w-4 h-4 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 flex items-center justify-center text-[10px] font-bold transition-colors"
+        className="w-4 h-4 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 flex items-center justify-center text-[10px] font-bold transition-colors dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
         aria-label="Spin counter help"
       >
         ?
@@ -103,7 +103,7 @@ function SpinCounter({
   isOnModal?: boolean;
 }) {
   return (
-    <div className="p-4 flex flex-row items-end gap-2 border border-black rounded-xl">
+    <div className="p-4 flex flex-row items-end gap-2 border border-black rounded-xl dark:border-gray-600">
       <div className="flex flex-col">
         <div className="mb-2 flex items-center gap-1">
           <span className="text-[10px] font-bold tracking-widest uppercase">
@@ -117,7 +117,7 @@ function SpinCounter({
           min={0}
           onChange={(e) => onChange(Number(e.target.value))}
           disabled={isOnModal}
-          className="w-16 h-10 rounded-xl border border-black flex items-center justify-center bg-white text-center text-xl font-bold text-gray-800 tabular-nums disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className="w-16 h-10 rounded-xl border border-black flex items-center justify-center bg-white text-center text-xl font-bold text-gray-800 tabular-nums disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
         />
       </div>
 
@@ -154,7 +154,7 @@ function MobileSpinCounter({
   isOnModal?: boolean;
 }) {
   return (
-    <div className="p-2 flex flex-row items-end gap-1 border border-black rounded-xl">
+    <div className="p-2 flex flex-row items-end gap-1 border border-black rounded-xl dark:border-gray-600">
       <div className="flex flex-col">
         <div className="mb-1 flex items-center gap-0.5">
           <span className="text-[8px] font-bold tracking-widest uppercase">
@@ -168,7 +168,7 @@ function MobileSpinCounter({
           min={0}
           onChange={(e) => onChange(Number(e.target.value))}
           disabled={isOnModal}
-          className="w-10 h-8 rounded-xl border border-black flex items-center justify-center bg-white text-center font-bold text-gray-800 tabular-nums disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className="w-10 h-8 rounded-xl border border-black flex items-center justify-center bg-white text-center font-bold text-gray-800 tabular-nums disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
         />
       </div>
 
@@ -215,13 +215,13 @@ export default function DJCard({
   return (
     <div className="min-h-max min-w-screen flex items-center justify-center font-sans">
       {/* ── Desktop Card ── */}
-      <div className="hidden sm:flex w-full bg-white rounded-2xl border border-[#D4CECE] p-6 items-center gap-6">
+      <div className="hidden sm:flex w-full bg-white rounded-2xl border border-[#D4CECE] p-6 items-center gap-6 dark:bg-gray-800 dark:border-gray-700">
         {/* Left: Info */}
         <div className="flex-1 min-w-0 space-y-2">
           <h2 className="text-xl font-bold text-blue-600 truncate">{name}</h2>
-          <p className="text-sm text-gray-500">{location}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{location}</p>
 
-          <p className="text-sm text-gray-800">
+          <p className="text-sm text-gray-800 dark:text-gray-200">
             <span className="font-semibold">Top Locations: </span>
             {topLocations.map((loc, i) => (
               <span key={loc.name}>
@@ -238,13 +238,13 @@ export default function DJCard({
             ))}
           </p>
 
-          <p className="text-sm text-gray-800">
+          <p className="text-sm text-gray-800 dark:text-gray-200">
             Campaigns Completed:{" "}
-            <span className="font-bold text-gray-900">
+            <span className="font-bold text-gray-900 dark:text-gray-100">
               {campaignsCompleted}
             </span>
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Audience Reach: {audienceReach}
           </p>
 
@@ -256,7 +256,7 @@ export default function DJCard({
         </div>
 
         {/* Divider */}
-        <div className="w-px self-stretch bg-gray-100" />
+        <div className="w-px self-stretch bg-gray-100 dark:bg-gray-700" />
 
         {/* Right: Spin Counter */}
         <div className="flex-shrink-0">
@@ -269,7 +269,7 @@ export default function DJCard({
       </div>
 
       {/* ── Mobile Card ── */}
-      <div className="flex sm:hidden w-full max-w-sm bg-white rounded-2xl border border-[#D4CECE] overflow-hidden">
+      <div className="flex sm:hidden w-full max-w-sm bg-white rounded-2xl border border-[#D4CECE] overflow-hidden dark:bg-gray-800 dark:border-gray-700">
         <div
           className="absolute left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-amber-400 rounded-t-2xl"
           style={{ position: "relative" }}
@@ -282,7 +282,9 @@ export default function DJCard({
               <h2 className="text-lg font-bold text-blue-600 leading-tight truncate">
                 {name}
               </h2>
-              <p className="text-xs text-gray-400 mt-0.5">{location}</p>
+              <p className="text-xs text-gray-400 mt-0.5 dark:text-gray-500">
+                {location}
+              </p>
             </div>
             <MobileSpinCounter
               spins={spins}
@@ -292,11 +294,11 @@ export default function DJCard({
           </div>
 
           {/* Divider */}
-          <hr className="border-gray-100" />
+          <hr className="border-gray-100 dark:border-gray-700" />
 
           {/* Top Locations */}
           <div>
-            <span className="text-xs font-semibold text-gray-700">
+            <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
               Top Locations:{" "}
             </span>
             {topLocations.map((loc, i) => (
@@ -317,16 +319,16 @@ export default function DJCard({
               <span className="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">
                 Campaigns
               </span>
-              <span className="text-base font-bold text-gray-800">
+              <span className="text-base font-bold text-gray-800 dark:text-gray-100">
                 {campaignsCompleted}
               </span>
             </div>
-            <div className="w-px h-8 bg-gray-100" />
+            <div className="w-px h-8 bg-gray-100 dark:bg-gray-700" />
             <div className="flex flex-col">
               <span className="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">
                 Audience Reach
               </span>
-              <span className="text-base font-bold text-gray-800">
+              <span className="text-base font-bold text-gray-800 dark:text-gray-100">
                 {audienceReach}
               </span>
             </div>
@@ -335,7 +337,7 @@ export default function DJCard({
           {/* Rating + Tokens */}
           <div className="flex items-center justify-between">
             <StarRating rating={rating} />
-            <span className="text-xs font-semibold text-amber-500 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-100">
+            <span className="text-xs font-semibold text-amber-500 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-100 dark:bg-amber-950/40 dark:border-amber-900">
               {tokensPerSpin} Tokens / Spin
             </span>
           </div>

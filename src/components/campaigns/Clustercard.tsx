@@ -16,9 +16,9 @@ export const ClusterCard: React.FC<ClusterCardProps> = ({
   onDistrictClick,
 }) => {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl px-5 py-8 flex flex-col gap-3 h-full hover:shadow-md hover:border-gray-300 transition-all duration-200">
+    <div className="bg-white border border-gray-200 rounded-xl px-5 py-8 flex flex-col gap-3 h-full hover:shadow-md hover:border-gray-300 transition-all duration-200 dark:bg-card dark:border-border dark:hover:border-ring">
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="font-bold text-gray-900 text-base">
+        <span className="font-bold text-gray-900 text-base dark:text-foreground">
           {city}, {country}
         </span>
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-600 border border-red-300">
@@ -35,7 +35,7 @@ export const ClusterCard: React.FC<ClusterCardProps> = ({
             className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-150 cursor-pointer ${
               activeDistricts?.has(district.id)
                 ? "bg-blue-600 border-blue-600 text-white"
-                : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300"
+                : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300 dark:bg-muted dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:border-ring"
             }`}
           >
             {district.name}

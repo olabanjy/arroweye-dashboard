@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import ls from "localstorage-slim";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";

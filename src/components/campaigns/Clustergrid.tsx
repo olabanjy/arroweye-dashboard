@@ -93,12 +93,24 @@ export const ClusterGrid: React.FC<ClusterGridProps> = ({
   return (
     <div ref={wrapperRef} className="flex flex-col gap-4 w-full">
       <div className="flex items-center justify-between">
-        <h2 className={`text-xl font-bold text-gray-900 ${titleStyle}`}>
+        <h2
+          className={`text-xl font-bold text-gray-900 dark:text-foreground ${titleStyle}`}
+        >
           Clusters
         </h2>
         <div className="flex gap-1">
-          <button onClick={() => scrollByPage("left")}><ChevronLeft className={titleStyle}/></button>
-          <button onClick={() => scrollByPage("right")}><ChevronRight className={titleStyle}/></button>
+          <button
+            onClick={() => scrollByPage("left")}
+            className="text-gray-900 dark:text-foreground"
+          >
+            <ChevronLeft className={titleStyle} />
+          </button>
+          <button
+            onClick={() => scrollByPage("right")}
+            className="text-gray-900 dark:text-foreground"
+          >
+            <ChevronRight className={titleStyle} />
+          </button>
         </div>
       </div>
 
