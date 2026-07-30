@@ -1,8 +1,9 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import ls from "localstorage-slim";
 import { Input } from "@/components/ui/input";
 import { fundCampaignWallet, getCampaignWallet } from "@/services";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { useQuery } from "@tanstack/react-query";
 
@@ -142,7 +143,9 @@ export default function SetBudget({
 
   return (
     <div className="bg-[#f0f0ef] p-4 sm:p-7">
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .budget-card {
           background: #ffffff;
           box-shadow: 0 2px 24px 0 rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04);
@@ -216,7 +219,9 @@ export default function SetBudget({
           border-radius: 50%;
           background: white;
         }
-      `}} />
+      `,
+        }}
+      />
       <div className="flex justify-center items-center gap-2 mb-7 my-10">
         <p>Set Budget</p>
         <div className="h-[1px] w-8 bg-[#A3A3A3]" />

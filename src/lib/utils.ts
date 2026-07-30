@@ -124,8 +124,8 @@ export const handleApiError = (
 
     // ✅ ALWAYS handle auth first
     if (status === 401) {
-      errorMessage = "Authentication required. Please log in again.";
       redirectToLogin();
+      return "Authentication required. Please log in again.";
     } else if (status === 403) {
       errorMessage =
         "Access denied. You don't have permission for this action.";

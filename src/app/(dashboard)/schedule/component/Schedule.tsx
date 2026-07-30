@@ -40,7 +40,7 @@ type SelectOption = {
 };
 
 const fieldClassName =
-  "!h-11 !rounded-lg !border-zinc-300 !bg-white !text-[14px] !text-zinc-950 !shadow-none placeholder:!text-zinc-400 focus-visible:!ring-2 focus-visible:!ring-violet-500/25 dark:!border-zinc-600 dark:!bg-zinc-800 dark:!text-zinc-100 dark:placeholder:!text-zinc-400";
+  "!h-11 !rounded-[6px] !border-zinc-300 !bg-white !text-[14px] !text-zinc-950 !shadow-none placeholder:!text-zinc-400 focus-visible:!ring-2 focus-visible:!ring-violet-500/25 dark:!border-zinc-600 dark:!bg-zinc-800 dark:!text-zinc-100 dark:placeholder:!text-zinc-400";
 
 interface ScheduleProps {
   filterIcon?: boolean;
@@ -68,7 +68,7 @@ const FieldSelect = ({
     >
       <SelectTrigger
         className={cn(
-          "h-11 rounded-lg border-zinc-300 bg-white px-4 text-[14px] text-zinc-950 shadow-none focus:ring-2 focus:ring-violet-500/25 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 [&>span]:line-clamp-1",
+          "h-11 rounded-[6px] border-zinc-300 bg-white px-4 text-[14px] text-zinc-950 shadow-none focus:ring-2 focus:ring-violet-500/25 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 [&>span]:line-clamp-1",
           error && "border-red-500 focus:ring-red-500",
         )}
       >
