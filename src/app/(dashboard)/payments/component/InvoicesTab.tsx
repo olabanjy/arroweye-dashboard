@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import ls from "localstorage-slim";
 import { Input } from "@/components/ui/input";
@@ -10,9 +11,9 @@ import { Dialog } from "primereact/dialog";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { CreateBusiness } from "@/services";
 import { DropDownInput } from "@/components/ui/dropdownInput";
-import CompanyDetailsForm from "./CompanyDetailsForm";
 
 import { TbBuildingBank } from "react-icons/tb";
+import CompanyDetailsForm from "@/components/campaigns/CompanyDetailsForm";
 
 const InvoicesTab = () => {
   const [userLoggedInProfile, setUserLoggedInProfile] = useState<any>({});

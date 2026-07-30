@@ -10,7 +10,7 @@ import Link from "next/link";
 import { MdOutlineModeEditOutline } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
 import { Button } from "@/components/ui/button";
-import { useCampaigns } from "../../../../hooks/use-campaigns";
+import { useCampaigns } from "@/hooks/use-campaigns";
 import Pagination from "@/pages-old/drops/component/Pagination";
 
 interface ProjectsProps {

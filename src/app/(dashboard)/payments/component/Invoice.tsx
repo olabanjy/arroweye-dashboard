@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import Table from "./Table";
 import { BsTrash } from "react-icons/bs";

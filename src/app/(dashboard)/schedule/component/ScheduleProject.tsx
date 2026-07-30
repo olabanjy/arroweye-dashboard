@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { SelectInput } from "@/components/ui/selectinput";
 import { GoArrowUpRight } from "react-icons/go";
 import { PiCalendarPlus } from "react-icons/pi";
+import { IoFilter } from "react-icons/io5";
+import { useParams } from "next/navigation";
 import AutocompleteInput from "./Autocomplete";
 import { Button } from "@/components/ui/button";
 import { InfoTooltip as Tooltip } from "@/components/ui/info-tooltip";
@@ -22,14 +24,15 @@ import { useSchedule } from "@/hooks/use-schedule";
 interface ScheduleProps {
   filterIcon?: boolean;
   isDateClickEnabled?: boolean;
-  isSchedulePage?: boolean;
+  isProjectPage?: boolean;
 }
 
-const Schedule: React.FC<ScheduleProps> = ({
+const ScheduleProject: React.FC<ScheduleProps> = ({
   filterIcon = true,
   isDateClickEnabled = false,
-  isSchedulePage = false,
+  isProjectPage = true,
 }) => {
+  const { id } = useParams<{ id: string }>();
   const {
     userLoggedInProfile,
     isModalVisible,
@@ -66,22 +69,28 @@ const Schedule: React.FC<ScheduleProps> = ({
     handleFormSubmit,
     rescheduleEvent,
   } = useSchedule({
-    isSchedulePage,
+    isProjectPage,
+    projectId: Number(id),
     isDateClickEnabled,
   });
+
   return (
     <div>
       <div className="schedule-container space-y-[20px] mb-[100px]">
         {filterIcon && (
           <div className=" flex items-center justify-center gap-[5px] mb-[30px]">
-            {userLoggedInProfile?.role !== "Manager" && (
-              <div
-                className="w-12 h-12 rounded-full bg-[#5d00e4] inline-flex text-[#ffffff]  items-center justify-center cursor-pointer"
-                onClick={() => setIsModalVisible(true)}
-              >
-                <PiCalendarPlus />
-              </div>
-            )}
+            <div
+              className="w-12 h-12 rounded-full bg-[#5d00e4] inline-flex text-[#ffffff]  items-center justify-center cursor-pointer"
+              onClick={() => setIsModalVisible(true)}
+            >
+              <PiCalendarPlus />
+            </div>{" "}
+            <div
+              className="w-12 h-12 cursor-pointer rounded-full bg-[#000000] inline-flex text-[#ffffff]  items-center justify-center"
+              onClick={() => setisFilter(true)}
+            >
+              <IoFilter />
+            </div>
           </div>
         )}
         <div className="calendar-container">
@@ -118,9 +127,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                 right: "",
               }}
               events={events}
-              eventClick={(info: any) => {
-                // alert(`Event: ${info.event.title}`);
-                setFormErrors({});
+              eventClick={(info) => {
                 setProjectPin(info?.event?._def?.extendedProps?.code);
                 setFormData({
                   id: info?.event?.id?.split("-")[0],
@@ -157,6 +164,7 @@ const Schedule: React.FC<ScheduleProps> = ({
               }}
               events={events}
               eventClick={(info: any) => {
+                // alert(`Event: ${info.event.title}`);
                 setFormErrors({});
                 setProjectPin(info?.event?._def?.extendedProps?.code);
                 setFormData({
@@ -212,7 +220,6 @@ const Schedule: React.FC<ScheduleProps> = ({
                     />
                   ) : (
                     <AutocompleteInput
-                      placeholder="Event Title"
                       name="title"
                       disabled={viewOnly}
                       value={formData.title}
@@ -276,7 +283,6 @@ const Schedule: React.FC<ScheduleProps> = ({
                     value={formData.location}
                     onChange={handleFormChange}
                     placeholder="Location (or Link for virtual meetings)"
-                    error={formErrors?.location}
                   />
                 </div>
 
@@ -296,7 +302,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                   <Input
                     type="text"
                     name="code"
-                    // disabled={viewOnly}
+                    disabled={viewOnly}
                     value={formData.code}
                     onChange={handleFormChange}
                     placeholder="Enter Code"
@@ -351,21 +357,19 @@ const Schedule: React.FC<ScheduleProps> = ({
                         Delete
                       </p>
                     )}
-                  {viewOnly && (
-                    <p
-                      className="text-[14px] px-[20px] py-[8px] bg-[#000] rounded-full text-[#fff] inline-flex cursor-pointer"
-                      // onClick={() =>
-                      //   downloadFormDataAsICS(
-                      //     formData,
-                      //     vendorOptions,
-                      //     subvendorOptions
-                      //   )
-                      // }
-                      onClick={() => exportICS()}
-                    >
-                      Share
-                    </p>
-                  )}
+                  <p
+                    className="text-[14px] px-[20px] py-[8px] bg-[#000] rounded-full text-[#fff] inline-flex cursor-pointer"
+                    // onClick={() =>
+                    //   downloadFormDataAsICS(
+                    //     formData,
+                    //     vendorOptions,
+                    //     subvendorOptions
+                    //   )
+                    // }
+                    onClick={() => exportICS()}
+                  >
+                    Share
+                  </p>
                   {viewOnly &&
                     hasAccessNoVendor(userLoggedInProfile, ["Manager"]) && (
                       <p
@@ -376,9 +380,11 @@ const Schedule: React.FC<ScheduleProps> = ({
                       </p>
                     )}
                 </div>
-                {viewOnly === true && (
+
+                {!isProjectPage && (
                   <button
                     className="relative group rounded-full"
+                    disabled={isProjectPage}
                     type="button"
                     onClick={() => {
                       if (!formData.project) {
@@ -521,4 +527,4 @@ const Schedule: React.FC<ScheduleProps> = ({
   );
 };
 
-export default Schedule;
+export default ScheduleProject;

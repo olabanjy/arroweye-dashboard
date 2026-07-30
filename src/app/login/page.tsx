@@ -74,7 +74,7 @@ const Login = () => {
                     value={loginFormData.email}
                     onChange={handleLoginInputChange}
                     error={loginErrors.email}
-                    className="w-full text-center font-medium text-[#323131] text-[15px]"
+                    className="login-input-white w-full text-center font-medium text-[#323131] text-[15px]"
                   />
                   <div className=" flex items-center justify-end">
                     <Button
@@ -98,7 +98,7 @@ const Login = () => {
                     value={otpFormData.otp}
                     onChange={handleOtpInputChange}
                     error={otpErrors.otp}
-                    className="w-full text-center font-medium text-[#323131]"
+                    className="login-input-white w-full text-center font-medium text-[#323131]"
                   />
 
                   <div className=" flex items-center justify-between">

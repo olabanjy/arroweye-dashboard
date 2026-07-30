@@ -1,12 +1,12 @@
 "use client";
-import { FC, ReactNode, useEffect } from "react";
+import { FC, ReactNode } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAuth } from "@/context/auth-session";
 import Sidebar from "./sidebar";
 import TopNav from "./top-nav";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { useProtectedRoute } from "./hooks/use-protected-route";
 
 interface LayoutProps {
   children: ReactNode;
@@ -14,15 +14,16 @@ interface LayoutProps {
 }
 
 const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
-  const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useProtectedRoute();
 
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push("/login");
-    }
-  }, [isLoading, isAuthenticated]);
+  if (isLoading || !isAuthenticated) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden">

@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect, useRef } from "react";
 import { Grip, X, ArrowUp, Info, XCircle } from "lucide-react";
 import { getSpinsAnalytics } from "@/services";

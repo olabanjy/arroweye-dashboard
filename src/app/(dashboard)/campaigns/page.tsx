@@ -1,9 +1,8 @@
 "use client";
 import { useState } from "react";
 import Head from "next/head";
-import Manage from "./component/Manage";
-import InvoicesTab from "./component/InvoicesTab";
-import Insight from "./component/Insight";
+import InvoicesTab from "@/components/campaigns/InvoicesTab";
+import Insight from "@/components/campaigns/Insight";
 
 const Campaigns = () => {
   const [activeTab, setActiveTab] = useState("manage");

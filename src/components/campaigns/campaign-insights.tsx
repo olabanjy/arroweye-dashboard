@@ -24,12 +24,12 @@ import getDarkerColor from "@/lib/getDarkerColor";
 import { toast } from "react-toastify";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import DoughnutChart from "@/app/(dashboard)/campaigns/payments/component/Doughnut";
-import ColumnChart from "@/app/(dashboard)/campaigns/payments/component/ColumnChart";
-import PieChart from "@/app/(dashboard)/campaigns/payments/component/PieChart";
+import PieChart from "@/app/(dashboard)/payments/component/PieChart";
 import MomentCardRewards from "./MomentCardRewards";
 import MomentCard from "./MomentCard";
 import MomentSliderCard from "./MomentSliderCard";
+import DoughnutChart from "./Doughnut";
+import ColumnChart from "./ColumnChart";
 
 const selectOptions = [
   [

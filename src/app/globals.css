@@ -208,3 +208,21 @@ body
 button {
   cursor: pointer;
 }
+
+.login-input-white,
+.login-input-white:focus,
+.login-input-white:hover {
+  background-color: #ffffff !important;
+  border-color: #000000 !important;
+  color: #323131 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.login-input-white:-webkit-autofill,
+.login-input-white:-webkit-autofill:hover,
+.login-input-white:-webkit-autofill:focus {
+  -webkit-text-fill-color: #323131 !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+  caret-color: #323131;
+}
