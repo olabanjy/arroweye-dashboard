@@ -34,7 +34,7 @@ const TopNav: FC = () => {
             className="text-black cursor-pointer mb-[40px] md:mb-0 relative"
             onClick={toggleSidebar}
           >
-            <FaRegBell size={27} />
+            <FaRegBell size={18} />
             {!allNotificationsRead && !hasOpenedNotifications && (
               <div className="w-2 h-2 bg-[#ffa500] absolute top-0 right-0 rounded-full" />
             )}

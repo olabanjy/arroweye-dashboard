@@ -47,7 +47,7 @@ const TopNav: FC = () => {
                 className="text-primary cursor-pointer mb-[40px] md:mb-0 relative outline-none"
                 aria-label="Open notifications"
               >
-                <FaRegBell size={27} />
+                <FaRegBell size={18} />
                 {!allNotificationsRead && !hasOpenedNotifications && (
                   <span className="w-2 h-2 bg-[#ffa500] absolute top-0 right-0 rounded-full" />
                 )}
