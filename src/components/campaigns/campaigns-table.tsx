@@ -11,7 +11,7 @@ import { MdOutlineModeEditOutline } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
 import { Button } from "@/components/ui/button";
 import { useCampaigns } from "@/hooks/use-campaigns";
-import Pagination from "@/pages-old/drops/component/Pagination";
+import Pagination from "@/app/(dashboard)/drops/component/pagination";
 
 interface ProjectsProps {
   filterVisible: boolean;
@@ -208,11 +208,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
             headers={PROJECT_HEADERS}
             rows={projectRows}
             emptyState={
-              isLoading ? (
-                <TableSpinner />
-              ) : (
-                <TableEmptyState label="No Data" />
-              )
+              isLoading ? <TableSpinner /> : <TableEmptyState label="No Data" />
             }
           />
         )}
