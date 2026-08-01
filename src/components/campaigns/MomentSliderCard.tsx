@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Download } from "lucide-react";
+import { CirclePlay, Download } from "lucide-react";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { toast } from "sonner";
@@ -47,7 +47,26 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
   loading = false,
 }) => {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const hasData = (images?.length ?? 0) > 0;
+  const listenHref = links?.[selectedIndex] ?? links?.[0];
+
+  useEffect(() => {
+    if (!carouselApi) return;
+
+    const updateSelectedIndex = () => {
+      setSelectedIndex(carouselApi.selectedScrollSnap());
+    };
+
+    updateSelectedIndex();
+    carouselApi.on("select", updateSelectedIndex);
+    carouselApi.on("reInit", updateSelectedIndex);
+
+    return () => {
+      carouselApi.off("select", updateSelectedIndex);
+      carouselApi.off("reInit", updateSelectedIndex);
+    };
+  }, [carouselApi]);
 
   useEffect(() => {
     if (!carouselApi || images.length <= 1) return;
@@ -124,7 +143,7 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
   };
 
   return (
-    <div className="w-full space-y-[20px]">
+    <div className="w-full max-h-[600px] space-y-[20px]">
       <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-SansFlex uppercase">
         {MomentsTitle}
       </p>
@@ -150,7 +169,7 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
                     <img
                       src={image}
                       alt={`Slide ${index + 1}`}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-contain"
                     />
                   </Link>
                 ) : (
@@ -158,13 +177,24 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
                     <img
                       src={image}
                       alt={`Slide ${index + 1}`}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-contain"
                     />
                   </div>
                 )}
               </CarouselItem>
             ))}
           </CarouselContent>
+          {listenHref && (
+            <Button
+              asChild
+              className="absolute bottom-4 left-1/2 z-10 h-auto -translate-x-1/2 rounded-full bg-white px-3 py-1 text-xs font-normal text-black hover:bg-white/90"
+            >
+              <Link href={listenHref} target="_blank" rel="noopener noreferrer">
+                <CirclePlay className="size-3" />
+                Listen
+              </Link>
+            </Button>
+          )}
           {images.length > 1 && (
             <>
               <CarouselPrevious

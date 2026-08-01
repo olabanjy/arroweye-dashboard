@@ -1,12 +1,11 @@
 import React from "react";
-import { CheckCircle2, UserPlus, XCircle } from "lucide-react";
+import { CheckCircle2, PencilLine, UserPlus, XCircle } from "lucide-react";
 import { ContentItem } from "@/types/contents";
 import { hasAccess } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
   TooltipContent,
@@ -46,6 +45,11 @@ export function CampaignDetailsHeader({
   onUserClick,
   onRequestEditModeChange,
 }: CampaignDetailsHeaderProps) {
+  const canUseEditMode = hasAccess(userLoggedInProfile, [
+    "Manager",
+    "Supervisor",
+  ]);
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-[5px] text-[0.875rem] text-[#919393]">
@@ -159,7 +163,7 @@ export function CampaignDetailsHeader({
             </div>
           </TooltipProvider>
 
-          {hasAccess(userLoggedInProfile, ["Manager"]) && (
+          {canUseEditMode && (
             <div className="relative">
               {toggleNotifications && (
                 <div className="fixed left-0 top-0 z-[9999999] flex h-[50px] w-full items-center justify-center bg-blue-500 font-SansFlex text-[15px] font-[500] text-white">
@@ -167,17 +171,19 @@ export function CampaignDetailsHeader({
                 </div>
               )}
 
-              <div className="flex items-center space-x-4">
-                <p className="font-SansFlex text-[16px] font-[400]">
-                  Edit mode
-                </p>
-                <Switch
-                  id="edit-mode"
-                  checked={toggleNotifications}
-                  onCheckedChange={onRequestEditModeChange}
-                  className="custom-switch"
-                />
-              </div>
+              <Button
+                type="button"
+                aria-pressed={toggleNotifications}
+                className="h-auto rounded-full bg-black px-4 py-2 font-SansFlex text-[16px] font-[400] text-white hover:bg-orange-500"
+                onClick={() => onRequestEditModeChange(!toggleNotifications)}
+              >
+                {toggleNotifications ? (
+                  <XCircle className="size-4" />
+                ) : (
+                  <PencilLine className="size-4" />
+                )}
+                {toggleNotifications ? "Exit edit mode" : "Edit mode"}
+              </Button>
             </div>
           )}
         </div>

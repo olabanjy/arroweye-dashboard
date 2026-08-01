@@ -456,11 +456,18 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
     refreshContent?.();
   };
 
+  const insightGridClass = editMode
+    ? "grid grid-cols-1 gap-x-[10px] gap-y-[20px] w-full md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-[auto_auto_auto_auto]"
+    : "grid grid-cols-1 gap-x-[10px] gap-y-[20px] w-full md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-[auto_auto_auto]";
+  const insightCardClass = editMode
+    ? "border p-[20px] w-full rounded-[8px] space-y-[20px] hover:bg-green-500/5 hover:border hover:border-green-500 lg:row-span-4 lg:grid lg:[grid-template-rows:subgrid] lg:space-y-0"
+    : "border p-[20px] w-full rounded-[8px] space-y-[20px] hover:bg-green-500/5 hover:border hover:border-green-500 lg:row-span-3 lg:grid lg:[grid-template-rows:subgrid] lg:space-y-0";
+
   return (
     <div ref={targetRef}>
       <div className="mt-[20px] mb-[80px]">
-        <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px] w-full">
-          <div className="border p-[20px] w-full rounded-[8px] space-y-[20px]  hover:bg-green-500/5 hover:border hover:border-green-500">
+        <div className={insightGridClass}>
+          <div className={insightCardClass}>
             {editMode && (
               <div className=" space-y-[20px]">
                 <p
@@ -521,7 +528,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
               loading={mediaLoading}
             />
           </div>
-          <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] hover:bg-green-500/5 hover:border hover:border-green-500">
+          <div className={insightCardClass}>
             {editMode && (
               <div className=" space-y-[20px]">
                 <p
@@ -581,7 +588,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
               loading={mediaLoading}
             />
           </div>
-          <div className="border p-[20px]  rounded-[8px] space-y-[20px] hover:bg-green-500/5 hover:border hover:border-green-500">
+          <div className={insightCardClass}>
             {editMode && (
               <div className=" space-y-[20px]">
                 <p
