@@ -2,11 +2,21 @@
 
 import React from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { PromotionGrid } from "@/components/campaigns/PromotionGrid";
-import { BadgeCheck, RefreshCcw } from "lucide-react";
-import Modal from "@/components/modal";
+import { BadgeCheck, LoaderCircle, RefreshCcw } from "lucide-react";
 import Link from "next/link";
 import { usePromoterSetup } from "../../../../../hooks/use-promoter-setup";
+import { CampaignStats } from "../../_components/campaign-stats";
 
 const PromoterCampaign = () => {
   const {
@@ -56,114 +66,178 @@ const PromoterCampaign = () => {
           <p>Launch Campaign</p>
         </div>
 
-        <div className="bg-white py-8 mx-5 px-5 lg:px-14 dark:bg-card dark:border dark:border-border">
-          <div className="grid grid-cols-1 gap-[20px] items-center">
-            <div className="relative">
-              <Input
-                value={isrc}
-                className="border-[#9D9A9A]"
-                type="text"
-                placeholder="ISRC / UPC"
-                onChange={(e) => setIsrc(e.target.value)}
-              />
-              {(loadingCampaignSong || isIsrcValidating) && (
-                <span className="italic absolute top-14 text-sm mt-2 truncate w-full block">
-                  {isIsrcValidating ? "Validating code..." : "Loading Song...."}
-                </span>
-              )}
-              {!loadingCampaignSong && !isIsrcValidating && validationError && (
-                <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
-                  {validationError}
-                </p>
-              )}
-              {!loadingCampaignSong &&
-                !isIsrcValidating &&
-                !validationError &&
-                campaignSongDetails?.error && (
-                  <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
-                    {campaignSongDetails?.error}
-                  </p>
+        <Card className="mx-5 rounded-lg py-0 shadow-none">
+          <CardContent className="px-5 py-8 lg:px-14">
+            <div className="grid grid-cols-1 gap-[20px] items-center">
+              <div className="relative">
+                <Input
+                  value={isrc}
+                  className="border-[#9D9A9A]"
+                  type="text"
+                  placeholder="ISRC / UPC"
+                  onChange={(e) => setIsrc(e.target.value)}
+                />
+                {(loadingCampaignSong || isIsrcValidating) && (
+                  <span className="italic absolute top-14 text-sm mt-2 truncate w-full block">
+                    {isIsrcValidating
+                      ? "Validating code..."
+                      : "Loading Song...."}
+                  </span>
                 )}
-              {!loadingCampaignSong &&
-                !isIsrcValidating &&
-                !validationError &&
-                campaignSongDetails?.artist &&
-                campaignSongDetails?.title && (
-                  <div
-                    title={`${campaignSongDetails?.artist} - ${campaignSongDetails?.title}`}
-                    className="absolute flex flex-row gap-2 items-center top-14 text-sm mt-2 text-green-500 w-full overflow-hidden cursor-default"
-                  >
-                    <BadgeCheck height={14} width={14} className="shrink-0" />
-                    <p className="truncate">
-                      {campaignSongDetails?.artist} -{" "}
-                      {campaignSongDetails?.title}
+                {!loadingCampaignSong &&
+                  !isIsrcValidating &&
+                  validationError && (
+                    <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
+                      {validationError}
                     </p>
-                  </div>
-                )}
-            </div>
-          </div>
-
-          <div className="mt-8 py-[1px] sticky top-0 z-30 bg-white dark:bg-card">
-            <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12 dark:bg-muted dark:border-border">
-              <div className="flex flex-col justify-between items-center min-h-[80px]">
-                <p className="text-lg font-medium text-center leading-tight">
-                  TOTAL TOKENS
-                </p>
-                <p className="text-5xl font-medium">
-                  {walletDetails?.available_balance || "0"}
-                </p>
-              </div>
-
-              <div className="flex flex-col justify-between items-center min-h-[80px]">
-                <p className="text-lg font-medium text-center leading-tight">
-                  TOKENS ALLOCATED
-                </p>
-                <p className="text-5xl font-medium">{totalTokens || "0"}</p>
-              </div>
-
-              <div className="flex flex-col justify-between items-center min-h-[80px]">
-                <p className="text-lg font-medium text-center leading-tight">
-                  TOKENS REMAINING
-                </p>
-                <p className="text-5xl font-medium">
-                  {totalTokens > 0 && walletDetails?.available_balance > 0
-                    ? walletDetails.available_balance - totalTokens
-                    : 0}
-                </p>
-              </div>
-
-              <div className="flex flex-col justify-between items-center min-h-[80px]">
-                <p className="text-lg font-medium text-center leading-tight">
-                  DJS SELECTED
-                </p>
-                <p className="text-5xl font-medium">{totalDJs || 0}</p>
+                  )}
+                {!loadingCampaignSong &&
+                  !isIsrcValidating &&
+                  !validationError &&
+                  campaignSongDetails?.error && (
+                    <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
+                      {campaignSongDetails?.error}
+                    </p>
+                  )}
+                {!loadingCampaignSong &&
+                  !isIsrcValidating &&
+                  !validationError &&
+                  campaignSongDetails?.artist &&
+                  campaignSongDetails?.title && (
+                    <div
+                      title={`${campaignSongDetails?.artist} - ${campaignSongDetails?.title}`}
+                      className="absolute flex flex-row gap-2 items-center top-14 text-sm mt-2 text-green-500 w-full overflow-hidden cursor-default"
+                    >
+                      <BadgeCheck height={14} width={14} className="shrink-0" />
+                      <p className="truncate">
+                        {campaignSongDetails?.artist} -{" "}
+                        {campaignSongDetails?.title}
+                      </p>
+                    </div>
+                  )}
               </div>
             </div>
-          </div>
 
-          <div className="pt-10">
-            <div className="mb-8">
-              <p className="font-bold lg:text-lg">Promoters</p>
-              <Input
-                className="border-[#9D9A9A]"
-                type="search"
-                placeholder="Search Djs"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSearch();
-                  }
+            <div className="sticky top-0 z-30 mt-8 bg-card py-px">
+              <div className="mt-10">
+                <CampaignStats
+                  availableTokens={walletDetails?.available_balance || 0}
+                  allocatedTokens={totalTokens}
+                  selectedDjs={totalDJs}
+                />
+              </div>
+            </div>
+
+            <div className="pt-10">
+              <div className="mb-8">
+                <p className="font-bold lg:text-lg">Promoters</p>
+                <Input
+                  className="border-[#9D9A9A]"
+                  type="search"
+                  placeholder="Search Djs"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
+                />
+              </div>
+              <PromotionGrid
+                data={promotersData}
+                selectedPromotion={selectedPromotion}
+                setSelectedPromotion={setSelectedPromotion}
+                resetPlan={resetPlan}
+                onPlanSelected={handlePlanSelected}
+                onAudienceReach={(reach) => setTotalAudienceReach(reach)}
+                onPlanStats={({ totalTokens, totalDJs }) => {
+                  setTotalTokens(totalTokens);
+                  setTotalDJs(totalDJs);
                 }}
               />
             </div>
+
+            {selectedPromotion && campaignPayload && (
+              <div className="w-full px-4 py-6 md:px-6 md:py-5 rounded-xl">
+                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                  {/* Actions (Automate + Start Over) */}
+                  <div className="flex gap-3 order-1 md:order-1">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="h-11 flex-1 md:flex-none"
+                      onClick={startOver}
+                    >
+                      <RefreshCcw />
+                      Start Over
+                    </Button>
+                  </div>
+
+                  {/* Date Input */}
+                  <div className="flex flex-col order-2 md:order-2 w-full md:w-auto">
+                    <label className="text-xs font-semibold tracking-wide text-gray-600 mb-1 md:mb-2 dark:text-muted-foreground">
+                      START DATE
+                    </label>
+                    <Input
+                      type="datetime-local"
+                      name="startDate"
+                      value={startDate}
+                      placeholder="01/01/2034"
+                      className="w-full md:w-[260px]"
+                      onChange={(e) =>
+                        setStartDate(e.target.value.split("T")[0])
+                      }
+                    />
+                  </div>
+
+                  {/* Launch CTA */}
+                  <Button
+                    type="button"
+                    className="order-3 h-11 w-full md:w-auto"
+                    disabled={
+                      loadingCampaignCreation ||
+                      !startDate ||
+                      !campaignSongDetails?.artist ||
+                      !totalAudienceReach
+                    }
+                    onClick={handleCreateCampaignDraft}
+                  >
+                    {loadingCampaignCreation && (
+                      <LoaderCircle className="animate-spin" />
+                    )}
+                    {loadingCampaignCreation === true
+                      ? "Loading..."
+                      : "Create Campaign"}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <Dialog
+        open={editBeforeLaunchModal}
+        onOpenChange={setEditBeforeLaunchModal}
+      >
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Your Selection</DialogTitle>
+            <DialogDescription>
+              Review the promotion plan and token allocation before launching.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div>
             <PromotionGrid
+              isModalPage={true}
+              isOnModal={true} // add this
               data={promotersData}
               selectedPromotion={selectedPromotion}
               setSelectedPromotion={setSelectedPromotion}
-              resetPlan={resetPlan}
               onPlanSelected={handlePlanSelected}
-              onAudienceReach={(reach) => setTotalAudienceReach(reach)}
+              onAudienceReach={(reach) => console.log(reach)}
               onPlanStats={({ totalTokens, totalDJs }) => {
                 setTotalTokens(totalTokens);
                 setTotalDJs(totalDJs);
@@ -171,120 +245,17 @@ const PromoterCampaign = () => {
             />
           </div>
 
-          {selectedPromotion && campaignPayload && (
-            <div className="w-full px-4 py-6 md:px-6 md:py-5 rounded-xl">
-              <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-                {/* Actions (Automate + Start Over) */}
-                <div className="flex gap-3 order-1 md:order-1">
-                  <button
-                    className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-black text-white font-medium dark:bg-primary dark:text-primary-foreground"
-                    onClick={startOver}
-                  >
-                    <RefreshCcw size={16} />
-                    Start Over
-                  </button>
-                </div>
-
-                {/* Date Input */}
-                <div className="flex flex-col order-2 md:order-2 w-full md:w-auto">
-                  <label className="text-xs font-semibold tracking-wide text-gray-600 mb-1 md:mb-2 dark:text-muted-foreground">
-                    START DATE
-                  </label>
-                  <Input
-                    type="datetime-local"
-                    name="startDate"
-                    value={startDate}
-                    placeholder="01/01/2034"
-                    className="w-full md:w-[260px]"
-                    onChange={(e) => setStartDate(e.target.value.split("T")[0])}
-                  />
-                </div>
-
-                {/* Launch CTA */}
-                <button
-                  className={`order-3 md:order-3 w-full md:w-auto px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold ${loadingCampaignCreation || !startDate || !campaignSongDetails?.artist || !totalAudienceReach ? "opacity-50 italic" : ""}`}
-                  disabled={
-                    loadingCampaignCreation ||
-                    !startDate ||
-                    !campaignSongDetails?.artist ||
-                    !totalAudienceReach
-                  }
-                  onClick={handleCreateCampaignDraft}
-                >
-                  {loadingCampaignCreation === true
-                    ? "Loading..."
-                    : "Create Campaign"}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <Modal
-        isOpen={editBeforeLaunchModal}
-        onClose={() => setEditBeforeLaunchModal(!editBeforeLaunchModal)}
-        maxWidth="lg:max-w-2xl"
-      >
-        <p className="pb-5 font-bold text-lg lg:text-2xl">Your Selection</p>
-
-        <div>
-          <PromotionGrid
-            isModalPage={true}
-            isOnModal={true} // add this
-            data={promotersData}
-            selectedPromotion={selectedPromotion}
-            setSelectedPromotion={setSelectedPromotion}
-            onPlanSelected={handlePlanSelected}
-            onAudienceReach={(reach) => console.log(reach)}
-            onPlanStats={({ totalTokens, totalDJs }) => {
-              setTotalTokens(totalTokens);
-              setTotalDJs(totalDJs);
-            }}
+          <CampaignStats
+            availableTokens={walletDetails?.available_balance || 0}
+            allocatedTokens={totalTokens}
+            selectedDjs={totalDJs}
+            compact
           />
-        </div>
 
-        <div className="mt-10 px-5 py-7 rounded-xl bg-[#F3F4F6] border border-black grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12 dark:bg-muted dark:border-border">
-          <div className="flex flex-col justify-between items-center min-h-[30px]">
-            <p className="text-xs font-medium text-center leading-tight">
-              TOTAL TOKENS
-            </p>
-            <p className="text-3xl font-medium">
-              {walletDetails?.available_balance || "0"}
-            </p>
-          </div>
-
-          <div className="flex flex-col justify-between items-center min-h-[30px]">
-            <p className="text-xs font-medium text-center leading-tight">
-              TOKENS ALLOCATED
-            </p>
-            <p className="text-3xl font-medium">{totalTokens || "0"}</p>
-          </div>
-
-          <div className="flex flex-col justify-between items-center min-h-[30px]">
-            <p className="text-xs font-medium text-center leading-tight">
-              TOKENS REMAINING
-            </p>
-            <p className="text-3xl font-medium">
-              {totalTokens > 0 && walletDetails?.available_balance > 0
-                ? walletDetails.available_balance - totalTokens
-                : 0}
-            </p>
-          </div>
-
-          <div className="flex flex-col justify-between items-center min-h-[30px]">
-            <p className="text-xs font-medium text-center leading-tight">
-              DJS SELECTED
-            </p>
-            <p className="text-3xl font-medium">{totalDJs || 0}</p>
-          </div>
-        </div>
-
-        <div className="w-full pt-8 rounded-xl">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            {/* Launch CTA */}
-            <button
-              className={`order-3 md:order-3 w-full md:w-auto px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold ${loadingCampaignCreation || !startDate || !campaignSongDetails?.artist ? "opacity-50 italic" : ""}`}
+          <DialogFooter>
+            <Button
+              type="button"
+              className="h-10 w-full sm:w-auto"
               disabled={
                 loadingCampaignCreation ||
                 !startDate ||
@@ -292,13 +263,16 @@ const PromoterCampaign = () => {
               }
               onClick={handleLaunchCampaign}
             >
+              {loadingCampaignCreation && (
+                <LoaderCircle className="animate-spin" />
+              )}
               {loadingCampaignCreation === true
                 ? "Loading..."
                 : "Launch Campaign"}
-            </button>
-          </div>
-        </div>
-      </Modal>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

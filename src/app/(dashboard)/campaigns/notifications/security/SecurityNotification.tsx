@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { markNotificationsAsRead } from "@/services";
 import SecurityNotificationCard from "../SecurityNotificationCard";
+import { NotificationEmptyState } from "../NotificationEmptyState";
 
 const SecurityNotification: React.FC<any> = ({
   notification,
@@ -184,10 +185,10 @@ const SecurityNotification: React.FC<any> = ({
     <div>
       <div className="space-y-[20px]">
         {!!notification && notification.length > 0 ? (
-          notification?.map((item: any, index: number) => {
+          notification?.map((item: any) => {
             return (
               <div
-                key={index}
+                key={item.id}
                 ref={(element) => setNotificationRef(element, item.id)}
                 data-notification-id={item.id}
               >
@@ -204,11 +205,7 @@ const SecurityNotification: React.FC<any> = ({
             );
           })
         ) : (
-          <div className="flex flex-col gap-10">
-            <p className="lg:text-lg">
-              You do not have security notifications currently
-            </p>
-          </div>
+          <NotificationEmptyState category="security" />
         )}
       </div>
     </div>

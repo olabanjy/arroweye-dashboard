@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { FiInfo } from "react-icons/fi";
 import { Pie, PieChart } from "recharts";
 
 import {
@@ -17,8 +16,9 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { SelectInput } from "@/components/ui/selectinput";
 import { formatNumber } from "@/lib/utils";
+import { ChartFilterSelect } from "./chart-filter-select";
+import { ChartInfoTooltip } from "./chart-info-tooltip";
 
 type ChartFilterState = {
   country?: string;
@@ -58,16 +58,6 @@ const fallbackColors = [
 
 const getDarkChartColor = (index: number) =>
   `var(--chart-${(index % fallbackColors.length) + 1})`;
-
-const Tooltip = ({ info }: { info: string | number }) => (
-  <div className="relative group">
-    <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-full top-0 transform ml-1 hidden w-60 p-2 text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-SansFlex">
-      <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
-      {info}
-    </div>
-  </div>
-);
 
 const getChartColor = (
   backgroundColor: string | string[] | undefined,
@@ -170,14 +160,13 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
           <CardTitle className="!text-[12px] font-[400] tracking-[.1rem]">
             {title}
           </CardTitle>
-          <div>{info && <Tooltip info={info} />}</div>
+          {info && <ChartInfoTooltip content={info} />}
         </div>
 
         <div>
           {selectOptions?.map((options, index) => (
             <div key={index} className="max-w-[180px] w-full">
-              <SelectInput
-                rounded={true}
+              <ChartFilterSelect
                 options={options}
                 placeholder={placeholder}
                 onChange={(selectedValue) => {
@@ -198,7 +187,9 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
           <p className="text-2xl lg:text-[56px] font-[600] font-SansFlex">
             {!!value && formatNumber(value)}
           </p>
-          {Number(value) > 1000 && <Tooltip info={value.toLocaleString()} />}
+          {Number(value) > 1000 && (
+            <ChartInfoTooltip content={value.toLocaleString()} />
+          )}
         </div>
 
         <div>
@@ -255,8 +246,7 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
         <div>
           {selectOptionsBottom?.map((options, index) => (
             <div key={index} className="min-w-[80px] max-w-[200px] w-full">
-              <SelectInput
-                rounded={true}
+              <ChartFilterSelect
                 options={weeksOptions}
                 placeholder="Weeks"
                 onChange={(selectedValue) => {
@@ -272,8 +262,7 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
         <div>
           {selectOptionsBottom?.map((options, index) => (
             <div key={index} className="max-w-[110px] w-full">
-              <SelectInput
-                rounded={true}
+              <ChartFilterSelect
                 options={months}
                 placeholder="Lifetime"
                 onChange={(selectedValue) => {

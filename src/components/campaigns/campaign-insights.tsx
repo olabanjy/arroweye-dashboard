@@ -17,11 +17,12 @@ import {
   geteDSPPerformanceStats,
 } from "@/services";
 import { Dialog } from "primereact/dialog";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VscSend } from "react-icons/vsc";
 import { usePDF } from "react-to-pdf";
 import getDarkerColor from "@/lib/getDarkerColor";
-import { toast } from "react-toastify";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import PieChart from "@/app/(dashboard)/payments/component/PieChart";
@@ -73,6 +74,9 @@ const countryFlags = [
   { flag: "🇫🇷", name: "France" },
   { flag: "🇩🇪", name: "Germany" },
 ];
+
+const editActionButtonClassName =
+  "h-11 w-full justify-start rounded-[8px] border-zinc-300 !bg-white px-5 text-sm font-medium !text-zinc-950 shadow-none hover:!bg-zinc-100 hover:!text-zinc-950 active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-violet-500/25";
 
 interface InsightChartProps {
   editMode?: boolean;
@@ -418,7 +422,6 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
         ...socialMediaPlatformFilters,
       }).then((fetchedContent) => {
         setSocialMediaData(fetchedContent);
-        toast.info("Social Media Stats Updated");
       });
       geteSMActionStats({ id: Number(id), ...socialMediaActionsFilters }).then(
         (fetchedContent) => {
@@ -433,7 +436,6 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
     if (!!id) {
       getAirPlayStats({ id: Number(id) }).then((fetchedContent) => {
         setAirPlayData(fetchedContent);
-        toast.info("AirPlay stats updated");
       });
       getAudienceStats({ id: Number(id), ...airplayAudienceFilters }).then(
         (fetchedContent) => {
@@ -450,34 +452,46 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
       });
       geteDSPPerformanceStats({ id: Number(id) }).then((fetchedContent) => {
         setDspPerformanceData(fetchedContent);
-        toast.info("DSP stats updated");
       });
     }
     refreshContent?.();
   };
 
+  const insightGridClass = editMode
+    ? "grid grid-cols-1 gap-x-[10px] gap-y-[20px] w-full md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-[auto_auto_auto_auto]"
+    : "grid grid-cols-1 gap-x-[10px] gap-y-[20px] w-full md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-[auto_auto_auto]";
+  const insightCardClass = editMode
+    ? "border p-[20px] w-full rounded-[8px] space-y-[20px] hover:bg-green-500/5 hover:border hover:border-green-500 lg:row-span-4 lg:grid lg:[grid-template-rows:subgrid] lg:space-y-0"
+    : "border p-[20px] w-full rounded-[8px] space-y-[20px] hover:bg-green-500/5 hover:border hover:border-green-500 lg:row-span-3 lg:grid lg:[grid-template-rows:subgrid] lg:space-y-0";
+
   return (
     <div ref={targetRef}>
       <div className="mt-[20px] mb-[80px]">
-        <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px] w-full">
-          <div className="border p-[20px] w-full rounded-[8px] space-y-[20px]  hover:bg-green-500/5 hover:border hover:border-green-500">
+        <div className={insightGridClass}>
+          <div className={insightCardClass}>
             {editMode && (
-              <div className=" space-y-[20px]">
-                <p
-                  className="cursor-pointer p-[15px] border border-[#000] rounded-full bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
+              <div className="space-y-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={editActionButtonClassName}
                   onClick={() => setAddDataModal(true)}
                 >
-                  + add data
-                </p>
-                <p
-                  className="cursor-pointer p-[15px] border border-[#000] rounded-full bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
+                  <Plus className="size-4" />
+                  Add data
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={editActionButtonClassName}
                   onClick={() => {
                     setInitialTab("moments");
                     setAddMediaModal(true);
                   }}
                 >
-                  + add media
-                </p>
+                  <Plus className="size-4" />
+                  Add media
+                </Button>
               </div>
             )}
 
@@ -521,24 +535,30 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
               loading={mediaLoading}
             />
           </div>
-          <div className="border p-[20px] w-full rounded-[8px] space-y-[20px] hover:bg-green-500/5 hover:border hover:border-green-500">
+          <div className={insightCardClass}>
             {editMode && (
-              <div className=" space-y-[20px]">
-                <p
-                  className="cursor-pointer p-[15px] border border-[#000] rounded-full bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
+              <div className="space-y-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={editActionButtonClassName}
                   onClick={() => setAddDataModalSocial(true)}
                 >
-                  + add data
-                </p>
-                <p
-                  className=" cursor-pointer p-[15px] border border-[#000] rounded-full bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
+                  <Plus className="size-4" />
+                  Add data
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={editActionButtonClassName}
                   onClick={() => {
                     setInitialTab("Recap");
                     setAddMediaModal(true);
                   }}
                 >
-                  + add media
-                </p>
+                  <Plus className="size-4" />
+                  Add media
+                </Button>
               </div>
             )}
 
@@ -581,24 +601,30 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
               loading={mediaLoading}
             />
           </div>
-          <div className="border p-[20px]  rounded-[8px] space-y-[20px] hover:bg-green-500/5 hover:border hover:border-green-500">
+          <div className={insightCardClass}>
             {editMode && (
-              <div className=" space-y-[20px]">
-                <p
-                  className="cursor-pointer  p-[15px] border border-[#000] rounded-full bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
+              <div className="space-y-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={editActionButtonClassName}
                   onClick={() => setAddDspModal(true)}
                 >
-                  + add data
-                </p>
-                <p
-                  className=" cursor-pointer p-[15px] border border-[#000] rounded-full bg-white hover:bg-[#000] font-[400] text-[16px] text-[#000] hover:text-[#fff]"
+                  <Plus className="size-4" />
+                  Add data
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={editActionButtonClassName}
                   onClick={() => {
                     setInitialTab("Dsp");
                     setAddMediaModal(true);
                   }}
                 >
-                  + add media
-                </p>
+                  <Plus className="size-4" />
+                  Add media
+                </Button>
               </div>
             )}
 

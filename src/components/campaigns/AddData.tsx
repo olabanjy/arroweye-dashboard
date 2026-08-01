@@ -1,545 +1,327 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Dialog } from "primereact/dialog";
-import { FiInfo } from "react-icons/fi";
-import { PiCalendarPlus } from "react-icons/pi";
-import RadioData from "./RadioData";
-import TVData from "./TvData";
-import { ContentItem } from "@/types/contents";
-import { useRouter } from "next/router";
-import { AddAirplayData, CreateChannel, getChannel } from "@/services";
-import { WeekInput } from "@/components/ui/weekInput";
-import { SelectInput } from "@/components/ui/selectinput";
-import { Input } from "@/components/ui/input";
-import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
-import { useParams } from "next/navigation";
 
-interface CompanyDetailsFormProps {
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import { Plus } from "lucide-react";
+import { useParams } from "next/navigation";
+import { toast } from "sonner";
+
+import { AddAirplayData, getChannel, UpdateAirplayStat } from "@/services";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import CampaignDataEditor, {
+  DataEditorRow,
+  DataEditorSource,
+} from "./CampaignDataEditor";
+
+interface AddDataProps {
   visible: boolean;
   onHide: () => void;
   onAddDataSuccess: () => void;
-  existingAirPlayData: any;
+  existingAirPlayData: any[];
 }
 
-const Tooltip = ({ info }: { info: string }) => (
-  <div className="relative group">
-    <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-[25px] top-0 transform  ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-SansFlex">
-      <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black  border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
-      {info}
-    </div>
-  </div>
-);
-
-interface AirPlayData {
-  airplay_id: number;
-  metric_id: number;
-  week_1: string;
-  week_2: string;
-  week_3: string;
-  week_4: string;
+interface Channel {
+  id?: string | number;
+  name?: string;
+  channel?: string;
 }
 
-const initialAirPlayData: AirPlayData = {
-  airplay_id: 0,
-  metric_id: 1,
-  week_1: "",
-  week_2: "",
-  week_3: "",
-  week_4: "",
+const AIRPLAY_SOURCES = [
+  { id: 1, label: "Radio" },
+  { id: 2, label: "TV" },
+];
+
+const emptyChannel = { name: "", audience: "", impressions: "" };
+
+const inputClassName =
+  "!h-11 !rounded-[6px] !border-zinc-300 !bg-white !text-[14px] !text-zinc-950 !shadow-none focus-visible:!ring-2 focus-visible:!ring-violet-500/25 dark:!border-zinc-600 dark:!bg-zinc-800 dark:!text-zinc-100";
+
+const getRows = (items: any[] = [], channel: string): DataEditorRow[] => {
+  const rows: DataEditorRow[] = [];
+
+  items
+    .filter((item) => item?.airplay?.channel === channel)
+    .forEach((item) => {
+      const optionId = Number(item.airplay.id);
+      if (!Number.isFinite(optionId)) return;
+
+      item.airplay_data?.forEach((metric: any) => {
+        const statId = Number(metric.id);
+        if (!Number.isFinite(statId)) return;
+
+        rows.push({
+          key: `saved-${channel}-${optionId}-${statId}`,
+          statId,
+          optionId,
+          label: item.airplay.name || "Unnamed channel",
+          persisted: true,
+          week_1: String(metric.week_1 ?? 0),
+          week_2: String(metric.week_2 ?? 0),
+          week_3: String(metric.week_3 ?? 0),
+          week_4: String(metric.week_4 ?? 0),
+        });
+      });
+    });
+
+  return rows;
 };
 
-const AddData: React.FC<CompanyDetailsFormProps> = ({
+export default function AddData({
   visible,
   onHide,
   onAddDataSuccess,
   existingAirPlayData,
-}) => {
+}: AddDataProps) {
   const { id } = useParams<{ id: string }>();
-  const [activeDetailsTab, setActiveDetailsTab] = useState("Radio");
-  const [stations, setStations] = useState<ContentItem[]>([]);
-  const [isAddNewService, setIsAddNewService] = useState(false);
-  const [processedData, setProcessedData] = useState<any>([]);
+  const [channels, setChannels] = useState<Channel[]>([]);
+  const [createSource, setCreateSource] = useState<DataEditorSource | null>(
+    null,
+  );
+  const [channelForm, setChannelForm] = useState(emptyChannel);
+  const [channelErrors, setChannelErrors] = useState<Record<string, string>>(
+    {},
+  );
+  const [isCreating, setIsCreating] = useState(false);
 
-  const [airPlayData, setAirPlayData] = useState<AirPlayData[]>([
-    { ...initialAirPlayData },
-  ]);
-  const [errors, setErrors] = useState<{
-    [key: string]: { airplay_id?: string; weeks?: string };
-  }>({});
+  const loadChannels = async () => {
+    const result = await getChannel();
+    setChannels(Array.isArray(result) ? result : []);
+  };
 
   useEffect(() => {
-    getChannel().then((content: any) => {
-      const radioContent = content.filter(
-        (item: any) => item.channel === activeDetailsTab,
-      );
-      setStations(radioContent);
-    });
-  }, [activeDetailsTab]);
+    void loadChannels();
+  }, []);
 
-  const resetForm = () => {
-    setAirPlayData([{ ...initialAirPlayData }]);
-    setErrors({});
-  };
+  const sources = useMemo<DataEditorSource[]>(
+    () =>
+      AIRPLAY_SOURCES.map((source) => ({
+        ...source,
+        options: channels
+          .filter((channel) => channel.channel === source.label && channel.id)
+          .map((channel) => ({
+            id: Number(channel.id),
+            label: channel.name || "Unnamed channel",
+          })),
+        rows: getRows(existingAirPlayData, source.label),
+      })),
+    [channels, existingAirPlayData],
+  );
 
-  const stationOptions = [
-    {
-      value: 99999,
-      label: "Add new service",
-    },
-    ...stations.map((station) => ({
-      value: station.id ?? 0,
-      label: station.name ?? "",
-    })),
-  ];
-
-  const addItemField = () => {
-    setAirPlayData([...airPlayData, { ...initialAirPlayData }]);
-  };
-
-  const removeItemField = (index: number) => {
-    setAirPlayData(airPlayData.filter((_, i) => i !== index));
-  };
-
-  const validateData = () => {
-    const newErrors: {
-      [key: string]: { airplay_id?: string; weeks?: string };
-    } = {};
-
-    return airPlayData.reduce((hasErrors, item, index) => {
-      if (!item.airplay_id || item.airplay_id === 0) {
-        newErrors[index] = {
-          ...newErrors[index],
-          airplay_id: "Please select a service",
-        };
-        hasErrors = true;
-      }
-
-      const weeks = [item.week_1, item.week_2, item.week_3, item.week_4];
-      if (weeks.some((week) => !week || isNaN(Number(week)))) {
-        newErrors[index] = {
-          ...newErrors[index],
-          weeks: "Please enter valid values for all weeks",
-        };
-        hasErrors = true;
-      }
-
-      setErrors(newErrors);
-      return hasErrors;
-    }, false);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const hasErrors = validateData();
-
-    if (!hasErrors && id) {
-      const payload = {
-        air_play_data: airPlayData.map((item) => ({
-          ...item,
-          week_1: Number(item.week_1),
-          week_2: Number(item.week_2),
-          week_3: Number(item.week_3),
-          week_4: Number(item.week_4),
-        })),
-      };
-
-      console.log(payload);
-      try {
-        await AddAirplayData(payload, Number(id));
-        console.log("Form submitted successfully!");
-        onAddDataSuccess();
-        resetForm();
-      } catch (err) {
-        console.error("Error submitting form:", err);
-      }
-    }
-  };
-
-  const updateAirPlayData = (
-    index: number,
-    field: keyof AirPlayData,
-    value: string | number,
+  const handleSave = async (
+    source: DataEditorSource,
+    rows: DataEditorRow[],
   ) => {
-    setAirPlayData((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
+    const existingRows = rows.filter((row) => row.persisted && row.statId);
+    const newRows = rows.filter((row) => !row.persisted);
+
+    await Promise.all(
+      existingRows.map((row) =>
+        UpdateAirplayStat(
+          Number(row.statId),
+          {
+            metric: source.id,
+            week_1: Number(row.week_1),
+            week_2: Number(row.week_2),
+            week_3: Number(row.week_3),
+            week_4: Number(row.week_4),
+          },
+          { showToast: false },
+        ),
+      ),
     );
-  };
 
-  const updateAllAirPlayIds = (newId: number) => {
-    setAirPlayData((prev) =>
-      prev.map((item) => ({ ...item, metric_id: newId })),
-    );
-  };
-
-  const placeholder = "Metric Value";
-
-  useEffect(() => {
-    const processAirplayData = (items: any[]) => {
-      // Filter items where airplay.channel matches activeDetailsTab
-      const filteredItems = items.filter(
-        (item) => item?.airplay?.channel === activeDetailsTab,
+    if (newRows.length > 0) {
+      await AddAirplayData(
+        {
+          air_play_data: newRows.map((row) => ({
+            airplay_id: row.optionId,
+            metric_id: source.id,
+            week_1: Number(row.week_1),
+            week_2: Number(row.week_2),
+            week_3: Number(row.week_3),
+            week_4: Number(row.week_4),
+          })),
+        },
+        Number(id),
+        { showToast: false },
       );
+    }
 
-      if (filteredItems.length === 0) return [];
+    toast.success("Airplay data saved.");
+    onAddDataSuccess();
+    onHide();
+  };
 
-      return filteredItems.map((item) => {
-        // Initialize aggregated weeks
-        const aggregatedWeeks = {
-          week_1: 0,
-          week_2: 0,
-          week_3: 0,
-          week_4: 0,
-        };
+  const handleCreateChannel = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!createSource) return;
 
-        item.airplay_data?.forEach((metricItem: any) => {
-          aggregatedWeeks.week_1 += metricItem.week_1 || 0;
-          aggregatedWeeks.week_2 += metricItem.week_2 || 0;
-          aggregatedWeeks.week_3 += metricItem.week_3 || 0;
-          aggregatedWeeks.week_4 += metricItem.week_4 || 0;
-        });
-
-        return {
-          id: item.airplay.id,
-          name: item.airplay.name,
-          channel: item.airplay.channel,
-          ...aggregatedWeeks,
-        };
-      });
+    const submittedForm = new FormData(event.currentTarget as HTMLFormElement);
+    const submittedChannel = {
+      name: String(submittedForm.get("name") ?? "").trim(),
+      audience: String(submittedForm.get("audience") ?? ""),
+      impressions: String(submittedForm.get("impressions") ?? ""),
     };
 
-    if (!!existingAirPlayData) {
-      const processedData = processAirplayData(existingAirPlayData);
-      setProcessedData(processedData);
-    }
-  }, [existingAirPlayData, activeDetailsTab]);
+    const nextErrors: Record<string, string> = {};
+    if (!submittedChannel.name) nextErrors.name = "Enter a channel name.";
+    if (
+      submittedChannel.audience === "" ||
+      !Number.isFinite(Number(submittedChannel.audience)) ||
+      Number(submittedChannel.audience) < 0
+    )
+      nextErrors.audience = "Enter an audience of 0 or more.";
+    if (
+      submittedChannel.impressions === "" ||
+      !Number.isFinite(Number(submittedChannel.impressions)) ||
+      Number(submittedChannel.impressions) < 0
+    )
+      nextErrors.impressions = "Enter impressions of 0 or more.";
+    setChannelErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
 
-  const [formData, setFormData] = useState({
-    name: "",
-    impressions: 0,
-    channel: "Radio",
-    audience: 0,
-    metric_ids: [1],
-  });
-
-  const [formErrors, setFormErrors] = useState({
-    name: "",
-    impressions: "",
-    audience: "",
-  });
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleInputChangeNumber = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const { name, value } = e.target;
-
-    const numericValue = value === "" ? 0 : Number(value);
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: numericValue,
-    }));
-  };
-
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const newErrors = {
-      name: "",
-      impressions: "",
-      audience: "",
-    };
-
-    if (!formData.name) {
-      newErrors.name = "Please enter a valid name.";
-    }
-    if (!formData.impressions) {
-      newErrors.impressions = "Please enter impressions.";
-    }
-    if (!formData.audience) {
-      newErrors.audience = "Please enter audience.";
-    }
-
-    setFormErrors(newErrors);
-
-    const hasErrors = Object.values(newErrors).some((error) => error !== "");
-    if (!hasErrors) {
-      CreateChannel(formData)
-        .then(() => {
-          console.log("Form submitted successfully!");
-          setIsAddNewService(false);
-
-          setFormData({
-            name: "",
-            impressions: 0,
-            audience: 0,
-            channel: "Radio",
-            metric_ids: [1],
-          });
-
-          getChannel().then((fetchedContent: any) => {
-            const radioContent = fetchedContent.filter(
-              (item: any) => item.channel === activeDetailsTab,
-            );
-            setStations(radioContent);
-          });
-        })
-        .catch((err) => {
-          console.error("Error submitting form:", err);
-        });
+    setIsCreating(true);
+    try {
+      await AddAirplayData(
+        {
+          airplay: {
+            name: submittedChannel.name,
+            channel: createSource.label,
+            audience: Number(submittedChannel.audience),
+            impressions: Number(submittedChannel.impressions),
+            metric_ids: [createSource.id],
+          },
+          airplay_data: [
+            {
+              metric: createSource.id,
+              week_1: 0,
+              week_2: 0,
+              week_3: 0,
+              week_4: 0,
+            },
+          ],
+        },
+        Number(id),
+        { showToast: false },
+      );
+      toast.success(`${createSource.label} channel created.`);
+      onAddDataSuccess();
+      await loadChannels();
+      setCreateSource(null);
+      setChannelForm(emptyChannel);
+      setChannelErrors({});
+    } catch {
+      // The API layer displays the server error; keep the form open.
+    } finally {
+      setIsCreating(false);
     }
   };
 
   return (
     <>
-      <div
-        className={`custom-dialog-overlay  ${
-          visible ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50" : "hidden"
-        }`}
+      <CampaignDataEditor
+        open={visible}
+        onOpenChange={(open) => !open && onHide()}
+        title="Airplay data"
+        description="Edit saved weekly values or add another channel. Saved channels are removed from the add list."
+        itemLabel="Channel"
+        sources={sources}
+        onCreateOption={setCreateSource}
+        onSubmit={handleSave}
+      />
+
+      <Dialog
+        open={Boolean(createSource)}
+        onOpenChange={(open) => !open && setCreateSource(null)}
       >
-        <Dialog
-          visible={visible}
-          onHide={onHide}
-          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "80vw" }}
-          className="font-SansFlex !overflow-y-auto"
-        >
-          <div className="">
-            <div className="flex items-center space-x-2 mb-7">
-              <p className="text-[32px] font-[500] text-[#212529]">Airplay</p>{" "}
-              <Tooltip info="The total revenue is the overall amount of money generated from the sale of goods or services before any expenses are deducted." />
-            </div>
-
-            <div className="text-[16px] font-[400] flex gap-[20px] items-center mt-[10px]">
-              <button
-                className={`text-center py-2 px-[16px] ${
-                  activeDetailsTab === "Radio"
-                    ? "  border-b border-[#212529] text-[#000000]"
-                    : ""
-                }`}
-                onClick={() => {
-                  updateAllAirPlayIds(1);
-                  setActiveDetailsTab("Radio");
-                }}
-              >
-                Radio
-              </button>
-              <button
-                className={`text-center py-2 px-[16px]${
-                  activeDetailsTab === "TV"
-                    ? "  border-b border-[#212529] text-[#000000]"
-                    : ""
-                }`}
-                onClick={() => {
-                  updateAllAirPlayIds(2);
-                  setActiveDetailsTab("TV");
-                }}
-              >
-                TV
-              </button>
-            </div>
-
-            <div>
-              <div className="mt-5 space-y-5 md:space-y-1 max-h-[400px] overflow-auto">
-                {processedData.map((metricData: any, idx: any) => (
-                  <div className="flex flex-col md:flex-row item-center gap-2 md:gap-5">
-                    <div className="max-w-[200px] w-full">
-                      <div className="bg-gray-300 border border-black rounded-xl p-3">
-                        {metricData.name}
-                      </div>
-                    </div>
-
-                    <div key={idx} className="flex flex-row items-center gap-2">
-                      {["week_1", "week_2", "week_3", "week_4"].map((week) => (
-                        <WeekInput
-                          key={`${metricData.id}-${week}`}
-                          type="number"
-                          name={`${metricData.id}-${week}`}
-                          label={`WEEK ${week.slice(-1)}`}
-                          placeholder={placeholder}
-                          value={metricData[week]}
-                          disabled={true}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <form onSubmit={handleSubmit} className="scrollbar-hide">
-                <div className="mt-5 space-y-5 max-h-[400px] overflow-auto">
-                  {airPlayData.map((item, index) => (
-                    <div key={index} className="flex items-center gap-5">
-                      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 items-end gap-5">
-                        <div className="max-w-[200px] w-full">
-                          <SelectInput
-                            icon={true}
-                            name="service"
-                            options={stationOptions}
-                            placeholder="Select Station"
-                            value={item.airplay_id || ""}
-                            onChange={(value: string | number) => {
-                              const selectedValue = Number(value);
-                              if (selectedValue === 99999) {
-                                setIsAddNewService(true);
-                              } else {
-                                updateAirPlayData(
-                                  index,
-                                  "airplay_id",
-                                  selectedValue,
-                                );
-                              }
-                            }}
-                          />
-                          {errors[index]?.airplay_id && (
-                            <p className="text-red-500 text-xs">
-                              {errors[index].airplay_id}
-                            </p>
-                          )}
-                        </div>
-
-                        {["week_1", "week_2", "week_3", "week_4"].map(
-                          (week) => (
-                            <div key={week} className="max-w-[150px] w-full">
-                              <WeekInput
-                                type="number"
-                                name={week}
-                                label={`WEEK ${week.slice(-1)}`}
-                                placeholder={placeholder}
-                                value={item[week as keyof AirPlayData] || ""}
-                                onChange={(e) =>
-                                  updateAirPlayData(
-                                    index,
-                                    week as keyof AirPlayData,
-                                    e.target.value,
-                                  )
-                                }
-                              />
-                            </div>
-                          ),
-                        )}
-                      </div>
-
-                      {index !== 0 && (
-                        <button
-                          type="button"
-                          className="w-10 h-10 mb-[5px] flex items-center justify-center rounded-full bg-gray-400 text-white text-xl"
-                          onClick={() => removeItemField(index)}
-                        >
-                          -
-                        </button>
-                      )}
-
-                      {index === 0 && (
-                        <button
-                          type="button"
-                          className="w-10 h-10 flex items-center justify-center rounded-full bg-black text-white text-xl"
-                          onClick={addItemField}
-                        >
-                          +
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-[20px] flex items-center space-x-2">
-                  <button
-                    type="submit"
-                    className="font-SansFlex text-[14px] text-white hover:text-[#ffffff] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-none py-[8px] px-[20px] rounded-full"
-                  >
-                    Save
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </Dialog>
-      </div>
-      <div
-        className={`custom-dialog-overlay ${
-          isAddNewService
-            ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50"
-            : "hidden"
-        }`}
-      >
-        <Dialog
-          header={`Add ${activeDetailsTab} Channel`}
-          visible={isAddNewService}
-          onHide={() => setIsAddNewService(false)}
-          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "35vw" }}
-          className="custom-dialog-overlay"
-        >
-          <form onSubmit={handleFormSubmit}>
-            <div className="space-y-4">
-              <div>
+        <DialogContent className="w-[calc(100vw-2rem)] rounded-2xl border-zinc-200 bg-white p-6 text-zinc-950 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 sm:max-w-md">
+          <form onSubmit={handleCreateChannel}>
+            <DialogHeader>
+              <DialogTitle className="text-[12px] font-[500] uppercase tracking-[.16rem] text-zinc-500 dark:text-zinc-400">
+                Create {createSource?.label} channel
+              </DialogTitle>
+              <DialogDescription className="sr-only">
+                The channel will become available in the add channel list.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-5">
+              <Field data-invalid={Boolean(channelErrors.name)}>
+                <FieldLabel htmlFor="channel-name">Name</FieldLabel>
                 <Input
-                  type="text"
+                  id="channel-name"
                   name="name"
-                  placeholder={`${activeDetailsTab} Name`}
-                  value={formData.name}
-                  onChange={handleInputChange}
+                  required
+                  value={channelForm.name}
+                  aria-invalid={Boolean(channelErrors.name)}
+                  className={inputClassName}
+                  onChange={(event) =>
+                    setChannelForm((current) => ({
+                      ...current,
+                      name: event.target.value,
+                    }))
+                  }
                 />
-                {formErrors.name && (
-                  <p className="text-red-500 text-xs">{formErrors.name}</p>
-                )}
-              </div>
-              <div>
-                <Input
-                  type="number"
-                  inputMode="numeric"
-                  name="audience"
-                  placeholder="Audience"
-                  value={formData.audience === 0 ? "" : formData.audience}
-                  onChange={handleInputChangeNumber}
-                />
-                {formErrors.audience && (
-                  <p className="text-red-500 text-xs">{formErrors.audience}</p>
-                )}
-              </div>
-              <div>
-                <Input
-                  type="number"
-                  inputMode="numeric"
-                  name="impressions"
-                  placeholder="Impression"
-                  value={formData.impressions === 0 ? "" : formData.impressions}
-                  onChange={handleInputChangeNumber}
-                />
-                {formErrors.impressions && (
-                  <p className="text-red-500 text-xs">
-                    {formErrors.impressions}
-                  </p>
-                )}
-              </div>
-
-              <div className="w-full">
-                <div className="flex justify-end space-x-2">
-                  <button
-                    type="submit"
-                    className="bg-[#000] hover:bg-orange-500 w-full p-[12px] h-full rounded flex items-center justify-center space-x-2"
+                <FieldError>{channelErrors.name}</FieldError>
+              </Field>
+              {(["audience", "impressions"] as const).map((field) => (
+                <Field key={field} data-invalid={Boolean(channelErrors[field])}>
+                  <FieldLabel
+                    htmlFor={`channel-${field}`}
+                    className="capitalize"
                   >
-                    <IoIosAdd className="text-white" />
-                    <span className="text-white">Add Channel</span>
-                  </button>
-                </div>
-              </div>
+                    {field}
+                  </FieldLabel>
+                  <Input
+                    id={`channel-${field}`}
+                    name={field}
+                    required
+                    type="number"
+                    min={0}
+                    inputMode="numeric"
+                    value={channelForm[field]}
+                    aria-invalid={Boolean(channelErrors[field])}
+                    className={inputClassName}
+                    onChange={(event) =>
+                      setChannelForm((current) => ({
+                        ...current,
+                        [field]: event.target.value,
+                      }))
+                    }
+                  />
+                  <FieldError>{channelErrors[field]}</FieldError>
+                </Field>
+              ))}
             </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                className="h-9 rounded-full border-zinc-300 px-5 text-sm active:scale-[0.97]"
+                onClick={() => setCreateSource(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isCreating}
+                className="h-9 rounded-full bg-[#5300d7] px-5 text-sm text-white hover:bg-[#4700b8] active:scale-[0.97]"
+              >
+                <Plus className="size-4" />
+                {isCreating ? "Creating..." : "Create channel"}
+              </Button>
+            </DialogFooter>
           </form>
-        </Dialog>
-      </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
-};
-
-export default AddData;
+}

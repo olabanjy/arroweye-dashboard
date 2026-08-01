@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ls from "localstorage-slim";
 
@@ -55,13 +55,31 @@ export const AuthSessionProvider = ({
     staleTime: Infinity,
   });
 
+  useEffect(() => {
+    if (!isLoading && typeof window !== "undefined") {
+      const token = data?.token || data?.access || null;
+      if (token) {
+        document.cookie = `auth_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax; Secure`;
+      } else {
+        document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      }
+    }
+  }, [data, isLoading]);
+
   const login = (authData: any) => {
+    const token = authData?.token || authData?.access || null;
+    if (token && typeof window !== "undefined") {
+      document.cookie = `auth_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax; Secure`;
+    }
     ls.set("Profile", authData, { encrypt: true });
     queryClient.setQueryData(["auth", "session"], authData);
     navigate("/campaigns");
   };
 
   const logout = () => {
+    if (typeof window !== "undefined") {
+      document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
     ls.remove("Profile");
     queryClient.setQueryData(["auth", "session"], null);
     navigate("/login");
