@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Plus, Save, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -52,6 +53,7 @@ export interface DataEditorOption {
 
 export interface DataEditorRow {
   key: string;
+  statId?: number;
   optionId: number;
   label: string;
   persisted: boolean;
@@ -86,6 +88,15 @@ const rowsFromSources = (sources: DataEditorSource[]) =>
       source.rows.map((row) => ({ ...row })),
     ]),
   );
+
+const rowHasChanges = (row: DataEditorRow, originalRow?: DataEditorRow) => {
+  if (!row.persisted) return true;
+  if (!originalRow) return true;
+
+  return WEEK_KEYS.some(
+    (week) => Number(row[week]) !== Number(originalRow[week]),
+  );
+};
 
 export default function CampaignDataEditor({
   open,
@@ -175,7 +186,8 @@ export default function CampaignDataEditor({
     updateRows((rows) => rows.filter((row) => row.key !== rowKey));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!activeSource || activeRows.length === 0) return;
 
     const nextErrors: Record<string, string> = {};
@@ -195,9 +207,23 @@ export default function CampaignDataEditor({
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
+    const changedRows = activeRows.filter((row) =>
+      rowHasChanges(
+        row,
+        activeSource.rows.find((sourceRow) => sourceRow.key === row.key),
+      ),
+    );
+
+    if (changedRows.length === 0) {
+      toast.info("No changes to save.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      await onSubmit(activeSource, activeRows);
+      await onSubmit(activeSource, changedRows);
+    } catch {
+      // The API layer displays the server error; keep the editor open.
     } finally {
       setIsSubmitting(false);
     }
@@ -216,7 +242,7 @@ export default function CampaignDataEditor({
         </DialogHeader>
 
         {sources.length > 0 ? (
-          <>
+          <form className="contents" onSubmit={handleSubmit}>
             <Tabs
               value={activeSourceId}
               onValueChange={(value) => {
@@ -386,16 +412,15 @@ export default function CampaignDataEditor({
                 Cancel
               </Button>
               <Button
-                type="button"
+                type="submit"
                 disabled={isSubmitting || activeRows.length === 0}
                 className="h-9 rounded-full bg-[#5300d7] px-5 text-sm text-white hover:bg-[#4700b8] active:scale-[0.97]"
-                onClick={handleSubmit}
               >
                 <Save className="size-4" />
                 {isSubmitting ? "Saving..." : "Save changes"}
               </Button>
             </DialogFooter>
-          </>
+          </form>
         ) : (
           <div className="px-6 py-12 text-center text-sm text-muted-foreground">
             No data sources are available.

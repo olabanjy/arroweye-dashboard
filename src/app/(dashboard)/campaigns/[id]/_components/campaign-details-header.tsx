@@ -52,6 +52,12 @@ export function CampaignDetailsHeader({
 
   return (
     <div className="flex flex-col gap-2">
+      {canUseEditMode && toggleNotifications && (
+        <div className="mb-3 flex min-h-[46px] w-full items-center justify-center border border-green-500 bg-green-500 px-4 font-SansFlex text-[14px] font-[500] text-white">
+          Edit mode
+        </div>
+      )}
+
       <div className="flex items-center gap-[5px] text-[0.875rem] text-[#919393]">
         <p className="uppercase tracking-[.1rem] text-primary">
           {content?.vendor?.organization_name || content?.campaign?.mode}
@@ -164,17 +170,16 @@ export function CampaignDetailsHeader({
           </TooltipProvider>
 
           {canUseEditMode && (
-            <div className="relative">
-              {toggleNotifications && (
-                <div className="fixed left-0 top-0 z-[9999999] flex h-[50px] w-full items-center justify-center bg-blue-500 font-SansFlex text-[15px] font-[500] text-white">
-                  Edit mode
-                </div>
-              )}
-
+            <div>
               <Button
                 type="button"
                 aria-pressed={toggleNotifications}
-                className="h-auto rounded-full bg-black px-4 py-2 font-SansFlex text-[16px] font-[400] text-white hover:bg-orange-500"
+                variant={toggleNotifications ? "outline" : "default"}
+                className={
+                  toggleNotifications
+                    ? "h-11 rounded-full border-zinc-300 !bg-white px-5 text-sm font-medium !text-zinc-950 shadow-none hover:!bg-zinc-100 hover:!text-zinc-950 active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-violet-500/25"
+                    : "h-11 rounded-full bg-[#5300d7] px-5 text-sm font-medium !text-white shadow-none hover:bg-[#4700b8] hover:!text-white active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-violet-500/25"
+                }
                 onClick={() => onRequestEditModeChange(!toggleNotifications)}
               >
                 {toggleNotifications ? (

@@ -38,18 +38,23 @@ export default function CreateMetricDialog({
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!name.trim()) {
+    const submittedForm = new FormData(event.currentTarget as HTMLFormElement);
+    const submittedName = String(submittedForm.get("name") ?? "").trim();
+
+    if (!submittedName) {
       setError("Enter a metric name.");
       return;
     }
 
     setIsCreating(true);
     try {
-      await CreateMetric({ name: name.trim() });
+      await CreateMetric({ name: submittedName });
       await onCreated();
       setName("");
       setError("");
       onOpenChange(false);
+    } catch {
+      // The API layer displays the server error; keep the form open.
     } finally {
       setIsCreating(false);
     }
@@ -71,6 +76,8 @@ export default function CreateMetricDialog({
             <FieldLabel htmlFor="new-metric-name">Metric name</FieldLabel>
             <Input
               id="new-metric-name"
+              name="name"
+              required
               value={name}
               aria-invalid={Boolean(error)}
               className={inputClassName}

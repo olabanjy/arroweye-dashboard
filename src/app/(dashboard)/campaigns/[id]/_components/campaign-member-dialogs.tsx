@@ -335,11 +335,18 @@ export function ConfirmActionDialog({
   onConfirm,
   onCancel,
 }: ConfirmActionDialogProps) {
+  const confirmButtonClassName =
+    confirmVariant === "destructive"
+      ? "h-9 rounded-full px-5 text-sm font-medium shadow-none active:scale-[0.97]"
+      : "h-9 rounded-full bg-[#5300d7] px-5 text-sm font-medium !text-white shadow-none hover:bg-[#4700b8] hover:!text-white active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-violet-500/25";
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[calc(100vw-2rem)] rounded-2xl border-zinc-200 bg-white p-6 text-zinc-950 shadow-2xl sm:max-w-[420px]">
         <DialogHeader>
-          <DialogTitle className="sr-only">{title}</DialogTitle>
+          <DialogTitle className="text-[12px] font-[500] uppercase tracking-[.16rem] text-zinc-500">
+            {title}
+          </DialogTitle>
           <DialogDescription className="text-[16px] font-[400] text-zinc-950">
             {description}
           </DialogDescription>
@@ -348,7 +355,7 @@ export function ConfirmActionDialog({
           <Button
             type="button"
             variant={confirmVariant}
-            className="rounded-full bg-blue-500 px-[16px] py-[8px] text-white hover:bg-blue-600"
+            className={confirmButtonClassName}
             onClick={onConfirm}
           >
             {confirmLabel}
@@ -356,7 +363,7 @@ export function ConfirmActionDialog({
           <Button
             type="button"
             variant="outline"
-            className="rounded-full px-[16px] py-[8px]"
+            className="h-9 rounded-full border-zinc-300 px-5 text-sm font-medium !text-zinc-950 shadow-none hover:bg-zinc-100 hover:!text-zinc-950 active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-violet-500/25"
             onClick={onCancel || (() => onOpenChange(false))}
           >
             {cancelLabel}

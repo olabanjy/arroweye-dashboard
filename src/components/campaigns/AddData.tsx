@@ -3,8 +3,9 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import { useParams } from "next/navigation";
+import { toast } from "sonner";
 
-import { AddAirplayData, CreateChannel, getChannel } from "@/services";
+import { AddAirplayData, getChannel, UpdateAirplayStat } from "@/services";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -45,41 +46,33 @@ const inputClassName =
   "!h-11 !rounded-[6px] !border-zinc-300 !bg-white !text-[14px] !text-zinc-950 !shadow-none focus-visible:!ring-2 focus-visible:!ring-violet-500/25 dark:!border-zinc-600 dark:!bg-zinc-800 dark:!text-zinc-100";
 
 const getRows = (items: any[] = [], channel: string): DataEditorRow[] => {
-  const rows = new Map<number, DataEditorRow>();
+  const rows: DataEditorRow[] = [];
 
   items
     .filter((item) => item?.airplay?.channel === channel)
     .forEach((item) => {
       const optionId = Number(item.airplay.id);
-      const current = rows.get(optionId) ?? {
-        key: `saved-${channel}-${optionId}`,
-        optionId,
-        label: item.airplay.name,
-        persisted: true,
-        week_1: "0",
-        week_2: "0",
-        week_3: "0",
-        week_4: "0",
-      };
+      if (!Number.isFinite(optionId)) return;
 
       item.airplay_data?.forEach((metric: any) => {
-        current.week_1 = String(
-          Number(current.week_1) + Number(metric.week_1 || 0),
-        );
-        current.week_2 = String(
-          Number(current.week_2) + Number(metric.week_2 || 0),
-        );
-        current.week_3 = String(
-          Number(current.week_3) + Number(metric.week_3 || 0),
-        );
-        current.week_4 = String(
-          Number(current.week_4) + Number(metric.week_4 || 0),
-        );
+        const statId = Number(metric.id);
+        if (!Number.isFinite(statId)) return;
+
+        rows.push({
+          key: `saved-${channel}-${optionId}-${statId}`,
+          statId,
+          optionId,
+          label: item.airplay.name || "Unnamed channel",
+          persisted: true,
+          week_1: String(metric.week_1 ?? 0),
+          week_2: String(metric.week_2 ?? 0),
+          week_3: String(metric.week_3 ?? 0),
+          week_4: String(metric.week_4 ?? 0),
+        });
       });
-      rows.set(optionId, current);
     });
 
-  return [...rows.values()];
+  return rows;
 };
 
 export default function AddData({
@@ -127,19 +120,43 @@ export default function AddData({
     source: DataEditorSource,
     rows: DataEditorRow[],
   ) => {
-    await AddAirplayData(
-      {
-        air_play_data: rows.map((row) => ({
-          airplay_id: row.optionId,
-          metric_id: source.id,
-          week_1: Number(row.week_1),
-          week_2: Number(row.week_2),
-          week_3: Number(row.week_3),
-          week_4: Number(row.week_4),
-        })),
-      },
-      Number(id),
+    const existingRows = rows.filter((row) => row.persisted && row.statId);
+    const newRows = rows.filter((row) => !row.persisted);
+
+    await Promise.all(
+      existingRows.map((row) =>
+        UpdateAirplayStat(
+          Number(row.statId),
+          {
+            metric: source.id,
+            week_1: Number(row.week_1),
+            week_2: Number(row.week_2),
+            week_3: Number(row.week_3),
+            week_4: Number(row.week_4),
+          },
+          { showToast: false },
+        ),
+      ),
     );
+
+    if (newRows.length > 0) {
+      await AddAirplayData(
+        {
+          air_play_data: newRows.map((row) => ({
+            airplay_id: row.optionId,
+            metric_id: source.id,
+            week_1: Number(row.week_1),
+            week_2: Number(row.week_2),
+            week_3: Number(row.week_3),
+            week_4: Number(row.week_4),
+          })),
+        },
+        Number(id),
+        { showToast: false },
+      );
+    }
+
+    toast.success("Airplay data saved.");
     onAddDataSuccess();
     onHide();
   };
@@ -148,27 +165,62 @@ export default function AddData({
     event.preventDefault();
     if (!createSource) return;
 
+    const submittedForm = new FormData(event.currentTarget as HTMLFormElement);
+    const submittedChannel = {
+      name: String(submittedForm.get("name") ?? "").trim(),
+      audience: String(submittedForm.get("audience") ?? ""),
+      impressions: String(submittedForm.get("impressions") ?? ""),
+    };
+
     const nextErrors: Record<string, string> = {};
-    if (!channelForm.name.trim()) nextErrors.name = "Enter a channel name.";
-    if (channelForm.audience === "" || Number(channelForm.audience) < 0)
+    if (!submittedChannel.name) nextErrors.name = "Enter a channel name.";
+    if (
+      submittedChannel.audience === "" ||
+      !Number.isFinite(Number(submittedChannel.audience)) ||
+      Number(submittedChannel.audience) < 0
+    )
       nextErrors.audience = "Enter an audience of 0 or more.";
-    if (channelForm.impressions === "" || Number(channelForm.impressions) < 0)
+    if (
+      submittedChannel.impressions === "" ||
+      !Number.isFinite(Number(submittedChannel.impressions)) ||
+      Number(submittedChannel.impressions) < 0
+    )
       nextErrors.impressions = "Enter impressions of 0 or more.";
     setChannelErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
     setIsCreating(true);
     try {
-      await CreateChannel({
-        name: channelForm.name.trim(),
-        audience: Number(channelForm.audience),
-        impressions: Number(channelForm.impressions),
-        channel: createSource.label,
-        metric_ids: [createSource.id],
-      });
+      await AddAirplayData(
+        {
+          airplay: {
+            name: submittedChannel.name,
+            channel: createSource.label,
+            audience: Number(submittedChannel.audience),
+            impressions: Number(submittedChannel.impressions),
+            metric_ids: [createSource.id],
+          },
+          airplay_data: [
+            {
+              metric: createSource.id,
+              week_1: 0,
+              week_2: 0,
+              week_3: 0,
+              week_4: 0,
+            },
+          ],
+        },
+        Number(id),
+        { showToast: false },
+      );
+      toast.success(`${createSource.label} channel created.`);
+      onAddDataSuccess();
       await loadChannels();
       setCreateSource(null);
       setChannelForm(emptyChannel);
+      setChannelErrors({});
+    } catch {
+      // The API layer displays the server error; keep the form open.
     } finally {
       setIsCreating(false);
     }
@@ -206,6 +258,8 @@ export default function AddData({
                 <FieldLabel htmlFor="channel-name">Name</FieldLabel>
                 <Input
                   id="channel-name"
+                  name="name"
+                  required
                   value={channelForm.name}
                   aria-invalid={Boolean(channelErrors.name)}
                   className={inputClassName}
@@ -228,6 +282,8 @@ export default function AddData({
                   </FieldLabel>
                   <Input
                     id={`channel-${field}`}
+                    name={field}
+                    required
                     type="number"
                     min={0}
                     inputMode="numeric"
