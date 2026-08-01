@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { MdOutlineFileDownload } from "react-icons/md";
-import { HiMiniArrowLeft, HiMiniArrowRight } from "react-icons/hi2";
+import { Download } from "lucide-react";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface MomentSliderCardProps {
   images: string[];
@@ -37,37 +46,18 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
   csvData,
   loading = false,
 }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const hasData = (images?.length ?? 0) > 0;
 
   useEffect(() => {
-    if (!hasData) {
-      setCurrentImageIndex(0);
-      return;
-    }
-
-    setCurrentImageIndex((index) => Math.min(index, images.length - 1));
-  }, [hasData, images.length]);
-
-  useEffect(() => {
-    if (images.length <= 1) return;
+    if (!carouselApi || images.length <= 1) return;
 
     const interval = window.setInterval(() => {
-      setCurrentImageIndex((index) => (index + 1) % images.length);
+      carouselApi.scrollNext();
     }, 3000);
 
     return () => window.clearInterval(interval);
-  }, [images.length]);
-
-  const showPreviousImage = () => {
-    setCurrentImageIndex((index) =>
-      index === 0 ? images.length - 1 : index - 1,
-    );
-  };
-
-  const showNextImage = () => {
-    setCurrentImageIndex((index) => (index + 1) % images.length);
-  };
+  }, [carouselApi, images.length]);
 
   const downloadAllDspFiles = async (fileUrls: string[]) => {
     if (!fileUrls.length) {
@@ -140,35 +130,22 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
       </p>
 
       {loading ? (
-        <div className="h-[400px] w-full rounded bg-gray-200 animate-pulse" />
+        <Skeleton className="h-[400px] w-full rounded bg-gray-200" />
       ) : hasData ? (
-        <div className="relative w-full px-12 md:px-20">
-          {images.length > 1 && (
-            <button
-              type="button"
-              aria-label="Previous image"
-              className="absolute left-0 top-1/2 z-10 flex size-14 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-[#7d837d] text-white transition-colors hover:bg-[#626862] md:size-[62px]"
-              onClick={showPreviousImage}
-            >
-              <HiMiniArrowLeft className="text-[22px]" />
-            </button>
-          )}
-
-          <div className="mx-auto h-[400px] w-full max-w-[640px] overflow-hidden rounded bg-gray-50 md:h-[640px]">
-            <div
-              className="flex h-full transition-transform duration-500 ease-in-out will-change-transform"
-              style={{
-                transform: `translate3d(-${currentImageIndex * 100}%, 0, 0)`,
-              }}
-            >
-              {images.map((image, index) =>
-                links?.[index] ? (
+        <Carousel
+          opts={{ loop: true }}
+          setApi={setCarouselApi}
+          className="group h-[400px] w-full overflow-hidden rounded [&_[data-slot=carousel-content]]:h-full [&_[data-slot=carousel-content]>div]:h-full"
+        >
+          <CarouselContent className="h-full">
+            {images.map((image, index) => (
+              <CarouselItem key={`${image}-${index}`} className="h-full">
+                {links?.[index] ? (
                   <Link
                     href={links[index]}
-                    key={`${image}-${index}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block h-full w-full shrink-0"
+                    className="block h-full overflow-hidden rounded"
                   >
                     <img
                       src={image}
@@ -177,80 +154,90 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
                     />
                   </Link>
                 ) : (
-                  <div
-                    key={`${image}-${index}`}
-                    className="h-full w-full shrink-0"
-                  >
+                  <div className="h-full overflow-hidden rounded">
                     <img
                       src={image}
                       alt={`Slide ${index + 1}`}
                       className="h-full w-full object-cover"
                     />
                   </div>
-                ),
-              )}
-            </div>
-          </div>
-
+                )}
+              </CarouselItem>
+            ))}
+          </CarouselContent>
           {images.length > 1 && (
-            <button
-              type="button"
-              aria-label="Next image"
-              className="absolute right-0 top-1/2 z-10 flex size-14 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-[#7d837d] text-white transition-colors hover:bg-[#626862] md:size-[62px]"
-              onClick={showNextImage}
-            >
-              <HiMiniArrowRight className="text-[22px]" />
-            </button>
+            <>
+              <CarouselPrevious
+                variant="ghost"
+                className="left-2 size-10 border-0 bg-black/50 text-white opacity-0 hover:bg-black/50 hover:text-white group-hover:opacity-100"
+              />
+              <CarouselNext
+                variant="ghost"
+                className="right-2 size-10 border-0 bg-black/50 text-white opacity-0 hover:bg-black/50 hover:text-white group-hover:opacity-100"
+              />
+            </>
           )}
-        </div>
+        </Carousel>
       ) : null}
 
       <div className="space-y-[5px] flex flex-col items-center justify-center">
         {hasData && (
           <div className="flex items-center gap-2 w-full">
             {watchButtonText && (
-              <p className="p-2 cursor-pointer hover:bg-orange-500 font-SansFlex text-[16px] font-[500] flex-grow rounded bg-black text-white text-center">
+              <Button
+                type="button"
+                className="h-auto flex-grow rounded bg-black p-2 text-base font-medium text-white hover:bg-orange-500"
+              >
                 {watchButtonText}
-              </p>
+              </Button>
             )}
 
             {downloadIcon && watchButtonText && (
-              <div className="bg-black hover:bg-orange-500 font-SansFlex text-[16px] font-medium text-white p-[11px] rounded inline-flex">
-                <MdOutlineFileDownload className="text-[16px]" />
-              </div>
+              <Button
+                type="button"
+                size="icon"
+                className="h-auto rounded bg-black p-[11px] text-white hover:bg-orange-500"
+                aria-label="Download"
+              >
+                <Download />
+              </Button>
             )}
           </div>
         )}
 
         {hasData && assetsButton && (
-          <button
-            className="w-full p-2 cursor-pointer hover:bg-orange-500 font-SansFlex text-[16px] font-[500] flex-grow rounded-full bg-black text-white text-center"
+          <Button
+            type="button"
+            className="h-auto w-full rounded-full bg-black p-2 text-base font-medium text-white hover:bg-orange-500"
             onClick={() => downloadAllDspFiles(images)}
           >
             {assetsButton}
-          </button>
+          </Button>
         )}
 
-        <div
-          className="p-2 font-SansFlex text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
+        <Button
+          type="button"
+          className="h-auto w-full rounded-full bg-black p-2 text-base font-medium text-white hover:bg-orange-500"
           onClick={() => downloadCSV(csvData)}
         >
-          <p>{downloadButtonText}</p>
-          <sup className="font-bold p-2 rounded-full bg-white text-black mt-1">
+          {downloadButtonText}
+          <sup className="mt-1 rounded-full bg-white p-2 font-bold text-black">
             CSV
           </sup>
-        </div>
+        </Button>
 
         {radioButtonText && (
-          <p
-            className={`p-2 cursor-pointer text-[16px] font-[500] font-SansFlex w-full rounded-full text-center ${
+          <Button
+            type="button"
+            variant={outline ? "outline" : "default"}
+            className={
               outline
-                ? "border border-black text-black hover:bg-black hover:text-white"
-                : "hover:bg-orange-500 bg-black text-white"
-            }`}
+                ? "h-auto w-full rounded-full border-black p-2 text-base font-medium text-black hover:bg-black hover:text-white"
+                : "h-auto w-full rounded-full bg-black p-2 text-base font-medium text-white hover:bg-orange-500"
+            }
           >
             {radioButtonText}
-          </p>
+          </Button>
         )}
 
         {subText && (

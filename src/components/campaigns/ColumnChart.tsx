@@ -1,18 +1,15 @@
 import React from "react";
-import { FiInfo } from "react-icons/fi";
-import { SelectInput } from "@/components/ui/selectinput";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  Cell,
-  Tooltip as RechartsTooltip,
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 import { ChartData } from "chart.js";
 import { formatNumber } from "@/lib/utils";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
+import { ChartFilterSelect } from "./chart-filter-select";
+import { ChartInfoTooltip } from "./chart-info-tooltip";
 
 const CHART_FONT_FAMILY = "Google Sans Flex, sans-serif";
 
@@ -40,16 +37,6 @@ interface ChartDataItem {
   fill: string;
   stroke: string;
 }
-
-const Tooltip = ({ info }: { info: string }) => (
-  <div className="relative group">
-    <FiInfo className="text-gray-400 hover:text-blue-500 cursor-pointer" />
-    <div className="absolute left-[25px] top-0 transform ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-SansFlex">
-      <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
-      {info}
-    </div>
-  </div>
-);
 
 const generateDynamicColor = (index: number) => {
   return `var(--chart-${(index % 5) + 1})`;
@@ -81,6 +68,9 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
   };
 
   const data = formatDataForRecharts();
+  const chartConfig = {
+    value: { label: title, color: "var(--chart-1)" },
+  } satisfies ChartConfig;
 
   const weeksOptions = [
     { value: "", label: "Weeks" },
@@ -111,16 +101,12 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
           <p className="!text-[12px] font-[400] tracking-[.1rem]">{title}</p>
-          {info && <Tooltip info={info} />}
+          {info && <ChartInfoTooltip content={info} />}
         </div>
         <div>
           {selectOptions?.map((options, index) => (
             <div key={index} className="max-w-[180px] w-full">
-              <SelectInput
-                rounded={true}
-                options={options}
-                placeholder={placeholder}
-              />
+              <ChartFilterSelect options={options} placeholder={placeholder} />
             </div>
           ))}
           {!selectOptions && <div className="h-10 max-w-[180px] w-full"></div>}
@@ -131,7 +117,9 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
         <p className="text-2xl lg:text-[56px] font-[600] font-SansFlex">
           {!!value && formatNumber(value)}
         </p>
-        {Number(value) > 1000 && <Tooltip info={value.toLocaleString()} />}
+        {Number(value) > 1000 && (
+          <ChartInfoTooltip content={value.toLocaleString()} />
+        )}
       </div>
       <div>
         <p className="!text-[12px] font-[400] tracking-[.1rem] text-black">
@@ -139,79 +127,65 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
         </p>
 
         <div className="w-full h-full flex justify-center items-center">
-          <div className="w-[313px] h-[313px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={data}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
+          <ChartContainer
+            config={chartConfig}
+            className="h-[313px] w-full max-w-[313px] aspect-auto"
+          >
+            <BarChart
+              data={data}
+              margin={{
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+              barSize={30}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                horizontal
+                vertical={false}
+                stroke="var(--border)"
+              />
+              <XAxis
+                dataKey="name"
+                axisLine={false}
+                tickLine={false}
+                tick={{
+                  fontSize: 12,
+                  fill: "var(--muted-foreground)",
+                  fontFamily: CHART_FONT_FAMILY,
                 }}
-                barSize={30}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  horizontal
-                  vertical={false}
-                  stroke="var(--border)"
-                />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{
-                    fontSize: 12,
-                    fill: "var(--muted-foreground)",
-                    fontFamily: CHART_FONT_FAMILY,
-                  }}
-                  interval={0}
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{
-                    fontSize: 12,
-                    fill: "var(--muted-foreground)",
-                    fontFamily: CHART_FONT_FAMILY,
-                  }}
-                />
-                <RechartsTooltip
-                  wrapperStyle={{
-                    backgroundColor: "var(--background)",
-                    borderRadius: "4px",
-                    padding: "10px",
-                    fontSize: "12px",
-                    fontFamily: CHART_FONT_FAMILY,
-                  }}
-                  content={({ active, payload }) => {
-                    if (active && payload && payload.length) {
-                      return (
-                        <div className="tooltip-content font-SansFlex">
-                          <p>{`${payload[0].payload.name}: ${payload[0].value}`}</p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                  {data.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={entry.fill}
-                      stroke={entry.stroke}
-                      strokeWidth={1}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+                interval={0}
+                angle={-45}
+                textAnchor="end"
+                height={60}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{
+                  fontSize: 12,
+                  fill: "var(--muted-foreground)",
+                  fontFamily: CHART_FONT_FAMILY,
+                }}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent labelKey="name" />}
+              />
+              <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                {data.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={entry.fill}
+                    stroke={entry.stroke}
+                    strokeWidth={1}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ChartContainer>
         </div>
       </div>
       {/* told to also hide this */}
@@ -219,8 +193,7 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
         <div>
           {selectOptionsBottom?.map((options, index) => (
             <div key={index} className="max-w-[200px] w-full">
-              <SelectInput
-                rounded={true}
+              <ChartFilterSelect
                 options={weeksOptions}
                 placeholder="Weeks"
                 onChange={(value) => {
@@ -236,8 +209,7 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
         <div>
           {selectOptionsBottom?.map((options, index) => (
             <div key={index} className="max-w-[110px] w-full">
-              <SelectInput
-                rounded={true}
+              <ChartFilterSelect
                 options={months}
                 placeholder="Lifetime"
                 onChange={(value) => {
