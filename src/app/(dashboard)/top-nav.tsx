@@ -1,13 +1,18 @@
 "use client";
 
 import { FC } from "react";
-import { FaRegBell } from "react-icons/fa";
-import { IoIosClose, IoIosRefresh } from "react-icons/io";
+import { Bell, LoaderCircle, RefreshCw, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CampaignNotifications from "./campaigns/notifications/campaigns/CampaignNotifications";
 import MileStonesNotification from "./campaigns/notifications/milestones/MileStonesNotification";
 import SecurityNotification from "./campaigns/notifications/security/SecurityNotification";
@@ -42,180 +47,185 @@ const TopNav: FC = () => {
             onOpenChange={setNotificationsOpen}
           >
             <DropdownMenuTrigger asChild>
-              <button
+              <Button
                 type="button"
-                className="text-primary cursor-pointer mb-[40px] md:mb-0 relative outline-none"
+                variant="ghost"
+                size="icon"
+                className="relative mb-[40px] text-foreground md:mb-0"
                 aria-label="Open notifications"
               >
-                <FaRegBell size={18} />
+                <Bell />
                 {!allNotificationsRead && !hasOpenedNotifications && (
-                  <span className="w-2 h-2 bg-[#ffa500] absolute top-0 right-0 rounded-full" />
+                  <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-orange-500 ring-2 ring-background" />
                 )}
-              </button>
+              </Button>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent
               id="notification-sidebar"
               align="end"
               sideOffset={10}
-              className="w-[350px] h-[calc(100vh-72px)] overflow-hidden bg-white p-0 shadow-lg z-50 border border-gray-200 rounded-[8px] flex flex-col scrollbar-hide scrollbar-hide::-webkit-scrollbar"
+              className="z-50 flex h-[min(calc(100vh-72px),760px)] w-[calc(100vw-2rem)] max-w-[380px] flex-col overflow-hidden rounded-[8px] border-zinc-200 bg-white p-0 text-zinc-950 shadow-lg dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
             >
-              <div className="sticky top-0 z-50">
-                <div className="flex items-center text-[#000000] justify-between p-4 border-b bg-[#f4faff]">
-                  <div className="flex items-center gap-[20px] text-[16px]">
-                    <p
-                      className={`cursor-pointer ${
-                        activeMainTab === "updates"
-                          ? "text-[#000000] font-[500]"
-                          : "text-[#767676] font-[400]"
-                      }`}
-                      onClick={() => handleMainTabClick("updates")}
-                    >
-                      Updates
-                    </p>
-                    <p
-                      className={`cursor-pointer ${
-                        activeMainTab === "drops"
-                          ? "text-[#000000] font-[500]"
-                          : "text-[#767676] font-[400]"
-                      }`}
-                      onClick={() => handleMainTabClick("drops")}
-                    >
-                      Drops
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <button
-                      className="text-[#0e3531] text-[16px] w-8 h-8 flex items-center justify-center rounded-full border bg-white"
+              <div className="shrink-0">
+                <div className="flex items-center justify-between gap-3 bg-muted/40 p-4">
+                  <DropdownMenuLabel className="px-0 py-0 text-sm font-semibold text-foreground">
+                    Notifications
+                  </DropdownMenuLabel>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon-sm"
+                      className="rounded-[6px] border-zinc-300 bg-white text-zinc-950 hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
                       onClick={() =>
                         setNotificationScrolled(!notificationScrolled)
                       }
+                      aria-label="Refresh notifications"
                     >
-                      <IoIosRefresh size={16} />
-                    </button>
-                    {!!notificationLoading && (
-                      <div className="h-4 w-4 animate-spin bg-none border-4 border-t-transparent border-blue-500 rounded-full" />
-                    )}
+                      {notificationLoading ? (
+                        <LoaderCircle className="animate-spin" />
+                      ) : (
+                        <RefreshCw />
+                      )}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      className="rounded-[6px] text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                      onClick={() => setNotificationsOpen(false)}
+                      aria-label="Close notifications"
+                    >
+                      <X />
+                    </Button>
                   </div>
-                  <button
-                    className="text-[#0e3531] text-[16px] w-8 h-8 flex items-center justify-center rounded-full border bg-white"
-                    onClick={() => setNotificationsOpen(false)}
-                  >
-                    <IoIosClose size={27} />
-                  </button>
                 </div>
 
-                <div className="flex justify-between py-4 px-4 border-b bg-white">
+                <Tabs
+                  value={activeMainTab}
+                  onValueChange={handleMainTabClick}
+                  className="border-y border-border px-4 py-3"
+                >
+                  <TabsList className="grid h-9 w-full grid-cols-2 rounded-[6px] bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                    <TabsTrigger
+                      value="updates"
+                      className="h-7 rounded-[4px] text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-zinc-950 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-900 dark:data-[state=active]:text-zinc-100"
+                    >
+                      Updates
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="drops"
+                      className="h-7 rounded-[4px] text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-zinc-950 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-900 dark:data-[state=active]:text-zinc-100"
+                    >
+                      Drops
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+
+                <Tabs
+                  value={activeInnerTab}
+                  onValueChange={handleInnerTabClick}
+                  className="px-4 py-3"
+                >
                   {activeMainTab === "updates" && (
-                    <>
-                      <button
-                        className={`text-[16px] ${
-                          activeInnerTab === "campaign"
-                            ? "text-[#0875d3] font-[500]"
-                            : "text-[#000000] font-[400]"
-                        }`}
-                        onClick={() => handleInnerTabClick("campaign")}
+                    <TabsList className="grid h-8 w-full grid-cols-3 bg-transparent p-0 text-muted-foreground">
+                      <TabsTrigger
+                        value="campaign"
+                        className="h-8 rounded-none border-b-2 border-transparent px-1 text-xs font-medium data-[state=active]:border-zinc-950 data-[state=active]:text-zinc-950 dark:data-[state=active]:border-zinc-100 dark:data-[state=active]:bg-transparent dark:data-[state=active]:text-zinc-100"
                       >
                         Campaign
-                      </button>
-                      <button
-                        className={`text-[16px] ${
-                          activeInnerTab === "milestones"
-                            ? "text-[#ff5700] font-[500]"
-                            : "text-[#000000] font-[400]"
-                        }`}
-                        onClick={() => handleInnerTabClick("milestones")}
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="milestones"
+                        className="h-8 rounded-none border-b-2 border-transparent px-1 text-xs font-medium data-[state=active]:border-zinc-950 data-[state=active]:text-zinc-950 dark:data-[state=active]:border-zinc-100 dark:data-[state=active]:bg-transparent dark:data-[state=active]:text-zinc-100"
                       >
                         Milestones
-                      </button>
-                      <button
-                        className={`text-[16px] ${
-                          activeInnerTab === "security"
-                            ? "text-[#767676] font-[500]"
-                            : "text-[#000000] font-[400]"
-                        }`}
-                        onClick={() => handleInnerTabClick("security")}
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="security"
+                        className="h-8 rounded-none border-b-2 border-transparent px-1 text-xs font-medium data-[state=active]:border-zinc-950 data-[state=active]:text-zinc-950 dark:data-[state=active]:border-zinc-100 dark:data-[state=active]:bg-transparent dark:data-[state=active]:text-zinc-100"
                       >
                         Security
-                      </button>
-                    </>
+                      </TabsTrigger>
+                    </TabsList>
                   )}
                   {activeMainTab === "drops" && (
-                    <>
-                      <button
-                        className={`text-[16px] ${
-                          activeInnerTab === "assets"
-                            ? "text-[#01a733] font-[500]"
-                            : "text-[#000000] font-[400]"
-                        }`}
-                        onClick={() => handleInnerTabClick("assets")}
+                    <TabsList className="grid h-8 w-full grid-cols-2 bg-transparent p-0 text-muted-foreground">
+                      <TabsTrigger
+                        value="assets"
+                        className="h-8 rounded-none border-b-2 border-transparent text-xs font-medium data-[state=active]:border-zinc-950 data-[state=active]:text-zinc-950 dark:data-[state=active]:border-zinc-100 dark:data-[state=active]:bg-transparent dark:data-[state=active]:text-zinc-100"
                       >
                         Assets
-                      </button>
-                      <button
-                        className={`text-[16px] ${
-                          activeInnerTab === "payment"
-                            ? "text-[#c304f1] font-[500]"
-                            : "text-[#000000] font-[400]"
-                        }`}
-                        onClick={() => handleInnerTabClick("payment")}
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="payment"
+                        className="h-8 rounded-none border-b-2 border-transparent text-xs font-medium data-[state=active]:border-zinc-950 data-[state=active]:text-zinc-950 dark:data-[state=active]:border-zinc-100 dark:data-[state=active]:bg-transparent dark:data-[state=active]:text-zinc-100"
                       >
                         Payments
-                      </button>
-                    </>
+                      </TabsTrigger>
+                    </TabsList>
                   )}
-                </div>
+                </Tabs>
+                <Separator />
               </div>
 
-              <div className="text-sm text-gray-600 px-4 py-4 flex-1 overflow-y-auto scrollbar-hide scrollbar-hide::-webkit-scrollbar">
-                {activeMainTab === "updates" &&
-                  activeInnerTab === "campaign" && (
-                    <CampaignNotifications
-                      notification={notifications.campaigns}
+              <ScrollArea className="min-h-0 flex-1">
+                <div className="px-4 py-4 text-sm text-muted-foreground">
+                  {activeMainTab === "updates" &&
+                    activeInnerTab === "campaign" && (
+                      <CampaignNotifications
+                        notification={notifications.campaigns}
+                        notificationScrolled={notificationScrolled}
+                        setNotificationScrolled={setNotificationScrolled}
+                      />
+                    )}
+                  {activeMainTab === "updates" &&
+                    activeInnerTab === "milestones" && (
+                      <MileStonesNotification
+                        notification={notifications.milestones}
+                        notificationScrolled={notificationScrolled}
+                        setNotificationScrolled={setNotificationScrolled}
+                      />
+                    )}
+                  {activeMainTab === "updates" &&
+                    activeInnerTab === "security" && (
+                      <SecurityNotification
+                        notification={notifications.security}
+                        notificationScrolled={notificationScrolled}
+                        setNotificationScrolled={setNotificationScrolled}
+                      />
+                    )}
+                  {activeMainTab === "drops" && activeInnerTab === "assets" && (
+                    <AssetsNotification
+                      notification={notifications.assets}
                       notificationScrolled={notificationScrolled}
                       setNotificationScrolled={setNotificationScrolled}
                     />
                   )}
-                {activeMainTab === "updates" &&
-                  activeInnerTab === "milestones" && (
-                    <MileStonesNotification
-                      notification={notifications.milestones}
-                      notificationScrolled={notificationScrolled}
-                      setNotificationScrolled={setNotificationScrolled}
-                    />
-                  )}
-                {activeMainTab === "updates" &&
-                  activeInnerTab === "security" && (
-                    <SecurityNotification
-                      notification={notifications.security}
-                      notificationScrolled={notificationScrolled}
-                      setNotificationScrolled={setNotificationScrolled}
-                    />
-                  )}
-                {activeMainTab === "drops" && activeInnerTab === "assets" && (
-                  <AssetsNotification
-                    notification={notifications.assets}
-                    notificationScrolled={notificationScrolled}
-                    setNotificationScrolled={setNotificationScrolled}
-                  />
-                )}
-                {activeMainTab === "drops" && activeInnerTab === "payment" && (
-                  <PaymentsNotification
-                    notification={notifications.payments}
-                    notificationScrolled={notificationScrolled}
-                    setNotificationScrolled={setNotificationScrolled}
-                  />
-                )}
-              </div>
-              {activeMainTab === "drops" && activeInnerTab === "assets" && (
-                <div className="bg-black px-4 py-[4px] rounded text-center mx-4 mb-4">
-                  <button
-                    className="text-white font-medium text-[14px] w-full font-SansFlex"
-                    onClick={() => router.push("/drops")}
-                  >
-                    View All Assets
-                  </button>
+                  {activeMainTab === "drops" &&
+                    activeInnerTab === "payment" && (
+                      <PaymentsNotification
+                        notification={notifications.payments}
+                        notificationScrolled={notificationScrolled}
+                        setNotificationScrolled={setNotificationScrolled}
+                      />
+                    )}
                 </div>
+              </ScrollArea>
+              {activeMainTab === "drops" && activeInnerTab === "assets" && (
+                <>
+                  <DropdownMenuSeparator />
+                  <div className="px-4 py-3">
+                    <Button
+                      type="button"
+                      className="h-9 w-full rounded-[6px] bg-zinc-900 text-white hover:bg-orange-500 dark:bg-zinc-900 dark:text-white"
+                      onClick={() => router.push("/drops")}
+                    >
+                      View All Assets
+                    </Button>
+                  </div>
+                </>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
