@@ -451,57 +451,57 @@ const CampaignsSidebarContent = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         side="right"
-                        align="end"
+                        align="center"
                         sideOffset={20}
-                        alignOffset={20}
-                        className="w-[360px] border border-neutral-100 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-950"
+                        collisionPadding={16}
+                        className="w-[360px] max-w-[calc(100vw-2rem)] border border-neutral-100 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-950"
                       >
-                        <div className="grid grid-cols-3 gap-y-6 gap-x-4 mb-6">
+                        <div className="mb-6 grid grid-cols-3 gap-x-4 gap-y-6">
                           {menuItems.map((item) => (
                             <DropdownMenuItem key={item.name} asChild>
-                              <div
-                                className="group flex flex-col items-center text-center cursor-pointer select-none outline-none focus:bg-transparent"
-                                onClick={() => {
-                                  window.open(item.url, "_blank");
-                                }}
+                              <a
+                                href={item.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group flex cursor-pointer flex-col items-center rounded-[10px] text-center outline-none focus:bg-transparent"
                               >
-                                <div className="flex size-14 items-center justify-center rounded-[12px] bg-neutral-50 hover:bg-neutral-100 transition-colors duration-200 dark:bg-zinc-900 dark:hover:bg-zinc-800">
+                                <div className="flex size-14 items-center justify-center rounded-[12px] bg-neutral-50 transition-colors duration-150 group-hover:bg-neutral-100 dark:bg-zinc-900 dark:group-hover:bg-zinc-800">
                                   <Image
                                     src={item.img}
                                     alt={item.name}
                                     width={40}
                                     height={40}
-                                    className="size-10 object-contain group-hover:scale-105 transition-transform duration-200"
+                                    className="size-10 object-contain"
                                   />
                                 </div>
                                 <span className="mt-2 text-xs font-semibold text-neutral-600 dark:text-neutral-300">
                                   {item.name}
                                 </span>
-                              </div>
+                              </a>
                             </DropdownMenuItem>
                           ))}
                         </div>
 
-                        <div className="flex items-center border border-neutral-100 rounded-[12px] p-4 bg-[#fafafa] dark:border-zinc-800 dark:bg-zinc-900">
+                        <div className="flex items-center rounded-[12px] border border-neutral-100 bg-[#fafafa] p-4 dark:border-zinc-800 dark:bg-zinc-900">
                           <Image
                             src="https://res.cloudinary.com/dyueswnzk/image/upload/v1758701617/r3o4deralgc2jl1y1xag_ynrxbj.webp"
                             alt="Ad Cover"
                             width={64}
                             height={96}
-                            className="w-16 h-24 rounded-[8px] object-cover mr-4 shrink-0"
+                            className="mr-4 h-24 w-16 shrink-0 rounded-[8px] object-cover"
                           />
-                          <div className="flex-1 min-w-0">
+                          <div className="min-w-0 flex-1">
                             <div className="text-[9px] font-bold tracking-wider text-neutral-400 uppercase">
                               ADS BY <span className="underline">VIVO</span>
                             </div>
-                            <div className="text-xs font-medium text-neutral-700 dark:text-neutral-300 mt-1 mb-3 leading-snug">
+                            <div className="mt-1 mb-3 text-xs leading-snug font-medium text-neutral-700 dark:text-neutral-300">
                               Stay in tune with the continent that makes the
                               world dance
                             </div>
                             <div className="flex gap-2">
                               <DropdownMenuItem asChild>
                                 <button
-                                  className="px-3 py-1 bg-black text-white text-[11px] font-bold rounded-[6px] hover:bg-neutral-800 transition-colors duration-150 cursor-pointer outline-none"
+                                  className="cursor-pointer rounded-[6px] bg-black px-3 py-1 text-[11px] font-bold text-white outline-none transition-[background-color,transform] duration-150 hover:bg-neutral-800 active:scale-[0.97]"
                                   onClick={() => {
                                     window.open(
                                       "https://butta.cocoa.house/",
@@ -514,7 +514,7 @@ const CampaignsSidebarContent = () => {
                               </DropdownMenuItem>
                               <DropdownMenuItem asChild>
                                 <button
-                                  className="px-3 py-1 border border-neutral-300 text-neutral-800 dark:text-neutral-200 text-[11px] font-bold rounded-[6px] hover:bg-neutral-50 dark:hover:bg-zinc-800 transition-colors duration-150 cursor-pointer outline-none"
+                                  className="cursor-pointer rounded-[6px] border border-neutral-300 px-3 py-1 text-[11px] font-bold text-neutral-800 outline-none transition-[background-color,transform] duration-150 hover:bg-neutral-50 active:scale-[0.97] dark:text-neutral-200 dark:hover:bg-zinc-800"
                                   onClick={() => {
                                     window.open(
                                       "https://open.spotify.com/playlist/3CVugIVKRAsTMQn0JeaP65?si=q_g3HBORS7GFNUdIC1BMDA&pi=qbbp4pmmSOCgF&nd=1&dlsi=d383ce1fced64d36",

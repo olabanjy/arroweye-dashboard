@@ -31,7 +31,6 @@ const NotificationsMenu = ({
   const {
     notifications,
     notificationScrolled,
-    notificationLoading,
     allNotificationsRead,
     isSidebarOpen,
     activeMainTab,

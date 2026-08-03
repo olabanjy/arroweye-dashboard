@@ -75,7 +75,7 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
   });
 
   return (
-    <div>
+    <div id="campaign-schedule" className="scroll-mt-20">
       <div className="schedule-container space-y-[20px] mb-[100px]">
         {filterIcon && (
           <div className=" flex items-center justify-center gap-[5px] mb-[30px]">
