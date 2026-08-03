@@ -31,7 +31,10 @@ const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
       <div className=" z-50">
         <Sidebar />
       </div>
-      <div className="flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow">
+      <div
+        id="dashboard-scroll-container"
+        className="flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow"
+      >
         <TopNav />
         <main
           className={`w-full max-w-7xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${

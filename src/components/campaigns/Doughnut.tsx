@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Pie, PieChart } from "recharts";
+import { Cell, Pie, PieChart } from "recharts";
 
 import {
   Card,
@@ -58,6 +58,9 @@ const fallbackColors = [
 
 const getDarkChartColor = (index: number) =>
   `var(--chart-${(index % fallbackColors.length) + 1})`;
+
+const getTranslucentChartColor = (color: string) =>
+  `color-mix(in srgb, ${color} 45%, transparent)`;
 
 const getChartColor = (
   backgroundColor: string | string[] | undefined,
@@ -129,20 +132,26 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
       label,
       value: entryValue,
       color: getChartColor(dataset?.backgroundColor, index),
-      borderColor: getChartColor(dataset?.borderColor, index),
       darkColor: getDarkChartColor(index),
       fill: `var(--color-${key})`,
+      stroke: `var(--color-${key}-border)`,
     };
   });
 
   const chartConfig = pieChartData.reduce<ChartConfig>(
-    (config, item, index) => ({
+    (config, item) => ({
       ...config,
       [item.segment]: {
         label: item.label,
         theme: {
-          light: getChartColor(dataset?.backgroundColor, index),
-          dark: getDarkChartColor(index),
+          light: getTranslucentChartColor(item.color),
+          dark: item.darkColor,
+        },
+      },
+      [`${item.segment}-border`]: {
+        theme: {
+          light: item.color,
+          dark: item.darkColor,
         },
       },
     }),
@@ -206,8 +215,10 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
                       className="h-5 w-7 shrink-0 border bg-[var(--chart-legend-bg)] dark:bg-[var(--chart-legend-dark-bg)] border-[var(--chart-legend-border)] dark:border-[var(--chart-legend-dark-border)]"
                       style={
                         {
-                          "--chart-legend-bg": item.color,
-                          "--chart-legend-border": item.borderColor,
+                          "--chart-legend-bg": getTranslucentChartColor(
+                            item.color,
+                          ),
+                          "--chart-legend-border": item.color,
                           "--chart-legend-dark-bg": item.darkColor,
                           "--chart-legend-dark-border": item.darkColor,
                         } as React.CSSProperties
@@ -234,7 +245,16 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
                     dataKey="value"
                     nameKey="segment"
                     innerRadius={60}
-                  />
+                  >
+                    {pieChartData.map((item) => (
+                      <Cell
+                        key={item.segment}
+                        fill={item.fill}
+                        stroke={item.stroke}
+                        strokeWidth={1}
+                      />
+                    ))}
+                  </Pie>
                 </PieChart>
               </ChartContainer>
             </div>

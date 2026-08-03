@@ -2,7 +2,7 @@
 
 import React from "react";
 import type { ChartData } from "chart.js";
-import { Pie, PieChart as RechartsPieChart } from "recharts";
+import { Cell, Pie, PieChart as RechartsPieChart } from "recharts";
 
 import {
   Card,
@@ -65,6 +65,9 @@ const getColor = (colors: unknown, index: number) => {
   return fallbackColors[index % fallbackColors.length];
 };
 
+const getTranslucentChartColor = (color: string) =>
+  `color-mix(in srgb, ${color} 45%, transparent)`;
+
 const getKey = (label: string, index: number) => {
   const slug = label
     .toLowerCase()
@@ -117,23 +120,34 @@ const CampaignPieChart = <
   const pieData = values.map((entryValue, index) => {
     const label = labels[index] ?? `Segment ${index + 1}`;
     const segment = getKey(label, index);
+    const color = getColor(dataset?.backgroundColor, index);
+    const darkColor = `var(--chart-${(index % fallbackColors.length) + 1})`;
 
     return {
       segment,
       label,
       value: entryValue,
+      color,
+      darkColor,
       fill: `var(--color-${segment})`,
+      stroke: `var(--color-${segment}-border)`,
     };
   });
 
   const chartConfig = pieData.reduce<ChartConfig>(
-    (config, item, index) => ({
+    (config, item) => ({
       ...config,
       [item.segment]: {
         label: item.label,
         theme: {
-          light: getColor(dataset?.backgroundColor, index),
-          dark: `var(--chart-${(index % fallbackColors.length) + 1})`,
+          light: getTranslucentChartColor(item.color),
+          dark: item.darkColor,
+        },
+      },
+      [`${item.segment}-border`]: {
+        theme: {
+          light: item.color,
+          dark: item.darkColor,
         },
       },
     }),
@@ -192,7 +206,16 @@ const CampaignPieChart = <
                 cursor={false}
                 content={<ChartTooltipContent hideLabel nameKey="segment" />}
               />
-              <Pie data={pieData} dataKey="value" nameKey="segment" />
+              <Pie data={pieData} dataKey="value" nameKey="segment">
+                {pieData.map((item) => (
+                  <Cell
+                    key={item.segment}
+                    fill={item.fill}
+                    stroke={item.stroke}
+                    strokeWidth={1}
+                  />
+                ))}
+              </Pie>
             </RechartsPieChart>
           </ChartContainer>
         )}
