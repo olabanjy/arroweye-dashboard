@@ -10,6 +10,7 @@ interface EmailInputWithSuggestionsProps {
   error?: string;
   placeholder?: string;
   required?: boolean;
+  inputClassName?: string;
 }
 
 const EmailInputWithSuggestions: React.FC<EmailInputWithSuggestionsProps> = ({
@@ -21,6 +22,7 @@ const EmailInputWithSuggestions: React.FC<EmailInputWithSuggestionsProps> = ({
   error,
   placeholder,
   required,
+  inputClassName,
 }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredStaff, setFilteredStaff] = useState<any[]>([]);
@@ -91,22 +93,23 @@ const EmailInputWithSuggestions: React.FC<EmailInputWithSuggestionsProps> = ({
         onFocus={handleInputFocus}
         error={error}
         autoComplete="off"
+        className={inputClassName}
       />
 
       {showSuggestions && filteredStaff.length > 0 && (
-        <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
+        <div className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-[6px] border border-zinc-300 bg-white shadow-none dark:border-zinc-600 dark:bg-zinc-800">
           {filteredStaff.map(
             (staff) =>
               staff.staff_email && (
                 <div
                   key={staff.id}
-                  className="px-4 py-2 cursor-pointer hover:bg-gray-100 flex flex-col"
+                  className="flex cursor-pointer flex-col px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700"
                   onClick={() => handleSuggestionClick(staff)}
                 >
-                  <span className="font-medium text-black">
+                  <span className="font-medium text-zinc-900 dark:text-zinc-100">
                     {staff.staff_email}
                   </span>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-zinc-600 dark:text-zinc-400">
                     {staff.fullname} - {staff.role}
                   </span>
                 </div>

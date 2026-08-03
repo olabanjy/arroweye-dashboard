@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import { CSSProperties, FC, ReactNode, useState } from "react";
+import { CSSProperties, FC, ReactNode, useEffect, useState } from "react";
 import {
   MdAddCircleOutline,
   MdCalendarMonth,
@@ -69,6 +69,16 @@ type NavItemProps = {
 const SIDEBAR_ICON_SIZE = 18;
 const SIDEBAR_SUB_ICON_SIZE = 16;
 const SIDEBAR_COLLAPSED_WIDTH = "4.75rem";
+const SIDEBAR_COOKIE_NAME = "sidebar_state";
+
+const getSavedSidebarOpenState = () => {
+  if (typeof document === "undefined") return false;
+
+  return document.cookie
+    .split("; ")
+    .find((cookie) => cookie.startsWith(`${SIDEBAR_COOKIE_NAME}=`))
+    ?.split("=")[1] === "true";
+};
 
 const SidebarLogo = () => {
   const { state, toggleSidebar } = useSidebar();
@@ -456,9 +466,17 @@ const CampaignsSidebarContent = () => {
 };
 
 const Sidebar: FC = () => {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setOpen(getSavedSidebarOpenState());
+  }, []);
+
   return (
     <SidebarProvider
-      defaultOpen
+      defaultOpen={false}
+      open={open}
+      onOpenChange={setOpen}
       style={
         {
           "--sidebar-width-icon": SIDEBAR_COLLAPSED_WIDTH,
