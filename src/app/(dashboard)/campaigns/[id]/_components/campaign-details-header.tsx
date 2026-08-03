@@ -1,7 +1,7 @@
 import React from "react";
 import { CheckCircle2, PencilLine, UserPlus, XCircle } from "lucide-react";
 import { ContentItem } from "@/types/contents";
-import { hasAccess } from "@/lib/utils";
+import { cn, hasAccess } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -170,25 +170,36 @@ export function CampaignDetailsHeader({
           </TooltipProvider>
 
           {canUseEditMode && (
-            <div>
-              <Button
+            <div className="flex items-center gap-3">
+              <span className="text-[16px] font-[500] text-zinc-900 dark:text-zinc-100 font-SansFlex">
+                Edit mode
+              </span>
+              <button
                 type="button"
-                aria-pressed={toggleNotifications}
-                variant={toggleNotifications ? "outline" : "default"}
-                className={
-                  toggleNotifications
-                    ? "h-11 rounded-full border-zinc-300 !bg-white px-5 text-sm font-medium !text-zinc-950 shadow-none hover:!bg-zinc-100 hover:!text-zinc-950 active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-violet-500/25"
-                    : "h-11 rounded-full bg-[#5300d7] px-5 text-sm font-medium !text-white shadow-none hover:bg-[#4700b8] hover:!text-white active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-violet-500/25"
-                }
                 onClick={() => onRequestEditModeChange(!toggleNotifications)}
-              >
-                {toggleNotifications ? (
-                  <XCircle className="size-4" />
-                ) : (
-                  <PencilLine className="size-4" />
+                className={cn(
+                  "relative inline-flex h-[28px] w-[56px] shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out p-1 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/25",
+                  toggleNotifications ? "bg-[#ff7300]" : "bg-zinc-300 dark:bg-zinc-700"
                 )}
-                {toggleNotifications ? "Exit edit mode" : "Edit mode"}
-              </Button>
+                aria-label="Toggle edit mode"
+              >
+                {/* Text overlay */}
+                <span
+                  className={cn(
+                    "absolute text-[9px] font-bold text-white transition-opacity select-none tracking-wider",
+                    toggleNotifications ? "left-2.5 opacity-100" : "right-2 opacity-100 text-zinc-600 dark:text-zinc-300"
+                  )}
+                >
+                  {toggleNotifications ? "ON" : "OFF"}
+                </span>
+                {/* Toggle knob */}
+                <span
+                  className={cn(
+                    "pointer-events-none block h-5 w-5 rounded-full bg-white shadow-md transform transition duration-200 ease-in-out",
+                    toggleNotifications ? "translate-x-[28px]" : "translate-x-0"
+                  )}
+                />
+              </button>
             </div>
           )}
         </div>
