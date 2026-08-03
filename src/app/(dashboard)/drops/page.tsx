@@ -277,7 +277,7 @@ const AssetsLibrary = () => {
                         <IoIosArrowRoundDown size={24} />
                       </Button>
                     ),
-                    tooltip: "Redirect",
+                    tooltip: "Download",
                   },
                   {
                     element: (
@@ -297,7 +297,7 @@ const AssetsLibrary = () => {
                         <FiMinus size={14} />
                       </Button>
                     ),
-                    tooltip: "Remove",
+                    tooltip: "Delete Drop",
                   },
                   {
                     element: (
