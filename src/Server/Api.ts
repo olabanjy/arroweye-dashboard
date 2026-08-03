@@ -60,6 +60,7 @@ interface ApiRequestParams {
   requireToken?: boolean;
   headers?: Record<string, string>;
   skipErrorHandling?: boolean;
+  silent?: boolean;
   loadingToastId?: ToastId | null;
 }
 
@@ -71,6 +72,7 @@ const apiRequest = async <T>({
   requireToken = true,
   headers = {},
   skipErrorHandling = false,
+  silent = false,
   loadingToastId = null,
 }: ApiRequestParams): Promise<T> => {
   try {
@@ -90,7 +92,9 @@ const apiRequest = async <T>({
 
     return response.data;
   } catch (error) {
-    console.error("API request error:", error);
+    if (!silent) {
+      console.error("API request error:", error);
+    }
 
     if (skipErrorHandling === true) {
       if (loadingToastId) {

@@ -323,7 +323,7 @@ const CampaignsSidebarContent = () => {
                       aria-expanded={isResourcesOpen}
                       data-open={isResourcesOpen}
                       onClick={handleResourcesClick}
-                      className="h-10 text-[14px] text-sidebar-foreground hover:bg-sidebar-accent group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!"
+                      className="h-10 text-lg text-sidebar-foreground hover:bg-sidebar-accent group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!"
                     >
                       <span className="size-1 rounded-full bg-transparent group-data-[collapsible=icon]:hidden" />
                       <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-[18px]!">
