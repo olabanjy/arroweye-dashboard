@@ -209,20 +209,25 @@ button {
   cursor: pointer;
 }
 
-.login-input-white,
-.login-input-white:focus,
-.login-input-white:hover {
-  background-color: #ffffff !important;
-  border-color: #000000 !important;
-  color: #323131 !important;
-  outline: none !important;
-  box-shadow: none !important;
+.login-input-themed,
+.login-input-themed:hover {
+  background-color: var(--background);
+  border-color: var(--input);
+  color: var(--foreground);
+  outline: none;
+  box-shadow: none;
 }
 
-.login-input-white:-webkit-autofill,
-.login-input-white:-webkit-autofill:hover,
-.login-input-white:-webkit-autofill:focus {
-  -webkit-text-fill-color: #323131 !important;
-  box-shadow: 0 0 0 1000px #ffffff inset !important;
-  caret-color: #323131;
+.login-input-themed:focus {
+  border-color: var(--ring);
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring), transparent 70%);
+}
+
+.login-input-themed:-webkit-autofill,
+.login-input-themed:-webkit-autofill:hover,
+.login-input-themed:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--foreground) !important;
+  box-shadow: 0 0 0 1000px var(--background) inset !important;
+  caret-color: var(--foreground);
 }

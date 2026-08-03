@@ -34,13 +34,13 @@ export function RoleSelect({
       >
         <SelectTrigger
           className={cn(
-            "h-[51px] rounded-[8px] border-black bg-white px-4 text-[14px] text-gray-900 shadow-sm focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white",
+            "h-11 w-full rounded-[6px] border-zinc-300 bg-white px-4 text-[14px] text-zinc-950 shadow-none focus:ring-2 focus:ring-violet-500/25 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 [&>span]:line-clamp-1",
             error && "border-red-500 focus:ring-red-500",
           )}
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="overflow-hidden rounded-[8px] border-zinc-200 bg-white p-1 text-zinc-950 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 [&_[data-radix-select-viewport]]:rounded-[6px]">
           {ROLE_OPTIONS.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}

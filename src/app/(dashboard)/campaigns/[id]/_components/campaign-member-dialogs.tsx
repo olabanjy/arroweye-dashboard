@@ -25,6 +25,9 @@ import {
   CampaignDetailUser,
 } from "@/types/campaign-detail";
 
+const memberDialogFieldClassName =
+  "!h-11 !rounded-[6px] !border-zinc-300 !bg-white !px-4 !text-[14px] !font-[400] !text-zinc-950 !shadow-none placeholder:!text-zinc-400 focus-visible:!ring-2 focus-visible:!ring-violet-500/25 dark:!border-zinc-600 dark:!bg-zinc-800 dark:!text-zinc-100 dark:placeholder:!text-zinc-400";
+
 interface AddMemberDialogProps {
   open: boolean;
   staffSuggestions: any[];
@@ -54,9 +57,9 @@ export function AddMemberDialog({
 }: AddMemberDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] rounded-2xl border-zinc-200 bg-white p-6 text-zinc-950 shadow-2xl sm:max-w-[560px]">
+      <DialogContent className="w-[calc(100vw-2rem)] rounded-2xl border-zinc-200 bg-white p-6 text-zinc-950 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 sm:max-w-[560px]">
         <DialogHeader>
-          <DialogTitle className="text-[12px] font-[500] uppercase tracking-[.1rem] text-[#212529]">
+          <DialogTitle className="text-[12px] font-[500] uppercase tracking-[.1rem] text-zinc-500 dark:text-zinc-400">
             + Add Members
           </DialogTitle>
           <DialogDescription className="sr-only">
@@ -64,8 +67,10 @@ export function AddMemberDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={onSubmit} className="space-y-4">
-          <p className="text-4xl font-bold text-[#000]">Collaborate</p>
+        <form onSubmit={onSubmit} className="space-y-5">
+          <p className="text-3xl font-bold text-zinc-950 dark:text-zinc-100">
+            Collaborate
+          </p>
           <EmailInputWithSuggestions
             staffDetails={staffSuggestions}
             value={formData.email}
@@ -84,12 +89,13 @@ export function AddMemberDialog({
             error={errors.email}
             placeholder="Add email"
             required
+            inputClassName={memberDialogFieldClassName}
           />
 
           <Button
             type="button"
             variant="ghost"
-            className="h-auto gap-[5px] px-0 py-0 text-[14px] text-foreground hover:bg-transparent"
+            className="h-auto gap-[5px] px-0 py-0 text-[14px] text-zinc-500 hover:bg-transparent hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100"
             onClick={onAddContactClick}
           >
             <CirclePlus />
@@ -101,8 +107,8 @@ export function AddMemberDialog({
             </p>
           )}
 
-          <div className="flex items-end gap-[10px]">
-            <div className="w-full">
+          <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-[180px_minmax(0,1fr)]">
+            <div className="min-w-0">
               <RoleSelect
                 value={formData.role}
                 onChange={onRoleChange}
@@ -112,7 +118,7 @@ export function AddMemberDialog({
             <Button
               type="submit"
               disabled={isLoading}
-              className="h-[51px] w-full rounded-full bg-black px-[12px] py-[15px] text-[14px] text-white hover:bg-orange-500"
+              className="h-[51px] w-full min-w-0 rounded-full bg-zinc-800 px-[12px] py-[15px] text-[14px] text-white hover:bg-orange-500"
             >
               {isLoading ? <LoaderCircle className="animate-spin" /> : <Plus />}
               <span>{isLoading ? "Adding" : "Add"}</span>
@@ -141,9 +147,9 @@ export function ContactNameDialog({
 }: ContactNameDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] rounded-2xl border-zinc-200 bg-white p-6 text-zinc-950 shadow-2xl sm:max-w-[640px]">
+      <DialogContent className="w-[calc(100vw-2rem)] rounded-2xl border-zinc-200 bg-white p-6 text-zinc-950 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-[12px] font-[500] uppercase tracking-[.1rem] text-[#212529]">
+          <DialogTitle className="text-[12px] font-[500] uppercase tracking-[.1rem] text-zinc-500 dark:text-zinc-400">
             Contact Name
           </DialogTitle>
           <DialogDescription className="sr-only">
@@ -159,19 +165,20 @@ export function ContactNameDialog({
             value={formData.fullname}
             onChange={onInputChange}
             error={errors.fullname}
+            className={memberDialogFieldClassName}
           />
-          <DialogFooter>
+          <DialogFooter className="border-t border-zinc-200 pt-4 dark:border-zinc-700">
             <Button
               type="button"
               variant="outline"
-              className="rounded-full"
+              className="h-9 rounded-full border-zinc-300 px-5 text-sm hover:bg-zinc-100 dark:border-zinc-600 dark:hover:bg-zinc-800"
               onClick={() => onOpenChange(false)}
             >
               Cancel
             </Button>
             <Button
               type="button"
-              className="rounded-full"
+              className="h-9 rounded-full bg-zinc-900 px-5 text-sm text-white hover:bg-orange-500 dark:bg-zinc-900 dark:text-white"
               onClick={() => onOpenChange(false)}
               disabled={!formData.fullname}
             >
