@@ -118,7 +118,7 @@ export function AddMemberDialog({
             <Button
               type="submit"
               disabled={isLoading}
-              className="h-[51px] w-full min-w-0 rounded-full bg-zinc-800 px-[12px] py-[15px] text-[14px] text-white hover:bg-orange-500"
+              className="h-[51px] w-full min-w-0 bg-black px-[12px] py-[15px] text-[14px] text-white hover:bg-orange-500"
             >
               {isLoading ? <LoaderCircle className="animate-spin" /> : <Plus />}
               <span>{isLoading ? "Adding" : "Add"}</span>
@@ -227,14 +227,18 @@ export function MemberInfoDialog({
               {selectedUser.fullname}
             </p>
             <div>
-              <p className="text-[16px] font-[400] text-zinc-900 dark:text-zinc-100">Email</p>
+              <p className="text-[16px] font-[400] text-zinc-900 dark:text-zinc-100">
+                Email
+              </p>
               <p className="text-[16px] font-[600] text-zinc-900 dark:text-zinc-100">
                 {selectedUser.staff_email}
               </p>
             </div>
             <div className="text-[16px] font-[400]">
               <p className="text-zinc-900 dark:text-zinc-100">Role</p>
-              <p className="font-[600] text-[#01a733] dark:text-green-400">{selectedUser.role}</p>
+              <p className="font-[600] text-[#01a733] dark:text-green-400">
+                {selectedUser.role}
+              </p>
             </div>
             <div className="text-[16px] font-[400] text-zinc-900 dark:text-zinc-100">
               <p>Member since</p>

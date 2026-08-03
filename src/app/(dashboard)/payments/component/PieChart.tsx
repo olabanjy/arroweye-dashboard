@@ -66,7 +66,7 @@ const getColor = (colors: unknown, index: number) => {
 };
 
 const getTranslucentChartColor = (color: string) =>
-  `color-mix(in srgb, ${color} 45%, transparent)`;
+  `color-mix(in srgb, ${color} 40%, transparent)`;
 
 const getKey = (label: string, index: number) => {
   const slug = label

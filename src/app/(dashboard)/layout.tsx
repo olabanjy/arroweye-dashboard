@@ -6,6 +6,7 @@ import Sidebar from "./sidebar";
 import TopNav from "./top-nav";
 import { usePathname } from "next/navigation";
 import { useProtectedRoute } from "./hooks/use-protected-route";
+import ScrollToTopButton from "@/components/scroll-to-top-button";
 
 interface LayoutProps {
   children: ReactNode;
@@ -49,6 +50,7 @@ const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
         </main>
         <ToastContainer />
       </div>
+      <ScrollToTopButton />
     </div>
   );
 };

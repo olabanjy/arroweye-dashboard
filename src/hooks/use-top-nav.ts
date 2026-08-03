@@ -10,6 +10,25 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getLoggedInUser } from "@/services";
 
+const notificationTypeAliases: Record<string, string> = {
+  campaign: "campaigns",
+  campaigns: "campaigns",
+  milestone: "milestones",
+  milestones: "milestones",
+  security: "security",
+  drop: "assets",
+  drops: "assets",
+  asset: "assets",
+  assets: "assets",
+  payment: "payments",
+  payments: "payments",
+};
+
+const normalizeNotificationType = (type: unknown) => {
+  const normalizedType = String(type ?? "").trim().toLowerCase();
+  return notificationTypeAliases[normalizedType] ?? normalizedType;
+};
+
 export const useTopNav = () => {
   const router = useRouter();
   const {
@@ -33,7 +52,10 @@ export const useTopNav = () => {
     () =>
       (loggedInUser?.notifications ?? []).reduce(
         (grouped: any, notification: any) => {
-          const type = notification.type.toLowerCase();
+          const type = normalizeNotificationType(notification.type);
+
+          if (!type) return grouped;
+
           grouped[type] = [...(grouped[type] || []), notification];
           return grouped;
         },

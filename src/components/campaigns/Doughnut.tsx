@@ -60,7 +60,7 @@ const getDarkChartColor = (index: number) =>
   `var(--chart-${(index % fallbackColors.length) + 1})`;
 
 const getTranslucentChartColor = (color: string) =>
-  `color-mix(in srgb, ${color} 45%, transparent)`;
+  `color-mix(in srgb, ${color} 40%, transparent)`;
 
 const getChartColor = (
   backgroundColor: string | string[] | undefined,

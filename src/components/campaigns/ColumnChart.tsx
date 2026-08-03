@@ -54,7 +54,7 @@ const getDatasetColor = (colors: unknown, index: number, fallback: string) => {
 };
 
 const getTranslucentChartColor = (color: string) =>
-  `color-mix(in srgb, ${color} 45%, transparent)`;
+  `color-mix(in srgb, ${color} 40%, transparent)`;
 
 const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
   title,

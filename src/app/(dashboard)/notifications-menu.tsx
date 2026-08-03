@@ -41,6 +41,7 @@ const NotificationsMenu = ({
     setNotificationScrolled,
     hasOpenedNotifications,
   } = useTopNav();
+  console.log("notifications", notifications);
 
   return (
     <DropdownMenu open={isSidebarOpen} onOpenChange={setNotificationsOpen}>
@@ -64,7 +65,7 @@ const NotificationsMenu = ({
         id="notification-sidebar"
         align="end"
         sideOffset={10}
-        className="z-50 flex h-[min(calc(100vh-72px),760px)] w-[calc(100vw-2rem)] max-w-[380px] flex-col overflow-hidden rounded-[16px] border border-neutral-100 bg-white p-0 text-zinc-950 shadow-xl dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
+        className="z-50 flex h-[min(calc(100vh-72px),760px)] w-[calc(100vw-2rem)] max-w-85 flex-col overflow-hidden rounded-none border border-neutral-100 bg-white p-0 text-zinc-950 shadow-xl dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
       >
         <div className="shrink-0">
           <Tabs
@@ -72,17 +73,17 @@ const NotificationsMenu = ({
             onValueChange={handleMainTabClick}
             className="w-full"
           >
-            <div className="flex items-center justify-between border-b border-neutral-100 bg-[#f8fafc] px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900">
-              <TabsList className="flex items-center gap-6 bg-transparent p-0">
+            <div className="flex items-center justify-between border-b border-neutral-100 bg-[#f4f8fc] px-5 py-0.5 dark:border-zinc-800 dark:bg-zinc-900">
+              <TabsList className="flex items-center gap-6 bg-none p-0">
                 <TabsTrigger
                   value="updates"
-                  className="bg-transparent p-0 text-sm font-bold text-neutral-400 data-[state=active]:bg-transparent data-[state=active]:text-neutral-900 data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
+                  className="bg-none p-0 text-[15px] font-normal text-neutral-400 data-[state=active]:bg-none data-[state=active]:text-neutral-900 data-[state=active]:font-normal data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
                 >
                   Updates
                 </TabsTrigger>
                 <TabsTrigger
                   value="drops"
-                  className="bg-transparent p-0 text-sm font-bold text-neutral-400 data-[state=active]:bg-transparent data-[state=active]:text-neutral-900 data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
+                  className="bg-transparent p-0 text-[15px] font-normal text-neutral-400 data-[state=active]:bg-transparent data-[state=active]:text-neutral-900 data-[state=active]:font-normal data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
                 >
                   Drops
                 </TabsTrigger>
@@ -90,10 +91,10 @@ const NotificationsMenu = ({
               <button
                 type="button"
                 onClick={() => setNotificationsOpen(false)}
-                className="flex size-6 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:border-zinc-800 dark:bg-zinc-800 dark:text-neutral-400 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
+                className="flex size-8 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:border-zinc-800 dark:bg-zinc-800 dark:text-neutral-400 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
                 aria-label="Close notifications"
               >
-                <X size={12} />
+                <X size={14} />
               </button>
             </div>
           </Tabs>
@@ -104,38 +105,38 @@ const NotificationsMenu = ({
             className="w-full border-b border-neutral-100 bg-white dark:border-zinc-800 dark:bg-zinc-950"
           >
             {activeMainTab === "updates" && (
-              <TabsList className="flex items-center gap-8 bg-transparent px-6 py-4">
+              <TabsList className="flex items-center justify-between gap-6 bg-transparent px-5 py-2.5">
                 <TabsTrigger
                   value="campaign"
-                  className="bg-transparent p-0 text-sm font-bold text-neutral-400 data-[state=active]:bg-transparent data-[state=active]:text-neutral-900 data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
+                  className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
                 >
                   Campaigns
                 </TabsTrigger>
                 <TabsTrigger
                   value="milestones"
-                  className="bg-transparent p-0 text-sm font-bold text-neutral-400 data-[state=active]:bg-transparent data-[state=active]:text-neutral-900 data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
+                  className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
                 >
                   Milestones
                 </TabsTrigger>
                 <TabsTrigger
                   value="security"
-                  className="bg-transparent p-0 text-sm font-bold text-neutral-400 data-[state=active]:bg-transparent data-[state=active]:text-neutral-900 data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
+                  className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
                 >
                   Security
                 </TabsTrigger>
               </TabsList>
             )}
             {activeMainTab === "drops" && (
-              <TabsList className="flex items-center gap-8 bg-transparent px-6 py-4">
+              <TabsList className="flex items-center justify-between gap-6 bg-transparent px-5 py-2.5">
                 <TabsTrigger
                   value="assets"
-                  className="bg-transparent p-0 text-sm font-bold text-neutral-400 data-[state=active]:bg-transparent data-[state=active]:text-neutral-900 data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
+                  className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
                 >
                   Assets
                 </TabsTrigger>
                 <TabsTrigger
                   value="payment"
-                  className="bg-transparent p-0 text-sm font-bold text-neutral-400 data-[state=active]:bg-transparent data-[state=active]:text-neutral-900 data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
+                  className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
                 >
                   Payments
                 </TabsTrigger>
@@ -145,7 +146,7 @@ const NotificationsMenu = ({
         </div>
 
         <ScrollArea className="min-h-0 flex-1">
-          <div className="px-4 py-4 text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground">
             {activeMainTab === "updates" && activeInnerTab === "campaign" && (
               <CampaignNotifications
                 notification={notifications.campaigns}
@@ -185,11 +186,11 @@ const NotificationsMenu = ({
         </ScrollArea>
         {activeMainTab === "drops" && activeInnerTab === "assets" && (
           <>
-            <DropdownMenuSeparator />
-            <div className="px-4 py-3">
+            <DropdownMenuSeparator className="my-0 bg-neutral-100 dark:bg-zinc-800" />
+            <div className="px-6 py-4">
               <Button
                 type="button"
-                className="h-9 w-full rounded-[6px] bg-zinc-900 text-white hover:bg-orange-500 dark:bg-zinc-900 dark:text-white"
+                className="h-9 w-full rounded-[6px] bg-zinc-950 text-white hover:bg-orange-500 dark:bg-zinc-100 dark:text-zinc-950"
                 onClick={() => router.push("/drops")}
               >
                 View All Assets

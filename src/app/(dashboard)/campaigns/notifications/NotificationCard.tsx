@@ -1,11 +1,8 @@
-"use client";
-
 import type { ReactNode } from "react";
-import { Download, ExternalLink, Share2 } from "lucide-react";
+import { Download } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 export interface NotificationAction {
@@ -27,6 +24,41 @@ interface NotificationCardProps {
   onAction?: (action: NotificationAction, url: string) => void;
 }
 
+const isUrl = (str?: string) => {
+  if (!str) return false;
+  return str.startsWith("http") || str.startsWith("/") || str.includes(".") || str.includes("/");
+};
+
+const parseMessage = (text: string) => {
+  if (!text) return "";
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <span key={index} className="font-bold text-neutral-950 dark:text-white">
+          {part.slice(2, -2)}
+        </span>
+      );
+    }
+    return part;
+  });
+};
+
+const parseTimeAgo = (text: string) => {
+  if (!text) return "";
+  const parts = text.split(/(_[^_]+_)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith("_") && part.endsWith("_")) {
+      return (
+        <span key={index} className="underline font-bold">
+          {part.slice(1, -1)}
+        </span>
+      );
+    }
+    return part;
+  });
+};
+
 export function NotificationCard({
   timeAgo,
   message,
@@ -45,78 +77,88 @@ export function NotificationCard({
     toast.success("Link has been copied!");
   };
 
+  const isIconUrl = isUrl(iconClass);
+
   return (
-    <Card
+    <div
       className={cn(
-        "gap-0 rounded-lg py-0 shadow-none",
-        !read &&
-          "border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/30",
+        "flex items-start gap-3 border-b border-neutral-100 bg-white px-5 py-3.5 last:border-b-0 dark:border-zinc-800 dark:bg-zinc-950",
+        !read && "bg-neutral-50/30 dark:bg-zinc-900/5"
       )}
     >
-      <CardContent className="flex items-start gap-3 p-4">
+      {isIconUrl ? (
+        <img
+          src={iconClass}
+          alt="Notification artwork"
+          className="w-14 h-[72px] shrink-0 rounded-lg object-cover"
+        />
+      ) : (
         <div
           className={cn(
-            "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md",
-            iconContainerClassName,
+            "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl",
+            iconContainerClassName
           )}
           style={
-            iconClass
+            iconClass && !iconClass.startsWith("http") && !iconClass.startsWith("/")
               ? { backgroundColor: iconClass.split(" ")[2], color: "white" }
               : undefined
           }
         >
           {iconClass ? <i className={cn(iconClass, "text-xl")} /> : icon}
         </div>
+      )}
 
-        <div className="min-w-0 flex-1 space-y-1.5">
-          <p className="text-xs font-medium uppercase text-muted-foreground">
-            {timeAgo}
-          </p>
-          <p className="text-sm leading-6 text-foreground">
-            {message}{" "}
-            {highlight && <span className="font-semibold">{highlight}</span>}
-          </p>
+      <div className="min-w-0 flex-1 space-y-1">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-zinc-500">
+          {parseTimeAgo(timeAgo)}
+        </p>
+        <p className="text-[13px] leading-[18px] text-neutral-800 dark:text-zinc-200">
+          {parseMessage(message)}{" "}
+          {highlight && <span className="font-bold text-neutral-950 dark:text-white">{highlight}</span>}
+        </p>
 
-          {actions.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 pt-1.5">
-              {actions.map((action, index) => {
-                const url = getActionUrl(action);
-                const isShare = action.type === "Share";
-                const isDownload = action.type === "Download";
-                const disabled = disabledActions.includes(action.type);
+        {actions.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 pt-2">
+            {actions.map((action, index) => {
+              const url = getActionUrl(action);
+              const isShare = action.type === "Share";
+              const isDownload = action.type === "Download";
+              const disabled = disabledActions.includes(action.type);
+              const isSecondary = isShare;
 
-                return (
-                  <Button
-                    key={`${action.type}-${index}`}
-                    type="button"
-                    size={isDownload ? "icon" : "default"}
-                    variant={isShare ? "outline" : "default"}
-                    disabled={disabled}
-                    aria-label={isDownload ? "Download" : undefined}
-                    onClick={() => {
-                      if (isShare) {
-                        void copyLink(url);
-                        return;
-                      }
-                      if (onAction) onAction(action, url);
-                      else window.open(url, "_blank", "noopener,noreferrer");
-                    }}
-                  >
-                    {isDownload ? (
-                      <Download />
-                    ) : (
-                      <>
-                        {isShare ? <Share2 /> : <ExternalLink />}
-                        {action.type}
-                      </>
-                    )}
-                  </Button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+              return (
+                <Button
+                  key={`${action.type}-${index}`}
+                  type="button"
+                  disabled={disabled}
+                  aria-label={isDownload ? "Download" : undefined}
+                  onClick={() => {
+                    if (isShare) {
+                      void copyLink(url);
+                      return;
+                    }
+                    if (onAction) onAction(action, url);
+                    else window.open(url, "_blank", "noopener,noreferrer");
+                  }}
+                  className={cn(
+                    "h-8 rounded-[6px] text-xs font-semibold px-4 transition-colors cursor-pointer",
+                    isSecondary
+                      ? "border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-850"
+                      : "bg-neutral-950 text-white hover:bg-neutral-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 border-0 shadow-none",
+                    isDownload && "w-8 px-0"
+                  )}
+                >
+                  {isDownload ? (
+                    <Download className="size-3.5" />
+                  ) : (
+                    action.type
+                  )}
+                </Button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

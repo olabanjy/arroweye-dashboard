@@ -183,7 +183,7 @@ const SecurityNotification: React.FC<any> = ({
 
   return (
     <div>
-      <div className="space-y-[20px]">
+      <div className="flex flex-col">
         {!!notification && notification.length > 0 ? (
           notification?.map((item: any) => {
             return (
@@ -205,7 +205,9 @@ const SecurityNotification: React.FC<any> = ({
             );
           })
         ) : (
-          <NotificationEmptyState category="security" />
+          <div className="p-6">
+            <NotificationEmptyState category="security" />
+          </div>
         )}
       </div>
     </div>
