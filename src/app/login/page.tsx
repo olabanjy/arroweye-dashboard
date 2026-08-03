@@ -51,11 +51,11 @@ const Login = () => {
             height={87}
             priority
           />
-          <section className="w-full max-w-[400px] overflow-hidden rounded-[10px] border border-border bg-card pb-10 text-card-foreground shadow-xl">
-            <div className="bg-primary px-[27px] py-[23px] text-primary-foreground">
+          <section className="w-full max-w-[400px] overflow-hidden rounded-[10px] border border-border bg-white pb-10 text-card-foreground shadow-xl">
+            <div className="bg-blue-500 px-[27px] py-[23px] text-primary-foreground">
               <div className="flex items-center gap-[14px]">
-                <Info size={22} strokeWidth={2} />
-                <p className="text-[16px] font-medium">
+                <Info size={22} strokeWidth={2} className="text-white" />
+                <p className="text-[16px] text-white font-medium">
                   Please verify your credentials
                 </p>
               </div>
@@ -75,17 +75,17 @@ const Login = () => {
                     value={loginFormData.email}
                     onChange={handleLoginInputChange}
                     error={loginErrors.email}
-                    className="login-input-themed w-full border-input bg-background text-center text-[15px] font-medium text-foreground placeholder:text-muted-foreground"
+                    className="login-input-themed w-full border-input bg-white text-center text-[15px] font-medium text-foreground placeholder:text-muted-foreground"
                   />
-                  <div className="flex items-center justify-between gap-4">
-                    <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                  <div className="flex items-center justify-end gap-4">
+                    {/* <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                       <Switch
                         size="sm"
                         checked={toggleNotifications}
                         onCheckedChange={setToggleNotifications}
                       />
                       Remember email
-                    </label>
+                    </label> */}
                     <Button
                       disabled={isLoginLoading}
                       size="lg"

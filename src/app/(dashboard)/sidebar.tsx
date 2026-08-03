@@ -285,7 +285,7 @@ const menuItems = [
     url: "https://spins.arroweye.pro/",
   },
   {
-    name: "AI Tools",
+    name: "Tools",
     img: "https://res.cloudinary.com/dyueswnzk/image/upload/v1758701302/sds_3_tsxk8m_ftgc0v.svg",
     url: "https://cocoa.house/tools",
   },
@@ -412,7 +412,7 @@ const CampaignsSidebarContent = () => {
                 {!isAdvertiser && (
                   <NavItem
                     href="https://spins.arroweye.pro/"
-                    label="Spins"
+                    label="Market"
                     active={false}
                     icon={
                       <Image
@@ -433,7 +433,7 @@ const CampaignsSidebarContent = () => {
                     >
                       <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
-                          tooltip="AI Tools"
+                          tooltip="Tools"
                           className={cn(
                             "h-10 text-lg text-sidebar-foreground hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground",
                             "group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!",
@@ -445,7 +445,7 @@ const CampaignsSidebarContent = () => {
                             <Icon path={mdiCreationOutline} size={0.88} />
                           </span>
                           <span className="group-data-[collapsible=icon]:hidden">
-                            AI Tools
+                            Tools
                           </span>
                         </SidebarMenuButton>
                       </DropdownMenuTrigger>

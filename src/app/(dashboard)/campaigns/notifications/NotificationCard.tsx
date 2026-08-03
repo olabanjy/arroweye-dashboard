@@ -1,4 +1,11 @@
 import type { ReactNode } from "react";
+import {
+  mdiCash,
+  mdiFolderOpenOutline,
+  mdiPlayCircleOutline,
+  mdiShieldCheckOutline,
+} from "@mdi/js";
+import MdiIcon from "@mdi/react";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
 
@@ -24,9 +31,35 @@ interface NotificationCardProps {
   onAction?: (action: NotificationAction, url: string) => void;
 }
 
+const notificationIcons: Record<string, string> = {
+  "mdi-album": mdiPlayCircleOutline,
+  "mdi-cash": mdiCash,
+  "mdi-folder-open-outline": mdiFolderOpenOutline,
+  "mdi-shield-check-outline": mdiShieldCheckOutline,
+};
+
+const getMdiIcon = (value?: string) => {
+  if (!value) return undefined;
+
+  const parts = value.trim().split(/\s+/);
+  const name = parts.find((part) => part.startsWith("mdi-"));
+
+  if (!name || !notificationIcons[name]) return undefined;
+
+  return {
+    path: notificationIcons[name],
+    color: parts.find((part) => /^#[0-9a-f]{3,8}$/i.test(part)),
+  };
+};
+
 const isUrl = (str?: string) => {
   if (!str) return false;
-  return str.startsWith("http") || str.startsWith("/") || str.includes(".") || str.includes("/");
+  return (
+    str.startsWith("http") ||
+    str.startsWith("/") ||
+    str.includes(".") ||
+    str.includes("/")
+  );
 };
 
 const parseMessage = (text: string) => {
@@ -35,7 +68,10 @@ const parseMessage = (text: string) => {
   return parts.map((part, index) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       return (
-        <span key={index} className="font-bold text-neutral-950 dark:text-white">
+        <span
+          key={index}
+          className="font-bold text-neutral-950 dark:text-white"
+        >
           {part.slice(2, -2)}
         </span>
       );
@@ -78,12 +114,13 @@ export function NotificationCard({
   };
 
   const isIconUrl = isUrl(iconClass);
+  const mdiIcon = getMdiIcon(iconClass);
 
   return (
     <div
       className={cn(
         "flex items-start gap-3 border-b border-neutral-100 bg-white px-5 py-3.5 last:border-b-0 dark:border-zinc-800 dark:bg-zinc-950",
-        !read && "bg-neutral-50/30 dark:bg-zinc-900/5"
+        !read && "bg-neutral-50/30 dark:bg-zinc-900/5",
       )}
     >
       {isIconUrl ? (
@@ -96,15 +133,11 @@ export function NotificationCard({
         <div
           className={cn(
             "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl",
-            iconContainerClassName
+            iconContainerClassName,
           )}
-          style={
-            iconClass && !iconClass.startsWith("http") && !iconClass.startsWith("/")
-              ? { backgroundColor: iconClass.split(" ")[2], color: "white" }
-              : undefined
-          }
+          style={mdiIcon?.color ? { color: mdiIcon.color } : undefined}
         >
-          {iconClass ? <i className={cn(iconClass, "text-xl")} /> : icon}
+          {mdiIcon ? <MdiIcon path={mdiIcon.path} size={0.8} /> : icon}
         </div>
       )}
 
@@ -114,7 +147,11 @@ export function NotificationCard({
         </p>
         <p className="text-[13px] leading-[18px] text-neutral-800 dark:text-zinc-200">
           {parseMessage(message)}{" "}
-          {highlight && <span className="font-bold text-neutral-950 dark:text-white">{highlight}</span>}
+          {highlight && (
+            <span className="font-bold text-neutral-950 dark:text-white">
+              {highlight}
+            </span>
+          )}
         </p>
 
         {actions.length > 0 && (
@@ -145,14 +182,10 @@ export function NotificationCard({
                     isSecondary
                       ? "border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-850"
                       : "bg-neutral-950 text-white hover:bg-neutral-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 border-0 shadow-none",
-                    isDownload && "w-8 px-0"
+                    isDownload && "w-8 px-0",
                   )}
                 >
-                  {isDownload ? (
-                    <Download className="size-3.5" />
-                  ) : (
-                    action.type
-                  )}
+                  {isDownload ? <Download className="size-3.5" /> : action.type}
                 </Button>
               );
             })}
