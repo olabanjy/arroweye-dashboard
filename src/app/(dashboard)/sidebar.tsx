@@ -199,7 +199,7 @@ const NavItem = ({
           active && "bg-[#17954c]",
         )}
       />
-      <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-[18px]!">
+      <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-[18px]">
         {icon}
       </span>
       <span className="group-data-[collapsible=icon]:hidden">{label}</span>
@@ -396,7 +396,7 @@ const CampaignsSidebarContent = () => {
                     href="/payments"
                     label="Payments"
                     active={isActive("/payments")}
-                    icon={<Icon path={mdiCurrencyUsd} size={0.75} />}
+                    icon={<Icon path={mdiCurrencyUsd} size={1} />}
                   />
                 )}
 
@@ -405,7 +405,7 @@ const CampaignsSidebarContent = () => {
                     href="/schedule"
                     label="Schedule"
                     active={isActive("/schedule")}
-                    icon={<Icon path={mdiCalendarMonthOutline} size={0.75} />}
+                    icon={<Icon path={mdiCalendarMonthOutline} size={0.88} />}
                   />
                 )}
 
@@ -441,8 +441,8 @@ const CampaignsSidebarContent = () => {
                           )}
                         >
                           <span className="size-1 rounded-full bg-transparent group-data-[collapsible=icon]:hidden" />
-                          <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-[18px]!">
-                            <Icon path={mdiCreationOutline} size={0.75} />
+                          <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-[18px]">
+                            <Icon path={mdiCreationOutline} size={0.88} />
                           </span>
                           <span className="group-data-[collapsible=icon]:hidden">
                             AI Tools

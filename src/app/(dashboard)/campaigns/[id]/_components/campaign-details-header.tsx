@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { CheckCircle2, UserPlus, XCircle } from "lucide-react";
 import { MdAddCircleOutline } from "react-icons/md";
 import { ContentItem } from "@/types/contents";
@@ -55,39 +56,67 @@ export function CampaignDetailsHeader({
   ]);
   const canAddMember = hasAccess(userLoggedInProfile, ["Manager"]);
   const stickySentinelRef = useRef<HTMLDivElement>(null);
+  const stickyHeaderRef = useRef<HTMLDivElement>(null);
+  const isStickyRef = useRef(false);
   const [isSticky, setIsSticky] = useState(false);
+  const [fullHeaderHeight, setFullHeaderHeight] = useState(0);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const sentinel = stickySentinelRef.current;
+    const stickyHeader = stickyHeaderRef.current;
     const scrollContainer = document.getElementById(
       "dashboard-scroll-container",
     );
 
-    if (!sentinel || !scrollContainer) return;
+    if (!sentinel || !stickyHeader || !scrollContainer) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const rootTop =
-          entry.rootBounds?.top ?? scrollContainer.getBoundingClientRect().top;
+    const measureFullHeader = () => {
+      if (isStickyRef.current) return;
 
-        setIsSticky(
-          !entry.isIntersecting && entry.boundingClientRect.top <= rootTop,
-        );
-      },
-      {
-        root: scrollContainer,
-        threshold: 0,
-      },
-    );
+      const nextHeight = stickyHeader.offsetHeight;
+      setFullHeaderHeight((currentHeight) =>
+        currentHeight === nextHeight ? currentHeight : nextHeight,
+      );
+    };
 
-    observer.observe(sentinel);
-    return () => observer.disconnect();
+    const updateStickyState = (synchronous = false) => {
+      const rootTop = scrollContainer.getBoundingClientRect().top;
+      const sentinelBottom = sentinel.getBoundingClientRect().bottom;
+      const nextIsSticky = isStickyRef.current
+        ? sentinelBottom <= rootTop + 2
+        : sentinelBottom <= rootTop;
+
+      if (nextIsSticky === isStickyRef.current) return;
+
+      isStickyRef.current = nextIsSticky;
+      const updateState = () => setIsSticky(nextIsSticky);
+
+      if (synchronous) {
+        flushSync(updateState);
+      } else {
+        updateState();
+      }
+    };
+
+    measureFullHeader();
+    updateStickyState();
+
+    const resizeObserver = new ResizeObserver(measureFullHeader);
+    resizeObserver.observe(stickyHeader);
+    const handleScroll = () => updateStickyState(true);
+    scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      resizeObserver.disconnect();
+      scrollContainer.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   return (
     <>
       <div ref={stickySentinelRef} className="h-px" aria-hidden="true" />
       <div
+        ref={stickyHeaderRef}
         className={cn(
           "sticky top-0 z-40 flex flex-col gap-2 [overflow-anchor:none]",
           isSticky &&
@@ -289,6 +318,10 @@ export function CampaignDetailsHeader({
           )}
         </div>
       </div>
+
+      {isSticky && fullHeaderHeight > 64 && (
+        <div aria-hidden="true" style={{ height: fullHeaderHeight - 64 }} />
+      )}
 
       {(hasAccess(userLoggedInProfile, ["Manager"]) || isAdvertiser) && (
         <ProjectSingleInsight isAdvertiser={isAdvertiser} content={content} />
