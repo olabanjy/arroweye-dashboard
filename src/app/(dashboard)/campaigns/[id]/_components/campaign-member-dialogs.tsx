@@ -211,9 +211,9 @@ export function MemberInfoDialog({
       open={selectedUser !== null}
       onOpenChange={(open) => onOpenChange(open)}
     >
-      <DialogContent className="w-[calc(100vw-2rem)] rounded-2xl border-border bg-primary p-6 font-SansFlex text-zinc-950 shadow-2xl sm:max-w-[420px]">
+      <DialogContent className="w-[calc(100vw-2rem)] rounded-2xl border-zinc-200 bg-white p-6 font-SansFlex text-zinc-950 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 sm:max-w-[420px]">
         <DialogHeader>
-          <DialogTitle className="text-[12px] font-[400] uppercase tracking-[.1rem] text-[#7c7e81]">
+          <DialogTitle className="text-[12px] font-[400] uppercase tracking-[.1rem] text-[#7c7e81] dark:text-zinc-400">
             Member Information
           </DialogTitle>
           <DialogDescription className="sr-only">
@@ -223,24 +223,24 @@ export function MemberInfoDialog({
 
         {selectedUser && (
           <div className="space-y-4">
-            <p className="text-[30px] font-[600] text-[#212529]">
+            <p className="text-[30px] font-[600] text-zinc-900 dark:text-zinc-100">
               {selectedUser.fullname}
             </p>
             <div>
-              <p className="text-[16px] font-[400] text-[#212529]">Email</p>
-              <p className="text-[16px] font-[600] text-[#212529]">
+              <p className="text-[16px] font-[400] text-zinc-900 dark:text-zinc-100">Email</p>
+              <p className="text-[16px] font-[600] text-zinc-900 dark:text-zinc-100">
                 {selectedUser.staff_email}
               </p>
             </div>
             <div className="text-[16px] font-[400]">
-              <p className="text-[#212529]">Role</p>
-              <p className="font-[600] text-[#01a733]">{selectedUser.role}</p>
+              <p className="text-zinc-900 dark:text-zinc-100">Role</p>
+              <p className="font-[600] text-[#01a733] dark:text-green-400">{selectedUser.role}</p>
             </div>
-            <div className="text-[16px] font-[400] text-[#212529]">
+            <div className="text-[16px] font-[400] text-zinc-900 dark:text-zinc-100">
               <p>Member since</p>
               <p className="font-[600]">{selectedUser.member_since}</p>
             </div>
-            <div className="text-[16px] font-[400] text-[#212529]">
+            <div className="text-[16px] font-[400] text-zinc-900 dark:text-zinc-100">
               <p>Last Login</p>
               <p className="font-[600]">{selectedUser.last_login}</p>
             </div>
@@ -250,7 +250,7 @@ export function MemberInfoDialog({
                 <Button
                   type="button"
                   size="icon"
-                  className="mr-2 rounded bg-black text-white"
+                  className="mr-2 rounded bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
                   onClick={onRemoveClick}
                 >
                   <UserMinus />
@@ -261,7 +261,7 @@ export function MemberInfoDialog({
                   type="button"
                   size="icon"
                   variant="ghost"
-                  className="text-black"
+                  className="text-zinc-900 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
                   onClick={onAccessClick}
                 >
                   <SlidersHorizontal />
@@ -293,9 +293,9 @@ export function MemberAccessDialog({
 }: MemberAccessDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] rounded-2xl border-border bg-background p-6 text-zinc-950 shadow-2xl sm:max-w-[420px]">
+      <DialogContent className="w-[calc(100vw-2rem)] rounded-2xl border-zinc-200 bg-white p-6 text-zinc-950 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 sm:max-w-[420px]">
         <DialogHeader>
-          <DialogTitle className="text-[12px] font-[400] uppercase tracking-[.1rem] text-[#7c7e81]">
+          <DialogTitle className="text-[12px] font-[400] uppercase tracking-[.1rem] text-[#7c7e81] dark:text-zinc-400">
             Member Access
           </DialogTitle>
           <DialogDescription className="sr-only">
@@ -349,12 +349,12 @@ export function ConfirmActionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] rounded-2xl border-zinc-200 bg-white p-6 text-zinc-950 shadow-2xl sm:max-w-[420px]">
+      <DialogContent className="w-[calc(100vw-2rem)] rounded-2xl border-zinc-200 bg-white p-6 text-zinc-950 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 sm:max-w-[420px]">
         <DialogHeader>
-          <DialogTitle className="text-[12px] font-[500] uppercase tracking-[.16rem] text-zinc-500">
+          <DialogTitle className="text-[12px] font-[500] uppercase tracking-[.16rem] text-zinc-500 dark:text-zinc-400">
             {title}
           </DialogTitle>
-          <DialogDescription className="text-[16px] font-[400] text-zinc-950">
+          <DialogDescription className="text-[16px] font-[400] text-zinc-950 dark:text-zinc-100">
             {description}
           </DialogDescription>
         </DialogHeader>
@@ -370,7 +370,7 @@ export function ConfirmActionDialog({
           <Button
             type="button"
             variant="outline"
-            className="h-9 rounded-full border-zinc-300 px-5 text-sm font-medium !text-zinc-950 shadow-none hover:bg-zinc-100 hover:!text-zinc-950 active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-violet-500/25"
+            className="h-9 rounded-full border-zinc-300 dark:border-zinc-600 px-5 text-sm font-medium !text-zinc-950 dark:!text-zinc-100 shadow-none hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:!text-zinc-950 dark:hover:!text-zinc-100 active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-violet-500/25"
             onClick={onCancel || (() => onOpenChange(false))}
           >
             {cancelLabel}

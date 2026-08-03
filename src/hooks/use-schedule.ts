@@ -464,7 +464,9 @@ export const useSchedule = ({
     }
   };
 
-  const events = eventItem.map((item, index) => ({
+  const eventsSource = Array.isArray(eventItem) ? eventItem : [];
+
+  const events = eventsSource.map((item, index) => ({
     id: `${item?.id}-${index}`,
     title: item.title,
     start: item.start_dte,

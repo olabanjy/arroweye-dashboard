@@ -3,6 +3,7 @@ import { ContentItem } from "@/types/contents";
 import ls from "localstorage-slim";
 
 import { toast } from "react-toastify";
+import { toast as sonnerToast } from "sonner";
 
 if (typeof window !== "undefined" && window?.localStorage)
   ls.config.storage = localStorage;
@@ -175,7 +176,7 @@ export const sendProjectEmail = async (
       requireToken: true,
     });
 
-    toast.success("Email sent successfully!");
+    sonnerToast.success("Email sent successfully!");
     return response as SendEmailResponse;
   } catch (error: unknown) {
     return null;
