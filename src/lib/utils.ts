@@ -140,16 +140,16 @@ export const handleApiError = (
     }
   }
 
-  if (toastUpdateOptions) {
-    toast.update(toastUpdateOptions.toastId, {
-      render: errorMessage,
-      type: "error",
-      isLoading: false,
-      autoClose: toastUpdateOptions.autoClose || 3000,
-    });
-  } else {
-    toast.error(errorMessage);
-  }
+  // if (toastUpdateOptions) {
+  //   toast.update(toastUpdateOptions.toastId, {
+  //     render: errorMessage,
+  //     type: "error",
+  //     isLoading: false,
+  //     autoClose: toastUpdateOptions.autoClose || 3000,
+  //   });
+  // } else {
+  //   toast.error(errorMessage);
+  // }
 
   return errorMessage;
 };

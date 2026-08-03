@@ -1,36 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { FaArrowUp } from "react-icons/fa";
+import React from "react";
+import Icon from "@mdi/react";
+import { mdiArrowUp } from "@mdi/js";
+import { useScrollToTop } from "./hooks/use-scroll-to-top";
+
 const ScrollToTopButton: React.FC = () => {
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-
-  const handleScroll = () => {
-    if (window.scrollY > 300) {
-      setIsVisible(true);
-    } else {
-      setIsVisible(false);
-    }
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+  const { isVisible, scrollToTop } = useScrollToTop();
 
   return (
-    isVisible && (
-      <button
-        onClick={scrollToTop}
-        className="fixed bottom-4 right-4 bg-black text-white p-3 rounded-full shadow-lg hover:bg-orange-500 transition-all"
-      >
-        <FaArrowUp className="text-2xl" />
-      </button>
-    )
+    <button
+      onClick={scrollToTop}
+      aria-label="Scroll to top"
+      className={`fixed bottom-6 right-6 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg transition-all duration-300 transform cursor-pointer ${
+        isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-10 scale-90 pointer-events-none"
+      } hover:scale-110 active:scale-95`}
+    >
+      <Icon path={mdiArrowUp} size={1} />
+    </button>
   );
 };
 

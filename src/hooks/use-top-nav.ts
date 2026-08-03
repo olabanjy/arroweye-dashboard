@@ -1,24 +1,82 @@
-import { useState, useEffect } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { getLoggedInUser } from "@/services";
+
+const notificationTypeAliases: Record<string, string> = {
+  campaign: "campaigns",
+  campaigns: "campaigns",
+  milestone: "milestones",
+  milestones: "milestones",
+  security: "security",
+  drop: "assets",
+  drops: "assets",
+  asset: "assets",
+  assets: "assets",
+  payment: "payments",
+  payments: "payments",
+};
+
+const normalizeNotificationType = (type: unknown) => {
+  const normalizedType = String(type ?? "").trim().toLowerCase();
+  return notificationTypeAliases[normalizedType] ?? normalizedType;
+};
 
 export const useTopNav = () => {
   const router = useRouter();
-  const [notifications, setNotifications] = useState<any>({
-    campaigns: [],
-    milestones: [],
-    security: [],
-    assets: [],
-    payments: [],
+  const {
+    data: loggedInUser,
+    isFetching: notificationLoading,
+    refetch: refetchNotifications,
+  } = useQuery<any>({
+    queryKey: ["user", "notifications"],
+    queryFn: getLoggedInUser,
+    staleTime: 60_000,
   });
   const [notificationScrolled, setNotificationScrolled] = useState(false);
-  const [notificationLoading, setNotificationLoading] = useState(false);
   const [allNotificationsRead, setAllNotificationsRead] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeMainTab, setActiveMainTab] = useState("updates");
   const [activeInnerTab, setActiveInnerTab] = useState("campaign");
   const [hasOpenedNotifications, setHasOpenedNotifications] = useState(false);
   const [knownUnreadIds, setKnownUnreadIds] = useState<Set<number>>(new Set());
+
+  const notifications = useMemo(
+    () =>
+      (loggedInUser?.notifications ?? []).reduce(
+        (grouped: any, notification: any) => {
+          const type = normalizeNotificationType(notification.type);
+
+          if (!type) return grouped;
+
+          grouped[type] = [...(grouped[type] || []), notification];
+          return grouped;
+        },
+        {
+          campaigns: [],
+          milestones: [],
+          security: [],
+          assets: [],
+          payments: [],
+        },
+      ),
+    [loggedInUser],
+  );
+
+  const refreshNotifications = useCallback<Dispatch<SetStateAction<boolean>>>(
+    (value) => {
+      setNotificationScrolled(value);
+      void refetchNotifications();
+    },
+    [refetchNotifications],
+  );
 
   const setNotificationsOpen = (open: boolean) => {
     setIsSidebarOpen(open);
@@ -42,33 +100,8 @@ export const useTopNav = () => {
   };
 
   const triggerRefresh = () => {
-    setNotificationScrolled((prev) => !prev);
+    refreshNotifications((prev) => !prev);
   };
-
-  useEffect(() => {
-    setNotificationLoading(true);
-    getLoggedInUser().then((user) => {
-      const groupedNotifications = user.notifications.reduce(
-        (acc: any, notification: any) => {
-          const type = notification.type.toLowerCase();
-          return {
-            ...acc,
-            [type]: [...(acc[type] || []), notification],
-          };
-        },
-        {
-          campaigns: [],
-          milestones: [],
-          security: [],
-          assets: [],
-          payments: [],
-        },
-      );
-
-      setNotifications(groupedNotifications);
-      setNotificationLoading(false);
-    });
-  }, [notificationScrolled]);
 
   const areAllItemsReadInAllArrays = (notification: any): boolean => {
     if (!notification) {
@@ -168,7 +201,7 @@ export const useTopNav = () => {
     handleMainTabClick,
     handleInnerTabClick,
     triggerRefresh,
-    setNotificationScrolled,
+    setNotificationScrolled: refreshNotifications,
     hasOpenedNotifications,
   };
 };

@@ -183,7 +183,7 @@ const CampaignNotification: React.FC<any> = ({
 
   return (
     <div>
-      <div className="space-y-[20px]">
+      <div className="flex flex-col">
         {!!notification && notification.length > 0 ? (
           notification?.map((item: any) => {
             return (
@@ -205,7 +205,9 @@ const CampaignNotification: React.FC<any> = ({
             );
           })
         ) : (
-          <NotificationEmptyState category="campaign" />
+          <div className="p-6">
+            <NotificationEmptyState category="campaign" />
+          </div>
         )}
       </div>
     </div>

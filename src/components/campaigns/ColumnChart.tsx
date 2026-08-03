@@ -32,15 +32,29 @@ interface InsightChartProps<TFilters extends ChartFilterState> {
 }
 
 interface ChartDataItem {
+  segment: string;
   name: string;
   value: number;
   fill: string;
   stroke: string;
+  color: string;
+  darkColor: string;
 }
 
 const generateDynamicColor = (index: number) => {
   return `var(--chart-${(index % 5) + 1})`;
 };
+
+const getDatasetColor = (colors: unknown, index: number, fallback: string) => {
+  if (Array.isArray(colors) && typeof colors[index] === "string") {
+    return colors[index];
+  }
+
+  return typeof colors === "string" ? colors : fallback;
+};
+
+const getTranslucentChartColor = (color: string) =>
+  `color-mix(in srgb, ${color} 40%, transparent)`;
 
 const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
   title,
@@ -57,20 +71,45 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
     if (!chartData?.labels || !chartData.datasets[0].data) return [];
 
     // Filter out entries with zero values
+    const dataset = chartData.datasets[0];
+
     return chartData.labels
-      .map((label, index) => ({
-        name: label,
-        value: chartData.datasets[0].data[index],
-        fill: generateDynamicColor(index),
-        stroke: generateDynamicColor(index),
-      }))
+      .map((label, index) => {
+        const segment = `segment-${index}`;
+        const darkColor = generateDynamicColor(index);
+
+        return {
+          segment,
+          name: label,
+          value: dataset.data[index],
+          fill: `var(--color-${segment})`,
+          stroke: `var(--color-${segment}-border)`,
+          color: getDatasetColor(dataset.backgroundColor, index, darkColor),
+          darkColor,
+        };
+      })
       .filter((item) => item.value > 0); // Only include items with values greater than 0
   };
 
   const data = formatDataForRecharts();
-  const chartConfig = {
-    value: { label: title, color: "var(--chart-1)" },
-  } satisfies ChartConfig;
+  const chartConfig = data.reduce<ChartConfig>(
+    (config, item) => ({
+      ...config,
+      [item.segment]: {
+        theme: {
+          light: getTranslucentChartColor(item.color),
+          dark: item.darkColor,
+        },
+      },
+      [`${item.segment}-border`]: {
+        theme: {
+          light: item.color,
+          dark: item.darkColor,
+        },
+      },
+    }),
+    { value: { label: title, color: "var(--chart-1)" } },
+  );
 
   const weeksOptions = [
     { value: "", label: "Weeks" },

@@ -28,8 +28,8 @@ export default function MilestoneNotificationCard({
       highlight={highlight}
       actions={actions}
       iconClass={iconClass}
-      icon={<Star className="size-5" />}
-      iconContainerClassName="bg-orange-100 text-orange-600"
+      icon={<Star className="size-[18px] fill-orange-500 text-orange-500" />}
+      iconContainerClassName="bg-amber-100/50 dark:bg-amber-950/20"
       read={read}
       disabledActions={["Manage", "Pay", "Delete"]}
     />
