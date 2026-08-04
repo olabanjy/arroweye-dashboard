@@ -1,6 +1,5 @@
-import { Star } from "lucide-react";
-
 import { NotificationCard, type NotificationAction } from "./NotificationCard";
+import { notificationIconConfig } from "./notification-icon-config";
 
 interface MilestoneNotificationCardProps {
   timeAgo: string;
@@ -21,6 +20,8 @@ export default function MilestoneNotificationCard({
   iconClass,
   read,
 }: MilestoneNotificationCardProps) {
+  const { Icon, containerClassName } = notificationIconConfig.milestones;
+
   return (
     <NotificationCard
       timeAgo={timeAgo}
@@ -28,8 +29,8 @@ export default function MilestoneNotificationCard({
       highlight={highlight}
       actions={actions}
       iconClass={iconClass}
-      icon={<Star className="size-[18px] fill-orange-500 text-orange-500" />}
-      iconContainerClassName="bg-amber-100/50 dark:bg-amber-950/20"
+      icon={<Icon className="size-5" />}
+      iconContainerClassName={containerClassName}
       read={read}
       disabledActions={["Manage", "Pay", "Delete"]}
     />

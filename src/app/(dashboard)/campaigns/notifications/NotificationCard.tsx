@@ -1,16 +1,11 @@
 import type { ReactNode } from "react";
-import {
-  mdiCash,
-  mdiFolderOpenOutline,
-  mdiPlayCircleOutline,
-  mdiShieldCheckOutline,
-} from "@mdi/js";
 import MdiIcon from "@mdi/react";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { mdiNotificationIcons } from "./notification-icon-config";
 
 export interface NotificationAction {
   type: string;
@@ -31,29 +26,22 @@ interface NotificationCardProps {
   onAction?: (action: NotificationAction, url: string) => void;
 }
 
-const notificationIcons: Record<string, string> = {
-  "mdi-album": mdiPlayCircleOutline,
-  "mdi-cash": mdiCash,
-  "mdi-folder-open-outline": mdiFolderOpenOutline,
-  "mdi-shield-check-outline": mdiShieldCheckOutline,
-};
-
-const getMdiIcon = (value?: string) => {
-  if (!value) return undefined;
+const getMdiIcon = (value?: unknown) => {
+  if (typeof value !== "string" || !value.trim()) return undefined;
 
   const parts = value.trim().split(/\s+/);
   const name = parts.find((part) => part.startsWith("mdi-"));
 
-  if (!name || !notificationIcons[name]) return undefined;
+  if (!name || !mdiNotificationIcons[name]) return undefined;
 
   return {
-    path: notificationIcons[name],
-    color: parts.find((part) => /^#[0-9a-f]{3,8}$/i.test(part)),
+    path: mdiNotificationIcons[name],
+    backgroundColor: parts.find((part) => /^#[0-9a-f]{3,8}$/i.test(part)),
   };
 };
 
-const isUrl = (str?: string) => {
-  if (!str) return false;
+const isUrl = (str?: unknown) => {
+  if (typeof str !== "string" || !str) return false;
   return (
     str.startsWith("http") ||
     str.startsWith("/") ||
@@ -135,14 +123,18 @@ export function NotificationCard({
             "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl",
             iconContainerClassName,
           )}
-          style={mdiIcon?.color ? { color: mdiIcon.color } : undefined}
+          style={
+            mdiIcon?.backgroundColor
+              ? { backgroundColor: mdiIcon.backgroundColor }
+              : undefined
+          } 
         >
           {mdiIcon ? <MdiIcon path={mdiIcon.path} size={0.8} /> : icon}
         </div>
       )}
 
       <div className="min-w-0 flex-1 space-y-1">
-        <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-zinc-500">
+        <p className="text-sm font-bold uppercase tracking-wider text-neutral-400 dark:text-zinc-500">
           {parseTimeAgo(timeAgo)}
         </p>
         <p className="text-[13px] leading-[18px] text-neutral-800 dark:text-zinc-200">

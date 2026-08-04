@@ -1,6 +1,5 @@
-import { ChartNoAxesCombined, PlayCircle } from "lucide-react";
-
 import { NotificationCard, type NotificationAction } from "./NotificationCard";
+import { getCampaignIconConfig } from "./notification-icon-config";
 
 interface FirstPlayNotificationCardProps {
   timeAgo: string;
@@ -25,7 +24,8 @@ export default function FirstPlayNotificationCard({
   read,
 }: FirstPlayNotificationCardProps) {
   const isSpinNotification = iconClass === "mdi mdi-album #088cff";
-  const isSocialMediaUpdate = /social media data/i.test(message);
+  const campaignIcon = getCampaignIconConfig(message);
+  const { Icon, containerClassName, ignoreApiIcon } = campaignIcon;
 
   return (
     <NotificationCard
@@ -33,15 +33,9 @@ export default function FirstPlayNotificationCard({
       message={message}
       highlight={highlight}
       actions={actions}
-      iconClass={iconClass}
-      icon={
-        isSocialMediaUpdate ? (
-          <ChartNoAxesCombined className="size-5" />
-        ) : (
-          <PlayCircle className="size-5" />
-        )
-      }
-      iconContainerClassName="bg-amber-100 text-amber-700"
+      iconClass={ignoreApiIcon ? undefined : iconClass}
+      icon={<Icon className="size-5" />}
+      iconContainerClassName={containerClassName}
       read={read}
       getActionUrl={(action) =>
         isSpinNotification && ["Share", "View"].includes(action.type)

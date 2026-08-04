@@ -1,6 +1,5 @@
-import { UserRound } from "lucide-react";
-
 import { NotificationCard, type NotificationAction } from "./NotificationCard";
+import { notificationIconConfig } from "./notification-icon-config";
 
 interface SecurityNotificationCardProps {
   timeAgo: string;
@@ -21,6 +20,8 @@ export default function SecurityNotificationCard({
   iconClass,
   read,
 }: SecurityNotificationCardProps) {
+  const { Icon, containerClassName } = notificationIconConfig.security;
+
   return (
     <NotificationCard
       timeAgo={timeAgo}
@@ -28,8 +29,8 @@ export default function SecurityNotificationCard({
       highlight={highlight}
       actions={actions}
       iconClass={iconClass}
-      icon={<UserRound className="size-5" />}
-      iconContainerClassName="bg-muted text-foreground"
+      icon={<Icon className="size-5" />}
+      iconContainerClassName={containerClassName}
       read={read}
     />
   );

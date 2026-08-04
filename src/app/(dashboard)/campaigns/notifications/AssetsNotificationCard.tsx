@@ -1,6 +1,5 @@
-import { FolderOpen } from "lucide-react";
-
 import { NotificationCard, type NotificationAction } from "./NotificationCard";
+import { notificationIconConfig } from "./notification-icon-config";
 
 interface AssetsNotificationCardProps {
   timeAgo: string;
@@ -21,6 +20,8 @@ export default function AssetsNotificationCard({
   iconClass,
   read,
 }: AssetsNotificationCardProps) {
+  const { Icon, containerClassName } = notificationIconConfig.assets;
+
   return (
     <NotificationCard
       timeAgo={timeAgo}
@@ -28,8 +29,8 @@ export default function AssetsNotificationCard({
       highlight={highlight}
       actions={actions}
       iconClass={iconClass}
-      icon={<FolderOpen className="size-5" />}
-      iconContainerClassName="bg-lime-200 text-green-700"
+      icon={<Icon className="size-5" />}
+      iconContainerClassName={containerClassName}
       read={read}
       disabledActions={["Manage", "Pay", "Delete"]}
     />

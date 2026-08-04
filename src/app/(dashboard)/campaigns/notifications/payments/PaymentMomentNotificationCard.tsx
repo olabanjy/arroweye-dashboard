@@ -1,6 +1,5 @@
-import { FileText } from "lucide-react";
-
 import { NotificationCard, type NotificationAction } from "../NotificationCard";
+import { notificationIconConfig } from "../notification-icon-config";
 
 interface PaymentMomentNotificationCardProps {
   timeAgo: string;
@@ -21,6 +20,8 @@ export default function PaymentMomentNotificationCard({
   iconClass,
   read,
 }: PaymentMomentNotificationCardProps) {
+  const { Icon, containerClassName } = notificationIconConfig.payments;
+
   return (
     <NotificationCard
       timeAgo={timeAgo}
@@ -28,8 +29,8 @@ export default function PaymentMomentNotificationCard({
       highlight={highlight}
       actions={actions}
       iconClass={iconClass}
-      icon={<FileText className="size-5" />}
-      iconContainerClassName="bg-violet-100 text-violet-600 dark:bg-violet-950"
+      icon={<Icon className="size-5" />}
+      iconContainerClassName={containerClassName}
       read={read}
       disabledActions={["Manage", "Pay", "Delete"]}
     />
