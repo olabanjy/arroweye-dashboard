@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import ls from "localstorage-slim";
-import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
 import {
   getCampaignClusters,
@@ -14,6 +13,7 @@ import {
 } from "@/services";
 import { useIsrcUpcValidator } from "./use-isrc-upc-validator";
 import { DJCardProps } from "@/components/campaigns/Djcard";
+import { toast } from "sonner";
 
 export interface DistrictEntry {
   name: string;
@@ -402,34 +402,20 @@ export const useCustomSetup = () => {
       });
 
       if (!result) {
-        toast.update(createDraftToast, {
-          render: "Campaign Creation Failed, kindly try again",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
+        toast.error("Campaign Creation Failed, kindly try again");
         setLoadingCampaignCreation(false);
         return;
       }
       setDraftId(result?.id ?? null);
-      toast.update(createDraftToast, {
-        render:
-          "Campaign Created Successfully, feel free to edit selection before Launch",
-        type: "info",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toast.success(
+        "Campaign Created Successfully, feel free to edit selection before Launch",
+      );
       setEditBeforeLaunchModal(true);
       setHasCreatedDraft(true);
       setLoadingCampaignCreation(false);
     } catch (err) {
       console.error("Error submitting form:", err);
-      toast.update(createDraftToast, {
-        render: "Campaign Created Failed, kindly try again",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toast.error("Campaign Created Failed, kindly try again");
       setLoadingCampaignCreation(false);
     }
   }, [campaignSongDetails, startDate]);
@@ -441,12 +427,7 @@ export const useCustomSetup = () => {
     const campaignId = draftId ?? fallbackDraft?.id;
 
     if (!campaignId) {
-      toast.update(createToast, {
-        render: "No campaign draft found. Please create the campaign first.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toast.info("No campaign draft found. Please create the campaign first.");
       setLoadingCampaignCreation(false);
       return;
     }
@@ -460,21 +441,11 @@ export const useCustomSetup = () => {
     try {
       const result = await launchCampaignFully(campaignId, payload);
       if (!result) {
-        toast.update(createToast, {
-          render: "Campaign Creation Failed, kindly try again",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
+        toast.error("Campaign Creation Failed, kindly try again");
         setLoadingCampaignCreation(false);
         return;
       }
-      toast.update(createToast, {
-        render: "Campaign Launched Successfully",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toast.success("Campaign Launched Successfully");
       setLoadingCampaignCreation(false);
       setEditBeforeLaunchModal(false);
       setTimeout(() => {
@@ -482,12 +453,7 @@ export const useCustomSetup = () => {
       }, 3000);
     } catch (err) {
       console.error("Error submitting form:", err);
-      toast.update(createToast, {
-        render: "Campaign Launch Failed, kindly try again",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toast.error("Campaign Launch Failed, kindly try again");
       setLoadingCampaignCreation(false);
     }
   }, [draftId, selectedDistricts, djSpins, buildCampaignPayload, router]);

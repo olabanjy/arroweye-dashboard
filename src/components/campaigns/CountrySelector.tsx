@@ -1,6 +1,6 @@
 import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import { X } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 // List of countries - you can expand this
 const COUNTRIES = [
@@ -274,7 +274,7 @@ const CountrySelector: FC<CountrySelectorProps> = ({
 
   const removeCountry = (countryToRemove: string) => {
     setSelectedCountries(
-      selectedCountries.filter((country) => country !== countryToRemove)
+      selectedCountries.filter((country) => country !== countryToRemove),
     );
   };
 
@@ -289,7 +289,7 @@ const CountrySelector: FC<CountrySelectorProps> = ({
           Select a country
         </option>
         {COUNTRIES.filter(
-          (country) => !selectedCountries?.includes(country.label)
+          (country) => !selectedCountries?.includes(country.label),
         )?.map((country) => (
           <option key={country.code} value={country.label}>
             {country.label}

@@ -3,9 +3,9 @@ import { Input } from "@/components/ui/input";
 import { CreateMedia } from "@/services";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
 import axios from "axios";
 import { SelectInput } from "@/components/ui/selectinput";
+import { toast } from "sonner";
 
 interface FormData {
   channel: string;
