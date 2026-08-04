@@ -1,7 +1,7 @@
 import apiRequest from "@/Server/Api";
 import { ContentItem } from "@/types/contents";
 import ls from "localstorage-slim";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 if (typeof window !== "undefined" && window?.localStorage)
   ls.config.storage = localStorage;
@@ -272,7 +272,6 @@ export const getCampaignWallet = async (): Promise<any | null> => {
 export const fundCampaignWallet = async (
   payload: FundWalletPayload,
 ): Promise<FundWalletResponse | null> => {
-  const createToast = toast.loading("Initiating Payment...");
   try {
     const result = await apiRequest<FundWalletResponse>({
       method: "POST",
@@ -281,12 +280,7 @@ export const fundCampaignWallet = async (
       requireToken: true,
     });
 
-    toast.update(createToast, {
-      render: "Payment Initiated Successfully",
-      type: "success",
-      isLoading: false,
-      autoClose: 3000,
-    });
+    toast.info("Payment Initiated Successfully");
     console.log("PAYMENT RESPONSE", result);
     return result;
   } catch (error: unknown) {

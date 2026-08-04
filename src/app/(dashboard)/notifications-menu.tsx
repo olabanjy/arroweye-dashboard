@@ -22,7 +22,7 @@ type NotificationsMenuProps = {
   triggerClassName?: string;
   triggerTabIndex?: number;
 };
-
+ 
 const NotificationsMenu = ({
   triggerClassName,
   triggerTabIndex,

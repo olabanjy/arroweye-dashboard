@@ -6,7 +6,9 @@ import { TbCurrencyDollar } from "react-icons/tb";
 import { getInvoice, initializePayment } from "@/services";
 import { ContentItem } from "@/types/contents";
 import Link from "next/link";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+import { LoaderCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Invoice = ({ amountFilter, statusFilter, searchText }: any) => {
   const headers = [
@@ -56,6 +58,10 @@ const Invoice = ({ amountFilter, statusFilter, searchText }: any) => {
   const [email, setEmail] = useState("");
   const [invoiceId, setInvoiceId] = useState("");
   const [reference, setReference] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [initializingInvoiceId, setInitializingInvoiceId] = useState<
+    number | string | null
+  >(null);
 
   const getCurrencySymbol = (currency: string) => {
     switch (currency) {
@@ -71,10 +77,15 @@ const Invoice = ({ amountFilter, statusFilter, searchText }: any) => {
   };
 
   useEffect(() => {
-    getInvoice().then((fetchedContent) => {
-      console.log("fetchedContent", fetchedContent);
-      setContent(fetchedContent);
-    });
+    setIsLoading(true);
+    getInvoice()
+      .then((fetchedContent) => {
+        console.log("fetchedContent", fetchedContent);
+        setContent(fetchedContent);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   // Apply filters whenever content, amountFilter, statusFilter, or searchText changes
@@ -143,7 +154,7 @@ const Invoice = ({ amountFilter, statusFilter, searchText }: any) => {
     );
 
     if (!popup || popup.closed || typeof popup.closed === "undefined") {
-      toast.warning(
+      toast.error(
         "Popup blocked! Please allow popups for this site and try again.",
       );
       return;
@@ -163,116 +174,146 @@ const Invoice = ({ amountFilter, statusFilter, searchText }: any) => {
     }, 900000);
   };
 
-  const toggleStatus = (item: any) => {
-    const paymentToast = toast.loading("Initializing payment...");
+  const toggleStatus = async (item: any) => {
+    if (!item?.id) return;
 
+    setInitializingInvoiceId(item.id);
     const invoiceReference = generateInvoiceReference();
     const payload = {
       email: item?.project?.subvendor?.owner_email,
       reference: invoiceReference,
       invoice_id: item?.id,
     };
-    initializePayment(payload)
-      .then((response) => {
-        console.log(response);
+
+    try {
+      const response = await initializePayment(payload);
+      console.log(response);
+
+      if (response?.authorization_url) {
         openPaystackPopup(response.authorization_url);
-        toast.update(paymentToast, {
-          render: "Payment generated",
-          isLoading: false,
-          type: "success",
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.update(paymentToast, {
-          render: "Error occured",
-          isLoading: false,
-          type: "error",
-        });
-      });
+        toast.info("Payment generated");
+      } else {
+        toast.error("Error occurred");
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Error occurred");
+    } finally {
+      setInitializingInvoiceId(null);
+    }
   };
 
-  const rows = (filteredContent || [])
-    .slice()
-    .reverse()
-    .map((item: any, index) => ({
-      data: [
-        {
-          content: (
-            <div key={`manage-button-${index}`} className=" text-start">
-              <Link href={`/payments/${item.id}`}>{item?.project?.title}</Link>
-            </div>
-          ),
-          className: "bg-[#2ea879] text-white text-center ",
-        },
-        { content: <div className=" text-start">{item?.po_code} </div> },
-        { content: <div className=" text-start">{item?.invoice_type} </div> },
-        {
-          content: (
-            <div className=" text-start">
-              {item?.project?.subvendor?.organization_name}
-            </div>
-          ),
-        },
-        {
-          content: (
-            <div className="text-start">
-              {item?.project?.artist_name ||
-                item?.project?.subvendor?.organization_name}
-            </div>
-          ),
-        },
-        {
-          content: (
-            <div className=" text-start">{item?.created?.slice(0, 10)}</div>
-          ),
-        },
-        {
-          content: (
-            <div className=" text-start">{`${getCurrencySymbol(item?.currency ?? "")}${item.total?.toLocaleString()}`}</div>
-          ),
-        },
-        {
-          content: (
-            <div
-              // onClick={() => item.id && toggleStatus(item.id)}
-              className={`cursor-pointer text-center ${item.status !== "Unpaid" && "text-[#000000]"}`}
-            >
-              {item.status}
-            </div>
-          ),
-          className: ` text-white text-center border-none ${item.status === "Unpaid" ? "bg-[#ff0000]" : " bg-[#90ee90] text-[#000000]"}`,
-        },
-        {
-          content: (
-            <div
-              key={`action-buttons-${index}`}
-              className="flex justify-center gap-2"
-            >
-              {item.status === "Unpaid" ? (
-                <div
-                  onClick={() => {
-                    setInvoiceId(item?.id);
-                    setEmail(item?.project?.subvendor?.owner_email);
-                    item.id && toggleStatus(item);
-                  }}
-                  className="p-[12px]  border border-[#2ea879] bg-[#ffffff] text-[#2ea879] rounded-full cursor-pointer"
-                >
-                  <TbCurrencyDollar size={16} />
+  const loadingRows = Array.from({ length: 5 }, () => ({
+    data: headers.map((_, cellIndex) => ({
+      content: (
+        <Skeleton
+          className={`mx-auto h-4 ${
+            cellIndex === 0
+              ? "w-[150px]"
+              : cellIndex === headers.length - 1
+                ? "h-8 w-8 rounded-full"
+                : "w-[90px]"
+          }`}
+        />
+      ),
+      className: "border bg-card dark:bg-card",
+    })),
+  }));
+
+  const rows = isLoading
+    ? loadingRows
+    : (filteredContent || [])
+        .slice()
+        .reverse()
+        .map((item: any, index) => ({
+          data: [
+            {
+              content: (
+                <div key={`manage-button-${index}`} className=" text-start">
+                  <Link href={`/payments/${item.id}`}>
+                    {item?.project?.title}
+                  </Link>
                 </div>
-              ) : (
+              ),
+              className:
+                "bg-[#2ea879] text-white text-center dark:bg-[#17954c]",
+            },
+            { content: <div className=" text-start">{item?.po_code} </div> },
+            {
+              content: <div className=" text-start">{item?.invoice_type} </div>,
+            },
+            {
+              content: (
+                <div className=" text-start">
+                  {item?.project?.subvendor?.organization_name}
+                </div>
+              ),
+            },
+            {
+              content: (
+                <div className="text-start">
+                  {item?.project?.artist_name ||
+                    item?.project?.subvendor?.organization_name}
+                </div>
+              ),
+            },
+            {
+              content: (
+                <div className=" text-start">{item?.created?.slice(0, 10)}</div>
+              ),
+            },
+            {
+              content: (
+                <div className=" text-start">{`${getCurrencySymbol(item?.currency ?? "")}${item.total?.toLocaleString()}`}</div>
+              ),
+            },
+            {
+              content: (
                 <div
                   // onClick={() => item.id && toggleStatus(item.id)}
-                  className="p-[16px] text-[#000000] cursor-pointer"
+                  className="cursor-pointer text-center"
                 >
-                  <BsTrash size={16} />
+                  {item.status}
                 </div>
-              )}
-            </div>
-          ),
-        },
-      ],
-    }));
+              ),
+              className: ` text-white text-center border-none ${item.status === "Unpaid" ? "bg-destructive text-destructive-foreground" : " bg-emerald-100 text-emerald-950 dark:bg-emerald-500/20 dark:text-emerald-200"}`,
+            },
+            {
+              content: (
+                <div
+                  key={`action-buttons-${index}`}
+                  className="flex justify-center gap-2"
+                >
+                  {item.status === "Unpaid" ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setInvoiceId(item?.id);
+                        setEmail(item?.project?.subvendor?.owner_email);
+                        item.id && toggleStatus(item);
+                      }}
+                      disabled={initializingInvoiceId === item.id}
+                      className="p-[12px]  border border-[#2ea879] bg-card text-[#2ea879] rounded-full cursor-pointer disabled:cursor-wait disabled:opacity-70 dark:border-[#31bc86] dark:text-[#73d79c]"
+                    >
+                      {initializingInvoiceId === item.id ? (
+                        <LoaderCircle size={16} className="animate-spin" />
+                      ) : (
+                        <TbCurrencyDollar size={16} />
+                      )}
+                    </button>
+                  ) : (
+                    <div
+                      // onClick={() => item.id && toggleStatus(item.id)}
+                      className="p-[16px] text-foreground cursor-pointer"
+                    >
+                      <BsTrash size={16} />
+                    </div>
+                  )}
+                </div>
+              ),
+            },
+          ],
+        }));
 
   return (
     <div className="">
@@ -283,7 +324,9 @@ const Invoice = ({ amountFilter, statusFilter, searchText }: any) => {
         emptyState={
           <div className="flex h-[50vh] flex-col items-center justify-center text-center">
             <div className="my-[32px]">
-              <p className="text-[20px] font-[600] text-grey-400">No Data</p>
+              <p className="text-[20px] font-[600] text-muted-foreground">
+                No Data
+              </p>
             </div>
           </div>
         }

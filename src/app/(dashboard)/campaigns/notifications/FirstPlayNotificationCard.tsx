@@ -1,4 +1,4 @@
-import { PlayCircle } from "lucide-react";
+import { ChartNoAxesCombined, PlayCircle } from "lucide-react";
 
 import { NotificationCard, type NotificationAction } from "./NotificationCard";
 
@@ -25,6 +25,7 @@ export default function FirstPlayNotificationCard({
   read,
 }: FirstPlayNotificationCardProps) {
   const isSpinNotification = iconClass === "mdi mdi-album #088cff";
+  const isSocialMediaUpdate = /social media data/i.test(message);
 
   return (
     <NotificationCard
@@ -33,7 +34,13 @@ export default function FirstPlayNotificationCard({
       highlight={highlight}
       actions={actions}
       iconClass={iconClass}
-      icon={<PlayCircle className="size-5" />}
+      icon={
+        isSocialMediaUpdate ? (
+          <ChartNoAxesCombined className="size-5" />
+        ) : (
+          <PlayCircle className="size-5" />
+        )
+      }
       iconContainerClassName="bg-amber-100 text-amber-700"
       read={read}
       getActionUrl={(action) =>

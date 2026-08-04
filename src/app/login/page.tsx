@@ -7,14 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 
+const LOGIN_BACKGROUND = "/assets/image%20(4).webp";
+
 const Login = () => {
   const {
     isLoginLoading,
     isOtpLoading,
     toggleNotifications,
     setToggleNotifications,
-    randomBgImage,
-    isBlurred,
     loginFormData,
     otpFormData,
     loginErrors,
@@ -28,43 +28,44 @@ const Login = () => {
   } = useLogin();
 
   return (
-    <main className="relative flex min-h-svh items-center justify-center overflow-hidden bg-background px-4 py-8 text-foreground">
-      {randomBgImage && (
-        <Image
-          src={randomBgImage}
-          alt="background"
-          fill
-          priority
-          sizes="100vw"
-          className={`absolute top-0 left-0 w-full h-full object-cover transition-all duration-500 ${
-            isBlurred ? "blur-[10px]" : "blur-none"
-          }`}
-        />
-      )}
-      <div className="absolute inset-0 bg-background/75 backdrop-blur-[2px] dark:bg-background/70" />
-      <div className="relative z-10 w-full max-w-6xl font-SansFlex">
-        <div className="grid min-h-[min(680px,calc(100svh-4rem))] place-items-center gap-8 lg:flex lg:items-center lg:justify-between">
+    <main className="relative flex min-h-svh items-center justify-center overflow-hidden bg-[#1c1611] px-5 py-8 font-SansFlex text-white">
+      <Image
+        src={LOGIN_BACKGROUND}
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="absolute inset-0 size-full object-cover"
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.08)_46%,rgba(0,0,0,0.22)_100%),linear-gradient(180deg,rgba(0,0,0,0.04)_0%,rgba(0,0,0,0.2)_100%)]" />
+      <div className="relative z-10 w-full max-w-[1355px]">
+        <div className="grid min-h-[min(680px,calc(100svh-4rem))] place-items-center gap-10 lg:flex lg:items-center lg:justify-between">
           <Image
-            src="https://res.cloudinary.com/dyueswnzk/image/upload/v1759782808/aestudio-new_usstzj.svg"
+            src="/aestudio.svg"
             alt="Arroweye Studio"
-            width={230}
-            height={87}
+            width={238}
+            height={79}
             priority
+            className="h-auto w-[238px] drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)] sm:w-[260px] lg:w-[238px]"
           />
-          <section className="w-full max-w-[400px] overflow-hidden rounded-[10px] border border-border bg-card pb-10 text-card-foreground shadow-xl">
-            <div className="bg-primary px-[27px] py-[23px] text-primary-foreground">
-              <div className="flex items-center gap-[14px]">
-                <Info size={22} strokeWidth={2} />
-                <p className="text-[16px] font-medium">
+          <section className="w-full max-w-[450px] overflow-hidden rounded-[10px] bg-white pb-[66px] text-[#111111] shadow-[0_20px_60px_rgba(0,0,0,0.24)]">
+            <div className="bg-[#287BE5] px-[32px] py-[28px] text-white">
+              <div className="flex items-center gap-[18px]">
+                <Info
+                  size={24}
+                  strokeWidth={2.5}
+                  className="shrink-0 text-white"
+                />
+                <p className="text-[20px] font-bold leading-none text-white">
                   Please verify your credentials
                 </p>
               </div>
             </div>
 
-            <div className="w-full mx-auto px-[27px]">
+            <div className="mx-auto w-full px-[32px]">
               {!isOtpSent ? (
                 <form
-                  className="mt-[20px] w-full space-y-5"
+                  className="mt-[34px] w-full space-y-[38px]"
                   onSubmit={handleLoginSubmit}
                 >
                   <Input
@@ -75,21 +76,21 @@ const Login = () => {
                     value={loginFormData.email}
                     onChange={handleLoginInputChange}
                     error={loginErrors.email}
-                    className="login-input-themed w-full border-input bg-background text-center text-[15px] font-medium text-foreground placeholder:text-muted-foreground"
+                    className="h-[62px] w-full border-[#111111] bg-white text-center text-[16px] font-bold text-[#111111] shadow-none outline-none placeholder:text-[#A9AFBA] placeholder:opacity-100 focus:border-[#111111] focus:ring-0 dark:border-[#111111] dark:bg-white dark:text-[#111111]"
                   />
-                  <div className="flex items-center justify-between gap-4">
-                    <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                  <div className="flex items-center justify-end gap-5">
+                    {/* <label className="flex items-center gap-[14px] text-[16px] font-medium text-[#6E6E73]">
                       <Switch
-                        size="sm"
                         checked={toggleNotifications}
                         onCheckedChange={setToggleNotifications}
+                        className="h-[34px] w-[61px] border-0 bg-[#D9DDE3] data-[state=checked]:bg-[#287BE5] data-[state=unchecked]:bg-[#D9DDE3] dark:data-[state=checked]:bg-[#287BE5] dark:data-[state=unchecked]:bg-[#D9DDE3] [&_[data-slot=switch-thumb]]:size-[24px] [&_[data-slot=switch-thumb]]:bg-white [&_[data-slot=switch-thumb]]:data-[state=checked]:translate-x-[27px] [&_[data-slot=switch-thumb]]:data-[state=unchecked]:translate-x-[4px]"
                       />
-                      Remember email
-                    </label>
+                      Store Credentials
+                    </label> */}
                     <Button
                       disabled={isLoginLoading}
                       size="lg"
-                      className="h-10 rounded-full px-5 font-bold"
+                      className="h-[54px] rounded-full bg-black px-[30px] text-[16px] font-bold leading-none text-white hover:bg-black/85 disabled:bg-black disabled:text-white disabled:opacity-60"
                     >
                       {isLoginLoading ? "Sending" : "Send OTP"}
                     </Button>
@@ -97,7 +98,7 @@ const Login = () => {
                 </form>
               ) : (
                 <form
-                  className="mt-[20px] space-y-[20px] w-full"
+                  className="mt-[34px] w-full space-y-[38px]"
                   onSubmit={handleOtpSubmit}
                 >
                   <Input
@@ -108,13 +109,13 @@ const Login = () => {
                     value={otpFormData.otp}
                     onChange={handleOtpInputChange}
                     error={otpErrors.otp}
-                    className="login-input-themed w-full border-input bg-background text-center font-medium text-foreground placeholder:text-muted-foreground"
+                    className="h-[62px] w-full border-[#111111] bg-white text-center text-[16px] font-bold text-[#111111] shadow-none outline-none placeholder:text-[#A9AFBA] placeholder:opacity-100 focus:border-[#111111] focus:ring-0 dark:border-[#111111] dark:bg-white dark:text-[#111111]"
                   />
 
                   <div className="flex items-center justify-between gap-4">
                     <button
                       type="button"
-                      className="flex items-center gap-[6px] text-sm font-medium text-primary transition-colors hover:text-primary/80"
+                      className="flex items-center gap-[6px] text-[16px] font-medium text-[#287BE5] transition-colors hover:text-[#1768ce]"
                       onClick={() => setIsOtpSent(false)}
                     >
                       <RotateCcw size={16} strokeWidth={2} />
@@ -123,7 +124,7 @@ const Login = () => {
                     <Button
                       disabled={isOtpLoading}
                       size="lg"
-                      className="h-10 rounded-full px-5 font-bold"
+                      className="h-[54px] rounded-full bg-black px-[30px] text-[16px] font-bold leading-none text-white hover:bg-black/85 disabled:bg-black disabled:text-white disabled:opacity-60"
                     >
                       {isOtpLoading ? "Verifying" : "Verify OTP"}
                     </Button>
