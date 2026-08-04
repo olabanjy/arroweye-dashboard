@@ -81,7 +81,8 @@ export default function AddData({
   onAddDataSuccess,
   existingAirPlayData,
 }: AddDataProps) {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
   const [channels, setChannels] = useState<Channel[]>([]);
   const [createSource, setCreateSource] = useState<DataEditorSource | null>(
     null,
