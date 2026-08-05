@@ -30,7 +30,7 @@ export const useLogin = (_props?: UseLoginProps) => {
 
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [isOtpLoading, setIsOtpLoading] = useState(false);
-  const [toggleNotifications, setToggleNotifications] = useState(false);
+  const [storeCred, setStoreCred] = useState(false);
 
   const [randomBgImage] = useState(getDeterministicBgImage());
   const [isBlurred, setIsBlurred] = useState(true);
@@ -57,7 +57,7 @@ export const useLogin = (_props?: UseLoginProps) => {
     const storedEmail = localStorage.getItem("storedEmail");
     if (storedEmail) {
       setLoginFormData((prevData) => ({ ...prevData, email: storedEmail }));
-      setToggleNotifications(true);
+      setStoreCred(true);
     }
   }, []);
 
@@ -88,7 +88,7 @@ export const useLogin = (_props?: UseLoginProps) => {
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (toggleNotifications) {
+    if (storeCred) {
       localStorage.setItem("storedEmail", loginFormData.email);
     } else {
       localStorage.removeItem("storedEmail");
@@ -168,8 +168,8 @@ export const useLogin = (_props?: UseLoginProps) => {
   return {
     isLoginLoading,
     isOtpLoading,
-    toggleNotifications,
-    setToggleNotifications,
+    storeCred,
+    setStoreCred,
     randomBgImage,
     isBlurred,
     loginFormData,
