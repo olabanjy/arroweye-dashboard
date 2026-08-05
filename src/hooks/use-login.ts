@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useAuth } from "../context/auth-session";
 import { LoginEP, VerifyLogin } from "../services";
- 
+
 const bgImages = [
   "/assets/image%20(1).webp",
   "/assets/image%20(2).webp",

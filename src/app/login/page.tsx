@@ -7,14 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 
-const LOGIN_BACKGROUND = "/assets/image%20(4).webp";
-
 const Login = () => {
   const {
     isLoginLoading,
     isOtpLoading,
     storeCred,
     setStoreCred,
+    randomBgImage,
+    isBlurred,
     loginFormData,
     otpFormData,
     loginErrors,
@@ -29,14 +29,18 @@ const Login = () => {
 
   return (
     <main className="relative flex min-h-svh items-center justify-center overflow-hidden bg-[#1c1611] px-5 py-8 font-SansFlex text-white">
-      <Image
-        src={LOGIN_BACKGROUND}
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="absolute inset-0 size-full object-cover"
-      />
+      {randomBgImage && (
+        <Image
+          src={randomBgImage}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className={`absolute inset-0 size-full object-cover transition-[filter] duration-500 ${
+            isBlurred ? "blur-[10px]" : "blur-none"
+          }`}
+        />
+      )}
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.08)_46%,rgba(0,0,0,0.22)_100%),linear-gradient(180deg,rgba(0,0,0,0.04)_0%,rgba(0,0,0,0.2)_100%)]" />
       <div className="relative z-10 w-full max-w-6xl">
         <div className="grid min-h-[min(680px,calc(100svh-4rem))] place-items-center gap-10 lg:flex lg:items-center lg:justify-between">
