@@ -71,7 +71,7 @@ const NotificationsMenu = ({
           aria-label="Open notifications"
           tabIndex={triggerTabIndex}
         >
-          <Bell className="size-[18px]!" />
+          <Bell className="size-[24px]!" />
           {!allNotificationsRead && !hasOpenedNotifications && (
             <span className="absolute right-1 top-1 size-2 rounded-full bg-orange-500 ring-2 ring-background" />
           )}

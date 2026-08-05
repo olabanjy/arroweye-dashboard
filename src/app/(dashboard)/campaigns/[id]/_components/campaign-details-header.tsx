@@ -52,7 +52,7 @@ export function CampaignDetailsHeader({
 }: CampaignDetailsHeaderProps) {
   const canUseEditMode = hasAccess(userLoggedInProfile, [
     "Manager",
-    "Supervisor",
+    // "Supervisor",
   ]);
   const canAddMember = hasAccess(userLoggedInProfile, ["Manager"]);
   const stickySentinelRef = useRef<HTMLDivElement>(null);
