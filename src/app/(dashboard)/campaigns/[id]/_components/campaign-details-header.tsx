@@ -2,7 +2,6 @@
 
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { CheckCircle2, UserPlus, XCircle } from "lucide-react";
 import { MdAddCircleOutline } from "react-icons/md";
 import type { AppUser } from "@/types/api";
 import { cn, hasAccess } from "@/lib/utils";
@@ -18,6 +17,12 @@ import {
 } from "@/components/ui/tooltip";
 import ProjectSingleInsight from "@/components/campaigns/ProjectSingleInsight";
 import NotificationsMenu from "../../../notifications-menu";
+import Icon from "@mdi/react";
+import {
+  mdiAccountPlusOutline,
+  mdiCheckCircleOutline,
+  mdiCloseCircleOutline,
+} from "@mdi/js";
 
 interface CampaignDetailsHeaderProps {
   content: any;
@@ -172,7 +177,7 @@ export function CampaignDetailsHeader({
                       className="text-blue-500"
                       onClick={() => onShowIconsChange(false)}
                     >
-                      <CheckCircle2 />
+                      <Icon path={mdiCheckCircleOutline} size={1} />
                       <span className="sr-only">Save title</span>
                     </Button>
                     <Button
@@ -185,7 +190,7 @@ export function CampaignDetailsHeader({
                         onShowIconsChange(false);
                       }}
                     >
-                      <XCircle />
+                      <Icon path={mdiCloseCircleOutline} size={1} />
                       <span className="sr-only">Cancel title edit</span>
                     </Button>
                   </div>
@@ -237,7 +242,7 @@ export function CampaignDetailsHeader({
                         >
                           <Avatar className="size-[50px]">
                             <AvatarFallback
-                              className={`${predefinedColors[index % predefinedColors.length]} text-xs font-bold text-white`}
+                              className={`${predefinedColors[index % predefinedColors.length]} text-xs font-bold text-white tracking-wide`}
                             >
                               {user?.user_profile?.fullname
                                 ?.slice(0, 2)
@@ -265,7 +270,7 @@ export function CampaignDetailsHeader({
                           className="size-[50px] rounded-full"
                           onClick={onAddMemberClick}
                         >
-                          <UserPlus />
+                          <Icon path={mdiAccountPlusOutline} size={1} />
                           <span className="sr-only">Add member</span>
                         </Button>
                       </TooltipTrigger>

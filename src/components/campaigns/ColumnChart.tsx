@@ -53,8 +53,8 @@ const getDatasetColor = (colors: unknown, index: number, fallback: string) => {
   return typeof colors === "string" ? colors : fallback;
 };
 
-const getTranslucentChartColor = (color: string) =>
-  `color-mix(in srgb, ${color} 40%, transparent)`;
+const getLightChartFillColor = (color: string) =>
+  `color-mix(in srgb, ${color} 20%, transparent)`;
 
 const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
   title,
@@ -97,7 +97,7 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
       ...config,
       [item.segment]: {
         theme: {
-          light: getTranslucentChartColor(item.color),
+          light: getLightChartFillColor(item.color),
           dark: item.darkColor,
         },
       },
@@ -142,14 +142,18 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
           <p className="!text-[12px] font-[400] tracking-[.1rem]">{title}</p>
           {info && <ChartInfoTooltip content={info} />}
         </div>
-        <div>
-          {selectOptions?.map((options, index) => (
-            <div key={index} className="max-w-[180px] w-full">
-              <ChartFilterSelect options={options} placeholder={placeholder} />
-            </div>
-          ))}
-          {!selectOptions && <div className="h-10 max-w-[180px] w-full"></div>}
-        </div>
+        {selectOptions && (
+          <div>
+            {selectOptions.map((options, index) => (
+              <div key={index} className="max-w-[180px] w-full">
+                <ChartFilterSelect
+                  options={options}
+                  placeholder={placeholder}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-2">
@@ -168,7 +172,7 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
         <div className="w-full h-full flex justify-center items-center">
           <ChartContainer
             config={chartConfig}
-            className="h-[313px] w-full max-w-[313px] aspect-auto"
+            className="h-[330px] w-full max-w-[350px] aspect-auto"
           >
             <BarChart
               data={data}
@@ -178,7 +182,7 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
                 left: 20,
                 bottom: 5,
               }}
-              barSize={30}
+              barSize={32}
             >
               <CartesianGrid
                 strokeDasharray="3 3"

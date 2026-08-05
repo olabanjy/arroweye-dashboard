@@ -17,6 +17,23 @@ interface UseCampaignInsightsParams {
   refreshContent?: () => void;
 }
 
+const campaignChartPalette = [
+  "#ff5c7a",
+  "#38a8ff",
+  "#ffc247",
+  "#4ecdc4",
+  "#8b5cf6",
+  "#ff7a1a",
+  "#22c55e",
+  "#ec4899",
+];
+
+const getCampaignChartColors = (count: number) =>
+  Array.from(
+    { length: count },
+    (_, index) => campaignChartPalette[index % campaignChartPalette.length],
+  );
+
 export function useCampaignInsights({
   content,
   refreshContent,
@@ -172,9 +189,7 @@ export function useCampaignInsights({
     const labels = filteredEntries.map(([key]) => key);
     const values = filteredEntries.map(([_, value]) => value);
 
-    const backgroundColors = labels.map(
-      (_, i) => `hsl(${(i * 60) % 360}, 70%, 80%)`,
-    );
+    const backgroundColors = getCampaignChartColors(labels.length);
     const borderColors = getDarkerColor(backgroundColors, 20);
 
     return {
@@ -221,9 +236,7 @@ export function useCampaignInsights({
     const labels = filteredEntries.map(([key]) => key);
     const values = filteredEntries.map(([_, value]) => value);
 
-    const backgroundColors = labels.map(
-      (_, i) => `hsl(${(i * 60) % 360}, 70%, 80%)`,
-    );
+    const backgroundColors = getCampaignChartColors(labels.length);
     const borderColors = getDarkerColor(backgroundColors, 20);
 
     return {
@@ -275,9 +288,7 @@ export function useCampaignInsights({
     const labels = filteredEntries.map(([key]) => key);
     const values = filteredEntries.map(([_, value]) => value);
 
-    const backgroundColors = labels.map(
-      (_, i) => `hsl(${(i * 60) % 360}, 70%, 80%)`,
-    );
+    const backgroundColors = getCampaignChartColors(labels.length);
 
     return {
       labels,

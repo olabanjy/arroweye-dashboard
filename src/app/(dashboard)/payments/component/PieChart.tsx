@@ -47,13 +47,15 @@ const fallbackColors = [
   "var(--chart-5)",
 ];
 
+const filterSelectClassName = "w-[120px]";
+
 const defaultData: ChartData<"pie", number[], string> = {
   labels: ["Radio", "Cable", "TV", "DJ"],
   datasets: [
     {
       label: "Airplay",
       data: [300, 50, 100, 22],
-      backgroundColor: ["#f8e0e1", "#d7ecfb", "#f8f5d8", "#d4f2ed"],
+      backgroundColor: ["#ff5c7a", "#38a8ff", "#ffc247", "#4ecdc4"],
     },
   ],
 };
@@ -65,8 +67,8 @@ const getColor = (colors: unknown, index: number) => {
   return fallbackColors[index % fallbackColors.length];
 };
 
-const getTranslucentChartColor = (color: string) =>
-  `color-mix(in srgb, ${color} 40%, transparent)`;
+const getLightChartFillColor = (color: string) =>
+  `color-mix(in srgb, ${color} 20%, transparent)`;
 
 const getKey = (label: string, index: number) => {
   const slug = label
@@ -140,7 +142,7 @@ const CampaignPieChart = <
       [item.segment]: {
         label: item.label,
         theme: {
-          light: getTranslucentChartColor(item.color),
+          light: getLightChartFillColor(item.color),
           dark: item.darkColor,
         },
       },
@@ -155,31 +157,33 @@ const CampaignPieChart = <
   );
 
   return (
-    <Card className="flex flex-col border-0 bg-transparent p-0 shadow-none">
-      <CardHeader className="flex-row items-center justify-between space-y-0 p-0">
+    <Card className="flex flex-col !gap-5 border-0 bg-transparent p-0 shadow-none">
+      <CardHeader className="!flex items-center justify-between space-y-0 p-0">
         <div className="flex items-center gap-1 text-muted-foreground">
           <CardTitle className="text-xs font-normal uppercase">
             {title}
           </CardTitle>
           {info && <ChartInfoTooltip content={info} />}
         </div>
-        <div>
-          {selectOptions?.map((options, index) => (
-            <ChartFilterSelect
-              key={index}
-              options={options}
-              placeholder="Channels"
-              className="w-[180px]"
-              onChange={(selectedValue) => {
-                setFilters?.((previous) => ({
-                  ...previous,
-                  channels: selectedValue,
-                }));
-              }}
-            />
-          ))}
-          {!selectOptions && <div className="h-10 w-[180px]" />}
-        </div>
+
+        {selectOptions && (
+          <div className="shrink-0">
+            {selectOptions.map((options, index) => (
+              <ChartFilterSelect
+                key={index}
+                options={options}
+                placeholder="Channels"
+                className={filterSelectClassName}
+                onChange={(selectedValue) => {
+                  setFilters?.((previous) => ({
+                    ...previous,
+                    channels: selectedValue,
+                  }));
+                }}
+              />
+            ))}
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="space-y-5 p-0">
@@ -197,27 +201,53 @@ const CampaignPieChart = <
         </p>
 
         {pieData.length > 0 && (
-          <ChartContainer
-            config={chartConfig}
-            className="mx-auto h-[300px] w-full aspect-auto"
-          >
-            <RechartsPieChart>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel nameKey="segment" />}
-              />
-              <Pie data={pieData} dataKey="value" nameKey="segment">
-                {pieData.map((item) => (
-                  <Cell
-                    key={item.segment}
-                    fill={item.fill}
-                    stroke={item.stroke}
-                    strokeWidth={1}
+          <div className="pt-2">
+            <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[13px] leading-none text-[#6f6f6f]">
+              {pieData.map((item) => (
+                <div key={item.segment} className="flex items-center gap-2">
+                  <span
+                    className="h-[14px] w-7 shrink-0 border bg-[var(--chart-legend-bg)] dark:bg-[var(--chart-legend-dark-bg)] border-[var(--chart-legend-border)] dark:border-[var(--chart-legend-dark-border)]"
+                    style={
+                      {
+                        "--chart-legend-bg": getLightChartFillColor(item.color),
+                        "--chart-legend-border": item.color,
+                        "--chart-legend-dark-bg": item.darkColor,
+                        "--chart-legend-dark-border": item.darkColor,
+                      } as React.CSSProperties
+                    }
                   />
-                ))}
-              </Pie>
-            </RechartsPieChart>
-          </ChartContainer>
+                  <span>{item.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <ChartContainer
+              config={chartConfig}
+              className="mx-auto aspect-square w-full max-w-[350px]"
+            >
+              <RechartsPieChart>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel nameKey="segment" />}
+                />
+                <Pie
+                  data={pieData}
+                  dataKey="value"
+                  nameKey="segment"
+                  outerRadius="88%"
+                >
+                  {pieData.map((item) => (
+                    <Cell
+                      key={item.segment}
+                      fill={item.fill}
+                      stroke={item.stroke}
+                      strokeWidth={1}
+                    />
+                  ))}
+                </Pie>
+              </RechartsPieChart>
+            </ChartContainer>
+          </div>
         )}
       </CardContent>
 
