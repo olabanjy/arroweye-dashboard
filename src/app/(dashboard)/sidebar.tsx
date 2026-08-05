@@ -20,6 +20,7 @@ import {
   mdiCurrencyUsd,
   mdiCreationOutline,
   mdiFormatListBulletedType,
+  mdiCog,
 } from "@mdi/js";
 
 import {
@@ -538,9 +539,10 @@ const CampaignsSidebarContent = () => {
                   label="Settings"
                   active={isActive("/settings")}
                   icon={
-                    <Settings
+                    <Icon
+                      path={mdiCog}
                       size={SIDEBAR_ICON_SIZE}
-                      strokeWidth={SIDEBAR_ICON_STROKE_WIDTH}
+                     
                     />
                   }
                 />

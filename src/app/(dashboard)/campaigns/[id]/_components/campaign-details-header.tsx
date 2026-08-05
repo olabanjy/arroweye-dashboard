@@ -139,7 +139,7 @@ export function CampaignDetailsHeader({
             <p className="uppercase tracking-[.1rem] text-primary">
               {content?.vendor?.organization_name || content?.campaign?.mode}
             </p>
-            <Badge variant="outline" className="uppercase">
+            <Badge variant="outline" className="uppercase rounded-none">
               {content?.subvendor?.organization_name ||
                 content?.campaign?.song_artist}
             </Badge>

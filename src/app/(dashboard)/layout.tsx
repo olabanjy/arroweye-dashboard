@@ -28,7 +28,6 @@ const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      
       <div className=" z-50">
         <Sidebar />
       </div>
@@ -38,13 +37,13 @@ const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
       >
         <TopNav />
         <main
-          className={`w-full max-w-7xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
+          className={`w-full max-w-6xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
             pathname !== "/campaigns/spins-notifications" &&
             pathname !== "/campaigns/setup/custom" &&
             pathname !== "/campaigns/setup/promoter"
               ? "mx-[20px]"
               : ""
-          } border-none rounded-[8px] mt-[20px]`}
+          } border-none rounded-xl mt-5`}
         >
           {children}
         </main>
