@@ -71,6 +71,8 @@ const SIDEBAR_ICON_STROKE_WIDTH = 2.5;
 const SIDEBAR_SUB_ICON_SIZE = 16;
 const SIDEBAR_COLLAPSED_WIDTH = "5.3125rem";
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
+const TOOLS_MENU_OFFSET = 20;
+const COLLAPSED_TOOLS_MENU_OFFSET = 34;
 
 const getSavedSidebarOpenState = () => {
   if (typeof document === "undefined") return false;
@@ -326,6 +328,7 @@ const getInitials = (name: string) => {
 const CampaignsSidebarContent = () => {
   const pathname = usePathname();
   const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
+  const { state } = useSidebar();
   const { isAdvertiser, user, userProfile, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const userRole = userProfile?.role || "";
@@ -453,7 +456,11 @@ const CampaignsSidebarContent = () => {
                       <DropdownMenuContent
                         side="right"
                         align="center"
-                        sideOffset={20}
+                        sideOffset={
+                          state === "collapsed"
+                            ? COLLAPSED_TOOLS_MENU_OFFSET
+                            : TOOLS_MENU_OFFSET
+                        }
                         collisionPadding={16}
                         className="w-[360px] max-w-[calc(100vw-2rem)] border border-neutral-100 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-950"
                       >
@@ -538,13 +545,7 @@ const CampaignsSidebarContent = () => {
                   href="/settings"
                   label="Settings"
                   active={isActive("/settings")}
-                  icon={
-                    <Icon
-                      path={mdiCog}
-                      size={SIDEBAR_ICON_SIZE}
-                     
-                    />
-                  }
+                  icon={<Icon path={mdiCog} size={SIDEBAR_ICON_SIZE} />}
                 />
               </SidebarMenu>
             </SidebarGroupContent>
