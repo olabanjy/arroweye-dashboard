@@ -199,7 +199,7 @@ export function BottomDock({
 
   return (
     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-      <div className="fixed inset-x-0 bottom-2 z-30 flex justify-center lg:left-32">
+      <div className="fixed inset-x-0 bottom-4 z-30 flex justify-center lg:left-32">
         <PopoverAnchor asChild>
           <div
             ref={toolbarRef}
