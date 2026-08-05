@@ -7,10 +7,17 @@ import { MdOutlineGroupAdd } from "react-icons/md";
 import Invoice from "./Invoice";
 import { SelectInput } from "@/components/ui/selectinput";
 import Users from "./Users";
-import { Dialog } from "primereact/dialog";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { CreateBusiness } from "@/services";
 import { DropDownInput } from "@/components/ui/dropdownInput";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 import { TbBuildingBank } from "react-icons/tb";
 import CompanyDetailsForm from "@/components/campaigns/CompanyDetailsForm";
@@ -22,7 +29,7 @@ const InvoicesTab = () => {
   const [amountFilter, setAmountFilter] = useState<any>("");
   const [statusFilter, setStatusFilter] = useState<any>("");
   const [searchText, setSearchText] = useState<any>("");
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [detailsModal, setDetailsModal] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -240,28 +247,28 @@ const InvoicesTab = () => {
         visible={detailsModal}
         onHide={() => setDetailsModal(false)}
       />
-      <div
-        className={`custom-dialog-overlay  ${
-          visible ? "bg-black/30 backdrop-blur-md fixed inset-0 z-50" : "hidden"
-        }`}
+      <Dialog
+        open={visible}
+        onOpenChange={(open) => {
+          if (open) {
+            setVisible(true);
+          } else {
+            hideDialog();
+          }
+        }}
       >
-        <Dialog
-          header=" +  ADD USERS"
-          headerClassName=" "
-          visible={visible}
-          onHide={hideDialog}
-          breakpoints={{ "960px": "75vw", "640px": "100vw" }}
-          style={{ width: "40vw" }}
-          className="!overflow-y-auto"
-        >
-          <form
-            onSubmit={handleSubmit}
-            className="scrollbar-hide scrollbar-hide::-webkit-scrollbar"
-          >
-            <div className=" grid gap-[10px] relative z-10">
-              <p className="text-[30px] font-[600] text-[#212529] font-SansFlex hidden">
-                Collaborate
-              </p>
+        <DialogContent className="max-h-[90vh] w-[calc(100vw-2rem)] overflow-y-auto rounded-2xl border-border bg-card p-6 text-card-foreground shadow-2xl sm:max-w-[560px]">
+          <DialogHeader>
+            <DialogTitle className="text-[12px] font-[500] uppercase tracking-[.1rem] text-muted-foreground">
+              + Add Users
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              Add a user to your business.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit} className="scrollbar-hide space-y-4">
+            <div className="relative z-10 grid gap-3">
               <div>
                 <DropDownInput
                   type="email"
@@ -269,7 +276,7 @@ const InvoicesTab = () => {
                   placeholder="E-mail"
                   value={formData.email}
                   onChange={(e) => handleInputChange(e)}
-                  className=" text-[14px]"
+                  className="border-border bg-transparent text-[14px] text-foreground placeholder:text-muted-foreground dark:bg-transparent"
                   // options={[
                   //   {
                   //     value: "1",
@@ -289,7 +296,9 @@ const InvoicesTab = () => {
                   // ]}
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-xs">{errors.email}</p>
+                  <p className="mt-1 text-xs text-destructive">
+                    {errors.email}
+                  </p>
                 )}
               </div>
               <div>
@@ -299,10 +308,10 @@ const InvoicesTab = () => {
                   placeholder="Business Name"
                   value={formData.organization_name}
                   onChange={handleInputChange}
-                  className=" text-[17px]"
+                  className="border-border bg-transparent text-[17px] text-foreground placeholder:text-muted-foreground dark:bg-transparent"
                 />
                 {errors.organization_name && (
-                  <p className="text-red-500 text-xs">
+                  <p className="mt-1 text-xs text-destructive">
                     {errors.organization_name}
                   </p>
                 )}
@@ -315,10 +324,12 @@ const InvoicesTab = () => {
                     placeholder="Full Name"
                     value={formData.fullname}
                     onChange={handleInputChange}
-                    className=" font-SansFlex text-[17px]"
+                    className="border-border bg-transparent font-SansFlex text-[17px] text-foreground placeholder:text-muted-foreground dark:bg-transparent"
                   />
                   {errors.fullname && (
-                    <p className="text-red-500 text-xs">{errors.fullname}</p>
+                    <p className="mt-1 text-xs text-destructive">
+                      {errors.fullname}
+                    </p>
                   )}
                 </div>
               )}
@@ -333,6 +344,7 @@ const InvoicesTab = () => {
                   <SelectInput
                     icon={true}
                     name="type"
+                    className="bg-transparent dark:bg-transparent"
                     options={[
                       { value: "Vendor", label: "Vendor" },
                       { value: "SubVendor", label: "SubVendor" },
@@ -346,25 +358,27 @@ const InvoicesTab = () => {
                     // onChange={handleInputChange}
                   />
                   {errors.type && (
-                    <p className="text-red-500 text-xs">{errors.type}</p>
+                    <p className="mt-1 text-xs text-destructive">
+                      {errors.type}
+                    </p>
                   )}
                 </div>
-                <div className="w-full ">
+                <div className="w-full">
                   <div className="flex justify-end space-x-2">
-                    <button
+                    <Button
                       type="submit"
-                      className=" font-SansFlex h-[50px] text-[14px] bg-[#000000] border border-[#000000] hover:bg-orange-500 hover:border-orange-500 w-full py-[12px] px-[12px] rounded-full flex items-center justify-center space-x-2"
+                      className="h-[50px] w-full rounded-full bg-foreground px-[12px] py-[12px] font-SansFlex text-[14px] text-background hover:bg-orange-500 hover:text-white"
                     >
-                      <IoIosAdd className="text-white" />
-                      <span className="text-white">Add User</span>
-                    </button>
+                      <IoIosAdd />
+                      <span>Add User</span>
+                    </Button>
                   </div>
                 </div>
               </div>
             </div>
           </form>
-        </Dialog>
-      </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

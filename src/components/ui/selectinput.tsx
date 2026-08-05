@@ -7,6 +7,7 @@ import { FiInfo } from "react-icons/fi";
 import { GoArrowDown } from "react-icons/go";
 
 interface DropdownInputProps {
+  className?: string;
   label?: string;
   options: { value: string | number; label: string }[];
   error?: string;
@@ -20,6 +21,7 @@ interface DropdownInputProps {
 }
 
 const SelectInput: React.FC<DropdownInputProps> = ({
+  className,
   label,
   options,
   error,
@@ -137,6 +139,7 @@ const SelectInput: React.FC<DropdownInputProps> = ({
               ? "rounded-full py-[5px] text-[14px] "
               : "rounded-[8px] text-[14px] py-[2px] flex items-center  h-[51px]",
             error && "border-red-500 focus:ring-red-500",
+            className,
           )}
         >
           <div className="flex items-center text-[14px] font-SansFlex">
