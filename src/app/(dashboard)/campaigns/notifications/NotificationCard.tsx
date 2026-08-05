@@ -164,7 +164,7 @@ export function NotificationCard({
         </p>
         <p
           className={cn(
-            "text-[13px] leading-[18px] text-neutral-800 dark:text-zinc-200",
+            "text-[14px] leading-[18px] text-neutral-800 dark:text-zinc-200",
             isArtwork && "text-base leading-6",
           )}
         >
