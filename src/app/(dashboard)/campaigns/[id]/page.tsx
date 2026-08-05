@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Head from "next/head";
 import { useParams } from "next/navigation";
 import { hasAccess } from "@/lib/utils";
 import NoNetwork from "@/components/no-network";
@@ -95,11 +94,11 @@ const ProjectDetails = () => {
 
   return (
     <>
-      <Head>
-        <title>
-          {content?.title || content?.campaign?.song_title} - Arroweye
-        </title>
-      </Head>
+      <title>
+        {content?.title || content?.campaign?.song_title
+          ? `${content.title || content.campaign.song_title} - Arroweye`
+          : "Campaign Details - Arroweye"}
+      </title>
 
       {hasNetworkError ? (
         <NoNetwork onReconnect={refreshContent} />

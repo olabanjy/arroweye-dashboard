@@ -160,7 +160,7 @@ const CampaignPieChart = <
     <Card className="flex flex-col !gap-5 border-0 bg-transparent p-0 shadow-none">
       <CardHeader className="!flex items-center justify-between space-y-0 p-0">
         <div className="flex items-center gap-1 text-muted-foreground">
-          <CardTitle className="text-xs font-normal uppercase">
+          <CardTitle className="text-xs font-normal uppercase tracking-[.1rem]">
             {title}
           </CardTitle>
           {info && <ChartInfoTooltip content={info} />}
