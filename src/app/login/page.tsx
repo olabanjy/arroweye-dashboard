@@ -13,8 +13,8 @@ const Login = () => {
   const {
     isLoginLoading,
     isOtpLoading,
-    toggleNotifications,
-    setToggleNotifications,
+    storeCred,
+    setStoreCred,
     loginFormData,
     otpFormData,
     loginErrors,
@@ -38,7 +38,7 @@ const Login = () => {
         className="absolute inset-0 size-full object-cover"
       />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.08)_46%,rgba(0,0,0,0.22)_100%),linear-gradient(180deg,rgba(0,0,0,0.04)_0%,rgba(0,0,0,0.2)_100%)]" />
-      <div className="relative z-10 w-full max-w-[1355px]">
+      <div className="relative z-10 w-full max-w-6xl">
         <div className="grid min-h-[min(680px,calc(100svh-4rem))] place-items-center gap-10 lg:flex lg:items-center lg:justify-between">
           <Image
             src="/aestudio.svg"
@@ -78,15 +78,15 @@ const Login = () => {
                     error={loginErrors.email}
                     className="h-[62px] w-full border-[#111111] bg-white text-center text-[16px] font-bold text-[#111111] shadow-none outline-none placeholder:text-[#A9AFBA] placeholder:opacity-100 focus:border-[#111111] focus:ring-0 dark:border-[#111111] dark:bg-white dark:text-[#111111]"
                   />
-                  <div className="flex items-center justify-end gap-5">
-                    {/* <label className="flex items-center gap-[14px] text-[16px] font-medium text-[#6E6E73]">
+                  <div className="flex items-center justify-between gap-5">
+                    <label className="flex items-center gap-[14px] text-[16px] font-medium text-[#6E6E73]">
                       <Switch
-                        checked={toggleNotifications}
-                        onCheckedChange={setToggleNotifications}
-                        className="h-[34px] w-[61px] border-0 bg-[#D9DDE3] data-[state=checked]:bg-[#287BE5] data-[state=unchecked]:bg-[#D9DDE3] dark:data-[state=checked]:bg-[#287BE5] dark:data-[state=unchecked]:bg-[#D9DDE3] [&_[data-slot=switch-thumb]]:size-[24px] [&_[data-slot=switch-thumb]]:bg-white [&_[data-slot=switch-thumb]]:data-[state=checked]:translate-x-[27px] [&_[data-slot=switch-thumb]]:data-[state=unchecked]:translate-x-[4px]"
+                        checked={storeCred}
+                        onCheckedChange={setStoreCred}
+                        className="h-[34px] w-[61px] border-0"
                       />
                       Store Credentials
-                    </label> */}
+                    </label>
                     <Button
                       disabled={isLoginLoading}
                       size="lg"
