@@ -333,7 +333,7 @@ const CampaignsSidebarContent = () => {
   const userInitials = getInitials(displayName);
 
   const isActive = (path: string) => {
-    return pathname === path || pathname.startsWith(`${path}/`);
+    return pathname === path || pathname?.startsWith(`${path}/`);
   };
 
   return (

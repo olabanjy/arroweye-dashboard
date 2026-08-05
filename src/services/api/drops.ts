@@ -1,5 +1,5 @@
 import apiRequest from "@/Server/Api";
-import { StaffItem } from "@/types/contents";
+import type { AppDropZonePage, Business } from "@/types/api";
 import { DropzonePayload } from "@/types/dropzone";
 import ls from "localstorage-slim";
 
@@ -22,7 +22,7 @@ export const getDropZones = async ({
   vendor?: string;
   subvendor?: string;
   platform?: string;
-}): Promise<any> => {
+}): Promise<AppDropZonePage> => {
   const params: Record<string, string | number> = { page };
   if (search) params.search = search;
   if (year) params.year = year;
@@ -31,7 +31,7 @@ export const getDropZones = async ({
   if (subvendor) params.subvendor = subvendor;
   if (platform) params.platform = platform;
 
-  const response = await apiRequest({
+  const response = await apiRequest<AppDropZonePage>({
     method: "GET",
     url: `/api/v1/projects/general/dropzone/`,
     params,
@@ -41,18 +41,17 @@ export const getDropZones = async ({
   return response;
 };
 
-export const deleteDropZones = async (id: number): Promise<any> => {
-  const response = await apiRequest({
+export const deleteDropZones = async (id: number): Promise<void> => {
+  await apiRequest<void>({
     method: "DELETE",
-    url: `/api/v1/projects/general/dropzone/${id}`,
+    url: `/api/v1/projects/general/dropzone/${id}/`,
     requireToken: true,
     skipErrorHandling: true,
   });
-  return response;
 };
 
-export const getBusiness = async (): Promise<StaffItem[]> => {
-  const response = await apiRequest<StaffItem[]>({
+export const getBusiness = async (): Promise<Business[]> => {
+  const response = await apiRequest<Business[]>({
     method: "GET",
     url: `/api/v1/org/business/`,
     requireToken: true,
@@ -61,10 +60,10 @@ export const getBusiness = async (): Promise<StaffItem[]> => {
   return response;
 };
 
-export const getStoredBusiness = (): StaffItem[] | null => {
+export const getStoredBusiness = (): Business[] | null => {
   const content = ls.get("Business", { decrypt: true });
 
-  return content as StaffItem[];
+  return content as Business[] | null;
 };
 
 export const createDropzone = async (

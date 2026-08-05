@@ -11,7 +11,7 @@ import {
 } from "@/services";
 import { useAuth } from "@/context/auth-context";
 import { DateClickArg } from "@fullcalendar/interaction";
-import { EventsItem } from "@/types/contents";
+import type { Event } from "@/types/api";
 import { toast } from "sonner";
 
 interface FormErrors {
@@ -91,9 +91,7 @@ export const useSchedule = ({
     }));
 
   // Fetch events based on schedule page vs project page
-  const { data: eventItem = [], isLoading: isEventsLoading } = useQuery<
-    EventsItem[]
-  >({
+  const { data: eventItem = [], isLoading: isEventsLoading } = useQuery<Event[]>({
     queryKey: ["events", isSchedulePage ? "all" : projectId || "project"],
     queryFn: () => {
       if (isSchedulePage) {
@@ -132,7 +130,7 @@ export const useSchedule = ({
 
   const rescheduleEventMutation = useMutation({
     mutationFn: RescheduleEvent,
-    onSuccess: (response: any) => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
       if (response?.invoice_created) {
         toast.success(

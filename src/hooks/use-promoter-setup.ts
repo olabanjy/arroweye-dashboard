@@ -115,6 +115,7 @@ export const usePromoterSetup = () => {
         song_title: campaignSongDetails?.title,
         song_artist: campaignSongDetails?.artist,
         song_artwork: campaignSongDetails?.artwork,
+        target_audience_reach: totalAudienceReach,
         start_date: startDate,
         mode: "aggregator",
       });
@@ -149,7 +150,7 @@ export const usePromoterSetup = () => {
       });
       setLoadingCampaignCreation(false);
     }
-  }, [campaignSongDetails, startDate]);
+  }, [campaignSongDetails, startDate, totalAudienceReach]);
 
   const handleLaunchCampaign = useCallback(async () => {
     const createToast = toast.loading("Creating Campaign...");

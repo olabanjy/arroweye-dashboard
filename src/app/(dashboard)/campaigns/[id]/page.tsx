@@ -20,6 +20,7 @@ import {
   MemberAccessDialog,
   MemberInfoDialog,
 } from "./_components/campaign-member-dialogs";
+import DropsList from "@/components/campaigns/DropsList";
 
 const predefinedColors = [
   "bg-blue-500",
@@ -35,7 +36,8 @@ const predefinedColors = [
 ];
 
 const ProjectDetails = () => {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
   const {
     content,
     setContent,
@@ -167,6 +169,7 @@ const ProjectDetails = () => {
           )}
 
           {isAdvertiser && <CampaignInsightAdvertiser content={content} />}
+          <DropsList isAdvertiser={isAdvertiser} content={content} />
 
           <MemberInfoDialog
             selectedUser={selectedUser}

@@ -1,173 +1,98 @@
-import {
-  type Dispatch,
-  type SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getLoggedInUser } from "@/services";
+import { getNotifications, notificationQueryKey } from "@/services";
+import { groupNotifications } from "@/types/notifications";
+import { useAuth } from "@/context/auth-session";
 
-const notificationTypeAliases: Record<string, string> = {
-  campaign: "campaigns",
-  campaigns: "campaigns",
-  milestone: "milestones",
-  milestones: "milestones",
-  security: "security",
-  drop: "assets",
-  drops: "assets",
-  asset: "assets",
-  assets: "assets",
-  payment: "payments",
-  payments: "payments",
-};
+export type NotificationMainTab = "updates" | "drops";
+export type NotificationInnerTab =
+  | "campaign"
+  | "milestones"
+  | "security"
+  | "others"
+  | "assets"
+  | "payment";
 
-const normalizeNotificationType = (type: unknown) => {
-  const normalizedType = String(type ?? "").trim().toLowerCase();
-  return notificationTypeAliases[normalizedType] ?? normalizedType;
-};
+const isMainTab = (value: string): value is NotificationMainTab =>
+  value === "updates" || value === "drops";
+
+const isInnerTab = (value: string): value is NotificationInnerTab =>
+  [
+    "campaign",
+    "milestones",
+    "security",
+    "others",
+    "assets",
+    "payment",
+  ].includes(value);
 
 export const useTopNav = () => {
-  const router = useRouter();
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const {
-    data: loggedInUser,
-    isFetching: notificationLoading,
+    data: notificationItems = [],
+    isLoading,
+    isError: notificationError,
     refetch: refetchNotifications,
-  } = useQuery<any>({
-    queryKey: ["user", "notifications"],
-    queryFn: getLoggedInUser,
+  } = useQuery({
+    queryKey: notificationQueryKey,
+    queryFn: getNotifications,
+    enabled: isAuthenticated && !isAuthLoading,
     staleTime: 60_000,
   });
-  const [notificationScrolled, setNotificationScrolled] = useState(false);
-  const [allNotificationsRead, setAllNotificationsRead] = useState(false);
+  const notificationLoading = isAuthLoading || isLoading;
+
+  const retryNotifications = useCallback(() => {
+    void refetchNotifications();
+  }, [refetchNotifications]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeMainTab, setActiveMainTab] = useState("updates");
-  const [activeInnerTab, setActiveInnerTab] = useState("campaign");
+  const [activeMainTab, setActiveMainTab] =
+    useState<NotificationMainTab>("updates");
+  const [activeInnerTab, setActiveInnerTab] =
+    useState<NotificationInnerTab>("campaign");
   const [hasOpenedNotifications, setHasOpenedNotifications] = useState(false);
-  const [knownUnreadIds, setKnownUnreadIds] = useState<Set<number>>(new Set());
+  const knownUnreadIds = useRef<Set<number>>(new Set());
 
   const notifications = useMemo(
-    () =>
-      (loggedInUser?.notifications ?? []).reduce(
-        (grouped: any, notification: any) => {
-          const type = normalizeNotificationType(notification.type);
-
-          if (!type) return grouped;
-
-          grouped[type] = [...(grouped[type] || []), notification];
-          return grouped;
-        },
-        {
-          campaigns: [],
-          milestones: [],
-          security: [],
-          assets: [],
-          payments: [],
-        },
-      ),
-    [loggedInUser],
+    () => groupNotifications(notificationItems),
+    [notificationItems],
   );
 
-  const refreshNotifications = useCallback<Dispatch<SetStateAction<boolean>>>(
-    (value) => {
-      setNotificationScrolled(value);
-      void refetchNotifications();
-    },
-    [refetchNotifications],
+  const allNotifications = useMemo(
+    () => Object.values(notifications).flat(),
+    [notifications],
+  );
+
+  const allNotificationsRead = allNotifications.every(
+    (notification) => notification.read !== false,
   );
 
   const setNotificationsOpen = (open: boolean) => {
     setIsSidebarOpen(open);
-
-    if (open) {
-      setHasOpenedNotifications(true);
-    }
-  };
-
-  const toggleSidebar = () => {
-    setNotificationsOpen(!isSidebarOpen);
+    if (open) setHasOpenedNotifications(true);
   };
 
   const handleMainTabClick = (tab: string) => {
+    if (!isMainTab(tab)) return;
+
     setActiveMainTab(tab);
     setActiveInnerTab(tab === "updates" ? "campaign" : "assets");
   };
 
   const handleInnerTabClick = (tab: string) => {
-    setActiveInnerTab(tab);
-  };
-
-  const triggerRefresh = () => {
-    refreshNotifications((prev) => !prev);
-  };
-
-  const areAllItemsReadInAllArrays = (notification: any): boolean => {
-    if (!notification) {
-      return true;
-    }
-
-    const arrayKeys = Object.keys(notification).filter(
-      (key) => Array.isArray(notification[key]) && notification[key].length > 0,
-    );
-
-    if (arrayKeys.length === 0) {
-      return true;
-    }
-
-    for (const key of arrayKeys) {
-      const array = notification[key];
-      const hasReadableItems = array.some((item: any) => "read" in item);
-
-      if (hasReadableItems) {
-        const allRead = array.every((item: any) => {
-          return !("read" in item) || item.read === true;
-        });
-
-        if (!allRead) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  };
-
-  const getUnreadNotificationIds = (notificationObj: any): Set<number> => {
-    const ids = new Set<number>();
-    if (!notificationObj) return ids;
-    Object.keys(notificationObj).forEach((key) => {
-      const array = notificationObj[key];
-      if (Array.isArray(array)) {
-        array.forEach((item: any) => {
-          if ("read" in item && item.read === false) {
-            ids.add(item.id);
-          }
-        });
-      }
-    });
-    return ids;
+    if (isInnerTab(tab)) setActiveInnerTab(tab);
   };
 
   useEffect(() => {
-    const unreadIds = getUnreadNotificationIds(notifications);
-    const hasNewUnread = Array.from(unreadIds).some(
-      (id) => !knownUnreadIds.has(id),
+    const unreadIds = allNotifications
+      .filter((notification) => notification.read === false)
+      .map((notification) => notification.id);
+    const hasNewUnread = unreadIds.some(
+      (id) => !knownUnreadIds.current.has(id),
     );
 
-    if (hasNewUnread) {
-      setHasOpenedNotifications(false);
-      setKnownUnreadIds((prev) => {
-        const next = new Set(prev);
-        unreadIds.forEach((id) => next.add(id));
-        return next;
-      });
-    }
-
-    const allRead = areAllItemsReadInAllArrays(notifications);
-    setAllNotificationsRead(allRead);
-  }, [notifications]);
+    if (hasNewUnread) setHasOpenedNotifications(false);
+    unreadIds.forEach((id) => knownUnreadIds.current.add(id));
+  }, [allNotifications]);
 
   useEffect(() => {
     if (!isSidebarOpen) return;
@@ -175,33 +100,25 @@ export const useTopNav = () => {
     const handleScroll = (event: Event) => {
       const target = event.target as HTMLElement;
       const sidebarEl = document.getElementById("notification-sidebar");
-      if (sidebarEl && sidebarEl.contains(target)) {
-        return;
-      }
-      setIsSidebarOpen(false);
+      if (!sidebarEl?.contains(target)) setIsSidebarOpen(false);
     };
 
     window.addEventListener("scroll", handleScroll, true);
-    return () => {
-      window.removeEventListener("scroll", handleScroll, true);
-    };
+    return () => window.removeEventListener("scroll", handleScroll, true);
   }, [isSidebarOpen]);
 
   return {
-    router,
     notifications,
-    notificationScrolled,
     notificationLoading,
+    notificationError,
+    retryNotifications,
     allNotificationsRead,
     isSidebarOpen,
     activeMainTab,
     activeInnerTab,
     setNotificationsOpen,
-    toggleSidebar,
     handleMainTabClick,
     handleInnerTabClick,
-    triggerRefresh,
-    setNotificationScrolled: refreshNotifications,
     hasOpenedNotifications,
   };
 };

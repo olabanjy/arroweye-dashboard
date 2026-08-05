@@ -102,7 +102,10 @@ export function useCampaignMemberActions({
     }
 
     if (useWatchersEndpoint) {
-      const payload = { action: "addition", user_id: selectedWatcher?.user };
+      const payload = {
+        action: "addition" as const,
+        user_id: selectedWatcher?.user,
+      };
 
       campaignStaffAction(Number(id), payload)
         .then((response) => {
@@ -126,7 +129,8 @@ export function useCampaignMemberActions({
 
     const payload = {
       ...addUserFormData,
-      business_id: content?.subvendor?.id,
+      business_id: Number(content?.subvendor?.id),
+      role: String(addUserFormData.role),
       project_id: Number(id),
     };
 
@@ -158,7 +162,10 @@ export function useCampaignMemberActions({
   const handleCampaignActionRemove = () => {
     if (!id) return;
 
-    const payload = { action: "remove", user_id: selectedUser?.id };
+    const payload = {
+      action: "remove" as const,
+      user_id: selectedUser?.id,
+    };
 
     campaignStaffAction(Number(id), payload)
       .then(() => {
@@ -174,7 +181,7 @@ export function useCampaignMemberActions({
     if (!id) return;
 
     const payload = {
-      action: "update",
+      action: "update" as const,
       user_id: selectedUser?.id,
       role: addUserFormData.role,
     };

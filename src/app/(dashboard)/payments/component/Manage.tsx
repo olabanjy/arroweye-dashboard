@@ -12,6 +12,7 @@ import {
 } from "@/services";
 import { IoIosAdd, IoMdAddCircleOutline } from "react-icons/io";
 import { ContentItem } from "@/types/contents";
+import type { Business } from "@/types/api";
 import { hasAccess, hasAccessExceptVendorManager } from "@/lib/utils";
 interface Item {
   id: number;
@@ -58,7 +59,7 @@ const Manage = () => {
   const [isAddNewService, setIsAddNewService] = useState(false);
 
   const [content, setContent] = useState<ContentItem[] | null>(null);
-  const [business, setBusiness] = useState<ContentItem[] | null>(null);
+  const [business, setBusiness] = useState<Business[] | null>(null);
 
   const [items, setItems] = useState<Item[]>([]);
 
@@ -125,7 +126,7 @@ const Manage = () => {
   }, []);
 
   useEffect(() => {
-    getBusiness().then((fetchedContent: any) => {
+    getBusiness().then((fetchedContent) => {
       setBusiness(fetchedContent);
     });
   }, []);

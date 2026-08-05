@@ -1,4 +1,5 @@
 import apiRequest from "@/Server/Api";
+import type { CreateBusinessInput } from "@/types/api";
 import { ContentItem } from "@/types/contents";
 import ls from "localstorage-slim";
 import { toast } from "sonner";
@@ -33,10 +34,12 @@ interface FundWalletResponse {
   paystack?: PaystackInitialization;
 }
 
-export const CreateBusiness = async (payload: unknown): Promise<any> => {
-  const result = await apiRequest<any>({
+export const CreateBusiness = async (
+  payload: CreateBusinessInput,
+): Promise<CreateBusinessInput> => {
+  const result = await apiRequest<CreateBusinessInput>({
     method: "POST",
-    url: `/api/v1/org/business/`,
+    url: `/api/v1/org/create-business/create/`,
     data: payload,
     requireToken: true,
   });

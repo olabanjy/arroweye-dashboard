@@ -174,7 +174,11 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                 { value: "lth", label: "Low to High" },
               ]}
               value={investmentFilter}
-              onChange={(value) => setInvestmentFilter(value)}
+              onChange={(value) =>
+                setInvestmentFilter(
+                  value === "htl" || value === "lth" ? value : "",
+                )
+              }
             />
           </div>
           <div className="max-w-[150px] w-full">
@@ -186,7 +190,11 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
                 { value: "lth", label: "Low to High" },
               ]}
               value={revenueFilter}
-              onChange={(value) => setRevenueFilter(value)}
+              onChange={(value) =>
+                setRevenueFilter(
+                  value === "htl" || value === "lth" ? value : "",
+                )
+              }
             />
           </div>
           <p

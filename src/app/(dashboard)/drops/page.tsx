@@ -392,16 +392,23 @@ const AssetsLibrary = () => {
               <div className="text-[16px]">
                 <p className="font-[400] text-muted-foreground">Member since</p>
                 <p className="font-[600]">
-                  {format(parseISO(selectedUser.user.created), "dd MMM yyyy")}
+                  {selectedUser.user.created
+                    ? format(
+                        parseISO(selectedUser.user.created),
+                        "dd MMM yyyy",
+                      )
+                    : "Unknown"}
                 </p>
               </div>
               <div className="text-[16px]">
                 <p className="font-[400] text-muted-foreground">Last login</p>
                 <p className="font-[600]">
-                  {format(
-                    parseISO(selectedUser.user.last_login),
-                    "dd MMM yyyy",
-                  )}
+                  {selectedUser.user.last_login
+                    ? format(
+                        parseISO(selectedUser.user.last_login),
+                        "dd MMM yyyy",
+                      )
+                    : "Never"}
                 </p>
               </div>
             </div>
@@ -458,7 +465,11 @@ const AssetsLibrary = () => {
               variant="destructive"
               disabled={pinEntered.length < 6 || pinError}
               className="rounded-full bg-red-600 text-white hover:bg-red-700"
-              onClick={() => handleDelete(dropIdToBeDeleted)}
+              onClick={() => {
+                if (dropIdToBeDeleted !== null) {
+                  handleDelete(dropIdToBeDeleted);
+                }
+              }}
             >
               Delete Drop
             </Button>

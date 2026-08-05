@@ -9,6 +9,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.pnpm-store
 
 # testing
 /coverage
@@ -42,3 +43,6 @@ next-env.d.ts
 pnpm-workspace.yaml
 
 /gotchas.md
+
+/src/pages-old
+/docs

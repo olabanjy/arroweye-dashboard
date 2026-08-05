@@ -9,9 +9,9 @@ const CampaignInsightAdvertiser: React.FC<{ content: any }> = ({ content }) => {
   const { kpis, top_djs, top_locations, dsp_breakdown } = content;
 
   return (
-    <div>
-      <div className="mt-[20px] mb-[80px]">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 w-full">
+    <div className="text-foreground">
+      <div className="mb-[80px] mt-[20px]">
+        <div className="grid w-full grid-cols-1 gap-2.5 md:grid-cols-2 lg:grid-cols-3">
           <VerifiedSpinsCard
             verifiedSpinsDelivered={kpis?.verified_spins_delivered}
             verifiedSpinsTarget={kpis?.verified_spins_target}
@@ -21,7 +21,7 @@ const CampaignInsightAdvertiser: React.FC<{ content: any }> = ({ content }) => {
             costPerReach={kpis?.cost_per_reach_naira}
             topLocations={top_locations}
           />
-          <div className="border p-5 w-full rounded-xl space-y-5 hover:bg-green-500/5 hover:border hover:border-green-500">
+          <div className="w-full space-y-5 rounded-xl border border-border bg-card p-5 text-card-foreground transition-colors hover:border-green-500 hover:bg-green-500/5">
             <DSPCard dspBreakdown={dsp_breakdown} />
           </div>
         </div>

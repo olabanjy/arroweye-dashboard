@@ -5,12 +5,12 @@ import { IoIosAddCircle, IoMdCheckmark } from "react-icons/io";
 import Modal from "@/components/modal";
 import { LuUserMinus } from "react-icons/lu";
 import { getBusiness } from "@/services";
-import { StaffItem } from "@/types/contents";
+import type { Business } from "@/types/api";
 
 const Users = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<StaffItem | null>(null);
-  const [content, setContent] = useState<StaffItem[] | null>(null);
+  const [selectedUser, setSelectedUser] = useState<Business | null>(null);
+  const [content, setContent] = useState<Business[] | null>(null);
 
   const headers = ["Name", "Vendor", "User", "Role", "Status"];
 
@@ -102,17 +102,17 @@ const Users = () => {
           </p>
           <div className="space-y-[20px] my-[20px]">
             <p className="text-2xl font-bold font-SansFlex">
-              {selectedUser.staff[0].fullname}
+              {selectedUser.staff[0]?.fullname ?? "Unknown member"}
             </p>
             <div className="space-y-[10px] font-SansFlex">
               <div>
                 <p className="text-[#818486]">Email</p>
-                <p>{selectedUser.staff[0].staff_email || " "}</p>
+                <p>{selectedUser.staff[0]?.staff_email || " "}</p>
               </div>
               <div>
                 <p className="text-[#818486]">Role</p>
                 <p className="text-[#5117ec] font-[600]">
-                  {selectedUser.staff[0].role || " "}
+                  {selectedUser.staff[0]?.role || " "}
                 </p>
               </div>
             </div>

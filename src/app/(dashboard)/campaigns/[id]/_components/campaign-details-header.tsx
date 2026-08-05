@@ -4,7 +4,7 @@ import React, { useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { CheckCircle2, UserPlus, XCircle } from "lucide-react";
 import { MdAddCircleOutline } from "react-icons/md";
-import { ContentItem } from "@/types/contents";
+import type { AppUser } from "@/types/api";
 import { cn, hasAccess } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +22,7 @@ import NotificationsMenu from "../../../notifications-menu";
 interface CampaignDetailsHeaderProps {
   content: any;
   setContent: React.Dispatch<React.SetStateAction<any | null>>;
-  subvendorStaff: ContentItem[] | null;
+  subvendorStaff: AppUser[] | null;
   predefinedColors: string[];
   userLoggedInProfile: any;
   isAdvertiser: boolean | null;
@@ -225,7 +225,7 @@ export function CampaignDetailsHeader({
             <div className="my-[20px] flex flex-wrap items-center justify-between gap-[20px]">
               <TooltipProvider>
                 <div className="flex space-x-[5px]">
-                  {subvendorStaff?.map((user: any, index: number) => (
+                  {subvendorStaff?.map((user, index) => (
                     <Tooltip key={user?.id || index}>
                       <TooltipTrigger asChild>
                         <Button

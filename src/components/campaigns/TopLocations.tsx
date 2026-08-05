@@ -64,36 +64,36 @@ const CostPerReachCard: React.FC<Props> = ({
     if (index === 0) return "bg-amber-400 border-amber-400 text-white"; // gold
     if (index === 1) return "bg-gray-400 border-gray-400 text-white"; // silver
     if (index === 2) return "bg-amber-700 border-amber-700 text-white"; // bronze
-    return "bg-white border-gray-200 text-gray-500";
+    return "bg-card border-border text-muted-foreground";
   };
 
   return (
-    <div className="border p-5 w-full rounded-xl space-y-5 font-SansFlex hover:bg-green-500/5 hover:border hover:border-green-500">
+    <div className="w-full space-y-5 rounded-xl border border-border bg-card p-5 font-SansFlex text-card-foreground transition-colors hover:border-green-500 hover:bg-green-500/5">
       {/* Header */}
       <div>
-        <p className="text-[11px] font-semibold tracking-widest text-gray-400 uppercase mb-2">
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
           Cost Per Reach
         </p>
-        <p className="text-[44px] font-extrabold text-primary leading-none">
+        <p className="text-[44px] font-extrabold leading-none text-primary">
           ₦{costPerReach.toFixed(2)}
         </p>
       </div>
 
       {/* Table */}
       <div>
-        <p className="text-[11px] font-bold tracking-widest text-primary uppercase mb-2">
+        <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-primary">
           Top Locations
         </p>
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-100">
-              <th className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider text-left pb-2 w-8">
+            <tr className="border-b border-border">
+              <th className="w-8 pb-2 text-left text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 #
               </th>
-              <th className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider text-left pb-2">
+              <th className="pb-2 text-left text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Location
               </th>
-              <th className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider text-right pb-2">
+              <th className="pb-2 text-right text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Estimated Reach
               </th>
             </tr>
@@ -104,17 +104,17 @@ const CostPerReachCard: React.FC<Props> = ({
               return (
                 <tr
                   key={loc.name}
-                  className="border-b border-gray-50 last:border-none"
+                  className="border-b border-border/60 last:border-none"
                 >
                   <td className="py-[9px]">
                     <span
-                      className={`w-[26px] h-[26px] rounded-full border inline-flex items-center justify-center text-[11px] font-bold
+                      className={`inline-flex h-[26px] w-[26px] items-center justify-center rounded-full border text-[11px] font-bold
   ${getRankStyle(index)}`}
                     >
                       {index + 1}
                     </span>
                   </td>
-                  <td className="py-[9px] text-[13px] text-gray-800">
+                  <td className="py-[9px] text-[13px] text-foreground">
                     {loc.name}
                   </td>
                   <td
@@ -132,7 +132,7 @@ const CostPerReachCard: React.FC<Props> = ({
       <button
         onClick={handleDownload}
         disabled={topLocations.length === 0}
-        className="w-full py-[13px] bg-gray-900 text-white rounded-full text-[14px] font-semibold hover:bg-gray-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full rounded-full bg-primary py-[13px] text-[14px] font-semibold text-primary-foreground transition-colors hover:bg-orange-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
       >
         Download Data
       </button>

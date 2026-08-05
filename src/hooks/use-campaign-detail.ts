@@ -7,7 +7,7 @@ import {
   getStoredSingleCampaign,
   getStoredSingleProject,
 } from "@/services";
-import { ContentItem } from "@/types/contents";
+import type { AppProject, BusinessStaff } from "@/types/api";
 
 const isNetworkError = (err: any) =>
   !err.response ||
@@ -17,10 +17,10 @@ const isNetworkError = (err: any) =>
 
 export function useCampaignDetail(id?: string) {
   const [content, setContent] = useState<any | null>(null);
-  const [subvendorStaff, setSubVendorStaff] = useState<ContentItem[] | null>(
-    null,
-  );
-  const [staffSuggestions, setStaffSuggestions] = useState<any[]>([]);
+  const [subvendorStaff, setSubVendorStaff] = useState<
+    AppProject["watchers"] | null
+  >(null);
+  const [staffSuggestions, setStaffSuggestions] = useState<BusinessStaff[]>([]);
   const [userLoggedInProfile, setUserLoggedInProfile] = useState<any>({});
   const [isAdvertiser, setIsAdvertiser] = useState<boolean | null>(null);
   const [hasNetworkError, setHasNetworkError] = useState(false);
@@ -46,7 +46,7 @@ export function useCampaignDetail(id?: string) {
 
       getSingleProject(Number(id))
         .then((fetchedContent) => {
-          setSubVendorStaff(fetchedContent?.watchers);
+          setSubVendorStaff(fetchedContent?.watchers ?? []);
           setContent(fetchedContent);
         })
         .catch((err) => {
@@ -73,7 +73,7 @@ export function useCampaignDetail(id?: string) {
 
     if (cached) {
       setContent(cached);
-      if (!advertiser) setSubVendorStaff((cached as any)?.watchers);
+      if (!advertiser) setSubVendorStaff((cached as AppProject).watchers ?? []);
     }
 
     refreshContent(advertiser);
@@ -81,11 +81,9 @@ export function useCampaignDetail(id?: string) {
 
   useEffect(() => {
     if (content?.subvendor?.id) {
-      getBusinessStaff(Number(content.subvendor.id)).then(
-        (fetchedStaffs: any) => {
-          setStaffSuggestions(fetchedStaffs);
-        },
-      );
+      getBusinessStaff(Number(content.subvendor.id)).then((fetchedStaffs) => {
+        setStaffSuggestions(fetchedStaffs ?? []);
+      });
     }
   }, [content?.subvendor?.id]);
 

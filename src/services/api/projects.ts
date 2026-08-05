@@ -1,4 +1,14 @@
 import apiRequest from "@/Server/Api";
+import type {
+  AppProject,
+  Campaign,
+  CampaignDraft,
+  CampaignDraftResponse,
+  CampaignPage,
+  ProjectListItem,
+  ProjectWatcherAction,
+  UpdateProjectInput,
+} from "@/types/api";
 import { ContentItem } from "@/types/contents";
 import ls from "localstorage-slim";
 
@@ -84,8 +94,8 @@ export const getStoredSingleContent = (): ContentItem | null => {
   return content as ContentItem;
 };
 
-export const getProjects = async (): Promise<ContentItem[]> => {
-  const response = await apiRequest<ContentItem[]>({
+export const getProjects = async (): Promise<ProjectListItem[]> => {
+  const response = await apiRequest<ProjectListItem[]>({
     method: "GET",
     url: `/api/v1/projects/`,
     requireToken: true,
@@ -96,21 +106,18 @@ export const getProjects = async (): Promise<ContentItem[]> => {
 
 export const getSingleProject = async (
   id: number,
-): Promise<ContentItem | null> => {
+): Promise<AppProject | null> => {
   try {
-    const response = await apiRequest<ContentItem>({
+    const response = await apiRequest<AppProject>({
       method: "GET",
       url: `/api/v1/projects/${id}/`,
       data: null,
       requireToken: true,
     });
 
-    if (response && response.id && response.title) {
-      const contentItem: ContentItem = response;
-
-      ls.set("SingleProject", contentItem, { encrypt: true });
-
-      return contentItem;
+    if (response?.id && response.title) {
+      ls.set("SingleProject", response, { encrypt: true });
+      return response;
     } else {
       console.error("Invalid Project item structure:", response);
       return null;
@@ -120,29 +127,24 @@ export const getSingleProject = async (
   }
 };
 
-export const getStoredSingleProject = (): ContentItem | null => {
+export const getStoredSingleProject = (): AppProject | null => {
   const content = ls.get("SingleProject", { decrypt: true });
-
-  return content as ContentItem;
+  return content as AppProject | null;
 };
 
 export const archiveProject = async (
   id: number,
-  payload: unknown,
-): Promise<void> => {
-  try {
-    const { data: response } = await apiRequest<
-      ApiRequestResponse<ApiResponse>
-    >({
-      method: "PATCH",
-      url: `/api/v1/projects/${id}/`,
-      data: payload,
-      requireToken: true,
-    });
+  payload: UpdateProjectInput,
+): Promise<AppProject> => {
+  const response = await apiRequest<AppProject>({
+    method: "PATCH",
+    url: `/api/v1/projects/${id}/`,
+    data: payload,
+    requireToken: true,
+  });
 
-    console.log(response);
-    toast.success("Action successful!");
-  } catch (error: unknown) {}
+  toast.success("Action successful!");
+  return response;
 };
 
 export const shareProject = async (
@@ -185,10 +187,10 @@ export const sendProjectEmail = async (
 
 export const campaignStaffAction = async (
   id: number | string,
-  payload: any,
-): Promise<any | null> => {
+  payload: ProjectWatcherAction,
+): Promise<AppProject | null> => {
   try {
-    const response = await apiRequest({
+    const response = await apiRequest<AppProject>({
       method: "POST",
       url: `/api/v1/projects/${id}/watchers/`,
       data: payload,
@@ -201,8 +203,10 @@ export const campaignStaffAction = async (
   }
 };
 
-export const createCampaignDraft = async (payload: unknown): Promise<any> => {
-  const result = await apiRequest<ApiRequestResponse<ApiResponse>>({
+export const createCampaignDraft = async (
+  payload: CampaignDraft,
+): Promise<CampaignDraftResponse> => {
+  const result = await apiRequest<CampaignDraftResponse>({
     method: "POST",
     url: `/api/v1/campaigns/draft/`,
     data: payload,
@@ -229,15 +233,14 @@ export const launchCampaignFully = async (
 export const getCreatedCampaigns = async (
   page = 1,
   pageSize = 10,
-): Promise<any | null> => {
+): Promise<CampaignPage | null> => {
   try {
-    const response = await apiRequest({
+    return await apiRequest<CampaignPage>({
       method: "GET",
-      url: `/api/v1/campaigns/?page=${page}&page_size=${pageSize}`,
-      data: null,
+      url: `/api/v1/campaigns/`,
+      params: { page, page_size: pageSize },
       requireToken: true,
     });
-    return response as any;
   } catch (error: unknown) {
     return null;
   }
@@ -245,9 +248,9 @@ export const getCreatedCampaigns = async (
 
 export const getSingleCampaign = async (
   id: number,
-): Promise<ContentItem | null> => {
+): Promise<Campaign | null> => {
   try {
-    const response = await apiRequest<ContentItem>({
+    const response = await apiRequest<Campaign>({
       method: "GET",
       url: `/api/v1/campaigns/${id}/dashboard/`,
       data: null,
@@ -255,9 +258,8 @@ export const getSingleCampaign = async (
     });
 
     if (response) {
-      const contentItem: ContentItem = response;
-      ls.set(`SingleCampaign:${id}`, contentItem, { encrypt: true });
-      return contentItem;
+      ls.set(`SingleCampaign:${id}`, response, { encrypt: true });
+      return response;
     } else {
       console.error("Invalid Project item structure:", response);
       return null;
@@ -267,9 +269,9 @@ export const getSingleCampaign = async (
   }
 };
 
-export const getStoredSingleCampaign = (id: number): ContentItem | null => {
+export const getStoredSingleCampaign = (id: number): Campaign | null => {
   const content = ls.get(`SingleCampaign:${id}`, { decrypt: true });
-  return content as ContentItem;
+  return content as Campaign | null;
 };
 
 export const ClaimReward = async (payload: unknown): Promise<void> => {

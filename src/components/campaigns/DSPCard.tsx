@@ -41,7 +41,7 @@ const DSP_COLORS: Record<string, string> = {
 };
 
 const DEFAULT_COLOR = "#a3a3a3";
-const CHART_FONT_FAMILY = "SansFLex, sans-serif";
+const CHART_FONT_FAMILY = "SansFlex, sans-serif";
 
 const formatNumber = (n: number) => {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -98,18 +98,18 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
   };
 
   return (
-    <Card className="flex flex-col justify-between gap-[20px] border-0 bg-transparent p-0 shadow-none font-SansFlex">
+    <Card className="flex flex-col justify-between gap-[20px] border-0 bg-transparent p-0 font-SansFlex text-card-foreground shadow-none">
       <CardHeader className="p-0">
-        <CardTitle className="mb-2 text-[11px] font-semibold tracking-widest text-gray-400 uppercase font-SansFlex">
+        <CardTitle className="mb-2 font-SansFlex text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
           DSP
         </CardTitle>
-        <p className="text-[44px] leading-none font-extrabold text-gray-900">
+        <p className="text-[44px] font-extrabold leading-none text-foreground">
           {hasData ? formatNumber(totalCount) : "—"}
         </p>
       </CardHeader>
 
       <CardContent className="p-0">
-        <p className="text-[11px] font-bold tracking-widest text-primary uppercase mb-3">
+        <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-primary">
           Top DSPs
         </p>
         {hasData ? (
@@ -126,7 +126,7 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
                 dataKey="name"
                 tick={{
                   fontSize: 11,
-                  fill: "#999",
+                  fill: "var(--muted-foreground)",
                   fontFamily: CHART_FONT_FAMILY,
                 }}
                 axisLine={false}
@@ -136,7 +136,7 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
                 tickFormatter={formatYAxis}
                 tick={{
                   fontSize: 10,
-                  fill: "#bbb",
+                  fill: "var(--muted-foreground)",
                   fontFamily: CHART_FONT_FAMILY,
                 }}
                 axisLine={false}
@@ -170,7 +170,7 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
             </BarChart>
           </ChartContainer>
         ) : (
-          <div className="h-[220px] flex items-center justify-center text-gray-300 text-[13px]">
+          <div className="flex h-[220px] items-center justify-center text-[13px] text-muted-foreground">
             No DSP data available
           </div>
         )}
@@ -179,7 +179,7 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
       {/* was told to hide this for now */}
       <CardFooter className="hidden items-center justify-between p-0">
         <Select value={period} onValueChange={setPeriod}>
-          <SelectTrigger className="h-auto w-auto rounded-full border-gray-300 bg-white px-[14px] py-[6px] text-[13px] font-medium text-gray-700 shadow-none focus:ring-0">
+          <SelectTrigger className="h-auto w-auto rounded-full border-border bg-card px-[14px] py-[6px] text-[13px] font-medium text-foreground shadow-none focus:ring-0">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -192,7 +192,7 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
         </Select>
 
         <Select value={view} onValueChange={setView}>
-          <SelectTrigger className="h-auto w-auto rounded-full border-gray-300 bg-white px-[14px] py-[6px] text-[13px] font-medium text-gray-700 shadow-none focus:ring-0">
+          <SelectTrigger className="h-auto w-auto rounded-full border-border bg-card px-[14px] py-[6px] text-[13px] font-medium text-foreground shadow-none focus:ring-0">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -208,7 +208,7 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
       <Button
         onClick={handleDownload}
         disabled={!hasData}
-        className="h-auto w-full rounded-full bg-gray-900 py-[13px] text-[14px] font-semibold text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
+        className="h-auto w-full rounded-full bg-primary py-[13px] text-[14px] font-semibold text-primary-foreground hover:bg-orange-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
       >
         Download Data
       </Button>

@@ -2,21 +2,11 @@ import { useCallback, useState, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProjects, getCreatedCampaigns, archiveProject } from "@/services";
-import { ContentItem } from "@/types/contents";
 
 import { useAuth } from "@/context/auth-session";
 
 interface UseCampaignsProps {
   searchValue: string;
-}
-
-interface CampaignListItem {
-  id?: number | string;
-  song_title?: string;
-  song_artist?: string;
-  start_date?: string;
-  status?: string;
-  total_tokens?: number | string;
 }
 
 const toNumber = (value: unknown) => {
@@ -40,8 +30,10 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isArchiving, setIsArchiving] = useState<number | null>(null);
 
-  const [investmentFilter, setInvestmentFilter] = useState<any>("");
-  const [revenueFilter, setRevenueFilter] = useState<any>("");
+  const [investmentFilter, setInvestmentFilter] = useState<"" | "htl" | "lth">(
+    "",
+  );
+  const [revenueFilter, setRevenueFilter] = useState<"" | "htl" | "lth">("");
 
   const PAGE_SIZE = 10;
   const normalizedSearchValue = searchValue.trim().toLowerCase();
@@ -72,11 +64,7 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
     enabled: isAuthLoading === false && isAdvertiser === false,
   });
 
-  const { data: campaignsData, isLoading: isCampaignsLoading } = useQuery<{
-    results: CampaignListItem[];
-    pages: number;
-    count: number;
-  }>({
+  const { data: campaignsData, isLoading: isCampaignsLoading } = useQuery({
     queryKey: ["campaigns", currentPage],
     queryFn: () => getCreatedCampaigns(currentPage, PAGE_SIZE),
     enabled: isAuthLoading === false && isAdvertiser === true,
@@ -88,10 +76,10 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
       ? isCampaignsLoading
       : isProjectsLoading;
 
-  const content: ContentItem[] = isAdvertiser ? [] : (projectsData ?? []);
+  const content = isAdvertiser ? [] : (projectsData ?? []);
   const campaignList = campaignsData?.results ?? [];
-  const totalPages = campaignsData?.pages ?? 1;
   const totalCount = campaignsData?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   const handleCopyPin = useCallback((pin: string) => {
     navigator.clipboard.writeText(pin);
@@ -115,34 +103,17 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
     [queryClient],
   );
 
-  const filteredContent = content
-    .filter(
-      (item) =>
-        !item.archived &&
-        (item.title?.toLowerCase().includes(normalizedSearchValue) ||
-          item.vendor?.organization_name
-            ?.toLowerCase()
-            .includes(normalizedSearchValue) ||
-          item.subvendor?.organization_name
-            ?.toLowerCase()
-            .includes(normalizedSearchValue)),
-    )
-    .sort((a, b) => {
-      if (investmentFilter === "htl") {
-        return toNumber(b.total_investment) - toNumber(a.total_investment);
-      } else if (investmentFilter === "lth") {
-        return toNumber(a.total_investment) - toNumber(b.total_investment);
-      }
-      return 0;
-    })
-    .sort((a, b) => {
-      if (revenueFilter === "htl") {
-        return toNumber(b.total_revenue) - toNumber(a.total_revenue);
-      } else if (revenueFilter === "lth") {
-        return toNumber(a.total_revenue) - toNumber(b.total_revenue);
-      }
-      return 0;
-    });
+  const filteredContent = content.filter(
+    (item) =>
+      !item.archived &&
+      (item.title.toLowerCase().includes(normalizedSearchValue) ||
+        item.vendor.organization_name
+          ?.toLowerCase()
+          .includes(normalizedSearchValue) ||
+        item.subvendor.organization_name
+          ?.toLowerCase()
+          .includes(normalizedSearchValue)),
+  );
 
   const filteredCampaignList = campaignList
     .filter(

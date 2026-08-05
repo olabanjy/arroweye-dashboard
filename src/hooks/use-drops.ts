@@ -3,13 +3,14 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { getDropZones, deleteDropZones, getBusiness } from "@/services";
 import { useAuth } from "@/context/auth-context";
+import type { DropZone } from "@/types/api";
 
 export const useDrops = () => {
   const queryClient = useQueryClient();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<DropZone | null>(null);
   const { userProfile: userLoggedInProfile } = useAuth();
 
   const [filters, setFilters] = useState({
@@ -27,7 +28,9 @@ export const useDrops = () => {
   const [projectPin, setProjectPin] = useState("");
   const [pinEntered, setPinEntered] = useState("");
   const [pinError, setPinError] = useState(false);
-  const [dropIdToBeDeleted, setDropIdToBeDeleted] = useState<any>("");
+  const [dropIdToBeDeleted, setDropIdToBeDeleted] = useState<number | null>(
+    null,
+  );
 
   const updateFilters = (key: string, value: string) => {
     setFilters((prevFilters) => ({
@@ -51,17 +54,17 @@ export const useDrops = () => {
   });
 
   const vendorOptions = businessData
-    .filter((business: any) => business.type === "Vendor")
-    .map((business: any) => ({
+    .filter((business) => business.type === "Vendor")
+    .map((business) => ({
       value: business.id,
-      label: business.organization_name,
+      label: business.organization_name ?? "Unnamed vendor",
     }));
 
   const subVendorOptions = businessData
-    .filter((business: any) => business.type === "SubVendor")
-    .map((business: any) => ({
+    .filter((business) => business.type === "SubVendor")
+    .map((business) => ({
       value: business.id,
-      label: business.organization_name,
+      label: business.organization_name ?? "Unnamed sub-vendor",
     }));
 
   // Fetch Drop Zones using react-query
@@ -97,7 +100,7 @@ export const useDrops = () => {
     setCurrentPage(page);
   };
 
-  const handleUserClick = (item: any) => {
+  const handleUserClick = (item: DropZone) => {
     setSelectedUser(item);
   };
 
