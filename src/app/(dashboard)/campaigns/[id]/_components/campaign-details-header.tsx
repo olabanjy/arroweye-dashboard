@@ -242,7 +242,7 @@ export function CampaignDetailsHeader({
                         >
                           <Avatar className="size-[50px]">
                             <AvatarFallback
-                              className={`${predefinedColors[index % predefinedColors.length]} text-xs font-bold text-white tracking-wide`}
+                              className={`${predefinedColors[index % predefinedColors.length]} text-xs font-bold tracking-[0.12em] text-white`}
                             >
                               {user?.user_profile?.fullname
                                 ?.slice(0, 2)

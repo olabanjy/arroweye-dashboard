@@ -170,18 +170,18 @@ const InvoicesTab = () => {
                   placeholder="Search by title, label and artist..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
-                  className="w-full rounded-full bg-transparent font-SansFlex placeholder:font-SansFlex text-[17px] placeholder:text-[17px]"
+                  className="w-full rounded-full bg-background! font-SansFlex placeholder:font-SansFlex text-[17px] placeholder:text-[17px]"
                 />
               </div>
             )}
             <div className="flex items-center lg:justify-between gap-[5px]">
               {activeTab === "Invoice" && (
-                <div
-                  className="cursor-pointer p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
+                <Button
+                  className="cursor-pointer rounded-full hover:bg-orange-500 size-10 hover:text-white"
                   onClick={() => setFilter(!filter)}
                 >
                   <IoFilter />
-                </div>
+                </Button>
               )}
               {userLoggedInProfile?.business_type === "Vendor" && (
                 <div

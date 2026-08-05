@@ -26,6 +26,11 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { getDropZones, sendProjectEmail } from "@/services";
 import {
   isApiNotification,
@@ -194,41 +199,46 @@ export function BottomDock({
 
   return (
     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-      <div className="fixed inset-x-0 bottom-7.5 z-30 flex justify-center lg:left-32">
+      <div className="fixed inset-x-0 bottom-2 z-30 flex justify-center lg:left-32">
         <PopoverAnchor asChild>
           <div
             ref={toolbarRef}
             aria-label="Campaign report actions"
-            className="flex h-[60px] w-[calc(100vw-2rem)] max-w-[310px] items-center justify-between rounded-[9px] border border-zinc-200/90 bg-white/95 px-4 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95"
+            className="flex h-[50px] w-[calc(100vw-2rem)] max-w-[260px] items-center justify-between rounded-sm border border-zinc-200/90 bg-white/95 px-3 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95"
             role="toolbar"
           >
             {dockItems.map((item) => {
               const isActive = popoverOpen && activePanel === item.id;
 
               return (
-                <button
-                  key={item.id}
-                  type="button"
-                  aria-label={item.label}
-                  aria-pressed={isActive}
-                  className={`relative flex size-9 shrink-0 items-center justify-center rounded-md outline-none transition-[color,transform,background-color] duration-150 active:scale-[0.96] focus-visible:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-zinc-400/35 dark:focus-visible:bg-zinc-900 ${
-                    isActive
-                      ? "text-zinc-950 dark:text-zinc-50"
-                      : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
-                  }`}
-                  onClick={() => selectPanel(item.id)}
-                  title={item.label}
-                >
-                  <span className="flex size-7 items-center justify-center">
-                    {item.icon}
-                  </span>
-                  {item.badge && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute top-0 right-0 size-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-zinc-950"
-                    />
-                  )}
-                </button>
+                <Tooltip key={item.id}>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label={item.label}
+                      aria-pressed={isActive}
+                      className={`relative flex size-8 shrink-0 items-center justify-center rounded-md outline-none transition-[color,transform,background-color] duration-150 active:scale-[0.96] focus-visible:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-zinc-400/35 dark:focus-visible:bg-zinc-900 ${
+                        isActive
+                          ? "text-zinc-950 dark:text-zinc-50"
+                          : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                      }`}
+                      onClick={() => selectPanel(item.id)}
+                    >
+                      <span className="flex size-6 items-center justify-center">
+                        {item.icon}
+                      </span>
+                      {item.badge && (
+                        <span
+                          aria-hidden="true"
+                          className="absolute top-0 right-0 size-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-zinc-950"
+                        />
+                      )}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" sideOffset={10}>
+                    {item.label}
+                  </TooltipContent>
+                </Tooltip>
               );
             })}
           </div>

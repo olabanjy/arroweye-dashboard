@@ -1,12 +1,13 @@
 "use client";
 
 import Head from "next/head";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { format, parseISO } from "date-fns";
-import { FiInfo, FiMinus } from "react-icons/fi";
+import { FiInfo } from "react-icons/fi";
 import { HiOutlineCube } from "react-icons/hi";
 import { IoFilter } from "react-icons/io5";
 import { IoIosArrowRoundDown } from "react-icons/io";
-import { LuCopy } from "react-icons/lu";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,10 +31,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import { useDrops } from "../../../hooks/use-drops";
 import LibraryCard from "./component/library-card";
-import Pagination from "./component/pagination";
 import { DropsIcon } from "../sidebar";
+import NotificationsMenu from "../notifications-menu";
+import Icon from "@mdi/react";
+import { mdiArrowDown, mdiContentCopy, mdiMinus } from "@mdi/js";
 
 type SelectOption = {
   label: string;
@@ -134,8 +138,10 @@ const FilterSelect = ({
 const AssetsLibrary = () => {
   const {
     content,
-    currentPage,
-    totalPages,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
     filter,
     setFilter,
     selectedUser,
@@ -157,105 +163,191 @@ const AssetsLibrary = () => {
     setPinError,
     dropIdToBeDeleted,
     setDropIdToBeDeleted,
-    handlePageChange,
     handleUserClick,
     handleCopyLink,
     handleDelete,
   } = useDrops();
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const stickySentinelRef = useRef<HTMLDivElement>(null);
+  const isStickyRef = useRef(false);
+  const [isSticky, setIsSticky] = useState(false);
+
+  useEffect(() => {
+    const loadMoreElement = loadMoreRef.current;
+
+    if (!loadMoreElement || !hasNextPage || isFetchingNextPage) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+
+        observer.unobserve(loadMoreElement);
+        void fetchNextPage();
+      },
+      { rootMargin: "240px 0px" },
+    );
+
+    observer.observe(loadMoreElement);
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  useLayoutEffect(() => {
+    const sentinel = stickySentinelRef.current;
+    const scrollContainer = document.getElementById(
+      "dashboard-scroll-container",
+    );
+
+    if (!sentinel || !scrollContainer) return;
+
+    const updateStickyState = (synchronous = false) => {
+      const rootTop = scrollContainer.getBoundingClientRect().top;
+      const sentinelBottom = sentinel.getBoundingClientRect().bottom;
+      const nextIsSticky = isStickyRef.current
+        ? sentinelBottom <= rootTop + 2
+        : sentinelBottom <= rootTop;
+
+      if (nextIsSticky === isStickyRef.current) return;
+
+      isStickyRef.current = nextIsSticky;
+      const updateState = () => setIsSticky(nextIsSticky);
+
+      if (synchronous) {
+        flushSync(updateState);
+      } else {
+        updateState();
+      }
+    };
+
+    updateStickyState();
+
+    const handleScroll = () => updateStickyState(true);
+    scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      scrollContainer.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <>
       <Head>
         <title>Drops - Arroweye</title>
       </Head>
-      <div className="flex items-center gap-[10px]">
-        <DropsIcon className="text-primary" size={24} />
-        <p className="text-[30px] text-primary font-bold">Asset Library</p>
-      </div>
-      <div className="mt-12.5 grow">
-        <div className="flex items-center justify-end gap-2.5">
-          <div className="grow">
-            <Input
-              type="text"
-              placeholder="Search..."
-              className="h-12 w-full rounded-full border-border bg-background text-[17px] text-foreground placeholder:text-[17px]"
-              value={filters.search}
-              onChange={(e) => updateFilters("search", e.target.value)}
-            />
+      <div ref={stickySentinelRef} className="h-px" aria-hidden="true" />
+      <div
+        className={cn(
+          "sticky top-0 z-40 flex flex-col [overflow-anchor:none]",
+          isSticky &&
+            "-mx-5 border-b border-zinc-200 bg-background px-6 dark:border-zinc-800 lg:px-10",
+        )}
+      >
+        <div
+          className={cn(
+            "flex items-center gap-[10px]",
+            isSticky ? "h-16 justify-between" : "mb-12.5",
+          )}
+        >
+          <div className="flex min-w-0 items-center gap-[10px]">
+            <DropsIcon className="shrink-0 text-primary" size={24} />
+            <p className="truncate text-[30px] font-bold text-primary">
+              Asset Library
+            </p>
           </div>
-          <Button
-            type="button"
-            size="icon-lg"
-            aria-label={filter ? "Hide filters" : "Show filters"}
-            className="size-12 rounded-full"
-            onClick={() => setFilter(!filter)}
-          >
-            <IoFilter />
-          </Button>
+          {isSticky && (
+            <NotificationsMenu triggerClassName="relative size-9 rounded-full text-foreground active:scale-[0.97] [&_svg]:size-[18px]!" />
+          )}
         </div>
-      </div>
-      {filter && (
-        <div className="my-2.5">
-          <div className="mb-5 flex flex-wrap items-center gap-2.5">
-            <div className="w-full max-w-[150px]">
-              <FilterSelect
-                placeholder="Year"
-                options={yearOptions}
-                value={filters.year}
-                onChange={(value) => updateFilters("year", value)}
-              />
-            </div>
-            <div className="w-full max-w-[150px]">
-              <FilterSelect
-                placeholder="Month"
-                options={monthOptions}
-                value={filters.month}
-                onChange={(value) => updateFilters("month", value)}
-              />
-            </div>
-            {userLoggedInProfile?.business_type === "Vendor" && (
-              <>
-                <div className="w-full max-w-[150px]">
-                  <FilterSelect
-                    placeholder="Vendor"
-                    options={vendorOptions}
-                    value={filters.vendor}
-                    onChange={(value) => updateFilters("vendor", value)}
+        {!isSticky && (
+          <>
+            <div>
+              <div className="flex h-12 items-center gap-2.5">
+                <div className="grow">
+                  <Input
+                    type="text"
+                    placeholder="Search..."
+                    className="h-auto w-full rounded-full border-border bg-background! text-[17px] text-foreground shadow-none placeholder:text-[17px]"
+                    value={filters.search}
+                    onChange={(e) => updateFilters("search", e.target.value)}
                   />
                 </div>
-                <div className="w-full max-w-[150px]">
-                  <FilterSelect
-                    placeholder="Sub-Vendor"
-                    options={subVendorOptions}
-                    value={filters.subvendor}
-                    onChange={(value) => updateFilters("subvendor", value)}
-                  />
+                <Button
+                  type="button"
+                  size="icon-lg"
+                  aria-label={filter ? "Hide filters" : "Show filters"}
+                  className="size-10 shrink-0 self-center rounded-full"
+                  onClick={() => setFilter(!filter)}
+                >
+                  <IoFilter />
+                </Button>
+              </div>
+            </div>
+            {filter && (
+              <div className="my-2.5">
+                <div className="mb-5 flex flex-wrap items-center gap-2.5">
+                  <div className="w-full max-w-[150px]">
+                    <FilterSelect
+                      placeholder="Year"
+                      options={yearOptions}
+                      value={filters.year}
+                      onChange={(value) => updateFilters("year", value)}
+                    />
+                  </div>
+                  <div className="w-full max-w-[150px]">
+                    <FilterSelect
+                      placeholder="Month"
+                      options={monthOptions}
+                      value={filters.month}
+                      onChange={(value) => updateFilters("month", value)}
+                    />
+                  </div>
+                  {userLoggedInProfile?.business_type === "Vendor" && (
+                    <>
+                      <div className="w-full max-w-[150px]">
+                        <FilterSelect
+                          placeholder="Vendor"
+                          options={vendorOptions}
+                          value={filters.vendor}
+                          onChange={(value) => updateFilters("vendor", value)}
+                        />
+                      </div>
+                      <div className="w-full max-w-[150px]">
+                        <FilterSelect
+                          placeholder="Sub-Vendor"
+                          options={subVendorOptions}
+                          value={filters.subvendor}
+                          onChange={(value) =>
+                            updateFilters("subvendor", value)
+                          }
+                        />
+                      </div>
+                    </>
+                  )}
+                  <div className="w-full max-w-[150px]">
+                    <FilterSelect
+                      placeholder="Platform"
+                      options={platformOptions}
+                      value={filters.platform}
+                      onChange={(value) => updateFilters("platform", value)}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    className="h-[42px] rounded-full bg-black px-4 text-white hover:bg-zinc-800"
+                    onClick={() => setFilters(emptyFilters)}
+                  >
+                    Clear Filters
+                  </Button>
                 </div>
-              </>
+              </div>
             )}
-            <div className="w-full max-w-[150px]">
-              <FilterSelect
-                placeholder="Platform"
-                options={platformOptions}
-                value={filters.platform}
-                onChange={(value) => updateFilters("platform", value)}
-              />
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              className="h-[42px] rounded-full px-4"
-              onClick={() => setFilters(emptyFilters)}
-            >
-              Clear Filters
-            </Button>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </div>
       <div className="mb-[100px] mt-[50px]">
         <div className="mb-10 grid h-full place-items-center gap-2 md:grid-cols-2 lg:grid-cols-4">
-          {content?.map((item: any, index: number) => (
-            <div key={index} className="group w-full">
+          {content.map((item: any) => (
+            <div key={item.id} className="group w-full">
               <LibraryCard
                 title={`${item.folder_name}`}
                 mainIcon={item.drop_type || "N/A"}
@@ -270,12 +362,12 @@ const AssetsLibrary = () => {
                         type="button"
                         size="icon-lg"
                         aria-label="Open drop link"
-                        className="hidden size-[50px] rounded-full bg-blue-500 text-white hover:bg-blue-600 group-hover:inline-flex"
+                        className="hidden size-10 rounded-full bg-blue-500 text-white hover:bg-blue-600 group-hover:inline-flex"
                         onClick={() =>
                           window.open(ensureHttps(item.link), "_blank")
                         }
                       >
-                        <IoIosArrowRoundDown size={24} />
+                        <Icon path={mdiArrowDown} className="size-3.5" />
                       </Button>
                     ),
                     tooltip: "Download",
@@ -288,14 +380,14 @@ const AssetsLibrary = () => {
                         size="icon-lg"
                         aria-label="Remove drop"
                         disabled={deleteLoading}
-                        className="size-[50px] rounded-full"
+                        className="size-10 rounded-full"
                         onClick={() => {
                           setDropIdToBeDeleted(item.id);
                           setProjectPin(item.project_pin);
                           setDeleteDialog(true);
                         }}
                       >
-                        <FiMinus size={14} />
+                        <Icon path={mdiMinus} className="size-3.5" />
                       </Button>
                     ),
                     tooltip: "Delete Drop",
@@ -307,10 +399,10 @@ const AssetsLibrary = () => {
                         variant="outline"
                         size="icon-lg"
                         aria-label="Copy drop link"
-                        className="size-[50px] rounded-full"
+                        className="size-10 rounded-full"
                         onClick={() => handleCopyLink(item.link)}
                       >
-                        <LuCopy size={14} />
+                        <Icon path={mdiContentCopy} className="size-3.5" />
                       </Button>
                     ),
                     tooltip: "Copy Link",
@@ -321,10 +413,10 @@ const AssetsLibrary = () => {
                         type="button"
                         size="icon-lg"
                         aria-label={`View ${item.first_name} ${item.last_name}`}
-                        className="size-[50px] rounded-full bg-blue-500 text-white hover:bg-blue-600"
+                        className="size-10 rounded-full bg-blue-500 text-white hover:bg-blue-600"
                         onClick={() => handleUserClick(item)}
                       >
-                        <span className="font-Poppins text-[16px] font-[600] tracking-[.1rem]">
+                        <span className="font-Poppins text-sm font-semibold tracking-[.08rem]">
                           {`${item.first_name.charAt(0)}${item.last_name.charAt(0)}`}
                         </span>
                       </Button>
@@ -336,11 +428,20 @@ const AssetsLibrary = () => {
             </div>
           ))}
         </div>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+        {content.length === 0 && !isLoading && (
+          <p className="py-10 text-center text-sm text-muted-foreground">
+            No drops found.
+          </p>
+        )}
+        <div
+          ref={loadMoreRef}
+          className="flex min-h-10 items-center justify-center"
+          aria-live="polite"
+        >
+          {(isLoading || isFetchingNextPage) && (
+            <p className="text-sm text-muted-foreground">Loading drops…</p>
+          )}
+        </div>
       </div>
       <Dialog
         open={selectedUser !== null}

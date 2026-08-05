@@ -397,6 +397,7 @@ const Manage = () => {
                   info="This is the title of the campaign, preferably the project name such as the song or album title."
                   value={projectFormData.project_title}
                   onChange={handleInputChange}
+                  className="bg-background!"
                 />
                 {projectErrors.project_title && (
                   <p className="text-red-500 text-xs">
@@ -509,6 +510,7 @@ const Manage = () => {
                   info="This is an option discount percentage offered by Vendor."
                   value={projectFormData.discount || ""}
                   onChange={handleInputChange}
+                  className="bg-background!"
                 />
                 {projectErrors.discount && (
                   <p className="text-red-500 text-xs">
