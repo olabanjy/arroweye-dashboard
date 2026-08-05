@@ -164,7 +164,7 @@ export function NotificationCard({
         </p>
         <p
           className={cn(
-            "text-[14px] leading-[18px] text-neutral-800 dark:text-zinc-200",
+            "text-[15px] leading-[18px] text-neutral-800 dark:text-zinc-200",
             isArtwork && "text-base leading-6",
           )}
         >
@@ -195,7 +195,7 @@ export function NotificationCard({
                     openAction(action, url);
                   }}
                   className={cn(
-                    "h-8 cursor-pointer rounded-[6px] px-4 text-xs font-semibold shadow-none transition-colors",
+                    "h-8 cursor-pointer rounded-full px-4 text-xs font-semibold shadow-none transition-colors",
                     isShare
                       ? "border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
                       : "border-0 bg-neutral-950 text-white hover:bg-neutral-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200",

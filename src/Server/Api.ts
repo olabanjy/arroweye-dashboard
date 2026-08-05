@@ -23,7 +23,9 @@ console.log("Base URL:", process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN);
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (!config.headers["skipAuth"]) {
-      const content = ls.get("Profile", { decrypt: true }) as AuthSession | null;
+      const content = ls.get("Profile", {
+        decrypt: true,
+      }) as AuthSession | null;
       const token = content?.access;
 
       if (token) {
@@ -47,7 +49,7 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      console.log(error);
+      console.dir(error, { depth: 100 });
     }
     return Promise.reject(error);
   },

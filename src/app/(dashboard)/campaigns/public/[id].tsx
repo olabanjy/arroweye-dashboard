@@ -44,6 +44,7 @@ const ProjectDetailsPublic = () => {
 
   return (
     <>
+    
       <div className="space-y-5">
         <div className="flex items-center gap-2.5 text-muted-foreground">
           <p className="text-sm">KHAID</p>

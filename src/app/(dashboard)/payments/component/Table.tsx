@@ -35,9 +35,12 @@ const Table: React.FC<TableProps> = ({
     >
       <table className="w-full table-auto text-foreground">
         <thead>
-          <tr className="rounded-[16px] bg-[#31bc86] text-center text-[16px] font-[700] text-white dark:bg-[#17954c]">
+          <tr className="rounded-2xl bg-[#31bc86] text-center text-[16px] text-white dark:bg-[#17954c]">
             {headers.map((header, index) => (
-              <th key={index} className="px-4 py-[11px] text-center">
+              <th
+                key={index}
+                className="px-4 py-[11px] font-medium text-center"
+              >
                 {header}
               </th>
             ))}

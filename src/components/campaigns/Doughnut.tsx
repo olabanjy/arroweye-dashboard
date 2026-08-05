@@ -56,11 +56,13 @@ const fallbackColors = [
   "var(--chart-5)",
 ];
 
+const filterSelectClassName = "w-[120px]";
+
 const getDarkChartColor = (index: number) =>
   `var(--chart-${(index % fallbackColors.length) + 1})`;
 
-const getTranslucentChartColor = (color: string) =>
-  `color-mix(in srgb, ${color} 40%, transparent)`;
+const getLightChartFillColor = (color: string) =>
+  `color-mix(in srgb, ${color} 20%, transparent)`;
 
 const getChartColor = (
   backgroundColor: string | string[] | undefined,
@@ -144,7 +146,7 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
       [item.segment]: {
         label: item.label,
         theme: {
-          light: getTranslucentChartColor(item.color),
+          light: getLightChartFillColor(item.color),
           dark: item.darkColor,
         },
       },
@@ -163,8 +165,8 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
   );
 
   return (
-    <Card className="flex flex-col border-0 bg-transparent p-0 shadow-none font-SansFlex">
-      <CardHeader className="flex-row items-center justify-between space-y-0 p-0">
+    <Card className="flex flex-col !gap-5 border-0 bg-transparent p-0 shadow-none font-SansFlex">
+      <CardHeader className="!flex items-center justify-between space-y-0 p-0">
         <div className="flex items-center gap-[5px] text-[#7a8081]">
           <CardTitle className="!text-[12px] font-[400] tracking-[.1rem]">
             {title}
@@ -172,23 +174,25 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
           {info && <ChartInfoTooltip content={info} />}
         </div>
 
-        <div>
-          {selectOptions?.map((options, index) => (
-            <div key={index} className="max-w-[180px] w-full">
-              <ChartFilterSelect
-                options={options}
-                placeholder={placeholder}
-                onChange={(selectedValue) => {
-                  setFilters?.((prevFilters) => ({
-                    ...prevFilters,
-                    country: String(selectedValue),
-                  }));
-                }}
-              />
-            </div>
-          ))}
-          {!selectOptions && <div className="h-[40px] max-w-[180px] w-full" />}
-        </div>
+        {selectOptions && (
+          <div className="flex flex-1 justify-end">
+            {selectOptions.map((options, index) => (
+              <div key={index} className="shrink-0">
+                <ChartFilterSelect
+                  options={options}
+                  placeholder={placeholder}
+                  className={filterSelectClassName}
+                  onChange={(selectedValue) => {
+                    setFilters?.((prevFilters) => ({
+                      ...prevFilters,
+                      country: String(selectedValue),
+                    }));
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="space-y-[20px] p-0">
@@ -208,14 +212,14 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
 
           {pieChartData.length > 0 && (
             <div className="pt-2">
-              <div className="mb-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[14px] text-[#6f6f6f]">
+              <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[13px] leading-none text-[#6f6f6f]">
                 {pieChartData.map((item) => (
                   <div key={item.segment} className="flex items-center gap-2">
                     <span
-                      className="h-5 w-7 shrink-0 border bg-[var(--chart-legend-bg)] dark:bg-[var(--chart-legend-dark-bg)] border-[var(--chart-legend-border)] dark:border-[var(--chart-legend-dark-border)]"
+                      className="h-[14px] w-7 shrink-0 border bg-[var(--chart-legend-bg)] dark:bg-[var(--chart-legend-dark-bg)] border-[var(--chart-legend-border)] dark:border-[var(--chart-legend-dark-border)]"
                       style={
                         {
-                          "--chart-legend-bg": getTranslucentChartColor(
+                          "--chart-legend-bg": getLightChartFillColor(
                             item.color,
                           ),
                           "--chart-legend-border": item.color,
@@ -231,7 +235,7 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
 
               <ChartContainer
                 config={chartConfig}
-                className="mx-auto aspect-square max-h-[300px] font-SansFlex"
+                className="mx-auto aspect-square w-full max-w-[350px] font-SansFlex"
               >
                 <PieChart>
                   <ChartTooltip
@@ -244,7 +248,8 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
                     data={pieChartData}
                     dataKey="value"
                     nameKey="segment"
-                    innerRadius={60}
+                    innerRadius="43%"
+                    outerRadius="88%"
                   >
                     {pieChartData.map((item) => (
                       <Cell

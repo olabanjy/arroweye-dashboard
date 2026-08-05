@@ -234,7 +234,7 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
         </div>
       ) : null}
 
-      <div className="space-y-[5px] flex flex-col items-center justify-center">
+      <div className="space-y-[4px] flex flex-col items-center justify-center">
         {hasData && (
           <div className="flex items-center gap-2 w-full">
             {watchButtonText && (
@@ -281,7 +281,7 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
         {radioButtonText &&
           userLoggedInProfile.business_type === "SubVendor" && (
             <button
-              className={`p-2 mt-[20px] cursor-pointer text-[16px] font-[500] font-SansFlex w-full rounded-full text-center ${
+              className={`p-2 cursor-pointer text-[16px] font-[500] font-SansFlex w-full rounded-full text-center ${
                 outline
                   ? "border border-black text-black hover:bg-black hover:text-white"
                   : "hover:bg-orange-500 bg-black text-white"

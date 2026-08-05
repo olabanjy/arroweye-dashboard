@@ -42,13 +42,13 @@ const Table: React.FC<TableProps> = ({
     <div className={cn("overflow-x-auto", className)}>
       <table className="w-full table-auto" aria-label={ariaLabel}>
         <thead>
-          <tr className="rounded-[16px] bg-[#31bc86] text-[16px] font-bold text-white">
+          <tr className="rounded-2xl bg-[#31bc86] text-[16px] text-white">
             {headers.map((header, index) => (
               <th
                 key={index}
                 scope="col"
                 className={cn(
-                  "px-4 py-[11px]",
+                  "px-4 py-[11px] font-medium",
                   getAlignmentClass(header.align),
                   header.className,
                 )}
@@ -84,7 +84,7 @@ const Table: React.FC<TableProps> = ({
                     className={cn(
                       "border border-grey-100 dark:border-border px-4 py-[4px]",
                       highlightFirstCell && cellIndex === 0
-                        ? "border-none bg-[#2ea879] text-white"
+                        ? "border-none bg-[#31bc86] text-white"
                         : "bg-[#f5f5f5] dark:bg-card text-[#212529] dark:text-foreground",
                       getAlignmentClass(headers[cellIndex]?.align),
                     )}

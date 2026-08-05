@@ -122,7 +122,7 @@ const NotificationsMenu = ({
             className="w-full border-b border-neutral-100 bg-white dark:border-zinc-800 dark:bg-zinc-950"
           >
             {activeMainTab === "updates" && (
-              <TabsList className="grid w-full grid-cols-3 gap-2 bg-transparent px-5 py-2.5">
+              <TabsList className="grid w-full grid-cols-3 justify-between gap-2 bg-transparent px-0 py-2.5">
                 <TabsTrigger
                   value="campaign"
                   className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"

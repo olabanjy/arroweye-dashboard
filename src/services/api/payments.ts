@@ -1,6 +1,7 @@
 import apiRequest from "@/Server/Api";
 import type { CreateBusinessInput } from "@/types/api";
 import { ContentItem } from "@/types/contents";
+import axios from "axios";
 import ls from "localstorage-slim";
 import { toast } from "sonner";
 
@@ -156,18 +157,38 @@ export const getStoredService = (): ContentItem[] | null => {
 };
 
 export const getPaymentInvoice = async (id: number): Promise<any | null> => {
+  const endpoint = `/api/v1/payments/invoice/${id}/`;
+
   try {
     const response = await apiRequest({
       method: "GET",
-      url: `/api/v1/projects/${id}/invoices/`,
+      url: endpoint,
       data: null,
       requireToken: true,
+      silent: true,
     });
 
     ls.set("PaymentInvoice", response, { encrypt: true });
 
     return response as any;
-  } catch (error: unknown) {
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Failed to fetch payment invoice", {
+        invoiceId: id,
+        endpoint,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        response: error.response?.data,
+        message: error.message,
+      });
+    } else {
+      console.error("Failed to fetch payment invoice", {
+        invoiceId: id,
+        endpoint,
+        error,
+      });
+    }
+
     return null;
   }
 };
@@ -235,7 +256,7 @@ export const getDsp = async (): Promise<ContentItem[] | null> => {
     ls.set("Dsp", response, { encrypt: true });
 
     return response as ContentItem[];
-  } catch (error: unknown) {
+  } catch (error: unknown) { 
     return null;
   }
 };
@@ -250,9 +271,11 @@ export const initializePayment = async (payload: unknown): Promise<any> => {
       data: payload,
       requireToken: true,
     });
-
+    console.dir(response, { depth: 100 });
     return response;
-  } catch (error: unknown) {}
+  } catch (error: unknown) {
+    console.dir(error, { depth: 100 });
+  }
 };
 
 export const getCampaignWallet = async (): Promise<any | null> => {

@@ -36,7 +36,7 @@ const EmailInputWithSuggestions: React.FC<EmailInputWithSuggestionsProps> = ({
       const filtered = staffDetails.filter(
         (staff) =>
           staff.staff_email &&
-          staff.staff_email.toLowerCase().includes(value.toLowerCase())
+          staff.staff_email.toLowerCase().includes(value.toLowerCase()),
       );
       setFilteredStaff(filtered);
     }
@@ -110,10 +110,10 @@ const EmailInputWithSuggestions: React.FC<EmailInputWithSuggestionsProps> = ({
                     {staff.staff_email}
                   </span>
                   <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                    {staff.fullname} - {staff.role}
+                    {staff.fullname} · {staff.role}
                   </span>
                 </div>
-              )
+              ),
           )}
         </div>
       )}
