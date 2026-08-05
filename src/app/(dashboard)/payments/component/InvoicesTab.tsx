@@ -29,7 +29,7 @@ const InvoicesTab = () => {
   const [amountFilter, setAmountFilter] = useState<any>("");
   const [statusFilter, setStatusFilter] = useState<any>("");
   const [searchText, setSearchText] = useState<any>("");
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [detailsModal, setDetailsModal] = useState(false);
 
   const [formData, setFormData] = useState({

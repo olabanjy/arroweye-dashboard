@@ -183,6 +183,7 @@ export default function SetBudget({
       }));
       // toast.error(termsError);
       return;
+      
     }
 
     return needsTopUp ? handleBuyToken() : handleContinue();
