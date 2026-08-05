@@ -6,11 +6,10 @@ import {
   mdiCalendarMonthOutline,
   mdiClose,
   mdiEmailOutline,
+  mdiHistory,
   mdiLoading,
   mdiMicrosoftExcel,
-  mdiRefresh,
   mdiReload,
-  mdiRestore,
   mdiSend,
 } from "@mdi/js";
 import MdiIcon, { Icon } from "@mdi/react";
@@ -18,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 import { NotificationList } from "@/app/(dashboard)/campaigns/notifications/NotificationList";
+import { NotificationCard } from "@/app/(dashboard)/campaigns/notifications/NotificationCard";
 import { DropsIcon } from "@/app/(dashboard)/sidebar";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,18 +27,21 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getDropZones, sendProjectEmail } from "@/services";
-import type { NotificationByType } from "@/types/notifications";
+import {
+  isApiNotification,
+  type NotificationByType,
+} from "@/types/notifications";
 
-type DockPanel = "refresh" | "drops" | "schedule" | "send" | "export";
+type DockPanel = "updates" | "drops" | "schedule" | "send" | "export";
 
 interface BottomDockProps {
   contentId?: number | string;
   handleDownloadData?: () => void;
-  handleRefresh?: () => void;
+  notifications?: unknown;
 }
 
 const panelTitle: Record<DockPanel, string> = {
-  refresh: "Refresh insights",
+  updates: "Updates",
   drops: "Drops",
   schedule: "Campaign schedule",
   send: "Send report",
@@ -48,11 +51,11 @@ const panelTitle: Record<DockPanel, string> = {
 export function BottomDock({
   contentId,
   handleDownloadData,
-  handleRefresh,
+  notifications,
 }: BottomDockProps) {
   const router = useRouter();
   const toolbarRef = useRef<HTMLDivElement>(null);
-  const [activePanel, setActivePanel] = useState<DockPanel>("refresh");
+  const [activePanel, setActivePanel] = useState<DockPanel>("updates");
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -94,6 +97,14 @@ export function BottomDock({
     [dropZonesData],
   );
 
+  const updateNotifications = useMemo(
+    () =>
+      Array.isArray(notifications)
+        ? notifications.filter(isApiNotification)
+        : [],
+    [notifications],
+  );
+
   const selectPanel = (panel: DockPanel) => {
     if (popoverOpen && activePanel === panel) {
       setPopoverOpen(false);
@@ -127,12 +138,6 @@ export function BottomDock({
     }
   };
 
-  const refreshInsights = () => {
-    if (handleRefresh) handleRefresh();
-    else if (typeof window !== "undefined") window.location.reload();
-    closePopover();
-  };
-
   const openSchedule = () => {
     if (typeof document === "undefined") return;
 
@@ -160,21 +165,21 @@ export function BottomDock({
     badge?: boolean;
   }> = [
     {
-      id: "refresh",
-      label: "Refresh insights",
-      icon: <MdiIcon className="size-full" path={mdiRestore} />,
+      id: "updates",
+      label: "Open updates",
+      icon: <Icon className="size-full" path={mdiHistory} />,
     },
     {
       id: "drops",
       label: "Open drops",
       icon: <DropsIcon className="size-full" />,
     },
-    {
-      id: "schedule",
-      label: "Open campaign schedule",
-      icon: <MdiIcon className="size-full" path={mdiCalendarMonthOutline} />,
-      badge: true,
-    },
+    // {
+    //   id: "schedule",
+    //   label: "Open campaign schedule",
+    //   icon: <MdiIcon className="size-full" path={mdiCalendarMonthOutline} />,
+    //   badge: true,
+    // },
     {
       id: "send",
       label: "Send report",
@@ -194,7 +199,7 @@ export function BottomDock({
           <div
             ref={toolbarRef}
             aria-label="Campaign report actions"
-            className="flex h-[60px] w-[calc(100vw-2rem)] max-w-[310px] items-center justify-between rounded-[9px] border border-zinc-200/90 bg-white/95 px-4 shadow-[0_8px_22px_rgba(0,0,0,0.08)] backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95"
+            className="flex h-[60px] w-[calc(100vw-2rem)] max-w-[310px] items-center justify-between rounded-[9px] border border-zinc-200/90 bg-white/95 px-4 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95"
             role="toolbar"
           >
             {dockItems.map((item) => {
@@ -240,11 +245,13 @@ export function BottomDock({
             event.preventDefault();
           }
         }}
-        className={`w-[calc(100vw-2rem)] gap-0 overflow-hidden rounded-xl border-0 bg-white p-0 text-sm shadow-2xl ring-1 ring-zinc-950/10 dark:bg-zinc-950 dark:ring-white/10 ${
-          activePanel === "drops" ? "max-w-85" : "max-w-[310px]"
+        className={`w-[calc(100vw-2rem)] gap-0 overflow-hidden border-0 bg-white p-0 text-sm ring-1 ring-zinc-950/10 dark:bg-zinc-950 dark:ring-white/10 ${
+          activePanel === "drops" || activePanel === "updates"
+            ? "max-w-85"
+            : "max-w-[310px]"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3 dark:border-zinc-800">
+        <div className="flex items-center justify-between border-b border-[#d9e7f2] bg-[#edf5fb] py-1 px-3 dark:border-zinc-800 dark:bg-zinc-900">
           <p className="text-xs font-semibold tracking-[0.12em] text-zinc-500 uppercase dark:text-zinc-400">
             {panelTitle[activePanel]}
           </p>
@@ -258,20 +265,21 @@ export function BottomDock({
           </button>
         </div>
 
-        {activePanel === "refresh" && (
-          <div className="space-y-3 p-4">
-            <p className="text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-              Fetch the latest performance data for this campaign.
-            </p>
-            <button
-              type="button"
-              className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-zinc-950 px-4 text-sm font-semibold text-white outline-none transition-[background-color,transform] duration-150 hover:bg-zinc-800 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-zinc-500/35 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200"
-              onClick={refreshInsights}
-            >
-              <MdiIcon className="size-4" path={mdiRefresh} />
-              Refresh insights
-            </button>
-          </div>
+        {activePanel === "updates" && (
+          <ScrollArea className="h-[min(46vh,360px)] min-h-48">
+            {updateNotifications.length > 0 ? (
+              updateNotifications.map((notification) => (
+                <NotificationCard
+                  key={notification.id}
+                  notification={notification}
+                />
+              ))
+            ) : (
+              <p className="p-5 text-center text-sm text-gray-500">
+                No updates available.
+              </p>
+            )}
+          </ScrollArea>
         )}
 
         {activePanel === "drops" && (
@@ -323,7 +331,7 @@ export function BottomDock({
         {activePanel === "schedule" && (
           <div className="space-y-3 p-4">
             <p className="text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-              Jump to this campaign&apos;s calendar and scheduled activity.
+              View this campaign&apos;s calendar and scheduled activity.
             </p>
             <button
               type="button"
