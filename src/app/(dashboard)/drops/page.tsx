@@ -33,6 +33,7 @@ import {
 import { useDrops } from "../../../hooks/use-drops";
 import LibraryCard from "./component/library-card";
 import Pagination from "./component/pagination";
+import { DropsIcon } from "../sidebar";
 
 type SelectOption = {
   label: string;
@@ -168,8 +169,8 @@ const AssetsLibrary = () => {
         <title>Drops - Arroweye</title>
       </Head>
       <div className="flex items-center gap-[10px]">
-        <HiOutlineCube className="text-primary" size={24} />
-        <p className="text-[30px] text-primary">Asset Library</p>
+        <DropsIcon className="text-primary" size={24} />
+        <p className="text-[30px] text-primary font-bold">Asset Library</p>
       </div>
       <div className="mt-12.5 grow">
         <div className="flex items-center justify-end gap-2.5">
@@ -252,7 +253,7 @@ const AssetsLibrary = () => {
         </div>
       )}
       <div className="mb-[100px] mt-[50px]">
-        <div className="mb-10 grid h-full place-items-center gap-2 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mb-10 grid h-full place-items-center gap-2 md:grid-cols-2 lg:grid-cols-4">
           {content?.map((item: any, index: number) => (
             <div key={index} className="group w-full">
               <LibraryCard
@@ -393,10 +394,7 @@ const AssetsLibrary = () => {
                 <p className="font-[400] text-muted-foreground">Member since</p>
                 <p className="font-[600]">
                   {selectedUser.user.created
-                    ? format(
-                        parseISO(selectedUser.user.created),
-                        "dd MMM yyyy",
-                      )
+                    ? format(parseISO(selectedUser.user.created), "dd MMM yyyy")
                     : "Unknown"}
                 </p>
               </div>

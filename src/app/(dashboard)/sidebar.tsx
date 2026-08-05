@@ -139,7 +139,7 @@ const SidebarLogo = () => {
   );
 };
 
-const DropsIcon = ({
+export const DropsIcon = ({
   className,
   size = 18,
 }: {
@@ -188,7 +188,7 @@ const NavItem = ({
       isActive={active}
       onClick={onClick}
       className={cn(
-        "h-10 text-lg text-sidebar-foreground hover:bg-sidebar-accent",
+        "h-10 text-base text-sidebar-foreground hover:bg-sidebar-accent",
         "group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!",
         active && "font-[500]",
       )}
@@ -214,7 +214,7 @@ const NavItem = ({
           tooltip={tooltip ?? label}
           isActive={active}
           className={cn(
-            "h-10 text-lg text-sidebar-foreground hover:bg-sidebar-accent",
+            "h-10 text-base text-sidebar-foreground hover:bg-sidebar-accent",
             "group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!",
             active && "font-[500]",
           )}
@@ -435,7 +435,7 @@ const CampaignsSidebarContent = () => {
                         <SidebarMenuButton
                           tooltip="Tools"
                           className={cn(
-                            "h-10 text-lg text-sidebar-foreground hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground",
+                            "h-10 text-base text-sidebar-foreground hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground",
                             "group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!",
                             isSwitcherOpen && "font-[500]",
                           )}
