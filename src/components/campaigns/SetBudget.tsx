@@ -4,8 +4,10 @@ import ls from "localstorage-slim";
 import { Input } from "@/components/ui/input";
 import { fundCampaignWallet, getCampaignWallet } from "@/services";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/auth-context";
+import { useAuth } from "@/context/auth-session";
 import { useQuery } from "@tanstack/react-query";
+import { LoaderCircle } from "lucide-react";
+import { toast } from "sonner";
 
 const PRICE_PER_TOKEN = 2500; // ₦ per token
 const MIN_TOKENS = 1;
@@ -18,18 +20,32 @@ export default function SetBudget({
 }: {
   refreshToken?: number;
 }) {
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const [tokens, setTokens] = useState(10);
   const [email, setEmail] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [budgetInput, setBudgetInput] = useState("25,000");
   const [tokenInput, setTokenInput] = useState("10");
+  const [isInitiatingPayment, setIsInitiatingPayment] = useState(false);
+  const paymentInFlightRef = useRef(false);
 
   useEffect(() => {
-    if (user?.user_profile?.staff_email) {
-      setEmail(user.user_profile.staff_email);
+    const currentUserEmail = user?.email || userProfile?.staff_email;
+
+    if (currentUserEmail) {
+      setEmail((currentEmail) => currentEmail || currentUserEmail);
     }
-  }, [user]);
+  }, [user?.email, userProfile?.staff_email]);
+
+  useEffect(() => {
+    const resetPaymentState = () => {
+      paymentInFlightRef.current = false;
+      setIsInitiatingPayment(false);
+    };
+
+    window.addEventListener("pageshow", resetPaymentState);
+    return () => window.removeEventListener("pageshow", resetPaymentState);
+  }, []);
 
   const router = useRouter();
 
@@ -83,7 +99,21 @@ export default function SetBudget({
     terms?: string;
   }>({});
 
+  const toggleAccepted = () => {
+    const nextAccepted = !accepted;
+    setAccepted(nextAccepted);
+
+    if (nextAccepted) {
+      setErrors((currentErrors) => ({
+        ...currentErrors,
+        terms: undefined,
+      }));
+    }
+  };
+
   const handleBuyToken = async () => {
+    if (paymentInFlightRef.current) return;
+
     const newErrors: typeof errors = {};
     const budgetNum = parseInt(budgetInput.replace(/[^0-9]/g, ""), 10);
 
@@ -96,30 +126,37 @@ export default function SetBudget({
     if (!budgetInput || isNaN(budgetNum) || budgetNum < MIN_AMOUNT)
       newErrors.budget = `Minimum amount is ₦${formatBudget(MIN_AMOUNT)}.`;
 
-    if (!accepted) newErrors.terms = "You must accept the terms of service.";
-
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
     const callbackUrl = `${window.location.origin}/campaigns/setup?showModal=true`;
+    paymentInFlightRef.current = true;
+    setIsInitiatingPayment(true);
 
-    await fundCampaignWallet({
-      amount_naira: budgetNum,
-      callback_url: callbackUrl,
-    })
-      .then((data) => {
-        const authUrl = data?.paystack?.authorization_url;
-        if (authUrl) {
-          window.location.href = authUrl;
-        } else {
-          setErrors({
-            budget: "Could not start payment. Please try again.",
-          });
-        }
-      })
-      .catch((err) => {
-        console.error("Error submitting form:", err);
+    try {
+      const data = await fundCampaignWallet({
+        amount_naira: budgetNum,
+        callback_url: callbackUrl,
       });
+
+      const authUrl = data?.paystack?.authorization_url;
+      if (authUrl) {
+        window.location.assign(authUrl);
+        return;
+      }
+
+      setErrors({
+        budget: "Could not start payment. Please try again.",
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setErrors({
+        budget: "Could not start payment. Please try again.",
+      });
+    }
+
+    paymentInFlightRef.current = false;
+    setIsInitiatingPayment(false);
   };
 
   const handleContinue = () => {
@@ -131,15 +168,26 @@ export default function SetBudget({
       newErrors.email = "Please enter a valid email address.";
     }
 
-    if (!accepted) newErrors.terms = "You must accept the terms of service.";
-
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
     router.push("/campaigns/setup?showModal=true");
   };
 
-  const handleSubmit = () => (needsTopUp ? handleBuyToken() : handleContinue());
+  const handleSubmit = () => {
+    if (!accepted) {
+      const termsError = "Please accept the terms of service to continue.";
+      setErrors((currentErrors) => ({
+        ...currentErrors,
+        terms: termsError,
+      }));
+      // toast.error(termsError);
+      return;
+      
+    }
+
+    return needsTopUp ? handleBuyToken() : handleContinue();
+  };
 
   return (
     <div className="p-4 sm:p-7">
@@ -255,11 +303,16 @@ export default function SetBudget({
         {/* CTA */}
         <div className="flex flex-col items-center gap-4">
           <button
-            className="bg-[#111] text-white border-none rounded-xl py-4 px-10 text-[1.0625rem] font-semibold cursor-pointer transition-[background,transform] duration-150 ease-out w-full max-w-[320px] tracking-[0.01em] hover:bg-[#2a2a2a] active:scale-98 dark:bg-primary dark:text-primary-foreground dark:hover:brightness-[0.92] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 bg-[#111] text-white border-none rounded-xl py-4 px-10 text-[1.0625rem] font-semibold cursor-pointer transition-[background,transform] duration-150 ease-out w-full max-w-[320px] tracking-[0.01em] hover:bg-[#2a2a2a] active:scale-98 dark:bg-primary dark:text-primary-foreground dark:hover:brightness-[0.92] disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleSubmit}
-            disabled={!accepted}
+            disabled={isInitiatingPayment}
           >
-            {needsTopUp ? "Buy Token" : "Continue"}
+            {isInitiatingPayment && <LoaderCircle className="animate-spin" />}
+            {isInitiatingPayment
+              ? "Initiating payment..."
+              : needsTopUp
+                ? "Buy Token"
+                : "Continue"}
           </button>
           <label className="flex items-center gap-2.5 cursor-pointer select-none">
             <div
@@ -268,11 +321,16 @@ export default function SetBudget({
                   ? "border-[#111] bg-[#111] dark:border-primary dark:bg-primary"
                   : "border-[#bbb] bg-white dark:border-border dark:bg-card"
               }`}
-              onClick={() => setAccepted((a) => !a)}
+              onClick={toggleAccepted}
               role="checkbox"
               aria-checked={accepted}
               tabIndex={0}
-              onKeyDown={(e) => e.key === " " && setAccepted((a) => !a)}
+              onKeyDown={(event) => {
+                if (event.key === " " || event.key === "Enter") {
+                  event.preventDefault();
+                  toggleAccepted();
+                }
+              }}
             >
               {accepted && (
                 <div className="w-[6px] h-[6px] rounded-full bg-white dark:bg-primary-foreground" />

@@ -376,6 +376,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
       <BottomDock
         contentId={content?.id}
         handleDownloadData={handleDownloadData}
+        notifications={content?.notifications}
       />
     </div>
   );

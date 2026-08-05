@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { getDropZones, deleteDropZones, getBusiness } from "@/services";
 import { useAuth } from "@/context/auth-context";
@@ -8,7 +13,6 @@ import type { DropZone } from "@/types/api";
 export const useDrops = () => {
   const queryClient = useQueryClient();
 
-  const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<DropZone | null>(null);
   const { userProfile: userLoggedInProfile } = useAuth();
@@ -68,10 +72,15 @@ export const useDrops = () => {
     }));
 
   // Fetch Drop Zones using react-query
-  const { data: dropZonesData, isLoading: isDropZonesLoading } = useQuery({
+  const {
+    data: dropZonesData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isDropZonesLoading,
+  } = useInfiniteQuery({
     queryKey: [
       "dropzones",
-      currentPage,
       debouncedSearch,
       filters.year,
       filters.month,
@@ -79,9 +88,9 @@ export const useDrops = () => {
       filters.subvendor,
       filters.platform,
     ],
-    queryFn: () =>
+    queryFn: ({ pageParam }) =>
       getDropZones({
-        page: currentPage,
+        page: pageParam,
         search: debouncedSearch,
         year: filters.year,
         month: filters.month,
@@ -89,16 +98,12 @@ export const useDrops = () => {
         subvendor: filters.subvendor,
         platform: filters.platform,
       }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+      lastPage.next ? lastPageParam + 1 : undefined,
   });
 
-  const content = dropZonesData?.results || [];
-  const totalPages = dropZonesData?.count
-    ? Math.ceil(dropZonesData.count / 10)
-    : 1;
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+  const content = dropZonesData?.pages.flatMap((page) => page.results) ?? [];
 
   const handleUserClick = (item: DropZone) => {
     setSelectedUser(item);
@@ -144,8 +149,9 @@ export const useDrops = () => {
 
   return {
     content,
-    currentPage,
-    totalPages,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     filter,
     setFilter,
     selectedUser,
@@ -167,7 +173,6 @@ export const useDrops = () => {
     setPinError,
     dropIdToBeDeleted,
     setDropIdToBeDeleted,
-    handlePageChange,
     handleUserClick,
     handleCopyLink,
     handleDelete,

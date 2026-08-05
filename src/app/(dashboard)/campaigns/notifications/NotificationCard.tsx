@@ -102,7 +102,7 @@ export function NotificationCard({
   };
 
   const resolveActionUrl = (action: NotificationAction) => {
-    const url = action.url ?? "";
+    const url = action.url?.trim() ?? "";
     return isSpinNotification && ["Share", "View"].includes(action.type)
       ? getSpinUrl(url)
       : url;
@@ -119,6 +119,10 @@ export function NotificationCard({
 
     window.open(url, "_blank", "noopener,noreferrer");
   };
+
+  const actionsWithUrls = notification.actions
+    .map((action) => ({ action, url: resolveActionUrl(action) }))
+    .filter(({ url }) => Boolean(url));
 
   return (
     <article
@@ -171,13 +175,12 @@ export function NotificationCard({
           {parseMessage(message)}
         </p>
 
-        {notification.actions.length > 0 && (
+        {actionsWithUrls.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 pt-2">
-            {notification.actions.map((action, index) => {
-              const url = resolveActionUrl(action);
+            {actionsWithUrls.map(({ action, url }, index) => {
               const isShare = action.type === "Share";
               const isDownload = action.type === "Download";
-              const disabled = !url || disabledActions.includes(action.type);
+              const disabled = disabledActions.includes(action.type);
               const label =
                 isArtwork && action.type === "View" ? "Discover" : action.type;
 

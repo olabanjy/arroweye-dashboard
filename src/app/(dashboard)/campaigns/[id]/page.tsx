@@ -160,16 +160,16 @@ const ProjectDetails = () => {
                 content={content}
                 refreshContent={refreshContent}
               />
-              <ScheduleProject
+              {/* <ScheduleProject
                 filterIcon={false}
                 isDateClickEnabled={false}
                 isProjectPage={true}
-              />
+              /> */}
             </>
           )}
 
           {isAdvertiser && <CampaignInsightAdvertiser content={content} />}
-          <DropsList isAdvertiser={isAdvertiser} content={content} />
+          {/* <DropsList isAdvertiser={isAdvertiser} content={content} /> */}
 
           <MemberInfoDialog
             selectedUser={selectedUser}

@@ -2,8 +2,10 @@
 
 import { mdiReload } from "@mdi/js";
 import MdiIcon from "@mdi/react";
+import { useQuery } from "@tanstack/react-query";
 import { Bell, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,6 +17,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NotificationList } from "./campaigns/notifications/NotificationList";
 import { useTopNav } from "@/hooks/use-top-nav";
+import { getDropZones } from "@/services";
+import type { NotificationByType } from "@/types/notifications";
 
 type NotificationsMenuProps = {
   triggerClassName?: string;
@@ -41,11 +45,48 @@ const NotificationsMenu = ({
     hasOpenedNotifications,
   } = useTopNav();
 
+  const {
+    data: dropZonesData,
+    isLoading: dropZonesLoading,
+    isError: dropZonesError,
+    refetch: refetchDropZones,
+  } = useQuery({
+    queryKey: ["dropzones", 1, "", "", "", "", "", ""],
+    queryFn: () => getDropZones({ page: 1 }),
+    enabled:
+      isSidebarOpen && activeMainTab === "drops" && activeInnerTab === "assets",
+    staleTime: 60_000,
+  });
+
+  const dropNotifications = useMemo<NotificationByType<"Assets">[]>(
+    () =>
+      (dropZonesData?.results ?? []).map((drop) => {
+        const uploader =
+          [drop.first_name, drop.last_name].filter(Boolean).join(" ") ||
+          drop.user?.user_profile?.fullname ||
+          "Unknown user";
+
+        return {
+          id: drop.id,
+          type: "Assets",
+          icon: "",
+          content: `New drop from ${uploader}: ${drop.folder_name || "Untitled folder"}`,
+          actions: [
+            { type: "Download", url: drop.link },
+            { type: "Share", url: drop.link },
+          ],
+          created: drop.created,
+          read: true,
+        };
+      }),
+    [dropZonesData],
+  );
+
   const activeNotificationList = (() => {
     if (activeMainTab === "drops") {
       return activeInnerTab === "payment"
         ? { items: notifications.payments, category: "payment" }
-        : { items: notifications.assets, category: "asset" };
+        : { items: dropNotifications, category: "asset" };
     }
 
     switch (activeInnerTab) {
@@ -59,6 +100,23 @@ const NotificationsMenu = ({
         return { items: notifications.campaigns, category: "campaign" };
     }
   })();
+
+  const isShowingDropAssets =
+    activeMainTab === "drops" && activeInnerTab === "assets";
+  const activeListLoading = isShowingDropAssets
+    ? dropZonesLoading
+    : notificationLoading;
+  const activeListError = isShowingDropAssets
+    ? dropZonesError
+    : notificationError;
+  const retryActiveList = () => {
+    if (isShowingDropAssets) {
+      void refetchDropZones();
+      return;
+    }
+
+    retryNotifications();
+  };
 
   return (
     <DropdownMenu open={isSidebarOpen} onOpenChange={setNotificationsOpen}>
@@ -170,28 +228,31 @@ const NotificationsMenu = ({
 
         <ScrollArea className="min-h-0 flex-1">
           <div className="text-sm text-muted-foreground">
-            {notificationLoading && (
+            {activeListLoading && (
               <p className="p-6 text-center text-neutral-500">
-                Loading notifications…
+                Loading {isShowingDropAssets ? "drops" : "notifications"}…
               </p>
             )}
-            {notificationError && !notificationLoading && (
+            {activeListError && !activeListLoading && (
               <div className="flex items-center justify-center gap-2 p-6 text-red-600">
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
-                  onClick={retryNotifications}
+                  onClick={retryActiveList}
                   aria-label="Reload notifications"
                   title="Reload notifications"
                   className="size-7 rounded-full text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950"
                 >
                   <MdiIcon path={mdiReload} size={0.7} />
                 </Button>
-                <p>Notifications could not be loaded.</p>
+                <p>
+                  {isShowingDropAssets ? "Drops" : "Notifications"} could not be
+                  loaded.
+                </p>
               </div>
             )}
-            {!notificationLoading && !notificationError && (
+            {!activeListLoading && !activeListError && (
               <NotificationList
                 notifications={activeNotificationList.items}
                 emptyCategory={activeNotificationList.category}

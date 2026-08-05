@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { IoFilter } from "react-icons/io5";
 import Archive from "./Archive";
 import Campaigns from "./campaigns-table";
+import { Button } from "../ui/button";
 
 const InvoicesTab: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"Campaigns" | "Archive">(
@@ -49,17 +50,17 @@ const InvoicesTab: React.FC = () => {
                 <Input
                   type="text"
                   placeholder="Search by title, label and artist..."
-                  className=" w-full rounded-full font-SansFlex placeholder:font-SansFlex text-[17px] placeholder:text-[17px]"
+                  className=" w-full rounded-full bg-background! font-SansFlex placeholder:font-SansFlex text-[17px] placeholder:text-[17px]"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                 />
               </div>
-              <div
-                className="cursor-pointer p-[16px] hover:bg-orange-500 bg-[#000000] text-[#ffffff] rounded-full"
+              <Button
+                className="cursor-pointer rounded-full hover:bg-orange-500 size-10 hover:text-white"
                 onClick={() => setFilter(!filter)}
               >
                 <IoFilter />
-              </div>
+              </Button>
             </div>
           </div>
         </div>
