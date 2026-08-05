@@ -1,159 +1,185 @@
-import type { ReactNode } from "react";
 import MdiIcon from "@mdi/react";
+import { formatDistanceToNow } from "date-fns";
 import { Download } from "lucide-react";
+import type { Ref } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { mdiNotificationIcons } from "./notification-icon-config";
-
-export interface NotificationAction {
-  type: string;
-  url: string;
-}
+import type {
+  ApiNotification,
+  NotificationAction,
+  NotificationType,
+} from "@/types/notifications";
+import { normalizeNotificationType } from "@/types/notifications";
+import {
+  getCampaignIconConfig,
+  getMdiNotificationIcon,
+  hasMdiNotificationIcon,
+  isNotificationIconUrl,
+  notificationIconConfig,
+  type NotificationIconConfig,
+} from "./notification-icon-config";
 
 interface NotificationCardProps {
-  timeAgo: string;
-  message: string;
-  highlight?: string;
-  actions?: NotificationAction[];
-  iconClass?: string;
-  icon: ReactNode;
-  iconContainerClassName: string;
-  read?: boolean;
-  disabledActions?: string[];
-  getActionUrl?: (action: NotificationAction) => string;
-  onAction?: (action: NotificationAction, url: string) => void;
+  notification: ApiNotification;
+  elementRef?: Ref<HTMLElement>;
 }
 
-const getMdiIcon = (value?: unknown) => {
-  if (typeof value !== "string" || !value.trim()) return undefined;
+const iconKeyByType = {
+  Security: "security",
+  Milestones: "milestones",
+  Assets: "assets",
+  Payments: "payments",
+  Others: "others",
+} as const satisfies Record<
+  Exclude<NotificationType, "Campaigns">,
+  keyof typeof notificationIconConfig
+>;
 
-  const parts = value.trim().split(/\s+/);
-  const name = parts.find((part) => part.startsWith("mdi-"));
-
-  if (!name || !mdiNotificationIcons[name]) return undefined;
-
-  return {
-    path: mdiNotificationIcons[name],
-    backgroundColor: parts.find((part) => /^#[0-9a-f]{3,8}$/i.test(part)),
-  };
+const disabledActionsByType: Partial<
+  Record<NotificationType, NotificationAction["type"][]>
+> = {
+  Assets: ["Manage", "Pay", "Delete"],
+  Milestones: ["Manage", "Pay", "Delete"],
+  Payments: ["Manage", "Pay", "Delete"],
 };
 
-const isUrl = (str?: unknown) => {
-  if (typeof str !== "string" || !str) return false;
-  return (
-    str.startsWith("http") ||
-    str.startsWith("/") ||
-    str.includes(".") ||
-    str.includes("/")
+const formatRelativeDate = (dateString: string | null) => {
+  if (!dateString) return "Recently";
+
+  const date = new Date(dateString);
+  return Number.isNaN(date.getTime())
+    ? "Recently"
+    : formatDistanceToNow(date, { addSuffix: true });
+};
+
+const getIconConfig = (
+  type: NotificationType,
+  message: string,
+): NotificationIconConfig =>
+  type === "Campaigns"
+    ? getCampaignIconConfig(message)
+    : notificationIconConfig[iconKeyByType[type]];
+
+const getSpinUrl = (url: string) =>
+  url.replace(/\/spins\/spin\/([^/?#]+)/, "/spins/$1");
+
+const parseMessage = (text: string) => {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, index) =>
+    part.startsWith("**") && part.endsWith("**") ? (
+      <span key={index} className="font-bold text-neutral-950 dark:text-white">
+        {part.slice(2, -2)}
+      </span>
+    ) : (
+      part
+    ),
   );
 };
 
-const parseMessage = (text: string) => {
-  if (!text) return "";
-  const parts = text.split(/(\*\*[^*]+\*\*)/g);
-  return parts.map((part, index) => {
-    if (part.startsWith("**") && part.endsWith("**")) {
-      return (
-        <span
-          key={index}
-          className="font-bold text-neutral-950 dark:text-white"
-        >
-          {part.slice(2, -2)}
-        </span>
-      );
-    }
-    return part;
-  });
-};
-
-const parseTimeAgo = (text: string) => {
-  if (!text) return "";
-  const parts = text.split(/(_[^_]+_)/g);
-  return parts.map((part, index) => {
-    if (part.startsWith("_") && part.endsWith("_")) {
-      return (
-        <span key={index} className="underline font-bold">
-          {part.slice(1, -1)}
-        </span>
-      );
-    }
-    return part;
-  });
-};
-
 export function NotificationCard({
-  timeAgo,
-  message,
-  highlight,
-  actions = [],
-  iconClass,
-  icon,
-  iconContainerClassName,
-  read,
-  disabledActions = ["Pay", "Delete"],
-  getActionUrl = (action) => action.url,
-  onAction,
+  notification,
+  elementRef,
 }: NotificationCardProps) {
+  const type = normalizeNotificationType(notification.type);
+  const message = notification.content ?? "";
+  const timeAgo = formatRelativeDate(notification.created);
+  const iconConfig = getIconConfig(type, message);
+  const { Icon, containerClassName, ignoreApiIcon } = iconConfig;
+  const iconValue = ignoreApiIcon ? undefined : notification.icon;
+  const mdiIcon = getMdiNotificationIcon(iconValue);
+  const isIconUrl = isNotificationIconUrl(iconValue);
+  const isArtwork = type === "Assets" && isIconUrl;
+  const isSpinNotification =
+    type === "Campaigns" &&
+    hasMdiNotificationIcon(notification.icon, "mdi-album");
+  const disabledActions = disabledActionsByType[type] ?? ["Pay", "Delete"];
+
   const copyLink = async (url: string) => {
     await navigator.clipboard.writeText(url);
     toast.success("Link has been copied!");
   };
 
-  const isIconUrl = isUrl(iconClass);
-  const mdiIcon = getMdiIcon(iconClass);
+  const resolveActionUrl = (action: NotificationAction) => {
+    const url = action.url ?? "";
+    return isSpinNotification && ["Share", "View"].includes(action.type)
+      ? getSpinUrl(url)
+      : url;
+  };
+
+  const openAction = (action: NotificationAction, url: string) => {
+    if (action.type === "View" && isSpinNotification) {
+      localStorage.setItem(
+        "spinNotification",
+        JSON.stringify({ content: message, timeAgo }),
+      );
+      window.dispatchEvent(new Event("spinNotificationUpdate"));
+    }
+
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   return (
-    <div
+    <article
+      ref={elementRef}
+      data-notification-id={notification.id}
       className={cn(
-        "flex items-start gap-3 border-b border-neutral-100 bg-white px-5 py-3.5 last:border-b-0 dark:border-zinc-800 dark:bg-zinc-950",
-        !read && "bg-neutral-50/30 dark:bg-zinc-900/5",
+        "flex items-start gap-3 border-b border-neutral-100 bg-white px-5 py-3.5 dark:border-zinc-800 dark:bg-zinc-950",
+        notification.read === false && "bg-neutral-50/30 dark:bg-zinc-900/5",
       )}
     >
       {isIconUrl ? (
         <img
-          src={iconClass}
+          src={iconValue}
           alt="Notification artwork"
-          className="w-14 h-[72px] shrink-0 rounded-lg object-cover"
+          className={cn(
+            "h-[72px] w-14 shrink-0 rounded-lg object-cover",
+            isArtwork && "h-[168px] w-[116px] rounded-[4px]",
+          )}
         />
       ) : (
         <div
           className={cn(
             "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl",
-            iconContainerClassName,
+            containerClassName,
           )}
           style={
             mdiIcon?.backgroundColor
               ? { backgroundColor: mdiIcon.backgroundColor }
               : undefined
-          } 
+          }
         >
-          {mdiIcon ? <MdiIcon path={mdiIcon.path} size={0.8} /> : icon}
+          {mdiIcon ? (
+            <MdiIcon path={mdiIcon.path} size={0.8} />
+          ) : (
+            <Icon className="size-5" />
+          )}
         </div>
       )}
 
       <div className="min-w-0 flex-1 space-y-1">
-        <p className="text-sm font-bold uppercase tracking-wider text-neutral-400 dark:text-zinc-500">
-          {parseTimeAgo(timeAgo)}
+        <p className="text-[8px] font-semibold uppercase tracking-[0.15em] text-neutral-400 dark:text-zinc-500">
+          {timeAgo}
         </p>
-        <p className="text-[13px] leading-[18px] text-neutral-800 dark:text-zinc-200">
-          {parseMessage(message)}{" "}
-          {highlight && (
-            <span className="font-bold text-neutral-950 dark:text-white">
-              {highlight}
-            </span>
+        <p
+          className={cn(
+            "text-[13px] leading-[18px] text-neutral-800 dark:text-zinc-200",
+            isArtwork && "text-base leading-6",
           )}
+        >
+          {parseMessage(message)}
         </p>
 
-        {actions.length > 0 && (
+        {notification.actions.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 pt-2">
-            {actions.map((action, index) => {
-              const url = getActionUrl(action);
+            {notification.actions.map((action, index) => {
+              const url = resolveActionUrl(action);
               const isShare = action.type === "Share";
               const isDownload = action.type === "Download";
-              const disabled = disabledActions.includes(action.type);
-              const isSecondary = isShare;
+              const disabled = !url || disabledActions.includes(action.type);
+              const label =
+                isArtwork && action.type === "View" ? "Discover" : action.type;
 
               return (
                 <Button
@@ -166,24 +192,24 @@ export function NotificationCard({
                       void copyLink(url);
                       return;
                     }
-                    if (onAction) onAction(action, url);
-                    else window.open(url, "_blank", "noopener,noreferrer");
+                    openAction(action, url);
                   }}
                   className={cn(
-                    "h-8 rounded-[6px] text-xs font-semibold px-4 transition-colors cursor-pointer",
-                    isSecondary
-                      ? "border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-850"
-                      : "bg-neutral-950 text-white hover:bg-neutral-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 border-0 shadow-none",
+                    "h-8 cursor-pointer rounded-[6px] px-4 text-xs font-semibold shadow-none transition-colors",
+                    isShare
+                      ? "border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                      : "border-0 bg-neutral-950 text-white hover:bg-neutral-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200",
                     isDownload && "w-8 px-0",
+                    isArtwork && "h-10 px-4 text-sm",
                   )}
                 >
-                  {isDownload ? <Download className="size-3.5" /> : action.type}
+                  {isDownload ? <Download className="size-3.5" /> : label}
                 </Button>
               );
             })}
           </div>
         )}
       </div>
-    </div>
+    </article>
   );
 }

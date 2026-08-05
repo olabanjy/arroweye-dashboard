@@ -1,5 +1,7 @@
 "use client";
 
+import { mdiReload } from "@mdi/js";
+import MdiIcon from "@mdi/react";
 import { Bell, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -11,18 +13,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import CampaignNotifications from "./campaigns/notifications/campaigns/CampaignNotifications";
-import MileStonesNotification from "./campaigns/notifications/milestones/MileStonesNotification";
-import SecurityNotification from "./campaigns/notifications/security/SecurityNotification";
-import AssetsNotification from "./campaigns/notifications/assets/AssetsNotification";
-import PaymentsNotification from "./campaigns/notifications/payments/PaymentsNotification";
+import { NotificationList } from "./campaigns/notifications/NotificationList";
 import { useTopNav } from "@/hooks/use-top-nav";
 
 type NotificationsMenuProps = {
   triggerClassName?: string;
   triggerTabIndex?: number;
 };
- 
+
 const NotificationsMenu = ({
   triggerClassName,
   triggerTabIndex,
@@ -30,7 +28,9 @@ const NotificationsMenu = ({
   const router = useRouter();
   const {
     notifications,
-    notificationScrolled,
+    notificationLoading,
+    notificationError,
+    retryNotifications,
     allNotificationsRead,
     isSidebarOpen,
     activeMainTab,
@@ -38,10 +38,27 @@ const NotificationsMenu = ({
     setNotificationsOpen,
     handleMainTabClick,
     handleInnerTabClick,
-    setNotificationScrolled,
     hasOpenedNotifications,
   } = useTopNav();
-  console.log("notifications", notifications);
+
+  const activeNotificationList = (() => {
+    if (activeMainTab === "drops") {
+      return activeInnerTab === "payment"
+        ? { items: notifications.payments, category: "payment" }
+        : { items: notifications.assets, category: "asset" };
+    }
+
+    switch (activeInnerTab) {
+      case "milestones":
+        return { items: notifications.milestones, category: "milestone" };
+      case "security":
+        return { items: notifications.security, category: "security" };
+      case "others":
+        return { items: notifications.others, category: "other" };
+      default:
+        return { items: notifications.campaigns, category: "campaign" };
+    }
+  })();
 
   return (
     <DropdownMenu open={isSidebarOpen} onOpenChange={setNotificationsOpen}>
@@ -105,7 +122,7 @@ const NotificationsMenu = ({
             className="w-full border-b border-neutral-100 bg-white dark:border-zinc-800 dark:bg-zinc-950"
           >
             {activeMainTab === "updates" && (
-              <TabsList className="flex items-center justify-between gap-6 bg-transparent px-5 py-2.5">
+              <TabsList className="grid w-full grid-cols-3 gap-2 bg-transparent px-5 py-2.5">
                 <TabsTrigger
                   value="campaign"
                   className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
@@ -123,6 +140,12 @@ const NotificationsMenu = ({
                   className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
                 >
                   Security
+                </TabsTrigger>
+                <TabsTrigger
+                  value="others"
+                  className="bg-transparent hidden p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
+                >
+                  Others
                 </TabsTrigger>
               </TabsList>
             )}
@@ -147,39 +170,31 @@ const NotificationsMenu = ({
 
         <ScrollArea className="min-h-0 flex-1">
           <div className="text-sm text-muted-foreground">
-            {activeMainTab === "updates" && activeInnerTab === "campaign" && (
-              <CampaignNotifications
-                notification={notifications.campaigns}
-                notificationScrolled={notificationScrolled}
-                setNotificationScrolled={setNotificationScrolled}
-              />
+            {notificationLoading && (
+              <p className="p-6 text-center text-neutral-500">
+                Loading notifications…
+              </p>
             )}
-            {activeMainTab === "updates" && activeInnerTab === "milestones" && (
-              <MileStonesNotification
-                notification={notifications.milestones}
-                notificationScrolled={notificationScrolled}
-                setNotificationScrolled={setNotificationScrolled}
-              />
+            {notificationError && !notificationLoading && (
+              <div className="flex items-center justify-center gap-2 p-6 text-red-600">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={retryNotifications}
+                  aria-label="Reload notifications"
+                  title="Reload notifications"
+                  className="size-7 rounded-full text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950"
+                >
+                  <MdiIcon path={mdiReload} size={0.7} />
+                </Button>
+                <p>Notifications could not be loaded.</p>
+              </div>
             )}
-            {activeMainTab === "updates" && activeInnerTab === "security" && (
-              <SecurityNotification
-                notification={notifications.security}
-                notificationScrolled={notificationScrolled}
-                setNotificationScrolled={setNotificationScrolled}
-              />
-            )}
-            {activeMainTab === "drops" && activeInnerTab === "assets" && (
-              <AssetsNotification
-                notification={notifications.assets}
-                notificationScrolled={notificationScrolled}
-                setNotificationScrolled={setNotificationScrolled}
-              />
-            )}
-            {activeMainTab === "drops" && activeInnerTab === "payment" && (
-              <PaymentsNotification
-                notification={notifications.payments}
-                notificationScrolled={notificationScrolled}
-                setNotificationScrolled={setNotificationScrolled}
+            {!notificationLoading && !notificationError && (
+              <NotificationList
+                notifications={activeNotificationList.items}
+                emptyCategory={activeNotificationList.category}
               />
             )}
           </div>

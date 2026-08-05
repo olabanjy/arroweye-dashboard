@@ -3,34 +3,20 @@
 import { createContext, ReactNode, useContext, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ls from "localstorage-slim";
-
-interface UserProfile {
-  fullname: string;
-  staff_email: string;
-  role: string;
-  business_name: string;
-  business_type: string;
-  id?: string | number;
-}
-
-interface User {
-  phone_verified?: boolean;
-  user_type: string;
-  user_profile?: UserProfile;
-  created?: string;
-  last_login?: string;
-  email?: string;
-  id?: string | number;
-}
+import type {
+  AuthenticatedUser,
+  AuthSession,
+  UserProfile,
+} from "@/types/api";
 
 interface AuthContextType {
-  user: User | null;
+  user: AuthenticatedUser | null;
   userProfile: UserProfile | null;
   token: string | null;
   isAdvertiser: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (authData: any) => void;
+  login: (authData: AuthSession) => void;
   logout: () => void;
 }
 
@@ -49,9 +35,10 @@ export const AuthSessionProvider = ({
 }: AuthSessionProviderProps) => {
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery<any>({
+  const { data, isLoading } = useQuery<AuthSession | null>({
     queryKey: ["auth", "session"],
-    queryFn: async () => ls.get("Profile", { decrypt: true }),
+    queryFn: async () =>
+      ls.get("Profile", { decrypt: true }) as AuthSession | null,
     staleTime: Infinity,
   });
 
@@ -66,7 +53,7 @@ export const AuthSessionProvider = ({
     }
   }, [data, isLoading]);
 
-  const login = (authData: any) => {
+  const login = (authData: AuthSession) => {
     const token = authData?.token || authData?.access || null;
     if (token && typeof window !== "undefined") {
       document.cookie = `auth_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax; Secure`;

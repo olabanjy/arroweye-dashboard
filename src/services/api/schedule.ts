@@ -1,12 +1,21 @@
 import apiRequest from "@/Server/Api";
-import { ContentItem, EventsItem } from "@/types/contents";
+import type {
+  CreateEventInput,
+  Event,
+  RescheduleEventInput,
+  RescheduleEventResponse,
+} from "@/types/api";
+import { ContentItem } from "@/types/contents";
 import ls from "localstorage-slim";
+import axios from "axios";
 
 if (typeof window !== "undefined" && window?.localStorage)
   ls.config.storage = localStorage;
 
-export const CreateEvent = async (payload: unknown): Promise<any> => {
-  const response = await apiRequest({
+export const CreateEvent = async (
+  payload: CreateEventInput,
+): Promise<CreateEventInput> => {
+  const response = await apiRequest<CreateEventInput>({
     method: "POST",
     url: `/api/v1/projects/schedule/events/create/`,
     data: payload,
@@ -16,8 +25,10 @@ export const CreateEvent = async (payload: unknown): Promise<any> => {
   return response;
 };
 
-export const RescheduleEvent = async (payload: unknown): Promise<any> => {
-  const response = await apiRequest({
+export const RescheduleEvent = async (
+  payload: RescheduleEventInput,
+): Promise<RescheduleEventResponse> => {
+  const response = await apiRequest<RescheduleEventResponse>({
     method: "POST",
     url: `/api/v1/projects/schedule/events/reschedule/`,
     data: payload,
@@ -27,8 +38,8 @@ export const RescheduleEvent = async (payload: unknown): Promise<any> => {
   return response;
 };
 
-export const getEvents = async (): Promise<EventsItem[]> => {
-  const response = await apiRequest<EventsItem[]>({
+export const getEvents = async (): Promise<Event[]> => {
+  const response = await apiRequest<Event[]>({
     method: "GET",
     url: `/api/v1/projects/schedule/events/`,
     requireToken: true,
@@ -37,35 +48,35 @@ export const getEvents = async (): Promise<EventsItem[]> => {
   return response;
 };
 
-const isNetworkError = (error: any) =>
-  !error?.response ||
-  error?.code === "ERR_NETWORK" ||
-  error?.code === "ECONNABORTED" ||
-  error?.message?.includes("timeout") ||
-  error?.message?.includes("Network Error");
+const isNetworkError = (error: unknown) =>
+  axios.isAxiosError(error) &&
+  (!error.response ||
+    error.code === "ERR_NETWORK" ||
+    error.code === "ECONNABORTED" ||
+    error.message.includes("timeout") ||
+    error.message.includes("Network Error"));
 
-export const deleteEvents = async (id: number): Promise<any> => {
-  const response = await apiRequest({
+export const deleteEvents = async (id: number): Promise<void> => {
+  await apiRequest<void>({
     method: "DELETE",
-    url: `/api/v1/projects/schedule/events/${id}`,
+    url: `/api/v1/projects/schedule/events/${id}/`,
     requireToken: true,
     skipErrorHandling: true,
   });
-
-  return response;
 };
 
-export const getStoredProjectEvents = (id: number): EventsItem[] => {
+export const getStoredProjectEvents = (id: number): Event[] => {
   const content =
     ls.get(`ProjectsEvents:${id}`, { decrypt: true }) ||
     ls.get("ProjectsEvents", { decrypt: true });
 
-  return Array.isArray(content) ? (content as EventsItem[]) : [];
+  return Array.isArray(content) ? (content as Event[]) : [];
 };
 
-export const getProjectsEvents = async (id: number): Promise<EventsItem[]> => {
+export const getProjectsEvents = async (id: number): Promise<Event[]> => {
   try {
-    const response = await apiRequest<EventsItem[]>({
+    // The schema says Event, but this list-like endpoint returns Event[].
+    const response = await apiRequest<Event[]>({
       method: "GET",
       url: `/api/v1/projects/${id}/events/`,
       data: null,

@@ -5,7 +5,6 @@ import Logo from "@assets/arroreyelogoSm.svg";
 import { LuImagePlus } from "react-icons/lu";
 import { Dialog } from "primereact/dialog";
 import { Input } from "@/components/ui/input";
-import { CreateBusiness } from "@/services";
 
 interface CompanyDetailsFormProps {
   visible: boolean;
@@ -99,14 +98,10 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
     console.log("Form Data being submitted:", formData);
     if (!hasErrors) {
-      CreateBusiness(formData)
-        .then(() => {
-          console.log("Form submitted successfully!");
-          onHide();
-        })
-        .catch((err) => {
-          console.error("Error submitting form:", err);
-        });
+      // The OpenAPI contract has no company-details update endpoint for this
+      // payload. Do not send it to create-business, which creates a new org.
+      console.warn("Company details update is not connected to an API endpoint.");
+      onHide();
     }
   };
 
@@ -160,14 +155,9 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({
 
     console.log("Form Data being submitted:", paymemtFormData);
     if (!hasErrors) {
-      CreateBusiness(paymemtFormData)
-        .then(() => {
-          console.log("Form submitted successfully!");
-          onHide();
-        })
-        .catch((err) => {
-          console.error("Error submitting form:", err);
-        });
+      // No business payment-details update operation exists in the contract.
+      console.warn("Payment details update is not connected to an API endpoint.");
+      onHide();
     }
   };
 

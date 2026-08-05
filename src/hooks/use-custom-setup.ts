@@ -397,6 +397,7 @@ export const useCustomSetup = () => {
         song_title: campaignSongDetails?.title,
         song_artist: campaignSongDetails?.artist,
         song_artwork: campaignSongDetails?.artwork,
+        target_audience_reach: Number(totalAudienceReach) || 0,
         start_date: startDate,
         mode: "custom",
       });
@@ -418,7 +419,7 @@ export const useCustomSetup = () => {
       toast.error("Campaign Created Failed, kindly try again");
       setLoadingCampaignCreation(false);
     }
-  }, [campaignSongDetails, startDate]);
+  }, [campaignSongDetails, startDate, totalAudienceReach]);
 
   const handleLaunchCampaign = useCallback(async () => {
     const createToast = toast.loading("Launching Campaign...");

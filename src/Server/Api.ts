@@ -7,6 +7,7 @@ import axios, {
 } from "axios";
 import { Id as ToastId } from "react-toastify";
 import { handleApiError } from "../lib/utils";
+import type { AuthSession } from "@/types/api";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN as string,
@@ -22,7 +23,7 @@ console.log("Base URL:", process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN);
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (!config.headers["skipAuth"]) {
-      const content: any = ls.get("Profile", { decrypt: true });
+      const content = ls.get("Profile", { decrypt: true }) as AuthSession | null;
       const token = content?.access;
 
       if (token) {

@@ -1,46 +1,35 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { ContentItem } from "@/types/contents";
-import { formatDistanceToNow } from "date-fns";
-import { toast } from "react-toastify";
-import AssetsNotificationCard from "@/app/(dashboard)/campaigns/notifications/AssetsNotificationCard";
-import FirstPlayNotificationCard from "@/app/(dashboard)/campaigns/notifications/FirstPlayNotificationCard";
-import SecurityNotificationCard from "@/app/(dashboard)/campaigns/notifications/SecurityNotificationCard";
-import PaymentMomentNotificationCard from "@/app/(dashboard)/campaigns/notifications/payments/PaymentMomentNotificationCard";
-import MilestoneNotificationCard from "@/app/(dashboard)/campaigns/notifications/MilestoneNotificationCard";
-import { useParams, useRouter } from "next/navigation";
+import { NotificationCard } from "@/app/(dashboard)/campaigns/notifications/NotificationCard";
+import {
+  isApiNotification,
+  type NotificationByType,
+} from "@/types/notifications";
+import { useParams } from "next/navigation";
 
 interface DropsListProps {
   isAdvertiser: boolean | null;
-  content?: any;
+  content?: ContentItem | null;
 }
+
+type MainTab = "updates" | "drops";
 
 const DropsList: React.FC<DropsListProps> = ({ isAdvertiser, content }) => {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [dropzoneData, setDropzoneData] = useState<ContentItem | null>(null);
-  const [pin, setPin] = useState("");
-  const [activeMainTab, setActiveMainTab] = useState("drops");
+  const [activeMainTab, setActiveMainTab] = useState<MainTab>("drops");
 
   const params = useParams<{ id: string }>();
   const id = params?.id;
 
-  const handleMainTabClick = (tab: string) => {
+  const handleMainTabClick = (tab: MainTab) => {
     setActiveMainTab(tab);
-  };
-
-  const handleDownload = (link: string) => {
-    window.open(link, "_blank");
-  };
-
-  const handleShare = (link: string) => {
-    navigator.clipboard.writeText(link);
-    toast.info("Link copied to clipboard!");
   };
 
   useEffect(() => {
     if (content && !dropzoneData) {
       setDropzoneData(content);
-      setPin(content?.pin);
     }
   }, [content, dropzoneData]);
 
@@ -48,22 +37,12 @@ const DropsList: React.FC<DropsListProps> = ({ isAdvertiser, content }) => {
     setDropzoneData(null);
   }, [id]);
 
-  const formatRelativeDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return formatDistanceToNow(date, { addSuffix: true });
-  };
-
-  const componentMap: any = {
-    Assets: AssetsNotificationCard,
-    Campaigns: FirstPlayNotificationCard,
-    Security: SecurityNotificationCard,
-    Payments: PaymentMomentNotificationCard,
-    Milestone: MilestoneNotificationCard,
-  };
-
   const renderContent = () => {
     if (activeMainTab === "updates") {
-      const notifications = dropzoneData?.notifications || [];
+      const rawNotifications: unknown = dropzoneData?.notifications;
+      const notifications = Array.isArray(rawNotifications)
+        ? rawNotifications.filter(isApiNotification)
+        : [];
       if (!notifications.length) {
         return (
           <p className="text-center text-gray-500 p-[20px]">
@@ -72,22 +51,9 @@ const DropsList: React.FC<DropsListProps> = ({ isAdvertiser, content }) => {
         );
       }
 
-      return notifications.map((drop: any, index: number) => {
-        const Component = componentMap[drop.type] || AssetsNotificationCard;
-        return (
-          <div key={index} className="p-[20px]">
-            <Component
-              timeAgo={formatRelativeDate(drop.created)}
-              message={drop.content}
-              onDownload={() => handleDownload(drop.link)}
-              onShare={() => handleShare(drop.link)}
-              actions={drop.actions}
-              iconClass={drop.icon}
-              read={true}
-            />
-          </div>
-        );
-      });
+      return notifications.map((notification) => (
+        <NotificationCard key={notification.id} notification={notification} />
+      ));
     }
 
     if (activeMainTab === "drops") {
@@ -100,22 +66,24 @@ const DropsList: React.FC<DropsListProps> = ({ isAdvertiser, content }) => {
         );
       }
 
-      return drops.map((drop: any, index: number) => (
-        <div key={index} className="p-[20px]">
-          <AssetsNotificationCard
-            timeAgo={formatRelativeDate(drop.created)}
-            message={`New drop from ${drop.first_name} ${drop.last_name}: ${drop.folder_name}`}
-            onDownload={() => handleDownload(drop.link)}
-            onShare={() => handleShare(drop.link)}
-            actions={[
-              { type: "Download", url: drop.link },
-              { type: "Share", url: drop.link },
-            ]}
-            iconClass={drop.icon}
-            read={true}
-          />
-        </div>
-      ));
+      return drops.map((drop, index) => {
+        const item: NotificationByType<"Assets"> = {
+          id: index + 1,
+          type: "Assets",
+          icon: "",
+          content: `New drop from ${drop.first_name} ${drop.last_name}: ${drop.folder_name}`,
+          actions: [
+            { type: "Download", url: drop.link },
+            { type: "Share", url: drop.link },
+          ],
+          created: drop.created,
+          read: true,
+        };
+
+        return (
+          <NotificationCard key={`${drop.link}-${index}`} notification={item} />
+        );
+      });
     }
 
     return null;
