@@ -93,19 +93,9 @@ const ProjectDetails = () => {
   const originalTitle = content?.title || "";
   const campaignTitle = content?.title || content?.campaign?.song_title;
 
-  React.useEffect(() => {
-    if (!campaignTitle) return;
-
-    const previousTitle = document.title;
-    document.title = campaignTitle;
-
-    return () => {
-      document.title = previousTitle;
-    };
-  }, [campaignTitle]);
-
   return (
     <>
+      {campaignTitle && <title>{`${campaignTitle} - Arroweye`}</title>}
       {hasNetworkError ? (
         <NoNetwork onReconnect={refreshContent} />
       ) : (

@@ -186,7 +186,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
           </sup>
         </button>
 
-        {radioButtonText && (
+        {/* {radioButtonText && (
           <button
             className={`p-2 cursor-pointer text-[16px] font-[500] font-SansFlex w-full rounded-full text-center ${
               outline
@@ -202,7 +202,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
           >
             {radioButtonText}
           </button>
-        )}
+        )} */}
 
         {subText && (
           <p className="text-[12px] font-[400] text-center">{subText}</p>

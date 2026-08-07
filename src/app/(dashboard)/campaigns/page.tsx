@@ -1,34 +1,10 @@
-"use client";
-import { useState } from "react";
-import Head from "next/head";
-import InvoicesTab from "@/components/campaigns/InvoicesTab";
-import Insight from "@/components/campaigns/Insight";
+import type { Metadata } from "next";
+import CampaignsPageClient from "./campaigns-page-client";
 
-const Campaigns = () => {
-  const [activeTab, setActiveTab] = useState("manage");
-  return (
-    <>
-      <Head>
-        <title>Campaigns - Arroweye</title>
-      </Head>
-
-      <div className=" ">
-        <div className="flex gap-2.5 items-center mb-4 lg:ml-5"></div>
-
-        <div>
-          {activeTab === "manage" && (
-            <div className="">
-              {/* <Manage /> */}
-
-              {/* render the invoices for campaigns created */}
-              <InvoicesTab />
-            </div>
-          )}
-          {activeTab === "insights" && <Insight />}
-        </div>
-      </div>
-    </>
-  );
+export const metadata: Metadata = {
+  title: "Campaigns - Arroweye",
 };
 
-export default Campaigns;
+export default function CampaignsPage() {
+  return <CampaignsPageClient />;
+}

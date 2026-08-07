@@ -171,12 +171,12 @@ export function BottomDock({
   }> = [
     {
       id: "updates",
-      label: "updates",
+      label: "Updates",
       icon: <Icon className="size-full" path={mdiHistory} />,
     },
     {
       id: "drops",
-      label: "drops",
+      label: "Drops",
       icon: <DropsIcon className="size-full" />,
     },
     // {
@@ -187,7 +187,7 @@ export function BottomDock({
     // },
     {
       id: "send",
-      label: "report",
+      label: "Send",
       icon: <MdiIcon className="size-full" path={mdiEmailOutline} />,
     },
     {
