@@ -1,57 +1,33 @@
-"use client";
-import { FC, ReactNode } from "react";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Sidebar from "./sidebar";
-import TopNav from "./top-nav";
-import { usePathname } from "next/navigation";
-import { useProtectedRoute } from "./hooks/use-protected-route";
-import ScrollToTopButton from "@/components/scroll-to-top-button";
+import type { Metadata } from "next";
+import DashboardLayoutClient from "./dashboard-layout-client";
 
-interface LayoutProps {
-  children: ReactNode;
-  withBorder?: boolean;
-}
+const BRAND_TITLE = "Arroweye Pro | AI-Powered Insights for African Creators";
+const BRAND_DESCRIPTION =
+  "Track expenses, generate reports and leverage key insights to boost your ROI.";
+const OG_IMAGE =
+  "https://res.cloudinary.com/dih0krdcj/image/upload/v1711013704/Arroweye%20Pro/gaw6s34qtctayapeeaf2.png";
 
-const DashboardLayout: FC<LayoutProps> = ({ children, withBorder = true }) => {
-  const pathname = usePathname();
-  const { isAuthenticated, isLoading } = useProtectedRoute();
-
-  if (isLoading || !isAuthenticated) {
-    return (
-      <div id="preloader">
-        <h1 className="pine-bold text-lg"></h1>
-        <div id="preloader_line"></div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex h-screen overflow-hidden">
-      <div className=" z-50">
-        <Sidebar />
-      </div>
-      <div
-        id="dashboard-scroll-container"
-        className="flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow"
-      >
-        <TopNav />
-        <main
-          className={`w-full max-w-6xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
-            pathname !== "/campaigns/spins-notifications" &&
-            pathname !== "/campaigns/setup/custom" &&
-            pathname !== "/campaigns/setup/promoter"
-              ? "mx-[20px]"
-              : ""
-          } border-none rounded-xl mt-5`}
-        >
-          {children}
-        </main>
-        <ToastContainer />
-      </div>
-      <ScrollToTopButton />
-    </div>
-  );
+export const metadata: Metadata = {
+  description: BRAND_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    url: "https://studio.arroweye.pro/",
+    title: BRAND_TITLE,
+    description: BRAND_DESCRIPTION,
+    images: [{ url: OG_IMAGE }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: BRAND_TITLE,
+    description: BRAND_DESCRIPTION,
+    images: [OG_IMAGE],
+  },
 };
 
-export default DashboardLayout;
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <DashboardLayoutClient>{children}</DashboardLayoutClient>;
+}

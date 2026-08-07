@@ -190,10 +190,10 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
       {loading ? (
         <div className="h-[400px] w-full rounded bg-gray-200 animate-pulse" />
       ) : hasData ? (
-        <div className="relative h-[400px] rounded overflow-hidden group">
+        <div className="relative flex h-[400px] items-center justify-center overflow-hidden rounded bg-black group">
           <>
             <iframe
-              className="w-full h-[400px]"
+              className="aspect-video h-full w-full"
               src={`${videoUrls[currentVideoIndex]}?autoplay=${isPlaying ? "1" : "0"}&controls=1&showinfo=0&rel=0`}
               title={`${videoTitle} - Video ${currentVideoIndex + 1}`}
               frameBorder="0"

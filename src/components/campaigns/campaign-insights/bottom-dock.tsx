@@ -171,12 +171,12 @@ export function BottomDock({
   }> = [
     {
       id: "updates",
-      label: "Open updates",
+      label: "updates",
       icon: <Icon className="size-full" path={mdiHistory} />,
     },
     {
       id: "drops",
-      label: "Open drops",
+      label: "drops",
       icon: <DropsIcon className="size-full" />,
     },
     // {
@@ -187,7 +187,7 @@ export function BottomDock({
     // },
     {
       id: "send",
-      label: "Send report",
+      label: "report",
       icon: <MdiIcon className="size-full" path={mdiEmailOutline} />,
     },
     {
@@ -204,7 +204,7 @@ export function BottomDock({
           <div
             ref={toolbarRef}
             aria-label="Campaign report actions"
-            className="flex h-[50px] w-[calc(100vw-2rem)] max-w-[260px] items-center justify-between rounded-sm border border-zinc-200/90 bg-white/95 px-3 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95"
+            className="flex h-[50px] w-[calc(100vw-2rem)] max-w-[260px] items-center justify-between rounded-sm border border-zinc-200/90 bg-white/95 px-3 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95 shaodow-sm"
             role="toolbar"
           >
             {dockItems.map((item) => {
@@ -220,7 +220,7 @@ export function BottomDock({
                       className={`relative flex size-8 shrink-0 items-center justify-center rounded-md outline-none transition-[color,transform,background-color] duration-150 active:scale-[0.96] focus-visible:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-zinc-400/35 dark:focus-visible:bg-zinc-900 ${
                         isActive
                           ? "text-zinc-950 dark:text-zinc-50"
-                          : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                          : "text-zinc-800 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-500"
                       }`}
                       onClick={() => selectPanel(item.id)}
                     >
@@ -365,7 +365,7 @@ export function BottomDock({
                 type="email"
                 autoComplete="email"
                 placeholder="hello@arroweye.pro"
-                className="h-11 w-full rounded-lg border border-zinc-300 bg-white pr-12 pl-4 text-sm text-zinc-950 shadow-sm outline-none transition-[border-color,box-shadow] placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 disabled:opacity-70 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                className="h-auto w-full rounded-full border border-border bg-background px-4 py-[8px] pr-14 text-[17px] text-foreground shadow-none outline-none placeholder:text-[17px] disabled:opacity-70"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 onKeyDown={(event) => {
@@ -376,7 +376,7 @@ export function BottomDock({
               <button
                 type="button"
                 aria-label="Send report email"
-                className="absolute right-1.5 flex size-8 items-center justify-center rounded-md bg-blue-600 text-white outline-none transition-[background-color,transform] duration-150 hover:bg-blue-700 active:scale-[0.95] focus-visible:ring-2 focus-visible:ring-blue-500/30 disabled:pointer-events-none disabled:opacity-50"
+                className="absolute right-1 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground outline-none transition-[background-color,transform] duration-150 hover:bg-primary/80 active:scale-[0.95] focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-50"
                 onClick={() => void handleSendEmail()}
                 disabled={isSending || !email}
               >

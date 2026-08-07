@@ -9,6 +9,9 @@ import type {
   UserProfile,
 } from "@/types/api";
 
+if (typeof window !== "undefined" && window?.localStorage)
+  ls.config.storage = localStorage;
+
 interface AuthContextType {
   user: AuthenticatedUser | null;
   userProfile: UserProfile | null;
@@ -40,23 +43,25 @@ export const AuthSessionProvider = ({
     queryFn: async () =>
       ls.get("Profile", { decrypt: true }) as AuthSession | null,
     staleTime: Infinity,
+    gcTime: Infinity,
   });
 
   useEffect(() => {
-    if (!isLoading && typeof window !== "undefined") {
-      const token = data?.token || data?.access || null;
+    if (typeof window !== "undefined") {
+      const stored = ls.get("Profile", { decrypt: true }) as AuthSession | null;
+      const token = stored?.token || stored?.access || null;
       if (token) {
-        document.cookie = `auth_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax; Secure`;
-      } else {
-        document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        const isProd = window.location.protocol === "https:";
+        document.cookie = `auth_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax${isProd ? "; Secure" : ""}`;
       }
     }
-  }, [data, isLoading]);
+  }, []);
 
   const login = (authData: AuthSession) => {
     const token = authData?.token || authData?.access || null;
     if (token && typeof window !== "undefined") {
-      document.cookie = `auth_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax; Secure`;
+      const isProd = window.location.protocol === "https:";
+      document.cookie = `auth_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax${isProd ? "; Secure" : ""}`;
     }
     ls.set("Profile", authData, { encrypt: true });
     queryClient.setQueryData(["auth", "session"], authData);

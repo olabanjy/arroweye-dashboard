@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { CirclePlay, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { toast } from "sonner";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
@@ -13,7 +12,6 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface MomentSliderCardProps {
   images: string[];
@@ -49,7 +47,6 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const hasData = (images?.length ?? 0) > 0;
-  const listenHref = links?.[selectedIndex] ?? links?.[0];
 
   useEffect(() => {
     if (!carouselApi) return;
@@ -149,7 +146,7 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
       </p>
 
       {loading ? (
-        <Skeleton className="h-[400px] w-full rounded bg-gray-200" />
+        <div className="h-[400px] w-full rounded bg-gray-200 animate-pulse" />
       ) : hasData ? (
         <Carousel
           opts={{ loop: true }}
@@ -169,7 +166,7 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
                     <img
                       src={image}
                       alt={`Slide ${index + 1}`}
-                      className="h-full w-full object-contain"
+                      className="h-full w-full object-cover"
                     />
                   </Link>
                 ) : (
@@ -177,24 +174,13 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
                     <img
                       src={image}
                       alt={`Slide ${index + 1}`}
-                      className="h-full w-full object-contain"
+                      className="h-full w-full object-cover"
                     />
                   </div>
                 )}
               </CarouselItem>
             ))}
           </CarouselContent>
-          {listenHref && (
-            <Button
-              asChild
-              className="absolute bottom-4 left-1/2 z-10 h-auto -translate-x-1/2 rounded-full bg-white px-3 py-1 text-xs font-normal text-black hover:bg-white/90"
-            >
-              <Link href={listenHref} target="_blank" rel="noopener noreferrer">
-                <CirclePlay className="size-3" />
-                Listen
-              </Link>
-            </Button>
-          )}
           {images.length > 1 && (
             <>
               <CarouselPrevious
@@ -210,71 +196,69 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
         </Carousel>
       ) : null}
 
-      <div className="space-y-[5px] flex flex-col items-center justify-center">
+      <div className="space-y-[4px] flex flex-col items-center justify-center">
         {hasData && (
           <div className="flex items-center gap-2 w-full">
             {watchButtonText && (
-              <Button
+              <button
                 type="button"
-                className="h-auto flex-grow rounded bg-black p-2 text-base font-medium text-white hover:bg-orange-500"
+                className="p-2 cursor-pointer hover:bg-orange-500 font-SansFlex text-[16px] font-[500] flex-grow rounded-full bg-black text-white text-center"
               >
                 {watchButtonText}
-              </Button>
+              </button>
             )}
 
             {downloadIcon && watchButtonText && (
-              <Button
+              <button
                 type="button"
-                size="icon"
-                className="h-auto rounded bg-black p-[11px] text-white hover:bg-orange-500"
+                className="bg-black hover:bg-orange-500 font-SansFlex text-[16px] font-medium text-white p-[11px] rounded-full inline-flex justify-center items-center"
                 aria-label="Download"
               >
-                <Download />
-              </Button>
+                <Download className="size-4" />
+              </button>
             )}
           </div>
         )}
 
         {hasData && assetsButton && (
-          <Button
+          <button
             type="button"
-            className="h-auto w-full rounded-full bg-black p-2 text-base font-medium text-white hover:bg-orange-500"
+            className="p-2 cursor-pointer text-[16px] font-[500] font-SansFlex w-full rounded-full text-center hover:bg-orange-500 bg-black text-white"
             onClick={() => downloadAllDspFiles(images)}
           >
             {assetsButton}
-          </Button>
+          </button>
         )}
 
-        <Button
+        <button
           type="button"
-          className="h-auto w-full rounded-full bg-black p-2 text-base font-medium text-white hover:bg-orange-500"
+          className="p-2 font-SansFlex text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
           onClick={() => downloadCSV(csvData)}
         >
-          {downloadButtonText}
-          <sup className="mt-1 rounded-full bg-white p-2 font-bold text-black">
+          <p>{downloadButtonText}</p>
+          <sup className="font-bold p-2 rounded-full bg-white text-black mt-1">
             CSV
           </sup>
-        </Button>
+        </button>
 
         {radioButtonText && (
-          <Button
+          <button
             type="button"
-            variant={outline ? "outline" : "default"}
-            className={
+            className={`p-2 cursor-pointer text-[16px] font-[500] font-SansFlex w-full rounded-full text-center ${
               outline
-                ? "h-auto w-full rounded-full border-black p-2 text-base font-medium text-black hover:bg-black hover:text-white"
-                : "h-auto w-full rounded-full bg-black p-2 text-base font-medium text-white hover:bg-orange-500"
-            }
+                ? "border border-black text-black hover:bg-black hover:text-white"
+                : "hover:bg-orange-500 bg-black text-white"
+            }`}
           >
             {radioButtonText}
-          </Button>
+          </button>
         )}
 
         {subText && (
           <p className="text-[12px] font-[400] text-center">{subText}</p>
         )}
         {additionalContent && (
-          <div className="p-2 font-SansFlex text-[16px] text-center text-gray-700">
+          <div className="font-SansFlex text-[16px] text-center text-gray-700">
             {additionalContent}
           </div>
         )}

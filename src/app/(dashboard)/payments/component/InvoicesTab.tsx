@@ -177,7 +177,10 @@ const InvoicesTab = () => {
             <div className="flex items-center lg:justify-between gap-[5px]">
               {activeTab === "Invoice" && (
                 <Button
-                  className="cursor-pointer rounded-full hover:bg-orange-500 size-10 hover:text-white"
+                  type="button"
+                  size="icon-lg"
+                  aria-label={filter ? "Hide filters" : "Show filters"}
+                  className="size-10 shrink-0 self-center rounded-full"
                   onClick={() => setFilter(!filter)}
                 >
                   <IoFilter />

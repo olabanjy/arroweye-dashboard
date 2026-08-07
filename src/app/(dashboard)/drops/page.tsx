@@ -119,7 +119,7 @@ const FilterSelect = ({
   onChange: (value: string) => void;
 }) => (
   <Select value={value || undefined} onValueChange={onChange}>
-    <SelectTrigger className="h-[42px] rounded-full border-border bg-background text-primary shadow-none">
+    <SelectTrigger className="h-[40px] rounded-full border-border bg-background text-primary shadow-none">
       <SelectValue placeholder={placeholder} />
     </SelectTrigger>
     <SelectContent>
@@ -169,8 +169,10 @@ const AssetsLibrary = () => {
   } = useDrops();
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const stickySentinelRef = useRef<HTMLDivElement>(null);
+  const stickyHeaderRef = useRef<HTMLDivElement>(null);
   const isStickyRef = useRef(false);
   const [isSticky, setIsSticky] = useState(false);
+  const [fullHeaderHeight, setFullHeaderHeight] = useState(0);
 
   useEffect(() => {
     const loadMoreElement = loadMoreRef.current;
@@ -194,11 +196,21 @@ const AssetsLibrary = () => {
 
   useLayoutEffect(() => {
     const sentinel = stickySentinelRef.current;
+    const stickyHeader = stickyHeaderRef.current;
     const scrollContainer = document.getElementById(
       "dashboard-scroll-container",
     );
 
-    if (!sentinel || !scrollContainer) return;
+    if (!sentinel || !stickyHeader || !scrollContainer) return;
+
+    const measureFullHeader = () => {
+      if (isStickyRef.current) return;
+
+      const nextHeight = stickyHeader.offsetHeight;
+      setFullHeaderHeight((currentHeight) =>
+        currentHeight === nextHeight ? currentHeight : nextHeight,
+      );
+    };
 
     const updateStickyState = (synchronous = false) => {
       const rootTop = scrollContainer.getBoundingClientRect().top;
@@ -219,12 +231,16 @@ const AssetsLibrary = () => {
       }
     };
 
+    measureFullHeader();
     updateStickyState();
 
+    const resizeObserver = new ResizeObserver(measureFullHeader);
+    resizeObserver.observe(stickyHeader);
     const handleScroll = () => updateStickyState(true);
     scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
+      resizeObserver.disconnect();
       scrollContainer.removeEventListener("scroll", handleScroll);
     };
   }, []);
@@ -236,6 +252,7 @@ const AssetsLibrary = () => {
       </Head>
       <div ref={stickySentinelRef} className="h-px" aria-hidden="true" />
       <div
+        ref={stickyHeaderRef}
         className={cn(
           "sticky top-0 z-40 flex flex-col [overflow-anchor:none]",
           isSticky &&
@@ -275,7 +292,7 @@ const AssetsLibrary = () => {
                   type="button"
                   size="icon-lg"
                   aria-label={filter ? "Hide filters" : "Show filters"}
-                  className="size-10 shrink-0 self-center rounded-full"
+                  className="size-10 shrink-0 mt-2 self-center rounded-full"
                   onClick={() => setFilter(!filter)}
                 >
                   <IoFilter />
@@ -333,7 +350,7 @@ const AssetsLibrary = () => {
                   </div>
                   <Button
                     type="button"
-                    className="h-[42px] rounded-full bg-black px-4 text-white hover:bg-zinc-800"
+                    className="h-[40px] rounded-full bg-black dark:bg-white dark:text-black dark:hover:bg-zinc-200 px-4 text-white hover:bg-zinc-800"
                     onClick={() => setFilters(emptyFilters)}
                   >
                     Clear Filters
@@ -344,8 +361,11 @@ const AssetsLibrary = () => {
           </>
         )}
       </div>
+      {isSticky && fullHeaderHeight > 64 && (
+        <div aria-hidden="true" style={{ height: fullHeaderHeight - 64 }} />
+      )}
       <div className="mb-[100px] mt-[50px]">
-        <div className="mb-10 grid h-full place-items-center gap-2 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-10 grid h-full place-items-center gap-2 md:grid-cols-2 lg:grid-cols-3">
           {content.map((item: any) => (
             <div key={item.id} className="group w-full">
               <LibraryCard

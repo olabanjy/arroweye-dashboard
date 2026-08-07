@@ -43,14 +43,14 @@ export function SendReportModal({
           <input
             type="email"
             placeholder="hello@arroweye.pro"
-            className="h-11 w-full rounded-[6px] border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 pl-4 pr-12 text-[14px] text-zinc-950 dark:text-zinc-100 shadow-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/25 outline-none font-SansFlex transition-all disabled:opacity-75"
+            className="h-auto w-full rounded-full border border-border bg-background px-4 py-[8px] pr-14 text-[17px] text-foreground shadow-none outline-none placeholder:text-[17px] disabled:opacity-75"
             value={email}
             onChange={(e) => onEmailChange(e.target.value)}
             disabled={loading}
           />
           <button
             type="button"
-            className="absolute right-1 mx-1.5 flex h-8 w-8 items-center justify-center rounded-[4px] bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 active:scale-[0.95] transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-blue-500/25 disabled:opacity-75 disabled:pointer-events-none"
+            className="absolute right-1 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground outline-none transition-all hover:bg-primary/80 active:scale-[0.95] focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-75"
             onClick={onSend}
             disabled={loading}
             aria-label="Send email"

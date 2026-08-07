@@ -50,13 +50,16 @@ const InvoicesTab: React.FC = () => {
                 <Input
                   type="text"
                   placeholder="Search by title, label and artist..."
-                  className=" w-full rounded-full bg-background! font-SansFlex placeholder:font-SansFlex text-[17px] placeholder:text-[17px]"
+                  className="h-auto w-full rounded-full border-border bg-background! text-[17px] text-foreground shadow-none placeholder:text-[17px]"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                 />
               </div>
               <Button
-                className="cursor-pointer rounded-full hover:bg-orange-500 size-10 hover:text-white"
+                type="button"
+                size="icon-lg"
+                aria-label={filter ? "Hide filters" : "Show filters"}
+                className="size-10 shrink-0 mt-2 self-center rounded-full"
                 onClick={() => setFilter(!filter)}
               >
                 <IoFilter />

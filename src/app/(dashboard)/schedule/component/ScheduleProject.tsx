@@ -86,12 +86,15 @@ const ScheduleProject: React.FC<ScheduleProps> = ({
             >
               <PiCalendarPlus />
             </div>{" "}
-            <div
-              className="w-12 h-12 cursor-pointer rounded-full bg-[#000000] inline-flex text-[#ffffff]  items-center justify-center"
+            <Button
+              type="button"
+              size="icon-lg"
+              aria-label="Show filters"
+              className="size-10 shrink-0 self-center rounded-full"
               onClick={() => setisFilter(true)}
             >
               <IoFilter />
-            </div>
+            </Button>
           </div>
         )}
         <div className="calendar-container">

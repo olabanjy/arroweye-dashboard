@@ -91,15 +91,21 @@ const ProjectDetails = () => {
   const { handleDownloadPDF, handleExportCSV } = useCampaignExports(content);
 
   const originalTitle = content?.title || "";
+  const campaignTitle = content?.title || content?.campaign?.song_title;
+
+  React.useEffect(() => {
+    if (!campaignTitle) return;
+
+    const previousTitle = document.title;
+    document.title = campaignTitle;
+
+    return () => {
+      document.title = previousTitle;
+    };
+  }, [campaignTitle]);
 
   return (
     <>
-      <title>
-        {content?.title || content?.campaign?.song_title
-          ? `${content.title || content.campaign.song_title} - Arroweye`
-          : "Campaign Details - Arroweye"}
-      </title>
-
       {hasNetworkError ? (
         <NoNetwork onReconnect={refreshContent} />
       ) : (

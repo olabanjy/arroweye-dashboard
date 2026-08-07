@@ -1,12 +1,11 @@
-
 import { ReactNode } from "react";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
-const CampaignsLayout = ({ children }: LayoutProps) => {
+const CampaignDetailLayout = ({ children }: LayoutProps) => {
   return children;
 };
 
-export default CampaignsLayout;
+export default CampaignDetailLayout;
