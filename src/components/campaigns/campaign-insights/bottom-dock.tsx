@@ -365,7 +365,7 @@ export function BottomDock({
                 type="email"
                 autoComplete="email"
                 placeholder="hello@arroweye.pro"
-                className="h-11 w-full rounded-lg border border-zinc-300 bg-white pr-12 pl-4 text-sm text-zinc-950 shadow-sm outline-none transition-[border-color,box-shadow] placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 disabled:opacity-70 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                className="h-auto w-full rounded-full border border-border bg-background px-4 py-[8px] pr-14 text-[17px] text-foreground shadow-none outline-none placeholder:text-[17px] disabled:opacity-70"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 onKeyDown={(event) => {
@@ -376,7 +376,7 @@ export function BottomDock({
               <button
                 type="button"
                 aria-label="Send report email"
-                className="absolute right-1.5 flex size-8 items-center justify-center rounded-md bg-blue-600 text-white outline-none transition-[background-color,transform] duration-150 hover:bg-blue-700 active:scale-[0.95] focus-visible:ring-2 focus-visible:ring-blue-500/30 disabled:pointer-events-none disabled:opacity-50"
+                className="absolute right-1 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground outline-none transition-[background-color,transform] duration-150 hover:bg-primary/80 active:scale-[0.95] focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-50"
                 onClick={() => void handleSendEmail()}
                 disabled={isSending || !email}
               >

@@ -91,6 +91,18 @@ const ProjectDetails = () => {
   const { handleDownloadPDF, handleExportCSV } = useCampaignExports(content);
 
   const originalTitle = content?.title || "";
+  const campaignTitle = content?.title || content?.campaign?.song_title;
+
+  React.useEffect(() => {
+    if (!campaignTitle) return;
+
+    const previousTitle = document.title;
+    document.title = campaignTitle;
+
+    return () => {
+      document.title = previousTitle;
+    };
+  }, [campaignTitle]);
 
   return (
     <>

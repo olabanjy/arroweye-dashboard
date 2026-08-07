@@ -6,7 +6,6 @@ import { MdAddCircleOutline } from "react-icons/md";
 import type { AppUser } from "@/types/api";
 import { cn, hasAccess } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -135,14 +134,14 @@ export function CampaignDetailsHeader({
         )}
 
         {!isSticky && (
-          <div className="flex items-center gap-[5px] text-[0.875rem] text-[#919393]">
-            <p className="uppercase tracking-[.1rem] text-primary">
-              {content?.vendor?.organization_name || content?.campaign?.mode}
-            </p>
-            <Badge variant="outline" className="uppercase rounded-none">
+          <div className="flex items-center gap-3 text-xs tracking-wider uppercase font-SansFlex font-medium">
+            <span className="text-zinc-600 dark:text-zinc-400">
               {content?.subvendor?.organization_name ||
                 content?.campaign?.song_artist}
-            </Badge>
+            </span>
+            <span className="border border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/50 px-3 py-1 text-zinc-500 dark:text-zinc-400">
+              {content?.vendor?.organization_name || content?.campaign?.mode}
+            </span>
           </div>
         )}
 
@@ -155,13 +154,10 @@ export function CampaignDetailsHeader({
         >
           <div className="min-w-0 flex-1">
             {toggleNotifications ? (
-              <div className="flex items-center">
+              <div className="flex items-center mt-3">
                 <Input
                   type="text"
-                  className={cn(
-                    "h-auto border-0 px-0 py-0 text-primary shadow-none focus-visible:ring-0",
-                    isSticky ? "text-2xl font-[800]" : "text-[45px] font-[900]",
-                  )}
+                  className="h-auto w-full rounded-full border-border bg-background! text-[17px] text-foreground shadow-none placeholder:text-[17px]"
                   value={content?.title || ""}
                   onChange={(event) => {
                     setContent({ ...content, title: event.target.value });
@@ -199,8 +195,8 @@ export function CampaignDetailsHeader({
             ) : (
               <p
                 className={cn(
-                  "truncate text-primary",
-                  isSticky ? "text-2xl font-[800]" : "text-[45px] font-[700]",
+                  "mt-3 truncate tracking-tight text-primary",
+                  isSticky ? "text-2xl font-[800]" : "text-[45px] font-[900]",
                 )}
               >
                 {content?.title || content?.campaign?.song_title}

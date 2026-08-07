@@ -5,11 +5,17 @@ import {
   type TableRow,
 } from "@/components/campaigns/table";
 import { BsTrash } from "react-icons/bs";
-import { SelectInput } from "@/components/ui/selectinput";
 import Link from "next/link";
 import { MdOutlineModeEditOutline } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useCampaigns } from "@/hooks/use-campaigns";
 import Pagination from "@/app/(dashboard)/drops/component/pagination";
 
@@ -34,6 +40,34 @@ const ADVERTISER_HEADERS: TableHeader[] = [
 
 const EDIT_HEADER: TableHeader = { content: "Manage", align: "center" };
 const DELETE_HEADER: TableHeader = { content: "Action", align: "center" };
+
+const sortOptions = [
+  { value: "htl", label: "High to Low" },
+  { value: "lth", label: "Low to High" },
+];
+
+const FilterSelect = ({
+  placeholder,
+  value,
+  onChange,
+}: {
+  placeholder: string;
+  value: string;
+  onChange: (value: string) => void;
+}) => (
+  <Select value={value || undefined} onValueChange={onChange}>
+    <SelectTrigger className="h-[40px] rounded-full border-border bg-background text-primary shadow-none">
+      <SelectValue placeholder={placeholder} />
+    </SelectTrigger>
+    <SelectContent>
+      {sortOptions.map((option) => (
+        <SelectItem key={`${placeholder}-${option.value}`} value={option.value}>
+          {option.label}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+);
 
 const TableEmptyState = ({ label }: { label: string }) => (
   <div className="flex h-[50vh] flex-col items-center justify-center text-center">
@@ -186,13 +220,8 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
       {filterVisible && (
         <div className="text-center flex flex-wrap items-end gap-[5px] md:gap-[10px] my-4">
           <div className="max-w-[150px] w-full">
-            <SelectInput
-              rounded={true}
-              options={[
-                { value: "", label: "Investment" },
-                { value: "htl", label: "High to Low" },
-                { value: "lth", label: "Low to High" },
-              ]}
+            <FilterSelect
+              placeholder="Investment"
               value={investmentFilter}
               onChange={(value) =>
                 setInvestmentFilter(
@@ -202,13 +231,8 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
             />
           </div>
           <div className="max-w-[150px] w-full">
-            <SelectInput
-              rounded={true}
-              options={[
-                { value: "", label: "Revenue" },
-                { value: "htl", label: "High to Low" },
-                { value: "lth", label: "Low to High" },
-              ]}
+            <FilterSelect
+              placeholder="Revenue"
               value={revenueFilter}
               onChange={(value) =>
                 setRevenueFilter(
@@ -217,15 +241,16 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
               }
             />
           </div>
-          <p
-            className="max-w-[150px] w-full cursor-pointer text-[14px] rounded-full px-[10px] py-[5px] hover:bg-orange-500 bg-[#000000] dark:bg-primary dark:text-primary-foreground text-white inline"
+          <Button
+            type="button"
+            className="h-[40px] rounded-full bg-black dark:bg-white dark:text-black dark:hover:bg-zinc-200 px-4 text-white hover:bg-zinc-800"
             onClick={() => {
               setInvestmentFilter("");
               setRevenueFilter("");
             }}
           >
             Clear Filters
-          </p>
+          </Button>
         </div>
       )}
       <div className="mt-5">
