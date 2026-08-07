@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
 
 import { Button } from "@/components/ui/button";
@@ -85,6 +85,25 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
   const hasData = dspBreakdown && dspBreakdown.length > 0;
   const chartData = hasData ? dspBreakdown : [];
 
+  const [hiddenNames, setHiddenNames] = useState<Set<string>>(new Set());
+
+  const toggleName = (name: string) => {
+    setHiddenNames((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) {
+        next.delete(name);
+      } else {
+        next.add(name);
+      }
+      return next;
+    });
+  };
+
+  const visibleChartData = useMemo(
+    () => chartData.filter((entry) => !hiddenNames.has(entry.name)),
+    [chartData, hiddenNames],
+  );
+
   const totalCount = hasData
     ? dspBreakdown.reduce((sum, d) => sum + d.count, 0)
     : 0;
@@ -113,62 +132,100 @@ const DSPCard: React.FC<Props> = ({ dspBreakdown }) => {
           Top DSPs
         </p>
         {hasData ? (
-          <ChartContainer
-            config={chartConfig}
-            className="h-[220px] w-full aspect-auto font-SansFlex"
-          >
-            <BarChart
-              data={chartData}
-              barSize={32}
-              margin={{ left: 10, right: 10, top: 4, bottom: 4 }}
+          <>
+            {chartData.length > 0 && (
+              <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[13px] leading-none text-[#6f6f6f]">
+                {chartData.map((entry) => {
+                  const isHidden = hiddenNames.has(entry.name);
+                  const color = DSP_COLORS[entry.name] ?? DEFAULT_COLOR;
+                  return (
+                    <button
+                      type="button"
+                      key={entry.name}
+                      onClick={() => toggleName(entry.name)}
+                      className="flex items-center gap-2 transition-opacity"
+                      style={{ opacity: isHidden ? 0.4 : 1 }}
+                    >
+                      <span
+                        className="h-[14px] w-4 shrink-0 border"
+                        style={{
+                          backgroundColor: color,
+                          borderColor: color,
+                          opacity: 0.5,
+                        }}
+                      />
+                      <span
+                        className={
+                          isHidden
+                            ? "line-through decoration-[#6f6f6f]/60"
+                            : ""
+                        }
+                      >
+                        {entry.name}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            <ChartContainer
+              config={chartConfig}
+              className="h-[220px] w-full aspect-auto font-SansFlex"
             >
-              <XAxis
-                dataKey="name"
-                tick={{
-                  fontSize: 11,
-                  fill: "var(--muted-foreground)",
-                  fontFamily: CHART_FONT_FAMILY,
-                }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tickFormatter={formatYAxis}
-                tick={{
-                  fontSize: 10,
-                  fill: "var(--muted-foreground)",
-                  fontFamily: CHART_FONT_FAMILY,
-                }}
-                axisLine={false}
-                tickLine={false}
-                width={60}
-              />
-              <ChartTooltip
-                cursor={false}
-                content={
-                  <ChartTooltipContent
-                    hideLabel
-                    formatter={(value) => (
-                      <div className="flex min-w-28 items-center justify-between gap-4">
-                        <span className="text-muted-foreground">Plays</span>
-                        <span className="font-mono font-medium tabular-nums text-foreground">
-                          {formatNumber(Number(value))}
-                        </span>
-                      </div>
-                    )}
-                  />
-                }
-              />
-              <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                {chartData.map((entry) => (
-                  <Cell
-                    key={entry.name}
-                    fill={DSP_COLORS[entry.name] ?? DEFAULT_COLOR}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ChartContainer>
+              <BarChart
+                data={visibleChartData}
+                barSize={32}
+                margin={{ left: 10, right: 10, top: 4, bottom: 4 }}
+              >
+                <XAxis
+                  dataKey="name"
+                  tick={{
+                    fontSize: 11,
+                    fill: "var(--muted-foreground)",
+                    fontFamily: CHART_FONT_FAMILY,
+                  }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tickFormatter={formatYAxis}
+                  tick={{
+                    fontSize: 10,
+                    fill: "var(--muted-foreground)",
+                    fontFamily: CHART_FONT_FAMILY,
+                  }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={60}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={
+                    <ChartTooltipContent
+                      hideLabel
+                      formatter={(value) => (
+                        <div className="flex min-w-28 items-center justify-between gap-4">
+                          <span className="text-muted-foreground">Plays</span>
+                          <span className="font-mono font-medium tabular-nums text-foreground">
+                            {formatNumber(Number(value))}
+                          </span>
+                        </div>
+                      )}
+                    />
+                  }
+                />
+                <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                  {visibleChartData.map((entry) => (
+                    <Cell
+                      key={entry.name}
+                      fill={DSP_COLORS[entry.name] ?? DEFAULT_COLOR}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          </>
         ) : (
           <div className="flex h-[220px] items-center justify-center text-[13px] text-muted-foreground">
             No DSP data available

@@ -5,9 +5,6 @@ import ls from "localstorage-slim";
 import { toast, Id as ToastId } from "react-toastify";
 import axios from "axios";
 
-if (typeof window !== "undefined" && window?.sessionStorage)
-  ls.config.storage = sessionStorage;
-
 export const setLS = (key: string, value: unknown) => {
   return ls.set(key, value, { encrypt: true });
 };

@@ -90,7 +90,7 @@ const MomentCard: React.FC<MomentCardProps> = ({
   };
 
   return (
-    <div className="w-full max-h-[600px] space-y-[20px]">
+    <div className="w-full max-h-[400px] space-y-[20px]">
       <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-SansFlex uppercase">
         {MomentsTitle}
       </p>
@@ -98,10 +98,10 @@ const MomentCard: React.FC<MomentCardProps> = ({
       {loading ? (
         <div className="h-[400px] w-full rounded bg-gray-200 animate-pulse" />
       ) : hasData ? (
-        <div className="relative h-[400px] rounded overflow-hidden group">
+        <div className="relative flex h-[400px] items-center justify-center overflow-hidden rounded bg-black group">
           <>
             <iframe
-              className="w-full h-[400px]"
+              className="aspect-video h-full w-full"
               src={`${videoUrls[currentVideoIndex]}?autoplay=${isPlaying ? "1" : "0"}&controls=1&showinfo=0&rel=0`}
               title={`${videoTitle} - Video ${currentVideoIndex + 1}`}
               frameBorder="0"

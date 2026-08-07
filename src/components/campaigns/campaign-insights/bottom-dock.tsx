@@ -171,12 +171,12 @@ export function BottomDock({
   }> = [
     {
       id: "updates",
-      label: "Open updates",
+      label: "updates",
       icon: <Icon className="size-full" path={mdiHistory} />,
     },
     {
       id: "drops",
-      label: "Open drops",
+      label: "drops",
       icon: <DropsIcon className="size-full" />,
     },
     // {
@@ -187,7 +187,7 @@ export function BottomDock({
     // },
     {
       id: "send",
-      label: "Send report",
+      label: "report",
       icon: <MdiIcon className="size-full" path={mdiEmailOutline} />,
     },
     {
@@ -204,7 +204,7 @@ export function BottomDock({
           <div
             ref={toolbarRef}
             aria-label="Campaign report actions"
-            className="flex h-[50px] w-[calc(100vw-2rem)] max-w-[260px] items-center justify-between rounded-sm border border-zinc-200/90 bg-white/95 px-3 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95"
+            className="flex h-[50px] w-[calc(100vw-2rem)] max-w-[260px] items-center justify-between rounded-sm border border-zinc-200/90 bg-white/95 px-3 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95 shaodow-sm"
             role="toolbar"
           >
             {dockItems.map((item) => {
@@ -220,7 +220,7 @@ export function BottomDock({
                       className={`relative flex size-8 shrink-0 items-center justify-center rounded-md outline-none transition-[color,transform,background-color] duration-150 active:scale-[0.96] focus-visible:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-zinc-400/35 dark:focus-visible:bg-zinc-900 ${
                         isActive
                           ? "text-zinc-950 dark:text-zinc-50"
-                          : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                          : "text-zinc-800 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-500"
                       }`}
                       onClick={() => selectPanel(item.id)}
                     >

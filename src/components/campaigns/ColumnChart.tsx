@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 import { ChartData } from "chart.js";
 import { formatNumber } from "@/lib/utils";
@@ -67,6 +67,20 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
   info,
   setFilters,
 }: InsightChartProps<TFilters>) => {
+  const [hiddenSegments, setHiddenSegments] = useState<Set<string>>(new Set());
+
+  const toggleSegment = (segment: string) => {
+    setHiddenSegments((prev) => {
+      const next = new Set(prev);
+      if (next.has(segment)) {
+        next.delete(segment);
+      } else {
+        next.add(segment);
+      }
+      return next;
+    });
+  };
+
   const formatDataForRecharts = (): ChartDataItem[] => {
     if (!chartData?.labels || !chartData.datasets[0].data) return [];
 
@@ -92,6 +106,10 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
   };
 
   const data = formatDataForRecharts();
+  const visibleData = useMemo(
+    () => data.filter((item) => !hiddenSegments.has(item.segment)),
+    [data, hiddenSegments],
+  );
   const chartConfig = data.reduce<ChartConfig>(
     (config, item) => ({
       ...config,
@@ -165,17 +183,49 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
         )}
       </div>
       <div>
-        <p className="!text-[12px] font-[400] tracking-[.1rem] text-black">
+        <p className="!text-[12px] font-[400] mb-2 tracking-[.1rem] text-black">
           {valuePlaceholder}
         </p>
 
-        <div className="w-full h-full flex justify-center items-center">
+        <div className="w-full h-full flex flex-col justify-center items-center">
+          {data.length > 0 && (
+            <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[13px] leading-none text-[#6f6f6f]">
+              {data.map((item) => {
+                const isHidden = hiddenSegments.has(item.segment);
+                return (
+                  <button
+                    type="button"
+                    key={item.segment}
+                    onClick={() => toggleSegment(item.segment)}
+                    className="flex items-center gap-2 transition-opacity"
+                    style={{ opacity: isHidden ? 0.4 : 1 }}
+                  >
+                    <span
+                      className="h-[14px] w-4 shrink-0 border"
+                      style={{
+                        backgroundColor: getLightChartFillColor(item.color),
+                        borderColor: item.color,
+                      }}
+                    />
+                    <span
+                      className={
+                        isHidden ? "line-through decoration-[#6f6f6f]/60" : ""
+                      }
+                    >
+                      {item.name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           <ChartContainer
             config={chartConfig}
             className="h-[330px] w-full max-w-[350px] aspect-auto"
           >
             <BarChart
-              data={data}
+              data={visibleData}
               margin={{
                 top: 20,
                 right: 30,
@@ -218,7 +268,7 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
                 content={<ChartTooltipContent labelKey="name" />}
               />
               <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                {data.map((entry, index) => (
+                {visibleData.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={entry.fill}

@@ -94,12 +94,6 @@ const ProjectDetails = () => {
 
   return (
     <>
-      <title>
-        {content?.title || content?.campaign?.song_title
-          ? `${content.title || content.campaign.song_title} - Arroweye`
-          : "Campaign Details - Arroweye"}
-      </title>
-
       {hasNetworkError ? (
         <NoNetwork onReconnect={refreshContent} />
       ) : (

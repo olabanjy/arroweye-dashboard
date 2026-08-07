@@ -541,6 +541,69 @@ const CampaignsSidebarContent = () => {
                   </SidebarMenuItem>
                 )}
 
+                <SidebarMenuItem className={cn(isAdvertiser && "mt-auto")}>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <SidebarMenuButton
+                        tooltip="Theme"
+                        className="h-10 text-base text-sidebar-foreground hover:bg-sidebar-accent group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2.5!"
+                      >
+                        <span className="size-1 rounded-full bg-transparent group-data-[collapsible=icon]:hidden" />
+                        <span className="flex size-7 shrink-0 items-center justify-center [&>svg]:size-[18px]">
+                          {(() => {
+                            const activeOption =
+                              themeOptions.find((opt) => opt.value === theme) ||
+                              themeOptions[2];
+                            const ActiveIcon = activeOption.icon;
+                            return (
+                              <ActiveIcon
+                                size={SIDEBAR_ICON_SIZE}
+                                className="size-[18px]!"
+                              />
+                            );
+                          })()}
+                        </span>
+                        <span className="group-data-[collapsible=icon]:hidden">
+                          Theme
+                        </span>
+                      </SidebarMenuButton>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      side="right"
+                      align="center"
+                      sideOffset={
+                        state === "collapsed"
+                          ? COLLAPSED_TOOLS_MENU_OFFSET
+                          : TOOLS_MENU_OFFSET
+                      }
+                      className="min-w-40 rounded-[8px] p-1.5 border border-neutral-100 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-950"
+                    >
+                      <DropdownMenuRadioGroup
+                        value={theme ?? "system"}
+                        onValueChange={setTheme}
+                      >
+                        {themeOptions.map((option) => {
+                          const Icon = option.icon;
+
+                          return (
+                            <DropdownMenuRadioItem
+                              key={option.value}
+                              value={option.value}
+                              className="rounded-[6px] cursor-pointer"
+                            >
+                              <Icon
+                                size={SIDEBAR_ICON_SIZE}
+                                className="size-[18px]!"
+                              />
+                              <span>{option.label}</span>
+                            </DropdownMenuRadioItem>
+                          );
+                        })}
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </SidebarMenuItem>
+
                 <NavItem
                   href="/settings"
                   label="Settings"
@@ -578,44 +641,7 @@ const CampaignsSidebarContent = () => {
                   align="start"
                   className="w-[--radix-popper-anchor-width] min-w-56 rounded-[8px] p-1.5"
                 >
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger className="rounded-[6px]">
-                      <MdLightMode
-                        size={SIDEBAR_ICON_SIZE}
-                        className="size-[18px]!"
-                      />
-                      <span>Theme</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent
-                      sideOffset={8}
-                      className="min-w-40 rounded-[8px] p-1.5"
-                    >
-                      <DropdownMenuRadioGroup
-                        value={theme ?? "system"}
-                        onValueChange={setTheme}
-                      >
-                        {themeOptions.map((option) => {
-                          const Icon = option.icon;
 
-                          return (
-                            <DropdownMenuRadioItem
-                              key={option.value}
-                              value={option.value}
-                              className="rounded-[6px]"
-                            >
-                              <Icon
-                                size={SIDEBAR_ICON_SIZE}
-                                className="size-[18px]!"
-                              />
-                              <span>{option.label}</span>
-                            </DropdownMenuRadioItem>
-                          );
-                        })}
-                      </DropdownMenuRadioGroup>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuSub>
-
-                  <DropdownMenuSeparator />
 
                   <DropdownMenuItem
                     onClick={logout}

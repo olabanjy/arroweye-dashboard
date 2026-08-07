@@ -9,6 +9,9 @@ import type {
   UserProfile,
 } from "@/types/api";
 
+if (typeof window !== "undefined" && window?.localStorage)
+  ls.config.storage = localStorage;
+
 interface AuthContextType {
   user: AuthenticatedUser | null;
   userProfile: UserProfile | null;
@@ -40,6 +43,7 @@ export const AuthSessionProvider = ({
     queryFn: async () =>
       ls.get("Profile", { decrypt: true }) as AuthSession | null,
     staleTime: Infinity,
+    gcTime: Infinity,
   });
 
   useEffect(() => {

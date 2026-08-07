@@ -150,7 +150,7 @@ export function CampaignDetailsHeader({
           className={cn(
             isSticky
               ? "flex h-16 items-center justify-between gap-4"
-              : "mb-5 pr-[40px]",
+              : "mb-5 pr-10",
           )}
         >
           <div className="min-w-0 flex-1">
@@ -267,7 +267,7 @@ export function CampaignDetailsHeader({
                           type="button"
                           size="icon-lg"
                           variant="secondary"
-                          className="size-[50px] rounded-full"
+                          className="size-[50px] rounded-full bg-[#ffdead]"
                           onClick={onAddMemberClick}
                         >
                           <Icon path={mdiAccountPlusOutline} size={1} />

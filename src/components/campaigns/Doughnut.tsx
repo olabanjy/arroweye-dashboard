@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { Cell, Pie, PieChart } from "recharts";
 
 import {
@@ -125,6 +125,20 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
   const dataset = chartData?.datasets[0];
   const values = dataset?.data ?? [];
 
+  const [hiddenSegments, setHiddenSegments] = useState<Set<string>>(new Set());
+
+  const toggleSegment = (segment: string) => {
+    setHiddenSegments((prev) => {
+      const next = new Set(prev);
+      if (next.has(segment)) {
+        next.delete(segment);
+      } else {
+        next.add(segment);
+      }
+      return next;
+    });
+  };
+
   const pieChartData = values.map((entryValue, index) => {
     const label = labels[index] ?? `Segment ${index + 1}`;
     const key = getChartKey(label, index);
@@ -139,6 +153,11 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
       stroke: `var(--color-${key}-border)`,
     };
   });
+
+  const visiblePieChartData = useMemo(
+    () => pieChartData.filter((item) => !hiddenSegments.has(item.segment)),
+    [pieChartData, hiddenSegments],
+  );
 
   const chartConfig = pieChartData.reduce<ChartConfig>(
     (config, item) => ({
@@ -213,55 +232,78 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
           {pieChartData.length > 0 && (
             <div className="pt-2">
               <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[13px] leading-none text-[#6f6f6f]">
-                {pieChartData.map((item) => (
-                  <div key={item.segment} className="flex items-center gap-2">
-                    <span
-                      className="h-[14px] w-7 shrink-0 border bg-[var(--chart-legend-bg)] dark:bg-[var(--chart-legend-dark-bg)] border-[var(--chart-legend-border)] dark:border-[var(--chart-legend-dark-border)]"
-                      style={
-                        {
-                          "--chart-legend-bg": getLightChartFillColor(
-                            item.color,
-                          ),
-                          "--chart-legend-border": item.color,
-                          "--chart-legend-dark-bg": item.darkColor,
-                          "--chart-legend-dark-border": item.darkColor,
-                        } as React.CSSProperties
-                      }
-                    />
-                    <span>{item.label}</span>
-                  </div>
-                ))}
+                {pieChartData.map((item) => {
+                  const isHidden = hiddenSegments.has(item.segment);
+                  return (
+                    <button
+                      type="button"
+                      key={item.segment}
+                      onClick={() => toggleSegment(item.segment)}
+                      className="flex items-center gap-2 transition-opacity"
+                      style={{ opacity: isHidden ? 0.4 : 1 }}
+                    >
+                      <span
+                        className="h-[14px] w-7 shrink-0 border bg-[var(--chart-legend-bg)] dark:bg-[var(--chart-legend-dark-bg)] border-[var(--chart-legend-border)] dark:border-[var(--chart-legend-dark-border)]"
+                        style={
+                          {
+                            "--chart-legend-bg": getLightChartFillColor(
+                              item.color,
+                            ),
+                            "--chart-legend-border": item.color,
+                            "--chart-legend-dark-bg": item.darkColor,
+                            "--chart-legend-dark-border": item.darkColor,
+                          } as React.CSSProperties
+                        }
+                      />
+                      <span
+                        className={
+                          isHidden
+                            ? "line-through decoration-[#6f6f6f]/60"
+                            : ""
+                        }
+                      >
+                        {item.label}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
 
-              <ChartContainer
-                config={chartConfig}
-                className="mx-auto aspect-square w-full max-w-[350px] font-SansFlex"
-              >
-                <PieChart>
-                  <ChartTooltip
-                    cursor={false}
-                    content={
-                      <ChartTooltipContent hideLabel nameKey="segment" />
-                    }
-                  />
-                  <Pie
-                    data={pieChartData}
-                    dataKey="value"
-                    nameKey="segment"
-                    innerRadius="43%"
-                    outerRadius="88%"
-                  >
-                    {pieChartData.map((item) => (
-                      <Cell
-                        key={item.segment}
-                        fill={item.fill}
-                        stroke={item.stroke}
-                        strokeWidth={1}
-                      />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ChartContainer>
+              {visiblePieChartData.length > 0 ? (
+                <ChartContainer
+                  config={chartConfig}
+                  className="mx-auto aspect-square w-full max-w-[350px] font-SansFlex"
+                >
+                  <PieChart>
+                    <ChartTooltip
+                      cursor={false}
+                      content={
+                        <ChartTooltipContent hideLabel nameKey="segment" />
+                      }
+                    />
+                    <Pie
+                      data={visiblePieChartData}
+                      dataKey="value"
+                      nameKey="segment"
+                      innerRadius="43%"
+                      outerRadius="88%"
+                    >
+                      {visiblePieChartData.map((item) => (
+                        <Cell
+                          key={item.segment}
+                          fill={item.fill}
+                          stroke={item.stroke}
+                          strokeWidth={1}
+                        />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ChartContainer>
+              ) : (
+                <div className="mx-auto flex aspect-square w-full max-w-[350px] items-center justify-center text-[13px] text-[#6f6f6f]">
+                  All segments hidden
+                </div>
+              )}
             </div>
           )}
         </div>
