@@ -114,6 +114,12 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
     pieChartDataAudience,
     pieChartDataDSPPerformance,
     chartDataForBar,
+    isAirPlayDataLoading,
+    isSocialMediaDataLoading,
+    isDspDataLoading,
+    isAudienceDataLoading,
+    isSmActionDataLoading,
+    isDspPerformanceDataLoading,
     onAddSocialMediaDataSuccess,
     onAddDataSuccess,
     onAddDataDspSuccess,
@@ -166,6 +172,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
                 selectOptions={selectOptionsAirPlay}
                 selectOptionsBottom={selectOptionsAudience}
                 chartData={chartDataForDoughnutAirplay}
+                isLoading={isAirPlayDataLoading}
                 setFilters={setairplayChannelsFilters}
                 placeholder="Country"
                 info="Estimated total number of airplay instances this campaign received across radio, television, and DJ/club activations."
@@ -178,6 +185,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
                 value={audienceData?.total_count ?? 0}
                 selectOptions={selectOptionsAudience}
                 chartData={pieChartDataAudience}
+                isLoading={isAudienceDataLoading}
                 setFilters={setairplayAudienceFilters}
                 selectOptionsBottom={selectOptionsAudience}
                 info="Estimated total number of listeners and viewers reached on radio and television. This data is based on the audience size of the channels where your music was featured."
@@ -193,7 +201,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
               watchButtonText="Watch"
               downloadButtonText="Download Data"
               radioButtonText="Radio Monitor"
-              subText="Radio monitor report is populating..."
+              // subText="Radio monitor report is populating..."
               loading={mediaLoading}
             />
           </div>
@@ -230,6 +238,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
                 valuePlaceHolder="TOP PLATFORMS"
                 value={socialMediaData?.total_count ?? 0}
                 chartData={chartDataForPie}
+                isLoading={isSocialMediaDataLoading}
                 setFilters={setSocialMediaPlatformFilters}
                 selectOptionsBottom={selectOptionsAudience}
                 info="Estimated total recorded actions and engagements across individual social media platforms."
@@ -241,6 +250,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
                 title="ACTIONS"
                 value={smactionData?.total_count ?? 0}
                 chartData={chartDataForDoughnutSMAction}
+                isLoading={isSmActionDataLoading}
                 setFilters={setSocialMediaActionsFilters}
                 selectOptionsBottom={selectOptionsAudience}
                 info="Estimated breakdown of engagement and interactions recorded across social media platforms."
@@ -296,6 +306,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
                 valuePlaceholder="TOP DSPs"
                 value={dspData?.total_count ?? 0}
                 chartData={chartDataForBar}
+                isLoading={isDspDataLoading}
                 setFilters={setDspFilters}
                 selectOptionsBottom={selectOptions}
                 info="Estimated total number of streams and views recorded during this campaign across DSPs. These figures are estimates; please confirm the actual numbers with your distributor."
@@ -308,6 +319,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
                 value={dspPerformanceData?.total_count ?? 0}
                 selectOptionsBottom={selectOptions}
                 chartData={pieChartDataDSPPerformance}
+                isLoading={isDspPerformanceDataLoading}
                 setFilters={setDspPerformanceFilters}
                 info="Estimated breakdown of activities and engagement metrics recorded across all DSPs. These figures are estimates; please verify the actual data with your distributor."
               />

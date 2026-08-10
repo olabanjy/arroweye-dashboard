@@ -136,11 +136,10 @@ export function CampaignDetailsHeader({
         {!isSticky && (
           <div className="flex items-center gap-3 text-xs tracking-wider uppercase font-SansFlex font-medium">
             <span className="text-zinc-600 dark:text-zinc-400">
-              {content?.subvendor?.organization_name ||
-                content?.campaign?.song_artist}
+              {content?.vendor?.organization_name || content?.campaign?.mode}
             </span>
             <span className="border border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/50 px-3 py-1 text-zinc-500 dark:text-zinc-400">
-              {content?.vendor?.organization_name || content?.campaign?.mode}
+              {content?.artist_name}
             </span>
           </div>
         )}
@@ -154,10 +153,10 @@ export function CampaignDetailsHeader({
         >
           <div className="min-w-0 flex-1">
             {toggleNotifications ? (
-<div className={cn("flex items-center", isSticky ? "" : "mt-3")}>
-                 <Input
-                   type="text"
-                   className="h-auto w-full rounded-full border-border bg-background! text-[17px] text-foreground shadow-none placeholder:text-[17px]"
+              <div className={cn("flex items-center", isSticky ? "" : "mt-3")}>
+                <Input
+                  type="text"
+                  className="h-auto w-full rounded-full border-border bg-background! text-[17px] text-foreground shadow-none placeholder:text-[17px]"
                   value={content?.title || ""}
                   onChange={(event) => {
                     setContent({ ...content, title: event.target.value });

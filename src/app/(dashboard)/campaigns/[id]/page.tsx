@@ -7,6 +7,8 @@ import NoNetwork from "@/components/no-network";
 import ScheduleProject from "@/components/campaigns/schedule/component/ScheduleProject";
 import CampaignInsightAdvertiser from "@/components/campaigns/CampaignInsightAdvertiser";
 import CampaignInsights from "@/components/campaigns/campaign-insights";
+import { InsightChartSkeleton } from "@/components/campaigns/InsightChartSkeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useCampaignDetail } from "@/hooks/use-campaign-detail";
 import { useCampaignEditMode } from "@/hooks/use-campaign-edit-mode";
 import { useCampaignExports } from "@/hooks/use-campaign-exports";
@@ -34,6 +36,49 @@ const predefinedColors = [
   "bg-gray-500",
 ];
 
+const CampaignDetailSkeleton = () => (
+  <div className="relative mx-auto w-full max-w-7xl space-y-8 pb-20">
+    <div className="space-y-5">
+      <div className="flex items-center gap-3">
+        <Skeleton className="h-3 w-28" />
+        <Skeleton className="h-6 w-24 rounded-none" />
+      </div>
+      <Skeleton className="h-12 w-[420px] max-w-full" />
+      <div className="flex items-center justify-between gap-5">
+        <div className="flex gap-2">
+          {Array.from({ length: 4 }, (_, index) => (
+            <Skeleton key={index} className="size-[50px] rounded-full" />
+          ))}
+        </div>
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-7 w-14 rounded-full" />
+        </div>
+      </div>
+    </div>
+
+    <div className="grid grid-cols-1 gap-x-[10px] gap-y-[20px] md:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 3 }, (_, index) => (
+        <div
+          key={index}
+          className="w-full space-y-[20px] rounded-[8px] border p-[20px]"
+        >
+          <div className="border-b pb-[20px]">
+            <InsightChartSkeleton showFilter={index === 0} />
+          </div>
+          <div className="border-b pb-[20px]">
+            <InsightChartSkeleton chartVariant={index === 2 ? "bar" : "pie"} />
+          </div>
+          <div className="space-y-3">
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-[120px] w-full rounded-[8px]" />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 const ProjectDetails = () => {
   const params = useParams<{ id: string }>();
   const id = params?.id;
@@ -44,6 +89,7 @@ const ProjectDetails = () => {
     staffSuggestions,
     userLoggedInProfile,
     isAdvertiser,
+    isContentFetching,
     hasNetworkError,
     refreshContent,
   } = useCampaignDetail(id);
@@ -92,6 +138,10 @@ const ProjectDetails = () => {
 
   const originalTitle = content?.title || "";
   const campaignTitle = content?.title || content?.campaign?.song_title;
+
+  if (!content && isContentFetching) {
+    return <CampaignDetailSkeleton />;
+  }
 
   return (
     <>
