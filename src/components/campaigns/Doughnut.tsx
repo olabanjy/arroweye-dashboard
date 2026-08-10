@@ -20,6 +20,7 @@ import { formatNumber } from "@/lib/utils";
 import { ChartFilterSelect } from "./chart-filter-select";
 import { ChartInfoTooltip } from "./chart-info-tooltip";
 import { EmptyInsightChartCard } from "./EmptyInsightChartCard";
+import { InsightChartSkeleton } from "./InsightChartSkeleton";
 
 type ChartFilterState = {
   country?: string;
@@ -45,6 +46,7 @@ interface InsightChartProps<TFilters extends ChartFilterState> {
   chartData?: DoughnutChartData;
   valuePlaceholder?: string;
   info?: string;
+  isLoading?: boolean;
   placeholder?: string;
   setFilters?: React.Dispatch<React.SetStateAction<TFilters>>;
 }
@@ -96,6 +98,7 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
   placeholder,
   valuePlaceholder,
   info,
+  isLoading = false,
   setFilters,
 }: InsightChartProps<TFilters>) => {
   const weeksOptions = [
@@ -140,20 +143,22 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
     });
   };
 
-  const pieChartData = values.map((entryValue, index) => {
-    const label = labels[index] ?? `Segment ${index + 1}`;
-    const key = getChartKey(label, index);
+  const pieChartData = values
+    .map((entryValue, index) => {
+      const label = labels[index] ?? `Segment ${index + 1}`;
+      const key = getChartKey(label, index);
 
-    return {
-      segment: key,
-      label,
-      value: entryValue,
-      color: getChartColor(dataset?.backgroundColor, index),
-      darkColor: getDarkChartColor(index),
-      fill: `var(--color-${key})`,
-      stroke: `var(--color-${key}-border)`,
-    };
-  }).filter((item) => Number(item.value) > 0);
+      return {
+        segment: key,
+        label,
+        value: entryValue,
+        color: getChartColor(dataset?.backgroundColor, index),
+        darkColor: getDarkChartColor(index),
+        fill: `var(--color-${key})`,
+        stroke: `var(--color-${key}-border)`,
+      };
+    })
+    .filter((item) => Number(item.value) > 0);
   const hasChartData = pieChartData.length > 0;
 
   const visiblePieChartData = useMemo(
@@ -184,6 +189,10 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
       },
     },
   );
+
+  if (isLoading) {
+    return <InsightChartSkeleton showFilter={Boolean(selectOptions)} />;
+  }
 
   if (!hasChartData) {
     return <EmptyInsightChartCard />;
@@ -263,9 +272,7 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
                       />
                       <span
                         className={
-                          isHidden
-                            ? "line-through decoration-[#6f6f6f]/60"
-                            : ""
+                          isHidden ? "line-through decoration-[#6f6f6f]/60" : ""
                         }
                       >
                         {item.label}

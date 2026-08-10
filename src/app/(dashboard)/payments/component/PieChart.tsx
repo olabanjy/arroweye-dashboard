@@ -20,6 +20,7 @@ import {
 import { ChartFilterSelect } from "@/components/campaigns/chart-filter-select";
 import { ChartInfoTooltip } from "@/components/campaigns/chart-info-tooltip";
 import { EmptyInsightChartCard } from "@/components/campaigns/EmptyInsightChartCard";
+import { InsightChartSkeleton } from "@/components/campaigns/InsightChartSkeleton";
 import { formatNumber } from "@/lib/utils";
 
 type ChartFilterState = {
@@ -37,6 +38,7 @@ interface InsightChartProps<TFilters extends ChartFilterState> {
   chartData?: ChartData<"pie", number[], string>;
   valuePlaceHolder?: string;
   info?: string;
+  isLoading?: boolean;
   setFilters?: React.Dispatch<React.SetStateAction<TFilters>>;
 }
 
@@ -102,28 +104,31 @@ const CampaignPieChart = <
   chartData,
   info,
   valuePlaceHolder,
+  isLoading = false,
   setFilters,
 }: InsightChartProps<TFilters>) => {
   const labels = chartData?.labels ?? [];
   const dataset = chartData?.datasets[0];
   const values = dataset?.data ?? [];
 
-  const pieData = values.map((entryValue, index) => {
-    const label = labels[index] ?? `Segment ${index + 1}`;
-    const segment = getKey(label, index);
-    const color = getColor(dataset?.backgroundColor, index);
-    const darkColor = `var(--chart-${(index % fallbackColors.length) + 1})`;
+  const pieData = values
+    .map((entryValue, index) => {
+      const label = labels[index] ?? `Segment ${index + 1}`;
+      const segment = getKey(label, index);
+      const color = getColor(dataset?.backgroundColor, index);
+      const darkColor = `var(--chart-${(index % fallbackColors.length) + 1})`;
 
-    return {
-      segment,
-      label,
-      value: entryValue,
-      color,
-      darkColor,
-      fill: `var(--color-${segment})`,
-      stroke: `var(--color-${segment}-border)`,
-    };
-  }).filter((item) => Number(item.value) > 0);
+      return {
+        segment,
+        label,
+        value: entryValue,
+        color,
+        darkColor,
+        fill: `var(--color-${segment})`,
+        stroke: `var(--color-${segment}-border)`,
+      };
+    })
+    .filter((item) => Number(item.value) > 0);
   const hasChartData = pieData.length > 0;
 
   const [hiddenSegments, setHiddenSegments] = useState<Set<string>>(new Set());
@@ -164,6 +169,10 @@ const CampaignPieChart = <
     }),
     { value: { label: title } },
   );
+
+  if (isLoading) {
+    return <InsightChartSkeleton showFilter={Boolean(selectOptions)} />;
+  }
 
   if (!hasChartData) {
     return <EmptyInsightChartCard />;
@@ -230,7 +239,9 @@ const CampaignPieChart = <
                       className="h-[14px] w-7 shrink-0 border bg-[var(--chart-legend-bg)] dark:bg-[var(--chart-legend-dark-bg)] border-[var(--chart-legend-border)] dark:border-[var(--chart-legend-dark-border)]"
                       style={
                         {
-                          "--chart-legend-bg": getLightChartFillColor(item.color),
+                          "--chart-legend-bg": getLightChartFillColor(
+                            item.color,
+                          ),
                           "--chart-legend-border": item.color,
                           "--chart-legend-dark-bg": item.darkColor,
                           "--chart-legend-dark-border": item.darkColor,
@@ -239,9 +250,7 @@ const CampaignPieChart = <
                     />
                     <span
                       className={
-                        isHidden
-                          ? "line-through decoration-[#6f6f6f]/60"
-                          : ""
+                        isHidden ? "line-through decoration-[#6f6f6f]/60" : ""
                       }
                     >
                       {item.label}
@@ -259,7 +268,9 @@ const CampaignPieChart = <
                 <RechartsPieChart>
                   <ChartTooltip
                     cursor={false}
-                    content={<ChartTooltipContent hideLabel nameKey="segment" />}
+                    content={
+                      <ChartTooltipContent hideLabel nameKey="segment" />
+                    }
                   />
                   <Pie
                     data={visiblePieData}

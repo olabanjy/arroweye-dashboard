@@ -11,6 +11,7 @@ import {
 import { ChartFilterSelect } from "./chart-filter-select";
 import { ChartInfoTooltip } from "./chart-info-tooltip";
 import { EmptyInsightChartCard } from "./EmptyInsightChartCard";
+import { InsightChartSkeleton } from "./InsightChartSkeleton";
 
 const CHART_FONT_FAMILY = "Google Sans Flex, sans-serif";
 
@@ -28,6 +29,7 @@ interface InsightChartProps<TFilters extends ChartFilterState> {
   chartData?: ChartData<"bar", number[], string>;
   valuePlaceholder?: string;
   info?: string;
+  isLoading?: boolean;
   placeholder?: string;
   setFilters?: React.Dispatch<React.SetStateAction<TFilters>>;
 }
@@ -66,6 +68,7 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
   placeholder,
   valuePlaceholder,
   info,
+  isLoading = false,
   setFilters,
 }: InsightChartProps<TFilters>) => {
   const [hiddenSegments, setHiddenSegments] = useState<Set<string>>(new Set());
@@ -154,6 +157,15 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
     { value: "11", label: "November" },
     { value: "12", label: "December" },
   ];
+
+  if (isLoading) {
+    return (
+      <InsightChartSkeleton
+        chartVariant="bar"
+        showFilter={Boolean(selectOptions)}
+      />
+    );
+  }
 
   if (!hasChartData) {
     return <EmptyInsightChartCard />;

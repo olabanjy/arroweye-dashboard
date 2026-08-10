@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChartData } from "chart.js";
 import { usePDF } from "react-to-pdf";
 import {
@@ -38,17 +39,12 @@ export function useCampaignInsights({
   content,
   refreshContent,
 }: UseCampaignInsightsParams) {
+  const queryClient = useQueryClient();
   const [initialTab, setInitialTab] = useState<any>("moments");
   const [addDataModal, setAddDataModal] = useState(false);
   const [addDataModalSocial, setAddDataModalSocial] = useState(false);
   const [addMediaModal, setAddMediaModal] = useState(false);
   const [addDspModal, setAddDspModal] = useState(false);
-  const [airPlayData, setAirPlayData] = useState<any>({});
-  const [socialMediaData, setSocialMediaData] = useState<any>({});
-  const [dspData, setDspData] = useState<any>({});
-  const [audienceData, setAudienceData] = useState<any>({});
-  const [smactionData, setSmactionData] = useState<any>({});
-  const [dspPerformanceData, setDspPerformanceData] = useState<any>({});
   const [momentMediaData, setMomentMediaData] = useState<any>([]);
   const [momentReportUrls, setMomentReportUrls] = useState<any>([]);
   const [giftingsReportUrls, setGiftingsReportUrls] = useState<any>([]);
@@ -58,6 +54,8 @@ export function useCampaignInsights({
   const media = content?.media || [];
   const mediaLoading = !content;
   const { id } = useParams<{ id: string }>();
+  const campaignId = Number(id);
+  const hasCampaignId = Boolean(id) && Number.isFinite(campaignId);
 
   const [airplayChannelsFilters, setairplayChannelsFilters] = useState({
     country: "",
@@ -91,79 +89,93 @@ export function useCampaignInsights({
     lifetime: "",
   });
 
-  useEffect(() => {
-    if (!!id) {
-      getAirPlayStats({ id: Number(id), ...airplayChannelsFilters }).then(
-        (fetchedContent) => {
-          setAirPlayData(fetchedContent);
-        },
-      );
-    }
-  }, [
-    id,
-    airplayChannelsFilters.weeks,
-    airplayChannelsFilters.lifetime,
-    airplayChannelsFilters.country,
-  ]);
+  const { data: airPlayData = {}, isLoading: isAirPlayDataLoading } = useQuery({
+    queryKey: [
+      "campaign-insights",
+      campaignId,
+      "airplay",
+      airplayChannelsFilters,
+    ],
+    queryFn: async () =>
+      (await getAirPlayStats({
+        id: campaignId,
+        ...airplayChannelsFilters,
+      })) ?? {},
+    enabled: hasCampaignId,
+  });
 
-  useEffect(() => {
-    if (!!id) {
-      getSocialMediaStats({
-        id: Number(id),
-        ...socialMediaPlatformFilters,
-      }).then((fetchedContent) => {
-        setSocialMediaData(fetchedContent);
-      });
-    }
-  }, [
-    id,
-    socialMediaPlatformFilters.weeks,
-    socialMediaPlatformFilters.lifetime,
-  ]);
+  const { data: socialMediaData = {}, isLoading: isSocialMediaDataLoading } =
+    useQuery({
+      queryKey: [
+        "campaign-insights",
+        campaignId,
+        "social-media",
+        socialMediaPlatformFilters,
+      ],
+      queryFn: async () =>
+        (await getSocialMediaStats({
+          id: campaignId,
+          ...socialMediaPlatformFilters,
+        })) ?? {},
+      enabled: hasCampaignId,
+    });
 
-  useEffect(() => {
-    if (!!id) {
-      getDSPStats({ id: Number(id), ...dspFilters }).then((fetchedContent) => {
-        setDspData(fetchedContent);
-      });
-    }
-  }, [id, dspFilters.weeks, dspFilters.lifetime]);
+  const { data: dspData = {}, isLoading: isDspDataLoading } = useQuery({
+    queryKey: ["campaign-insights", campaignId, "dsp", dspFilters],
+    queryFn: async () =>
+      (await getDSPStats({ id: campaignId, ...dspFilters })) ?? {},
+    enabled: hasCampaignId,
+  });
 
-  useEffect(() => {
-    if (!!id) {
-      getAudienceStats({ id: Number(id), ...airplayAudienceFilters }).then(
-        (fetchedContent) => {
-          setAudienceData(fetchedContent);
-        },
-      );
-    }
-  }, [
-    id,
-    airplayAudienceFilters.weeks,
-    airplayAudienceFilters.lifetime,
-    airplayAudienceFilters.channels,
-  ]);
+  const { data: audienceData = {}, isLoading: isAudienceDataLoading } =
+    useQuery({
+      queryKey: [
+        "campaign-insights",
+        campaignId,
+        "audience",
+        airplayAudienceFilters,
+      ],
+      queryFn: async () =>
+        (await getAudienceStats({
+          id: campaignId,
+          ...airplayAudienceFilters,
+        })) ?? {},
+      enabled: hasCampaignId,
+    });
 
-  useEffect(() => {
-    if (!!id) {
-      geteSMActionStats({ id: Number(id), ...socialMediaActionsFilters }).then(
-        (fetchedContent) => {
-          setSmactionData(fetchedContent);
-        },
-      );
-    }
-  }, [id, socialMediaActionsFilters.weeks, socialMediaActionsFilters.lifetime]);
+  const { data: smactionData = {}, isLoading: isSmActionDataLoading } =
+    useQuery({
+      queryKey: [
+        "campaign-insights",
+        campaignId,
+        "social-media-actions",
+        socialMediaActionsFilters,
+      ],
+      queryFn: async () =>
+        (await geteSMActionStats({
+          id: campaignId,
+          ...socialMediaActionsFilters,
+        })) ?? {},
+      enabled: hasCampaignId,
+    });
 
-  useEffect(() => {
-    if (!!id) {
-      geteDSPPerformanceStats({
-        id: Number(id),
+  const {
+    data: dspPerformanceData = {},
+    isLoading: isDspPerformanceDataLoading,
+  } = useQuery({
+    queryKey: [
+      "campaign-insights",
+      campaignId,
+      "dsp-performance",
+      dspPerformanceFilters,
+    ],
+    queryFn: async () =>
+      (await geteDSPPerformanceStats({
+        id: campaignId,
         ...dspPerformanceFilters,
-      }).then((fetchedContent) => {
-        setDspPerformanceData(fetchedContent);
-      });
-    }
-  }, [id, dspPerformanceFilters.weeks, dspPerformanceFilters.lifetime]);
+      })) ?? {},
+    enabled: hasCampaignId,
+  });
 
   const generateDoughnutChartData = (
     data: Record<string, number>,
@@ -340,45 +352,32 @@ export function useCampaignInsights({
   }, [media]);
 
   const onAddSocialMediaDataSuccess = () => {
-    if (!!id) {
-      getSocialMediaStats({
-        id: Number(id),
-        ...socialMediaPlatformFilters,
-      }).then((fetchedContent) => {
-        setSocialMediaData(fetchedContent);
-      });
-      geteSMActionStats({ id: Number(id), ...socialMediaActionsFilters }).then(
-        (fetchedContent) => {
-          setSmactionData(fetchedContent);
-        },
-      );
-    }
+    queryClient.invalidateQueries({
+      queryKey: ["campaign-insights", campaignId, "social-media"],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["campaign-insights", campaignId, "social-media-actions"],
+    });
     refreshContent?.();
   };
 
   const onAddDataSuccess = () => {
-    if (!!id) {
-      getAirPlayStats({ id: Number(id) }).then((fetchedContent) => {
-        setAirPlayData(fetchedContent);
-      });
-      getAudienceStats({ id: Number(id), ...airplayAudienceFilters }).then(
-        (fetchedContent) => {
-          setAudienceData(fetchedContent);
-        },
-      );
-    }
+    queryClient.invalidateQueries({
+      queryKey: ["campaign-insights", campaignId, "airplay"],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["campaign-insights", campaignId, "audience"],
+    });
     refreshContent?.();
   };
 
   const onAddDataDspSuccess = () => {
-    if (!!id) {
-      getDSPStats({ id: Number(id) }).then((fetchedContent) => {
-        setDspData(fetchedContent);
-      });
-      geteDSPPerformanceStats({ id: Number(id) }).then((fetchedContent) => {
-        setDspPerformanceData(fetchedContent);
-      });
-    }
+    queryClient.invalidateQueries({
+      queryKey: ["campaign-insights", campaignId, "dsp"],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["campaign-insights", campaignId, "dsp-performance"],
+    });
     refreshContent?.();
   };
 
@@ -423,6 +422,12 @@ export function useCampaignInsights({
     pieChartDataAudience,
     pieChartDataDSPPerformance,
     chartDataForBar,
+    isAirPlayDataLoading,
+    isSocialMediaDataLoading,
+    isDspDataLoading,
+    isAudienceDataLoading,
+    isSmActionDataLoading,
+    isDspPerformanceDataLoading,
     onAddSocialMediaDataSuccess,
     onAddDataSuccess,
     onAddDataDspSuccess,

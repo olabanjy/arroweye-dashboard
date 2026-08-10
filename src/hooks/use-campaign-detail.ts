@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-import ls from "localstorage-slim";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/context/auth-session";
 import {
   getBusinessStaff,
   getSingleCampaign,
@@ -16,84 +17,83 @@ const isNetworkError = (err: any) =>
   err.message?.includes("timeout");
 
 export function useCampaignDetail(id?: string) {
+  const queryClient = useQueryClient();
+  const { isAdvertiser, isLoading: isAuthLoading, userProfile } = useAuth();
   const [content, setContent] = useState<any | null>(null);
-  const [subvendorStaff, setSubVendorStaff] = useState<
-    AppProject["watchers"] | null
-  >(null);
-  const [staffSuggestions, setStaffSuggestions] = useState<BusinessStaff[]>([]);
-  const [userLoggedInProfile, setUserLoggedInProfile] = useState<any>({});
-  const [isAdvertiser, setIsAdvertiser] = useState<boolean | null>(null);
-  const [hasNetworkError, setHasNetworkError] = useState(false);
 
-  const refreshContent = useCallback(
-    (advertiser: boolean | null = isAdvertiser) => {
-      if (advertiser === null || !id) return;
-
-      setHasNetworkError(false);
-
-      if (advertiser) {
-        getSingleCampaign(Number(id))
-          .then((fetchedContent) => {
-            setContent(fetchedContent);
-          })
-          .catch((err) => {
-            if (isNetworkError(err)) {
-              setHasNetworkError(true);
-            }
-          });
-        return;
-      }
-
-      getSingleProject(Number(id))
-        .then((fetchedContent) => {
-          setSubVendorStaff(fetchedContent?.watchers ?? []);
-          setContent(fetchedContent);
-        })
-        .catch((err) => {
-          if (isNetworkError(err)) {
-            setHasNetworkError(true);
-          }
-        });
-    },
+  const campaignId = Number(id);
+  const hasCampaignId = Boolean(id) && Number.isFinite(campaignId);
+  const campaignDetailQueryKey = useMemo(
+    () => ["campaign-detail", isAdvertiser ? "advertiser" : "project", id],
     [id, isAdvertiser],
   );
 
-  useEffect(() => {
-    if (!id) return;
+  const cachedContent = useMemo(() => {
+    if (!hasCampaignId || isAuthLoading) return null;
 
-    const profile: any = ls.get("Profile", { decrypt: true });
-    setUserLoggedInProfile(profile?.user?.user_profile);
-
-    const advertiser = profile?.user?.user_type === "Advertiser";
-    setIsAdvertiser(advertiser);
-
-    const cached = advertiser
-      ? getStoredSingleCampaign(Number(id))
-      : getStoredSingleProject();
-
-    if (cached) {
-      setContent(cached);
-      if (!advertiser) setSubVendorStaff((cached as AppProject).watchers ?? []);
+    if (isAdvertiser) {
+      return getStoredSingleCampaign(campaignId);
     }
 
-    refreshContent(advertiser);
-  }, [id, refreshContent]);
+    const cachedProject = getStoredSingleProject();
+    return cachedProject?.id === campaignId ? cachedProject : null;
+  }, [campaignId, hasCampaignId, isAdvertiser, isAuthLoading]);
+
+  const {
+    data: fetchedContent,
+    error: contentError,
+    isFetching: isContentFetching,
+  } = useQuery({
+    queryKey: campaignDetailQueryKey,
+    queryFn: () =>
+      isAdvertiser
+        ? getSingleCampaign(campaignId)
+        : getSingleProject(campaignId),
+    enabled: hasCampaignId && !isAuthLoading,
+    initialData: cachedContent,
+  });
+
+  const [hasNetworkError, setHasNetworkError] = useState(false);
+
+  const refreshContent = useCallback(async () => {
+    if (!hasCampaignId || isAuthLoading) return;
+    setHasNetworkError(false);
+    await queryClient.invalidateQueries({ queryKey: campaignDetailQueryKey });
+  }, [campaignDetailQueryKey, hasCampaignId, isAuthLoading, queryClient]);
 
   useEffect(() => {
-    if (content?.subvendor?.id) {
-      getBusinessStaff(Number(content.subvendor.id)).then((fetchedStaffs) => {
-        setStaffSuggestions(fetchedStaffs ?? []);
-      });
+    if (!hasCampaignId || isAuthLoading) return;
+    setContent(cachedContent ?? null);
+  }, [cachedContent, hasCampaignId, isAuthLoading]);
+
+  useEffect(() => {
+    if (fetchedContent) {
+      setContent(fetchedContent);
     }
-  }, [content?.subvendor?.id]);
+  }, [fetchedContent]);
+
+  useEffect(() => {
+    setHasNetworkError(Boolean(contentError && isNetworkError(contentError)));
+  }, [contentError]);
+
+  const { data: staffSuggestions = [] } = useQuery<BusinessStaff[]>({
+    queryKey: ["business-staff", content?.subvendor?.id],
+    queryFn: async () =>
+      (await getBusinessStaff(Number(content?.subvendor?.id))) ?? [],
+    enabled: Boolean(content?.subvendor?.id),
+  });
+
+  const subvendorStaff =
+    !isAdvertiser && content ? ((content as AppProject).watchers ?? []) : null;
 
   return {
     content,
     setContent,
     subvendorStaff,
     staffSuggestions,
-    userLoggedInProfile,
+    userLoggedInProfile: userProfile,
     isAdvertiser,
+    isContentFetching,
     hasNetworkError,
     refreshContent,
   };
