@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/chart";
 import { ChartFilterSelect } from "./chart-filter-select";
 import { ChartInfoTooltip } from "./chart-info-tooltip";
+import { EmptyInsightChartCard } from "./EmptyInsightChartCard";
 
 const CHART_FONT_FAMILY = "Google Sans Flex, sans-serif";
 
@@ -82,11 +83,11 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
   };
 
   const formatDataForRecharts = (): ChartDataItem[] => {
-    if (!chartData?.labels || !chartData.datasets[0].data) return [];
+    const dataset = chartData?.datasets[0];
+
+    if (!chartData?.labels || !dataset?.data) return [];
 
     // Filter out entries with zero values
-    const dataset = chartData.datasets[0];
-
     return chartData.labels
       .map((label, index) => {
         const segment = `segment-${index}`;
@@ -128,6 +129,7 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
     }),
     { value: { label: title, color: "var(--chart-1)" } },
   );
+  const hasChartData = data.length > 0;
 
   const weeksOptions = [
     { value: "", label: "Weeks" },
@@ -152,6 +154,10 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
     { value: "11", label: "November" },
     { value: "12", label: "December" },
   ];
+
+  if (!hasChartData) {
+    return <EmptyInsightChartCard />;
+  }
 
   return (
     <div className="space-y-5 font-SansFlex w-full">

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/chart";
 import { ChartFilterSelect } from "@/components/campaigns/chart-filter-select";
 import { ChartInfoTooltip } from "@/components/campaigns/chart-info-tooltip";
+import { EmptyInsightChartCard } from "@/components/campaigns/EmptyInsightChartCard";
 import { formatNumber } from "@/lib/utils";
 
 type ChartFilterState = {
@@ -48,17 +49,6 @@ const fallbackColors = [
 ];
 
 const filterSelectClassName = "w-[120px]";
-
-const defaultData: ChartData<"pie", number[], string> = {
-  labels: ["Radio", "Cable", "TV", "DJ"],
-  datasets: [
-    {
-      label: "Airplay",
-      data: [300, 50, 100, 22],
-      backgroundColor: ["#ff5c7a", "#38a8ff", "#ffc247", "#4ecdc4"],
-    },
-  ],
-};
 
 const getColor = (colors: unknown, index: number) => {
   if (Array.isArray(colors) && typeof colors[index] === "string") {
@@ -114,9 +104,8 @@ const CampaignPieChart = <
   valuePlaceHolder,
   setFilters,
 }: InsightChartProps<TFilters>) => {
-  const sourceData = chartData || defaultData;
-  const labels = sourceData.labels ?? [];
-  const dataset = sourceData.datasets[0];
+  const labels = chartData?.labels ?? [];
+  const dataset = chartData?.datasets[0];
   const values = dataset?.data ?? [];
 
   const pieData = values.map((entryValue, index) => {
@@ -134,7 +123,8 @@ const CampaignPieChart = <
       fill: `var(--color-${segment})`,
       stroke: `var(--color-${segment}-border)`,
     };
-  });
+  }).filter((item) => Number(item.value) > 0);
+  const hasChartData = pieData.length > 0;
 
   const [hiddenSegments, setHiddenSegments] = useState<Set<string>>(new Set());
 
@@ -174,6 +164,10 @@ const CampaignPieChart = <
     }),
     { value: { label: title } },
   );
+
+  if (!hasChartData) {
+    return <EmptyInsightChartCard />;
+  }
 
   return (
     <Card className="flex flex-col !gap-5 border-0 bg-transparent p-0 shadow-none">

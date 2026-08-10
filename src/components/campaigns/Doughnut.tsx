@@ -19,6 +19,7 @@ import {
 import { formatNumber } from "@/lib/utils";
 import { ChartFilterSelect } from "./chart-filter-select";
 import { ChartInfoTooltip } from "./chart-info-tooltip";
+import { EmptyInsightChartCard } from "./EmptyInsightChartCard";
 
 type ChartFilterState = {
   country?: string;
@@ -152,7 +153,8 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
       fill: `var(--color-${key})`,
       stroke: `var(--color-${key}-border)`,
     };
-  });
+  }).filter((item) => Number(item.value) > 0);
+  const hasChartData = pieChartData.length > 0;
 
   const visiblePieChartData = useMemo(
     () => pieChartData.filter((item) => !hiddenSegments.has(item.segment)),
@@ -182,6 +184,10 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
       },
     },
   );
+
+  if (!hasChartData) {
+    return <EmptyInsightChartCard />;
+  }
 
   return (
     <Card className="flex flex-col !gap-5 border-0 bg-transparent p-0 shadow-none font-SansFlex">
