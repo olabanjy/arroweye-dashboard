@@ -19,7 +19,6 @@ import {
 import { formatNumber } from "@/lib/utils";
 import { ChartFilterSelect } from "./chart-filter-select";
 import { ChartInfoTooltip } from "./chart-info-tooltip";
-import { EmptyInsightChartCard } from "./EmptyInsightChartCard";
 import { InsightChartSkeleton } from "./InsightChartSkeleton";
 
 type ChartFilterState = {
@@ -60,6 +59,8 @@ const fallbackColors = [
 ];
 
 const filterSelectClassName = "w-[120px]";
+const emptyChartColor = "#d4d4d8";
+const emptyChartFillColor = "color-mix(in srgb, #d4d4d8 28%, transparent)";
 
 const getDarkChartColor = (index: number) =>
   `var(--chart-${(index % fallbackColors.length) + 1})`;
@@ -160,19 +161,41 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
     })
     .filter((item) => Number(item.value) > 0);
   const hasChartData = pieChartData.length > 0;
+  const emptyPieChartData = (labels.length > 0 ? labels : ["No data"]).map(
+    (label, index) => {
+      const key = getChartKey(label, index);
+
+      return {
+        segment: key,
+        label,
+        value: 1,
+        color: emptyChartColor,
+        darkColor: "var(--muted)",
+        fill: `var(--color-${key})`,
+        stroke: `var(--color-${key}-border)`,
+      };
+    },
+  );
+  const displayPieChartData = hasChartData ? pieChartData : emptyPieChartData;
+  const displayValue = Number(value) > 0 ? value : 0;
 
   const visiblePieChartData = useMemo(
-    () => pieChartData.filter((item) => !hiddenSegments.has(item.segment)),
-    [pieChartData, hiddenSegments],
+    () =>
+      hasChartData
+        ? pieChartData.filter((item) => !hiddenSegments.has(item.segment))
+        : displayPieChartData,
+    [displayPieChartData, hasChartData, pieChartData, hiddenSegments],
   );
 
-  const chartConfig = pieChartData.reduce<ChartConfig>(
+  const chartConfig = displayPieChartData.reduce<ChartConfig>(
     (config, item) => ({
       ...config,
       [item.segment]: {
         label: item.label,
         theme: {
-          light: getLightChartFillColor(item.color),
+          light: hasChartData
+            ? getLightChartFillColor(item.color)
+            : emptyChartFillColor,
           dark: item.darkColor,
         },
       },
@@ -192,10 +215,6 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
 
   if (isLoading) {
     return <InsightChartSkeleton showFilter={Boolean(selectOptions)} />;
-  }
-
-  if (!hasChartData) {
-    return <EmptyInsightChartCard />;
   }
 
   return (
@@ -232,7 +251,7 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
       <CardContent className="space-y-[20px] p-0">
         <div className="flex items-center gap-2">
           <p className="text-2xl lg:text-[56px] font-[600] font-SansFlex">
-            {!!value && formatNumber(value)}
+            {formatNumber(displayValue)}
           </p>
           {Number(value) > 1000 && (
             <ChartInfoTooltip content={value.toLocaleString()} />
@@ -244,26 +263,30 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
             {valuePlaceholder}
           </p>
 
-          {pieChartData.length > 0 && (
+          {displayPieChartData.length > 0 && (
             <div className="pt-2">
               <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[13px] leading-none text-[#6f6f6f]">
-                {pieChartData.map((item) => {
-                  const isHidden = hiddenSegments.has(item.segment);
+                {displayPieChartData.map((item) => {
+                  const isHidden =
+                    hasChartData && hiddenSegments.has(item.segment);
                   return (
                     <button
                       type="button"
                       key={item.segment}
-                      onClick={() => toggleSegment(item.segment)}
+                      disabled={!hasChartData}
+                      onClick={() => {
+                        if (hasChartData) toggleSegment(item.segment);
+                      }}
                       className="flex items-center gap-2 transition-opacity"
-                      style={{ opacity: isHidden ? 0.4 : 1 }}
+                      style={{ opacity: isHidden || !hasChartData ? 0.55 : 1 }}
                     >
                       <span
                         className="h-[14px] w-7 shrink-0 border bg-[var(--chart-legend-bg)] dark:bg-[var(--chart-legend-dark-bg)] border-[var(--chart-legend-border)] dark:border-[var(--chart-legend-dark-border)]"
                         style={
                           {
-                            "--chart-legend-bg": getLightChartFillColor(
-                              item.color,
-                            ),
+                            "--chart-legend-bg": hasChartData
+                              ? getLightChartFillColor(item.color)
+                              : emptyChartFillColor,
                             "--chart-legend-border": item.color,
                             "--chart-legend-dark-bg": item.darkColor,
                             "--chart-legend-dark-border": item.darkColor,
@@ -288,12 +311,14 @@ const DoughnutChart = <TFilters extends ChartFilterState = ChartFilterState>({
                   className="mx-auto aspect-square w-full max-w-[350px] font-SansFlex"
                 >
                   <PieChart>
-                    <ChartTooltip
-                      cursor={false}
-                      content={
-                        <ChartTooltipContent hideLabel nameKey="segment" />
-                      }
-                    />
+                    {hasChartData && (
+                      <ChartTooltip
+                        cursor={false}
+                        content={
+                          <ChartTooltipContent hideLabel nameKey="segment" />
+                        }
+                      />
+                    )}
                     <Pie
                       data={visiblePieChartData}
                       dataKey="value"

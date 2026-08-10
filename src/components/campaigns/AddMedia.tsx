@@ -17,12 +17,14 @@ import GiftingAddMedia from "./GiftingAddMedia";
 interface CompanyDetailsFormProps {
   visible: boolean;
   onHide: () => void;
+  onSuccess?: () => void;
   initialTab?: "moments" | "Recap" | "Dsp" | "Shazam" | "Editorial" | "Gifting";
 }
 
 const AddMedia: React.FC<CompanyDetailsFormProps> = ({
   visible,
   onHide,
+  onSuccess,
   initialTab = "moments",
 }) => {
   const [activeDetailsTab, setActiveDetailsTab] = useState(initialTab);
@@ -86,9 +88,9 @@ const AddMedia: React.FC<CompanyDetailsFormProps> = ({
         </Tabs>
 
         <div className="py-5">
-          {activeDetailsTab === "moments" && <Moments />}
-          {activeDetailsTab === "Recap" && <Recap />}
-          {activeDetailsTab === "Dsp" && <DspCovers />}
+          {activeDetailsTab === "moments" && <Moments onSuccess={onSuccess} />}
+          {activeDetailsTab === "Recap" && <Recap onSuccess={onSuccess} />}
+          {activeDetailsTab === "Dsp" && <DspCovers onSuccess={onSuccess} />}
           {activeDetailsTab === "Editorial" && <EditorialAddMedia />}
           {activeDetailsTab === "Gifting" && <GiftingAddMedia />}
         </div>

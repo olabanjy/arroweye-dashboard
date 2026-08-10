@@ -4,6 +4,7 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { toast } from "sonner";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Carousel,
   CarouselContent,
@@ -139,62 +140,70 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
     URL.revokeObjectURL(url);
   };
 
+  const mediaPreview = loading ? (
+    <Skeleton className="h-[400px] w-full rounded-[8px]" />
+  ) : hasData ? (
+    <Carousel
+      opts={{ loop: true }}
+      setApi={setCarouselApi}
+      className="group h-[400px] w-full overflow-hidden rounded [&_[data-slot=carousel-content]]:h-full [&_[data-slot=carousel-content]>div]:h-full"
+    >
+      <CarouselContent className="h-full">
+        {images.map((image, index) => (
+          <CarouselItem key={`${image}-${index}`} className="h-full">
+            {links?.[index] ? (
+              <Link
+                href={links[index]}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block h-full overflow-hidden rounded"
+              >
+                <img
+                  src={image}
+                  alt={`Slide ${index + 1}`}
+                  className="h-full w-full object-cover"
+                />
+              </Link>
+            ) : (
+              <div className="h-full overflow-hidden rounded">
+                <img
+                  src={image}
+                  alt={`Slide ${index + 1}`}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )}
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      {images.length > 1 && (
+        <>
+          <CarouselPrevious
+            variant="ghost"
+            className="left-2 size-10 border-0 bg-black/50 text-white opacity-0 hover:bg-black/50 hover:text-white group-hover:opacity-100"
+          />
+          <CarouselNext
+            variant="ghost"
+            className="right-2 size-10 border-0 bg-black/50 text-white opacity-0 hover:bg-black/50 hover:text-white group-hover:opacity-100"
+          />
+        </>
+      )}
+    </Carousel>
+  ) : (
+    <div
+      role="img"
+      aria-label="No media available"
+      className="h-[400px] w-full rounded-[8px] bg-gray-200 dark:bg-muted/70"
+    />
+  );
+
   return (
     <div className="w-full max-h-[600px] space-y-[20px]">
       <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-SansFlex uppercase">
         {MomentsTitle}
       </p>
 
-      {loading ? (
-        <div className="h-[400px] w-full rounded bg-gray-200 animate-pulse" />
-      ) : hasData ? (
-        <Carousel
-          opts={{ loop: true }}
-          setApi={setCarouselApi}
-          className="group h-[400px] w-full overflow-hidden rounded [&_[data-slot=carousel-content]]:h-full [&_[data-slot=carousel-content]>div]:h-full"
-        >
-          <CarouselContent className="h-full">
-            {images.map((image, index) => (
-              <CarouselItem key={`${image}-${index}`} className="h-full">
-                {links?.[index] ? (
-                  <Link
-                    href={links[index]}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block h-full overflow-hidden rounded"
-                  >
-                    <img
-                      src={image}
-                      alt={`Slide ${index + 1}`}
-                      className="h-full w-full object-cover"
-                    />
-                  </Link>
-                ) : (
-                  <div className="h-full overflow-hidden rounded">
-                    <img
-                      src={image}
-                      alt={`Slide ${index + 1}`}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                )}
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          {images.length > 1 && (
-            <>
-              <CarouselPrevious
-                variant="ghost"
-                className="left-2 size-10 border-0 bg-black/50 text-white opacity-0 hover:bg-black/50 hover:text-white group-hover:opacity-100"
-              />
-              <CarouselNext
-                variant="ghost"
-                className="right-2 size-10 border-0 bg-black/50 text-white opacity-0 hover:bg-black/50 hover:text-white group-hover:opacity-100"
-              />
-            </>
-          )}
-        </Carousel>
-      ) : null}
+      {mediaPreview}
 
       <div className="space-y-[4px] flex flex-col items-center justify-center">
         {hasData && (

@@ -1,11 +1,10 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { CreateMedia } from "@/services";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 interface FormData {
   embed_link: string;
@@ -22,7 +21,11 @@ interface FormErrors {
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
-const Moments = () => {
+interface MomentsProps {
+  onSuccess?: () => void;
+}
+
+const Moments: React.FC<MomentsProps> = ({ onSuccess }) => {
   const params = useParams<{ id: string }>();
   const id = params?.id;
 
@@ -133,13 +136,14 @@ const Moments = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    setIsUploading(true);
     e.preventDefault();
 
     if (!validateForm()) {
       toast.error("Please fill in all required fields");
       return;
     }
+
+    setIsUploading(true);
 
     try {
       const payload = {
@@ -152,12 +156,10 @@ const Moments = () => {
 
       console.log("PAYLOAD", payload);
 
-      CreateMedia(Number(id), payload)
-        .then((response) => {
-          console.log("RESPONSE", response);
-          resetForm();
-        })
-        .catch((err) => console.log(err));
+      const response = await CreateMedia(Number(id), payload);
+      console.log("RESPONSE", response);
+      resetForm();
+      onSuccess?.();
     } catch (err) {
       handleError(err);
     } finally {
