@@ -18,6 +18,27 @@ interface UseCampaignInsightsParams {
   refreshContent?: () => void;
 }
 
+type DoughnutChartData = {
+  labels?: string[];
+  datasets: Array<{
+    data?: number[];
+    backgroundColor?: string | string[];
+    borderColor?: string | string[];
+    borderWidth?: number;
+  }>;
+};
+
+type InsightStats = Record<string, number>;
+
+type CampaignInsightsData = {
+  airPlayData: InsightStats;
+  socialMediaData: InsightStats;
+  dspData: InsightStats;
+  audienceData: InsightStats;
+  smactionData: InsightStats;
+  dspPerformanceData: InsightStats;
+};
+
 const campaignChartPalette = [
   "#ff5c7a",
   "#38a8ff",
@@ -34,6 +55,16 @@ const getCampaignChartColors = (count: number) =>
     { length: count },
     (_, index) => campaignChartPalette[index % campaignChartPalette.length],
   );
+
+const emptyInsightData: Record<string, number> = {};
+const emptyCampaignInsightsData: CampaignInsightsData = {
+  airPlayData: emptyInsightData,
+  socialMediaData: emptyInsightData,
+  dspData: emptyInsightData,
+  audienceData: emptyInsightData,
+  smactionData: emptyInsightData,
+  dspPerformanceData: emptyInsightData,
+};
 
 export function useCampaignInsights({
   content,
@@ -89,97 +120,69 @@ export function useCampaignInsights({
     lifetime: "",
   });
 
-  const { data: airPlayData = {}, isLoading: isAirPlayDataLoading } = useQuery({
+  const {
+    data: insightsData = emptyCampaignInsightsData,
+    isLoading: isInsightsDataLoading,
+  } = useQuery<CampaignInsightsData>({
     queryKey: [
       "campaign-insights",
       campaignId,
-      "airplay",
-      airplayChannelsFilters,
-    ],
-    queryFn: async () =>
-      (await getAirPlayStats({
-        id: campaignId,
-        ...airplayChannelsFilters,
-      })) ?? {},
-    enabled: hasCampaignId,
-  });
-
-  const { data: socialMediaData = {}, isLoading: isSocialMediaDataLoading } =
-    useQuery({
-      queryKey: [
-        "campaign-insights",
-        campaignId,
-        "social-media",
-        socialMediaPlatformFilters,
-      ],
-      queryFn: async () =>
-        (await getSocialMediaStats({
-          id: campaignId,
-          ...socialMediaPlatformFilters,
-        })) ?? {},
-      enabled: hasCampaignId,
-    });
-
-  const { data: dspData = {}, isLoading: isDspDataLoading } = useQuery({
-    queryKey: ["campaign-insights", campaignId, "dsp", dspFilters],
-    queryFn: async () =>
-      (await getDSPStats({ id: campaignId, ...dspFilters })) ?? {},
-    enabled: hasCampaignId,
-  });
-
-  const { data: audienceData = {}, isLoading: isAudienceDataLoading } =
-    useQuery({
-      queryKey: [
-        "campaign-insights",
-        campaignId,
-        "audience",
+      {
+        airplayChannelsFilters,
         airplayAudienceFilters,
-      ],
-      queryFn: async () =>
-        (await getAudienceStats({
-          id: campaignId,
-          ...airplayAudienceFilters,
-        })) ?? {},
-      enabled: hasCampaignId,
-    });
-
-  const { data: smactionData = {}, isLoading: isSmActionDataLoading } =
-    useQuery({
-      queryKey: [
-        "campaign-insights",
-        campaignId,
-        "social-media-actions",
+        socialMediaPlatformFilters,
         socialMediaActionsFilters,
-      ],
-      queryFn: async () =>
-        (await geteSMActionStats({
+        dspFilters,
+        dspPerformanceFilters,
+      },
+    ],
+    queryFn: async () => {
+      const [
+        airPlayData,
+        socialMediaData,
+        dspData,
+        audienceData,
+        smactionData,
+        dspPerformanceData,
+      ] = await Promise.all([
+        getAirPlayStats({ id: campaignId, ...airplayChannelsFilters }),
+        getSocialMediaStats({ id: campaignId, ...socialMediaPlatformFilters }),
+        getDSPStats({ id: campaignId, ...dspFilters }),
+        getAudienceStats({ id: campaignId, ...airplayAudienceFilters }),
+        geteSMActionStats({
           id: campaignId,
           ...socialMediaActionsFilters,
-        })) ?? {},
-      enabled: hasCampaignId,
-    });
+        }),
+        geteDSPPerformanceStats({
+          id: campaignId,
+          ...dspPerformanceFilters,
+        }),
+      ]);
 
-  const {
-    data: dspPerformanceData = {},
-    isLoading: isDspPerformanceDataLoading,
-  } = useQuery({
-    queryKey: [
-      "campaign-insights",
-      campaignId,
-      "dsp-performance",
-      dspPerformanceFilters,
-    ],
-    queryFn: async () =>
-      (await geteDSPPerformanceStats({
-        id: campaignId,
-        ...dspPerformanceFilters,
-      })) ?? {},
+      return {
+        airPlayData: airPlayData ?? {},
+        socialMediaData: socialMediaData ?? {},
+        dspData: dspData ?? {},
+        audienceData: audienceData ?? {},
+        smactionData: smactionData ?? {},
+        dspPerformanceData: dspPerformanceData ?? {},
+      };
+    },
     enabled: hasCampaignId,
   });
+
+  const {
+    airPlayData = emptyInsightData,
+    socialMediaData = emptyInsightData,
+    dspData = emptyInsightData,
+    audienceData = emptyInsightData,
+    smactionData = emptyInsightData,
+    dspPerformanceData = emptyInsightData,
+  } = insightsData;
 
   const generateDoughnutChartData = (
     data: Record<string, number>,
-  ): ChartData<"doughnut", number[], string> => {
+  ): DoughnutChartData => {
     const filteredEntries = Object.entries(data).filter(
       ([key]) => key !== "total_count",
     );
@@ -341,33 +344,24 @@ export function useCampaignInsights({
     setDspMediaData(dspfileUrls);
   }, [media]);
 
+  const invalidateCampaignInsights = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["campaign-insights", campaignId],
+    });
+  };
+
   const onAddSocialMediaDataSuccess = () => {
-    queryClient.invalidateQueries({
-      queryKey: ["campaign-insights", campaignId, "social-media"],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ["campaign-insights", campaignId, "social-media-actions"],
-    });
+    invalidateCampaignInsights();
     refreshContent?.();
   };
 
   const onAddDataSuccess = () => {
-    queryClient.invalidateQueries({
-      queryKey: ["campaign-insights", campaignId, "airplay"],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ["campaign-insights", campaignId, "audience"],
-    });
+    invalidateCampaignInsights();
     refreshContent?.();
   };
 
   const onAddDataDspSuccess = () => {
-    queryClient.invalidateQueries({
-      queryKey: ["campaign-insights", campaignId, "dsp"],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ["campaign-insights", campaignId, "dsp-performance"],
-    });
+    invalidateCampaignInsights();
     refreshContent?.();
   };
 
@@ -412,12 +406,12 @@ export function useCampaignInsights({
     pieChartDataAudience,
     pieChartDataDSPPerformance,
     chartDataForBar,
-    isAirPlayDataLoading,
-    isSocialMediaDataLoading,
-    isDspDataLoading,
-    isAudienceDataLoading,
-    isSmActionDataLoading,
-    isDspPerformanceDataLoading,
+    isAirPlayDataLoading: isInsightsDataLoading,
+    isSocialMediaDataLoading: isInsightsDataLoading,
+    isDspDataLoading: isInsightsDataLoading,
+    isAudienceDataLoading: isInsightsDataLoading,
+    isSmActionDataLoading: isInsightsDataLoading,
+    isDspPerformanceDataLoading: isInsightsDataLoading,
     onAddSocialMediaDataSuccess,
     onAddDataSuccess,
     onAddDataDspSuccess,
