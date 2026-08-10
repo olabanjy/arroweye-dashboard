@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { CreateMedia } from "@/services";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import React, { useState } from "react";
 
 type MediaItem = {
@@ -10,9 +10,13 @@ type MediaItem = {
   // embed_link: string;
 };
 
-const DspCovers = () => {
-  const router = useRouter();
-  const id = Number(router.query.id);
+interface DspCoversProps {
+  onSuccess?: () => void;
+}
+
+const DspCovers: React.FC<DspCoversProps> = ({ onSuccess }) => {
+  const params = useParams<{ id: string }>();
+  const id = Number(params?.id);
 
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
 
@@ -71,12 +75,10 @@ const DspCovers = () => {
     };
     console.log("Payload", payload);
     try {
-      CreateMedia(id, payload, "application/json")
-        .then((response) => {
-          console.log("RESPONSE", response);
-          setMediaItems([]); // Clear the form
-        })
-        .catch((err) => console.log(err));
+      const response = await CreateMedia(id, payload, "application/json");
+      console.log("RESPONSE", response);
+      setMediaItems([]); // Clear the form
+      onSuccess?.();
     } catch (err) {
       console.error("Error submitting form:", err);
     }

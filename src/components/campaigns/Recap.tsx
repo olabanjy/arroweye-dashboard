@@ -1,11 +1,10 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { CreateMedia } from "@/services";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
 
 interface FormData {
   embed_link: string;
@@ -22,9 +21,13 @@ interface FormErrors {
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
-const Recap = () => {
-  const router = useRouter();
-  const id = Number(router.query.id);
+interface RecapProps {
+  onSuccess?: () => void;
+}
+
+const Recap: React.FC<RecapProps> = ({ onSuccess }) => {
+  const params = useParams<{ id: string }>();
+  const id = Number(params?.id);
 
   const [formData, setFormData] = useState<FormData>({
     embed_link: "",
@@ -152,12 +155,10 @@ const Recap = () => {
 
       console.log("PAYLOAD", payload);
 
-      CreateMedia(id, payload)
-        .then((response) => {
-          console.log("RESPONSE", response);
-          resetForm();
-        })
-        .catch((err) => console.log(err));
+      const response = await CreateMedia(id, payload);
+      console.log("RESPONSE", response);
+      resetForm();
+      onSuccess?.();
     } catch (err) {
       handleError(err);
     } finally {

@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/chart";
 import { ChartFilterSelect } from "@/components/campaigns/chart-filter-select";
 import { ChartInfoTooltip } from "@/components/campaigns/chart-info-tooltip";
-import { EmptyInsightChartCard } from "@/components/campaigns/EmptyInsightChartCard";
 import { InsightChartSkeleton } from "@/components/campaigns/InsightChartSkeleton";
 import { formatNumber } from "@/lib/utils";
 
@@ -51,6 +50,8 @@ const fallbackColors = [
 ];
 
 const filterSelectClassName = "w-[120px]";
+const emptyChartColor = "#d4d4d8";
+const emptyChartFillColor = "color-mix(in srgb, #d4d4d8 28%, transparent)";
 
 const getColor = (colors: unknown, index: number) => {
   if (Array.isArray(colors) && typeof colors[index] === "string") {
@@ -130,6 +131,23 @@ const CampaignPieChart = <
     })
     .filter((item) => Number(item.value) > 0);
   const hasChartData = pieData.length > 0;
+  const emptyPieData = (labels.length > 0 ? labels : ["No data"]).map(
+    (label, index) => {
+      const segment = getKey(label, index);
+
+      return {
+        segment,
+        label,
+        value: 1,
+        color: emptyChartColor,
+        darkColor: "var(--muted)",
+        fill: `var(--color-${segment})`,
+        stroke: `var(--color-${segment}-border)`,
+      };
+    },
+  );
+  const displayPieData = hasChartData ? pieData : emptyPieData;
+  const displayValue = Number(value) > 0 ? value : 0;
 
   const [hiddenSegments, setHiddenSegments] = useState<Set<string>>(new Set());
 
@@ -146,17 +164,22 @@ const CampaignPieChart = <
   };
 
   const visiblePieData = useMemo(
-    () => pieData.filter((item) => !hiddenSegments.has(item.segment)),
-    [pieData, hiddenSegments],
+    () =>
+      hasChartData
+        ? pieData.filter((item) => !hiddenSegments.has(item.segment))
+        : displayPieData,
+    [displayPieData, hasChartData, pieData, hiddenSegments],
   );
 
-  const chartConfig = pieData.reduce<ChartConfig>(
+  const chartConfig = displayPieData.reduce<ChartConfig>(
     (config, item) => ({
       ...config,
       [item.segment]: {
         label: item.label,
         theme: {
-          light: getLightChartFillColor(item.color),
+          light: hasChartData
+            ? getLightChartFillColor(item.color)
+            : emptyChartFillColor,
           dark: item.darkColor,
         },
       },
@@ -172,10 +195,6 @@ const CampaignPieChart = <
 
   if (isLoading) {
     return <InsightChartSkeleton showFilter={Boolean(selectOptions)} />;
-  }
-
-  if (!hasChartData) {
-    return <EmptyInsightChartCard />;
   }
 
   return (
@@ -211,7 +230,7 @@ const CampaignPieChart = <
       <CardContent className="space-y-5 p-0">
         <div className="flex items-center gap-2">
           <p className="text-2xl font-semibold lg:text-[56px]">
-            {!!value && formatNumber(value)}
+            {formatNumber(displayValue)}
           </p>
           {Number(value) > 1000 && (
             <ChartInfoTooltip content={value.toLocaleString()} />
@@ -222,26 +241,30 @@ const CampaignPieChart = <
           {valuePlaceHolder}
         </p>
 
-        {pieData.length > 0 && (
+        {displayPieData.length > 0 && (
           <div className="pt-2">
             <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[13px] leading-none text-[#6f6f6f]">
-              {pieData.map((item) => {
-                const isHidden = hiddenSegments.has(item.segment);
+              {displayPieData.map((item) => {
+                const isHidden =
+                  hasChartData && hiddenSegments.has(item.segment);
                 return (
                   <button
                     type="button"
                     key={item.segment}
-                    onClick={() => toggleSegment(item.segment)}
+                    disabled={!hasChartData}
+                    onClick={() => {
+                      if (hasChartData) toggleSegment(item.segment);
+                    }}
                     className="flex items-center gap-2 transition-opacity"
-                    style={{ opacity: isHidden ? 0.4 : 1 }}
+                    style={{ opacity: isHidden || !hasChartData ? 0.55 : 1 }}
                   >
                     <span
                       className="h-[14px] w-7 shrink-0 border bg-[var(--chart-legend-bg)] dark:bg-[var(--chart-legend-dark-bg)] border-[var(--chart-legend-border)] dark:border-[var(--chart-legend-dark-border)]"
                       style={
                         {
-                          "--chart-legend-bg": getLightChartFillColor(
-                            item.color,
-                          ),
+                          "--chart-legend-bg": hasChartData
+                            ? getLightChartFillColor(item.color)
+                            : emptyChartFillColor,
                           "--chart-legend-border": item.color,
                           "--chart-legend-dark-bg": item.darkColor,
                           "--chart-legend-dark-border": item.darkColor,
@@ -266,12 +289,14 @@ const CampaignPieChart = <
                 className="mx-auto aspect-square w-full max-w-[350px]"
               >
                 <RechartsPieChart>
-                  <ChartTooltip
-                    cursor={false}
-                    content={
-                      <ChartTooltipContent hideLabel nameKey="segment" />
-                    }
-                  />
+                  {hasChartData && (
+                    <ChartTooltip
+                      cursor={false}
+                      content={
+                        <ChartTooltipContent hideLabel nameKey="segment" />
+                      }
+                    />
+                  )}
                   <Pie
                     data={visiblePieData}
                     dataKey="value"

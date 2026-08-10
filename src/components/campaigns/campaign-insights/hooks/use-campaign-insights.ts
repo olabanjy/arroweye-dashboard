@@ -1,22 +1,22 @@
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import { ChartData } from "chart.js";
 import { usePDF } from "react-to-pdf";
-import {
-  getAirPlayStats,
-  getSocialMediaStats,
-  getDSPStats,
-  getAudienceStats,
-  geteSMActionStats,
-  geteDSPPerformanceStats,
-} from "@/services";
 import getDarkerColor from "@/lib/getDarkerColor";
 
 interface UseCampaignInsightsParams {
   content?: any;
   refreshContent?: () => void;
 }
+
+type DoughnutChartData = {
+  labels?: string[];
+  datasets: Array<{
+    data?: number[];
+    backgroundColor?: string | string[];
+    borderColor?: string | string[];
+    borderWidth?: number;
+  }>;
+};
 
 const campaignChartPalette = [
   "#ff5c7a",
@@ -35,27 +35,53 @@ const getCampaignChartColors = (count: number) =>
     (_, index) => campaignChartPalette[index % campaignChartPalette.length],
   );
 
+const emptyMedia: any[] = [];
+
+const weekKeys = ["week_1", "week_2", "week_3", "week_4"] as const;
+
+const toNumber = (value: unknown) => {
+  const number = Number(value ?? 0);
+  return Number.isFinite(number) ? number : 0;
+};
+
+const sumWeeklyValues = (rows: any[] = []) =>
+  rows.reduce(
+    (total, row) =>
+      total + weekKeys.reduce((sum, key) => sum + toNumber(row?.[key]), 0),
+    0,
+  );
+
+const getMetricLabel = (metric: any) =>
+  metric?.metric_name ||
+  metric?.name ||
+  `Metric ${metric?.metric ?? ""}`.trim();
+
+const addValue = (
+  totals: Record<string, number>,
+  label: string | undefined | null,
+  value: number,
+) => {
+  const key = label || "Uncategorized";
+  totals[key] = (totals[key] ?? 0) + value;
+};
+
+const withTotalCount = (totals: Record<string, number>) => ({
+  ...totals,
+  total_count: Object.values(totals).reduce((sum, value) => sum + value, 0),
+});
+
 export function useCampaignInsights({
   content,
   refreshContent,
 }: UseCampaignInsightsParams) {
-  const queryClient = useQueryClient();
   const [initialTab, setInitialTab] = useState<any>("moments");
   const [addDataModal, setAddDataModal] = useState(false);
   const [addDataModalSocial, setAddDataModalSocial] = useState(false);
   const [addMediaModal, setAddMediaModal] = useState(false);
   const [addDspModal, setAddDspModal] = useState(false);
-  const [momentMediaData, setMomentMediaData] = useState<any>([]);
-  const [momentReportUrls, setMomentReportUrls] = useState<any>([]);
-  const [giftingsReportUrls, setGiftingsReportUrls] = useState<any>([]);
-  const [recapMediaData, setRecapMediaData] = useState<any>([]);
-  const [dspMediaData, setDspMediaData] = useState<any>([]);
 
-  const media = content?.media || [];
+  const media = content?.media ?? emptyMedia;
   const mediaLoading = !content;
-  const { id } = useParams<{ id: string }>();
-  const campaignId = Number(id);
-  const hasCampaignId = Boolean(id) && Number.isFinite(campaignId);
 
   const [airplayChannelsFilters, setairplayChannelsFilters] = useState({
     country: "",
@@ -89,97 +115,89 @@ export function useCampaignInsights({
     lifetime: "",
   });
 
-  const { data: airPlayData = {}, isLoading: isAirPlayDataLoading } = useQuery({
-    queryKey: [
-      "campaign-insights",
-      campaignId,
-      "airplay",
-      airplayChannelsFilters,
-    ],
-    queryFn: async () =>
-      (await getAirPlayStats({
-        id: campaignId,
-        ...airplayChannelsFilters,
-      })) ?? {},
-    enabled: hasCampaignId,
-  });
+  const airPlayData = useMemo(() => {
+    const totals: Record<string, number> = {};
 
-  const { data: socialMediaData = {}, isLoading: isSocialMediaDataLoading } =
-    useQuery({
-      queryKey: [
-        "campaign-insights",
-        campaignId,
-        "social-media",
-        socialMediaPlatformFilters,
-      ],
-      queryFn: async () =>
-        (await getSocialMediaStats({
-          id: campaignId,
-          ...socialMediaPlatformFilters,
-        })) ?? {},
-      enabled: hasCampaignId,
+    content?.project_airplay?.forEach((item: any) => {
+      addValue(
+        totals,
+        item?.airplay?.name,
+        sumWeeklyValues(item?.airplay_data),
+      );
     });
 
-  const { data: dspData = {}, isLoading: isDspDataLoading } = useQuery({
-    queryKey: ["campaign-insights", campaignId, "dsp", dspFilters],
-    queryFn: async () =>
-      (await getDSPStats({ id: campaignId, ...dspFilters })) ?? {},
-    enabled: hasCampaignId,
-  });
+    return withTotalCount(totals);
+  }, [content?.project_airplay]);
 
-  const { data: audienceData = {}, isLoading: isAudienceDataLoading } =
-    useQuery({
-      queryKey: [
-        "campaign-insights",
-        campaignId,
-        "audience",
-        airplayAudienceFilters,
-      ],
-      queryFn: async () =>
-        (await getAudienceStats({
-          id: campaignId,
-          ...airplayAudienceFilters,
-        })) ?? {},
-      enabled: hasCampaignId,
+  const audienceData = useMemo(() => {
+    const totals: Record<string, number> = {};
+
+    content?.project_airplay?.forEach((item: any) => {
+      addValue(
+        totals,
+        item?.airplay?.channel || item?.airplay?.name,
+        toNumber(item?.airplay?.audience),
+      );
     });
 
-  const { data: smactionData = {}, isLoading: isSmActionDataLoading } =
-    useQuery({
-      queryKey: [
-        "campaign-insights",
-        campaignId,
-        "social-media-actions",
-        socialMediaActionsFilters,
-      ],
-      queryFn: async () =>
-        (await geteSMActionStats({
-          id: campaignId,
-          ...socialMediaActionsFilters,
-        })) ?? {},
-      enabled: hasCampaignId,
+    return withTotalCount(totals);
+  }, [content?.project_airplay]);
+
+  const socialMediaData = useMemo(() => {
+    const totals: Record<string, number> = {};
+
+    content?.project_sm?.forEach((item: any) => {
+      addValue(totals, item?.sm?.name, sumWeeklyValues(item?.sm_data));
     });
 
-  const {
-    data: dspPerformanceData = {},
-    isLoading: isDspPerformanceDataLoading,
-  } = useQuery({
-    queryKey: [
-      "campaign-insights",
-      campaignId,
-      "dsp-performance",
-      dspPerformanceFilters,
-    ],
-    queryFn: async () =>
-      (await geteDSPPerformanceStats({
-        id: campaignId,
-        ...dspPerformanceFilters,
-      })) ?? {},
-    enabled: hasCampaignId,
-  });
+    return withTotalCount(totals);
+  }, [content?.project_sm]);
+
+  const smactionData = useMemo(() => {
+    const totals: Record<string, number> = {};
+
+    content?.project_sm?.forEach((item: any) => {
+      item?.sm_data?.forEach((metric: any) => {
+        addValue(
+          totals,
+          getMetricLabel(metric),
+          weekKeys.reduce((sum, key) => sum + toNumber(metric?.[key]), 0),
+        );
+      });
+    });
+
+    return withTotalCount(totals);
+  }, [content?.project_sm]);
+
+  const dspData = useMemo(() => {
+    const totals: Record<string, number> = {};
+
+    content?.project_dsp?.forEach((item: any) => {
+      addValue(totals, item?.dsp?.name, sumWeeklyValues(item?.dsp_data));
+    });
+
+    return withTotalCount(totals);
+  }, [content?.project_dsp]);
+
+  const dspPerformanceData = useMemo(() => {
+    const totals: Record<string, number> = {};
+
+    content?.project_dsp?.forEach((item: any) => {
+      item?.dsp_data?.forEach((metric: any) => {
+        addValue(
+          totals,
+          getMetricLabel(metric),
+          weekKeys.reduce((sum, key) => sum + toNumber(metric?.[key]), 0),
+        );
+      });
+    });
+
+    return withTotalCount(totals);
+  }, [content?.project_dsp]);
 
   const generateDoughnutChartData = (
     data: Record<string, number>,
-  ): ChartData<"doughnut", number[], string> => {
+  ): DoughnutChartData => {
     const filteredEntries = Object.entries(data).filter(
       ([key]) => key !== "total_count",
     );
@@ -320,64 +338,42 @@ export function useCampaignInsights({
 
   const { toPDF, targetRef } = usePDF({ filename: "dashboard.pdf" });
 
-  useEffect(() => {
-    if (media.length > 0) {
-      const giftings = media.filter((item: any) => item?.type === "Gifting");
-      setGiftingsReportUrls(giftings);
+  const {
+    momentMediaData,
+    momentReportUrls,
+    giftingsReportUrls,
+    recapMediaData,
+    dspMediaData,
+  } = useMemo(() => {
+    const momentMedia = media.filter((item: any) => item?.type === "Moment");
+    const recapMedia = media.filter((item: any) => item?.type === "Recap");
+    const dspCoversWithFiles = media.filter(
+      (item: any) =>
+        item?.type === "DSP_Covers" && item?.files && item.files.length > 0,
+    );
 
-      const newMomentMedia = media.filter(
-        (item: any) => item?.type === "Moment",
-      );
-      const embedMomentLinks = newMomentMedia.map(
-        (item: any) => item.embed_link,
-      );
-      const momentReportUrl = newMomentMedia.map((item: any) => item.report);
-      const newRecapMedia = media.filter((item: any) => item?.type === "Recap");
-      const embedRecapLinks = newRecapMedia.map((item: any) => item.embed_link);
-      const dspCoversWithFiles = media.filter(
-        (item: any) =>
-          item?.type === "DSP_Covers" && item?.files && item.files.length > 0,
-      );
-      const dspfileUrls = dspCoversWithFiles.flatMap((item: any) =>
+    return {
+      giftingsReportUrls: media.filter((item: any) => item?.type === "Gifting"),
+      momentMediaData: momentMedia.map((item: any) => item.embed_link),
+      momentReportUrls: momentMedia.map((item: any) => item.report),
+      recapMediaData: recapMedia.map((item: any) => item.embed_link),
+      dspMediaData: dspCoversWithFiles.flatMap((item: any) =>
         item.files.map(
           (file: any) => `https://studio-api.arroweye.pro${file.file}`,
         ),
-      );
-
-      setMomentReportUrls(momentReportUrl);
-      setMomentMediaData(embedMomentLinks);
-      setRecapMediaData(embedRecapLinks);
-      setDspMediaData(dspfileUrls);
-    }
+      ),
+    };
   }, [media]);
 
   const onAddSocialMediaDataSuccess = () => {
-    queryClient.invalidateQueries({
-      queryKey: ["campaign-insights", campaignId, "social-media"],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ["campaign-insights", campaignId, "social-media-actions"],
-    });
     refreshContent?.();
   };
 
   const onAddDataSuccess = () => {
-    queryClient.invalidateQueries({
-      queryKey: ["campaign-insights", campaignId, "airplay"],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ["campaign-insights", campaignId, "audience"],
-    });
     refreshContent?.();
   };
 
   const onAddDataDspSuccess = () => {
-    queryClient.invalidateQueries({
-      queryKey: ["campaign-insights", campaignId, "dsp"],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ["campaign-insights", campaignId, "dsp-performance"],
-    });
     refreshContent?.();
   };
 
@@ -422,12 +418,12 @@ export function useCampaignInsights({
     pieChartDataAudience,
     pieChartDataDSPPerformance,
     chartDataForBar,
-    isAirPlayDataLoading,
-    isSocialMediaDataLoading,
-    isDspDataLoading,
-    isAudienceDataLoading,
-    isSmActionDataLoading,
-    isDspPerformanceDataLoading,
+    isAirPlayDataLoading: mediaLoading,
+    isSocialMediaDataLoading: mediaLoading,
+    isDspDataLoading: mediaLoading,
+    isAudienceDataLoading: mediaLoading,
+    isSmActionDataLoading: mediaLoading,
+    isDspPerformanceDataLoading: mediaLoading,
     onAddSocialMediaDataSuccess,
     onAddDataSuccess,
     onAddDataDspSuccess,

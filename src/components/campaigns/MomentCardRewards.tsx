@@ -4,6 +4,7 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Dialog } from "primereact/dialog";
 import { ClaimReward } from "@/services";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface MomentCardRewardsProps {
   giftingPin?: string;
@@ -181,58 +182,65 @@ const MomentCardRewards: React.FC<MomentCardRewardsProps> = ({
     document.body.removeChild(link);
   };
 
+  const mediaPreview = loading ? (
+    <Skeleton className="h-[400px] w-full rounded-[8px]" />
+  ) : hasData ? (
+    <div className="relative flex h-[400px] items-center justify-center overflow-hidden rounded bg-black group">
+      <>
+        <iframe
+          className="aspect-video h-full w-full"
+          src={`${videoUrls[currentVideoIndex]}?autoplay=${isPlaying ? "1" : "0"}&controls=1&showinfo=0&rel=0`}
+          title={`${videoTitle} - Video ${currentVideoIndex + 1}`}
+          frameBorder="0"
+          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        ></iframe>
+
+        {videoUrls.length > 1 && (
+          <>
+            <button
+              className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={handlePrevVideo}
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={handleNextVideo}
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </>
+        )}
+
+        {!isPlaying && (
+          <button
+            className="absolute inset-0 flex items-center justify-center bg-black/50 hover:bg-black/40 transition-colors"
+            onClick={handlePlayClick}
+          >
+            <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
+              <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[24px] border-l-black border-b-[12px] border-b-transparent ml-1" />
+            </div>
+          </button>
+        )}
+      </>
+    </div>
+  ) : (
+    <div
+      role="img"
+      aria-label="No media available"
+      className="h-[400px] w-full rounded-[8px] bg-gray-200 dark:bg-muted/70"
+    />
+  );
+
   return (
     <div className="w-full max-h-[600px] space-y-[20px]">
       <p className="!text-[12px] font-[400] tracking-[.1rem] text-[#000000] font-SansFlex uppercase">
         {MomentsTitle}
       </p>
 
-      {loading ? (
-        <div className="h-[400px] w-full rounded bg-gray-200 animate-pulse" />
-      ) : hasData ? (
-        <div className="relative flex h-[400px] items-center justify-center overflow-hidden rounded bg-black group">
-          <>
-            <iframe
-              className="aspect-video h-full w-full"
-              src={`${videoUrls[currentVideoIndex]}?autoplay=${isPlaying ? "1" : "0"}&controls=1&showinfo=0&rel=0`}
-              title={`${videoTitle} - Video ${currentVideoIndex + 1}`}
-              frameBorder="0"
-              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            ></iframe>
-
-            {/* Navigation Buttons */}
-            {videoUrls.length > 1 && (
-              <>
-                <button
-                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={handlePrevVideo}
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={handleNextVideo}
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
-              </>
-            )}
-
-            {!isPlaying && (
-              <button
-                className="absolute inset-0 flex items-center justify-center bg-black/50 hover:bg-black/40 transition-colors"
-                onClick={handlePlayClick}
-              >
-                <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
-                  <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[24px] border-l-black border-b-[12px] border-b-transparent ml-1" />
-                </div>
-              </button>
-            )}
-          </>
-        </div>
-      ) : null}
+      {mediaPreview}
 
       <div className="space-y-[4px] flex flex-col items-center justify-center">
         {hasData && (

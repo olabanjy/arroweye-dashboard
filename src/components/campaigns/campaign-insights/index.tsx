@@ -331,7 +331,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
               csvData={{ ...dspData, ...dspPerformanceData }}
               downloadButtonText="Download Data"
               downloadIcon={true}
-              MomentsTitle="DSP EDITORIAL"
+              MomentsTitle="DSP"
               assetsButton="Download Assets"
               links={[
                 "https://www.google.com",
@@ -375,6 +375,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
       <AddMedia
         visible={addMediaModal}
         onHide={() => setAddMediaModal(false)}
+        onSuccess={refreshContent}
         initialTab={initialTab}
       />
 
