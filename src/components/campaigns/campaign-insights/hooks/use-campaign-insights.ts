@@ -321,34 +321,24 @@ export function useCampaignInsights({
   const { toPDF, targetRef } = usePDF({ filename: "dashboard.pdf" });
 
   useEffect(() => {
-    if (media.length > 0) {
-      const giftings = media.filter((item: any) => item?.type === "Gifting");
-      setGiftingsReportUrls(giftings);
+    const giftings = media.filter((item: any) => item?.type === "Gifting");
+    const momentMedia = media.filter((item: any) => item?.type === "Moment");
+    const recapMedia = media.filter((item: any) => item?.type === "Recap");
+    const dspCoversWithFiles = media.filter(
+      (item: any) =>
+        item?.type === "DSP_Covers" && item?.files && item.files.length > 0,
+    );
+    const dspfileUrls = dspCoversWithFiles.flatMap((item: any) =>
+      item.files.map(
+        (file: any) => `https://studio-api.arroweye.pro${file.file}`,
+      ),
+    );
 
-      const newMomentMedia = media.filter(
-        (item: any) => item?.type === "Moment",
-      );
-      const embedMomentLinks = newMomentMedia.map(
-        (item: any) => item.embed_link,
-      );
-      const momentReportUrl = newMomentMedia.map((item: any) => item.report);
-      const newRecapMedia = media.filter((item: any) => item?.type === "Recap");
-      const embedRecapLinks = newRecapMedia.map((item: any) => item.embed_link);
-      const dspCoversWithFiles = media.filter(
-        (item: any) =>
-          item?.type === "DSP_Covers" && item?.files && item.files.length > 0,
-      );
-      const dspfileUrls = dspCoversWithFiles.flatMap((item: any) =>
-        item.files.map(
-          (file: any) => `https://studio-api.arroweye.pro${file.file}`,
-        ),
-      );
-
-      setMomentReportUrls(momentReportUrl);
-      setMomentMediaData(embedMomentLinks);
-      setRecapMediaData(embedRecapLinks);
-      setDspMediaData(dspfileUrls);
-    }
+    setGiftingsReportUrls(giftings);
+    setMomentReportUrls(momentMedia.map((item: any) => item.report));
+    setMomentMediaData(momentMedia.map((item: any) => item.embed_link));
+    setRecapMediaData(recapMedia.map((item: any) => item.embed_link));
+    setDspMediaData(dspfileUrls);
   }, [media]);
 
   const onAddSocialMediaDataSuccess = () => {
