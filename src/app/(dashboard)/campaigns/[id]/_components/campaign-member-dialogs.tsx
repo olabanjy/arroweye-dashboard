@@ -349,7 +349,7 @@ export function ConfirmActionDialog({
   const confirmButtonClassName =
     confirmVariant === "destructive"
       ? "h-9 rounded-full px-5 text-sm font-medium shadow-none active:scale-[0.97]"
-      : "h-9 rounded-full bg-[#5300d7] px-5 text-sm font-medium !text-white shadow-none hover:bg-[#4700b8] hover:!text-white active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-violet-500/25";
+      : "h-9 rounded-full bg-zinc-950 px-5 text-sm font-medium !text-white shadow-none hover:bg-zinc-800 hover:!text-white active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-zinc-500/30 dark:bg-zinc-100 dark:!text-zinc-950 dark:hover:bg-zinc-200 dark:hover:!text-zinc-950";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

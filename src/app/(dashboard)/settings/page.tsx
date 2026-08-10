@@ -12,7 +12,6 @@ import {
 import { Info } from "lucide-react";
 import { LuCopy } from "react-icons/lu";
 import { useSettings } from "@/hooks/use-settings";
-import Head from "next/head";
 
 const Setting = () => {
   const {
@@ -96,9 +95,6 @@ const Setting = () => {
 
   return (
     <>
-      <Head>
-        <title>Settings - Arroweye</title>
-      </Head>
       <div>
         <div className="mt-10 min-h-screen space-y-[20px] px-4 py-10 text-foreground">
           <div className="grid items-end gap-6 md:grid-cols-2 lg:grid-cols-3">

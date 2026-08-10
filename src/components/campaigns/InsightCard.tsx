@@ -20,7 +20,7 @@ interface InsightCardProps {
 const Tooltip = ({ info }: { info: string }) => (
   <div className="relative group">
     <FiInfo className="text-gray-400 hover:text-green-500 cursor-pointer" />
-    <div className="absolute left-[25px] top-0 transform  ml-1 hidden w-60 p-[12px] text-xs font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-SansFlex">
+    <div className="absolute left-[25px] top-0 transform  ml-1 hidden w-72 p-[14px] text-xs leading-relaxed font-[400] text-white bg-black rounded-[4px] group-hover:block z-10 shadow-lg font-SansFlex">
       <div className="absolute left-0 top-[10px] transform -translate-y-1/2 -ml-[6px] border-black  border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-black"></div>
       {info}
     </div>
@@ -73,7 +73,7 @@ const InsightCard: FC<InsightCardProps> = ({
         )}
       </div>
 
-      {!percentageChange && <p className="min-h-[25px]"></p>}
+      {/* {!percentageChange && <p className="min-h-[25px]"></p>}
       {percentageChange && (
         <p
           className="text-[14px] lg:text-[16px] font-[500]"
@@ -83,7 +83,7 @@ const InsightCard: FC<InsightCardProps> = ({
           {percentageChange}
           {"%"}
         </p>
-      )}
+      )} */}
 
       <div className="grid md:flex items-center gap-[10px]">
         {selectOptions?.map((options, index) => (

@@ -5,7 +5,6 @@ import Image from "next/image";
 import { getPaymentInvoice } from "@/services";
 import { format } from "date-fns";
 import { useParams } from "next/navigation";
-import Head from "next/head";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const DetailSkeleton = ({ className = "w-24" }: { className?: string }) => (
@@ -83,9 +82,9 @@ const Invoice = () => {
 
   return (
     <>
-      <Head>
-        <title>{content?.project?.title || "Invoice"} - Arroweye</title>
-      </Head>
+      {content?.project?.title && (
+        <title>{`${content.project.title} - Arroweye`}</title>
+      )}
       <div className="mt-20 flex min-h-[calc(100vh-5rem)] items-start justify-center bg-background px-4 font-SansFlex text-foreground">
         {loadError ? (
           <div className="w-full max-w-[400px] rounded-lg border border-destructive/30 bg-destructive/10 px-6 py-8 text-center text-destructive">

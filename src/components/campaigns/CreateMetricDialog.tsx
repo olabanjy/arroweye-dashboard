@@ -17,7 +17,7 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 const inputClassName =
-  "!h-11 !rounded-[6px] !border-zinc-300 !bg-white !text-[14px] !text-zinc-950 !shadow-none focus-visible:!ring-2 focus-visible:!ring-violet-500/25 dark:!border-zinc-600 dark:!bg-zinc-800 dark:!text-zinc-100";
+  "!h-11 !rounded-[6px] !border-zinc-300 !bg-white !text-[14px] !text-zinc-950 !shadow-none focus-visible:!ring-2 focus-visible:!ring-ring/30 dark:!border-zinc-600 dark:!bg-zinc-800 dark:!text-zinc-100";
 
 interface CreateMetricDialogProps {
   open: boolean;
@@ -100,7 +100,7 @@ export default function CreateMetricDialog({
             <Button
               type="submit"
               disabled={isCreating}
-              className="h-9 rounded-full bg-[#5300d7] px-5 text-sm text-white hover:bg-[#4700b8] active:scale-[0.97]"
+              className="h-9 rounded-full px-5 text-sm active:scale-[0.97]"
             >
               <Plus className="size-4" />
               {isCreating ? "Creating..." : "Create metric"}

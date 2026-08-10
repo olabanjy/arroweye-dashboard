@@ -201,11 +201,17 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
                     style={{ opacity: isHidden ? 0.4 : 1 }}
                   >
                     <span
-                      className="h-[14px] w-4 shrink-0 border"
-                      style={{
-                        backgroundColor: getLightChartFillColor(item.color),
-                        borderColor: item.color,
-                      }}
+                      className="h-[14px] w-4 shrink-0 border border-[var(--chart-legend-border)] bg-[var(--chart-legend-bg)] dark:border-[var(--chart-legend-dark-border)] dark:bg-[var(--chart-legend-dark-bg)]"
+                      style={
+                        {
+                          "--chart-legend-bg": getLightChartFillColor(
+                            item.color,
+                          ),
+                          "--chart-legend-border": item.color,
+                          "--chart-legend-dark-bg": item.darkColor,
+                          "--chart-legend-dark-border": item.darkColor,
+                        } as React.CSSProperties
+                      }
                     />
                     <span
                       className={

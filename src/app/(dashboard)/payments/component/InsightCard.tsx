@@ -31,14 +31,14 @@ const InsightCard: FC<InsightCardProps> = ({
 
       <p className="text-2xl lg:text-4xl font-bold">{value}</p>
 
-      {percentageChange && (
+      {/* {percentageChange && (
         <p
           className="text-[14px] lg:text-[16px] font-bold"
           style={{ color: percentageColor }}
         >
           {percentageChange}
         </p>
-      )}
+      )} */}
 
       <div className="grid md:flex items-center gap-[10px]">
         {selectOptions?.map((options, index) => (

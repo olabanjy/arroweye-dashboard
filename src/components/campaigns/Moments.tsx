@@ -2,10 +2,10 @@
 import { Input } from "@/components/ui/input";
 import { CreateMedia } from "@/services";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
+import { useParams, useRouter } from "next/navigation";
 
 interface FormData {
   embed_link: string;
@@ -23,8 +23,8 @@ interface FormErrors {
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
 const Moments = () => {
-  const router = useRouter();
-  const id = Number(router.query.id);
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
 
   const [formData, setFormData] = useState<FormData>({
     embed_link: "",
@@ -152,7 +152,7 @@ const Moments = () => {
 
       console.log("PAYLOAD", payload);
 
-      CreateMedia(id, payload)
+      CreateMedia(Number(id), payload)
         .then((response) => {
           console.log("RESPONSE", response);
           resetForm();

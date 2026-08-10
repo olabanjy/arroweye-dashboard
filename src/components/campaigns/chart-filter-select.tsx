@@ -5,6 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface ChartFilterSelectProps {
   options: Array<{ value: string | number; label: string }>;
@@ -37,7 +38,7 @@ export function ChartFilterSelect({
         onChange?.(nextValue === EMPTY_SELECT_VALUE ? "" : nextValue)
       }
     >
-      <SelectTrigger className={className}>
+      <SelectTrigger className={cn("rounded-full", className)}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

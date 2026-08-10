@@ -1,6 +1,5 @@
 "use client";
 
-import Head from "next/head";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { format, parseISO } from "date-fns";
@@ -247,9 +246,6 @@ const AssetsLibrary = () => {
 
   return (
     <>
-      <Head>
-        <title>Drops - Arroweye</title>
-      </Head>
       <div ref={stickySentinelRef} className="h-px" aria-hidden="true" />
       <div
         ref={stickyHeaderRef}

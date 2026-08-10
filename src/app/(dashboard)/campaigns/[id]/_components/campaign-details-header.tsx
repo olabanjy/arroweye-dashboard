@@ -154,10 +154,10 @@ export function CampaignDetailsHeader({
         >
           <div className="min-w-0 flex-1">
             {toggleNotifications ? (
-              <div className="flex items-center mt-3">
-                <Input
-                  type="text"
-                  className="h-auto w-full rounded-full border-border bg-background! text-[17px] text-foreground shadow-none placeholder:text-[17px]"
+<div className={cn("flex items-center", isSticky ? "" : "mt-3")}>
+                 <Input
+                   type="text"
+                   className="h-auto w-full rounded-full border-border bg-background! text-[17px] text-foreground shadow-none placeholder:text-[17px]"
                   value={content?.title || ""}
                   onChange={(event) => {
                     setContent({ ...content, title: event.target.value });
@@ -195,8 +195,10 @@ export function CampaignDetailsHeader({
             ) : (
               <p
                 className={cn(
-                  "mt-3 truncate tracking-tight text-primary",
-                  isSticky ? "text-2xl font-[800]" : "text-[45px] font-[900]",
+                  "truncate tracking-tight text-primary",
+                  isSticky
+                    ? "text-2xl font-[800]"
+                    : "mt-3 text-[45px] font-[700]",
                 )}
               >
                 {content?.title || content?.campaign?.song_title}
