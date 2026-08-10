@@ -48,6 +48,11 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const hasData = (images?.length ?? 0) > 0;
+  const hasCsvData =
+    csvData &&
+    Object.entries(csvData).some(
+      ([key, value]) => key !== "total_count" && Number(value ?? 0) > 0,
+    );
 
   useEffect(() => {
     if (!carouselApi) return;
@@ -229,11 +234,12 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
           </div>
         )}
 
-        {hasData && assetsButton && (
+        {assetsButton && (
           <button
             type="button"
-            className="p-2 cursor-pointer text-[16px] font-[500] font-SansFlex w-full rounded-full text-center hover:bg-orange-500 bg-black text-white"
+            className="p-2 cursor-pointer text-[16px] font-[500] font-SansFlex w-full rounded-full text-center hover:bg-orange-500 bg-black text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-black"
             onClick={() => downloadAllDspFiles(images)}
+            disabled={!hasData || loading}
           >
             {assetsButton}
           </button>
@@ -241,8 +247,9 @@ const MomentSliderCard: React.FC<MomentSliderCardProps> = ({
 
         <button
           type="button"
-          className="p-2 font-SansFlex text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center"
+          className="p-2 font-SansFlex text-[16px] font-[500] w-full rounded-full text-white text-center cursor-pointer hover:bg-orange-500 bg-black inline-flex items-center gap-2 justify-center disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-black"
           onClick={() => downloadCSV(csvData)}
+          disabled={!hasCsvData || loading}
         >
           <p>{downloadButtonText}</p>
           <sup className="font-bold p-2 rounded-full bg-white text-black mt-1">
