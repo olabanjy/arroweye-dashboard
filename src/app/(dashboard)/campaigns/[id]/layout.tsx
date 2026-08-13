@@ -4,8 +4,7 @@ import type { ReactNode } from "react";
 
 const BRAND_DESCRIPTION =
   "Track expenses, generate reports and leverage key insights to boost your ROI.";
-const OG_IMAGE =
-  "https://res.cloudinary.com/dyueswnzk/image/upload/v1767505937/90.001_a7q3o7.png";
+  const OG_IMAGE = "https://studio.arroweye.pro/banner.png";
 
 interface LayoutProps {
   children: ReactNode;

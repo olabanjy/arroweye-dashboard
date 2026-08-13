@@ -1,11 +1,11 @@
 "use client";
 
-import { mdiReload } from "@mdi/js";
+import { mdiPlus, mdiReload } from "@mdi/js";
 import MdiIcon from "@mdi/react";
 import { useQuery } from "@tanstack/react-query";
 import { Bell, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,20 +16,27 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NotificationList } from "./campaigns/notifications/NotificationList";
+import { DropzoneUploadDialog } from "./campaigns/notifications/dropzone-upload-dialog";
 import { useTopNav } from "@/hooks/use-top-nav";
-import { getDropZones } from "@/services";
+import { getDropZones, getProjectDropZone } from "@/services";
 import type { NotificationByType } from "@/types/notifications";
 
 type NotificationsMenuProps = {
+  projectId?: number | string;
   triggerClassName?: string;
   triggerTabIndex?: number;
 };
 
 const NotificationsMenu = ({
+  projectId,
   triggerClassName,
   triggerTabIndex,
 }: NotificationsMenuProps) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const routeProjectId = pathname.match(/^\/campaigns\/(\d+)\/?$/)?.[1];
+  const activeProjectId = projectId ?? routeProjectId;
+  const [dropzoneDialogOpen, setDropzoneDialogOpen] = useState(false);
   const {
     notifications,
     notificationLoading,
@@ -46,13 +53,21 @@ const NotificationsMenu = ({
   } = useTopNav();
 
   const {
-    data: dropZonesData,
+    data: dropZones = [],
     isLoading: dropZonesLoading,
     isError: dropZonesError,
     refetch: refetchDropZones,
   } = useQuery({
-    queryKey: ["dropzones", 1, "", "", "", "", "", ""],
-    queryFn: () => getDropZones({ page: 1 }),
+    queryKey: ["notification-dropzones", activeProjectId ?? "all"],
+    queryFn: async () => {
+      if (activeProjectId) {
+        const dropZone = await getProjectDropZone(activeProjectId);
+        return dropZone ? [dropZone] : [];
+      }
+
+      const response = await getDropZones({ page: 1 });
+      return response.results;
+    },
     enabled:
       isSidebarOpen && activeMainTab === "drops" && activeInnerTab === "assets",
     staleTime: 60_000,
@@ -60,7 +75,7 @@ const NotificationsMenu = ({
 
   const dropNotifications = useMemo<NotificationByType<"Assets">[]>(
     () =>
-      (dropZonesData?.results ?? []).map((drop) => {
+      dropZones.map((drop) => {
         const uploader =
           [drop.first_name, drop.last_name].filter(Boolean).join(" ") ||
           drop.user?.user_profile?.fullname ||
@@ -79,7 +94,7 @@ const NotificationsMenu = ({
           read: true,
         };
       }),
-    [dropZonesData],
+    [dropZones],
   );
 
   const activeNotificationList = (() => {
@@ -119,163 +134,189 @@ const NotificationsMenu = ({
   };
 
   return (
-    <DropdownMenu open={isSidebarOpen} onOpenChange={setNotificationsOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={triggerClassName}
-          aria-label="Open notifications"
-          tabIndex={triggerTabIndex}
+    <>
+      <DropdownMenu open={isSidebarOpen} onOpenChange={setNotificationsOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={triggerClassName}
+            aria-label="Open notifications"
+            tabIndex={triggerTabIndex}
+          >
+            <Bell className="size-[24px]!" />
+            {!allNotificationsRead && !hasOpenedNotifications && (
+              <span className="absolute right-1 top-1 size-2 rounded-full bg-orange-500 ring-2 ring-background" />
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent
+          id="notification-sidebar"
+          align="end"
+          sideOffset={10}
+          className="z-50 flex h-[min(calc(100vh-72px),760px)] w-[calc(100vw-2rem)] max-w-85 flex-col overflow-hidden rounded-none border border-neutral-100 bg-white p-0 text-zinc-950 shadow-xl dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
         >
-          <Bell className="size-[24px]!" />
-          {!allNotificationsRead && !hasOpenedNotifications && (
-            <span className="absolute right-1 top-1 size-2 rounded-full bg-orange-500 ring-2 ring-background" />
-          )}
-        </Button>
-      </DropdownMenuTrigger>
+          <div className="shrink-0">
+            <Tabs
+              value={activeMainTab}
+              onValueChange={handleMainTabClick}
+              className="w-full"
+            >
+              <div className="flex items-center justify-between border-b border-neutral-100 bg-[#f4f8fc] px-5 py-0.5 dark:border-zinc-800 dark:bg-zinc-900">
+                <TabsList className="flex items-center gap-6 bg-none p-0">
+                  <TabsTrigger
+                    value="updates"
+                    className="bg-none p-0 text-[15px] font-normal text-neutral-400 data-[state=active]:bg-none data-[state=active]:text-neutral-900 data-[state=active]:font-normal data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
+                  >
+                    Updates
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="drops"
+                    className="bg-transparent p-0 text-[15px] font-normal text-neutral-400 data-[state=active]:bg-transparent data-[state=active]:text-neutral-900 data-[state=active]:font-normal data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
+                  >
+                    Drops
+                  </TabsTrigger>
+                </TabsList>
+                <button
+                  type="button"
+                  onClick={() => setNotificationsOpen(false)}
+                  className="flex size-8 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:border-zinc-800 dark:bg-zinc-800 dark:text-neutral-400 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
+                  aria-label="Close notifications"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            </Tabs>
 
-      <DropdownMenuContent
-        id="notification-sidebar"
-        align="end"
-        sideOffset={10}
-        className="z-50 flex h-[min(calc(100vh-72px),760px)] w-[calc(100vw-2rem)] max-w-85 flex-col overflow-hidden rounded-none border border-neutral-100 bg-white p-0 text-zinc-950 shadow-xl dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
-      >
-        <div className="shrink-0">
-          <Tabs
-            value={activeMainTab}
-            onValueChange={handleMainTabClick}
-            className="w-full"
-          >
-            <div className="flex items-center justify-between border-b border-neutral-100 bg-[#f4f8fc] px-5 py-0.5 dark:border-zinc-800 dark:bg-zinc-900">
-              <TabsList className="flex items-center gap-6 bg-none p-0">
-                <TabsTrigger
-                  value="updates"
-                  className="bg-none p-0 text-[15px] font-normal text-neutral-400 data-[state=active]:bg-none data-[state=active]:text-neutral-900 data-[state=active]:font-normal data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
-                >
-                  Updates
-                </TabsTrigger>
-                <TabsTrigger
-                  value="drops"
-                  className="bg-transparent p-0 text-[15px] font-normal text-neutral-400 data-[state=active]:bg-transparent data-[state=active]:text-neutral-900 data-[state=active]:font-normal data-[state=active]:shadow-none dark:data-[state=active]:text-white cursor-pointer transition-colors hover:text-neutral-900 dark:hover:text-white"
-                >
-                  Drops
-                </TabsTrigger>
-              </TabsList>
-              <button
-                type="button"
-                onClick={() => setNotificationsOpen(false)}
-                className="flex size-8 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:border-zinc-800 dark:bg-zinc-800 dark:text-neutral-400 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
-                aria-label="Close notifications"
-              >
-                <X size={14} />
-              </button>
+            <Tabs
+              value={activeInnerTab}
+              onValueChange={handleInnerTabClick}
+              className="w-full border-b border-neutral-100 bg-white dark:border-zinc-800 dark:bg-zinc-950"
+            >
+              {activeMainTab === "updates" && (
+                <TabsList className="grid w-full grid-cols-3 justify-between gap-2 bg-transparent px-0 py-2.5">
+                  <TabsTrigger
+                    value="campaign"
+                    className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
+                  >
+                    Campaigns
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="milestones"
+                    className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
+                  >
+                    Milestones
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="security"
+                    className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
+                  >
+                    Security
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="others"
+                    className="bg-transparent hidden p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
+                  >
+                    Others
+                  </TabsTrigger>
+                </TabsList>
+              )}
+              {activeMainTab === "drops" && (
+                <TabsList className="flex items-center justify-between gap-6 bg-transparent px-5 py-2.5">
+                  <TabsTrigger
+                    value="assets"
+                    className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
+                  >
+                    Assets
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="payment"
+                    className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
+                  >
+                    Payments
+                  </TabsTrigger>
+                </TabsList>
+              )}
+            </Tabs>
+          </div>
+
+          <ScrollArea className="min-h-0 flex-1">
+            <div className="text-sm text-muted-foreground">
+              {activeListLoading && (
+                <p className="p-6 text-center text-neutral-500">
+                  Loading {isShowingDropAssets ? "drops" : "notifications"}…
+                </p>
+              )}
+              {activeListError && !activeListLoading && (
+                <div className="flex items-center justify-center gap-2 p-6 text-red-600">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={retryActiveList}
+                    aria-label="Reload notifications"
+                    title="Reload notifications"
+                    className="size-7 rounded-full text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950"
+                  >
+                    <MdiIcon path={mdiReload} size={0.7} />
+                  </Button>
+                  <p>
+                    {isShowingDropAssets ? "Drops" : "Notifications"} could not
+                    be loaded.
+                  </p>
+                </div>
+              )}
+              {!activeListLoading && !activeListError && (
+                <NotificationList
+                  notifications={activeNotificationList.items}
+                  emptyCategory={activeNotificationList.category}
+                />
+              )}
             </div>
-          </Tabs>
-
-          <Tabs
-            value={activeInnerTab}
-            onValueChange={handleInnerTabClick}
-            className="w-full border-b border-neutral-100 bg-white dark:border-zinc-800 dark:bg-zinc-950"
-          >
-            {activeMainTab === "updates" && (
-              <TabsList className="grid w-full grid-cols-3 justify-between gap-2 bg-transparent px-0 py-2.5">
-                <TabsTrigger
-                  value="campaign"
-                  className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
-                >
-                  Campaigns
-                </TabsTrigger>
-                <TabsTrigger
-                  value="milestones"
-                  className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
-                >
-                  Milestones
-                </TabsTrigger>
-                <TabsTrigger
-                  value="security"
-                  className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
-                >
-                  Security
-                </TabsTrigger>
-                <TabsTrigger
-                  value="others"
-                  className="bg-transparent hidden p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
-                >
-                  Others
-                </TabsTrigger>
-              </TabsList>
-            )}
-            {activeMainTab === "drops" && (
-              <TabsList className="flex items-center justify-between gap-6 bg-transparent px-5 py-2.5">
-                <TabsTrigger
-                  value="assets"
-                  className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
-                >
-                  Assets
-                </TabsTrigger>
-                <TabsTrigger
-                  value="payment"
-                  className="bg-transparent p-0 text-sm font-normal text-neutral-950 data-[state=active]:bg-transparent data-[state=active]:text-[#ff5a1f] data-[state=active]:font-normal data-[state=active]:shadow-none dark:text-neutral-400 dark:data-[state=active]:text-[#ff5a1f] cursor-pointer transition-colors hover:text-[#ff5a1f]"
-                >
-                  Payments
-                </TabsTrigger>
-              </TabsList>
-            )}
-          </Tabs>
-        </div>
-
-        <ScrollArea className="min-h-0 flex-1">
-          <div className="text-sm text-muted-foreground">
-            {activeListLoading && (
-              <p className="p-6 text-center text-neutral-500">
-                Loading {isShowingDropAssets ? "drops" : "notifications"}…
-              </p>
-            )}
-            {activeListError && !activeListLoading && (
-              <div className="flex items-center justify-center gap-2 p-6 text-red-600">
+          </ScrollArea>
+          {activeMainTab === "drops" && activeInnerTab === "assets" && (
+            <>
+              <DropdownMenuSeparator className="my-0 bg-neutral-100 dark:bg-zinc-800" />
+              <div className="flex gap-2 px-6 py-4">
                 <Button
                   type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={retryActiveList}
-                  aria-label="Reload notifications"
-                  title="Reload notifications"
-                  className="size-7 rounded-full text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950"
+                  className="h-9 flex-1 rounded-[6px] bg-zinc-950 text-white hover:bg-orange-500 dark:bg-zinc-100 dark:text-zinc-950"
+                  onClick={() => router.push("/drops")}
                 >
-                  <MdiIcon path={mdiReload} size={0.7} />
+                  View All Assets
                 </Button>
-                <p>
-                  {isShowingDropAssets ? "Drops" : "Notifications"} could not be
-                  loaded.
-                </p>
+                {activeProjectId && (
+                  <Button
+                    type="button"
+                    size="icon"
+                    aria-label="Upload drop"
+                    title="Upload drop"
+                    className="size-9 shrink-0 rounded-[6px] bg-zinc-950 text-white hover:bg-orange-500 dark:bg-zinc-100 dark:text-zinc-950"
+                    onClick={() => {
+                      setNotificationsOpen(false);
+                      setDropzoneDialogOpen(true);
+                    }}
+                  >
+                    <MdiIcon path={mdiPlus} size={0.8} />
+                  </Button>
+                )}
               </div>
-            )}
-            {!activeListLoading && !activeListError && (
-              <NotificationList
-                notifications={activeNotificationList.items}
-                emptyCategory={activeNotificationList.category}
-              />
-            )}
-          </div>
-        </ScrollArea>
-        {activeMainTab === "drops" && activeInnerTab === "assets" && (
-          <>
-            <DropdownMenuSeparator className="my-0 bg-neutral-100 dark:bg-zinc-800" />
-            <div className="px-6 py-4">
-              <Button
-                type="button"
-                className="h-9 w-full rounded-[6px] bg-zinc-950 text-white hover:bg-orange-500 dark:bg-zinc-100 dark:text-zinc-950"
-                onClick={() => router.push("/drops")}
-              >
-                View All Assets
-              </Button>
-            </div>
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {activeProjectId && (
+        <DropzoneUploadDialog
+          open={dropzoneDialogOpen}
+          projectId={activeProjectId}
+          onOpenChange={setDropzoneDialogOpen}
+          onUploaded={() => void refetchDropZones()}
+        />
+      )}
+    </>
   );
 };
 

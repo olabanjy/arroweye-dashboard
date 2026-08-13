@@ -415,7 +415,7 @@ export function BottomDock({
                             rel="noopener noreferrer"
                             className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-zinc-950 underline-offset-4 hover:underline dark:text-zinc-100"
                           >
-                            View publication
+                            Publication
                             <MdiIcon className="size-3.5" path={mdiOpenInNew} />
                           </a>
                         )}
