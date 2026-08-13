@@ -60,7 +60,7 @@ const Login = () => {
                   strokeWidth={2.5}
                   className="shrink-0 text-white"
                 />
-                <p className="text-[20px] font-bold leading-none text-white">
+                <p className="text-[16px] font-normal leading-none text-white">
                   Please verify your credentials
                 </p>
               </div>

@@ -137,7 +137,14 @@ const ProjectDetails = () => {
   const { handleDownloadPDF, handleExportCSV } = useCampaignExports(content);
 
   const originalTitle = content?.title || "";
-  const campaignTitle = content?.title || content?.campaign?.song_title;
+  const campaignTitle =
+    content?.title || content?.song_title || content?.campaign?.song_title;
+
+  React.useEffect(() => {
+    if (campaignTitle) {
+      document.title = `${campaignTitle} - Arroweye`;
+    }
+  }, [campaignTitle]);
 
   if (!content && isContentFetching) {
     return <CampaignDetailSkeleton />;
@@ -145,7 +152,6 @@ const ProjectDetails = () => {
 
   return (
     <>
-      {campaignTitle && <title>{`${campaignTitle} - Arroweye`}</title>}
       {hasNetworkError ? (
         <NoNetwork onReconnect={refreshContent} />
       ) : (

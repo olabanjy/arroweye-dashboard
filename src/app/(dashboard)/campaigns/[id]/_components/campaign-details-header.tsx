@@ -200,7 +200,7 @@ export function CampaignDetailsHeader({
                     : "mt-3 text-[45px] font-[700]",
                 )}
               >
-                {content?.title || content?.campaign?.song_title}
+                {content?.title || content?.song_title}
               </p>
             )}
           </div>
