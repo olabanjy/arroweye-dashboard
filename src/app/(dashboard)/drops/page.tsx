@@ -296,8 +296,8 @@ const AssetsLibrary = () => {
               </div>
             </div>
             {filter && (
-              <div className="my-2.5">
-                <div className="mb-5 flex flex-wrap items-center gap-2.5">
+              <div className="mt-2.5">
+                <div className="flex flex-wrap items-center gap-2.5">
                   <div className="w-full max-w-[150px]">
                     <FilterSelect
                       placeholder="Year"
@@ -360,7 +360,7 @@ const AssetsLibrary = () => {
       {isSticky && fullHeaderHeight > 64 && (
         <div aria-hidden="true" style={{ height: fullHeaderHeight - 64 }} />
       )}
-      <div className="mb-[100px]">
+      <div className="mb-[100px] mt-4">
         <div className="mb-10 grid h-full place-items-center gap-2 md:grid-cols-2 lg:grid-cols-3">
           {content.map((item: any) => (
             <div key={item.id} className="group w-full">

@@ -219,7 +219,10 @@ export function CampaignDetailsHeader({
                   <MdAddCircleOutline className="size-5!" />
                 </Button>
               )}
-              <NotificationsMenu triggerClassName="relative size-9 rounded-full text-foreground active:scale-[0.97] [&_svg]:size-[18px]!" />
+              <NotificationsMenu
+                projectId={content?.id}
+                triggerClassName="relative size-9 rounded-full text-foreground active:scale-[0.97] [&_svg]:size-[18px]!"
+              />
             </div>
           )}
 

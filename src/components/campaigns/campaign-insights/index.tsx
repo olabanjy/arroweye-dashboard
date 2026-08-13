@@ -302,7 +302,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
 
             <div className="  border-b pb-[20px] ">
               <ColumnChart
-                title="STREAMING AND DISCOVERY"
+                title="DISCOVERY AND STREAMING"
                 valuePlaceholder="TOP DSPs"
                 value={dspData?.total_count ?? 0}
                 chartData={chartDataForBar}

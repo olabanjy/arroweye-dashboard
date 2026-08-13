@@ -1,6 +1,6 @@
-import MdiIcon from "@mdi/react";
+import { mdiArrowDown } from "@mdi/js";
+import Icon from "@mdi/react";
 import { formatDistanceToNow } from "date-fns";
-import { Download } from "lucide-react";
 import type { Ref } from "react";
 import { toast } from "sonner";
 
@@ -86,7 +86,11 @@ export function NotificationCard({
   const message = notification.content ?? "";
   const timeAgo = formatRelativeDate(notification.created);
   const iconConfig = getIconConfig(type, message);
-  const { Icon, containerClassName, ignoreApiIcon } = iconConfig;
+  const {
+    Icon: NotificationIcon,
+    containerClassName,
+    ignoreApiIcon,
+  } = iconConfig;
   const iconValue = ignoreApiIcon ? undefined : notification.icon;
   const mdiIcon = getMdiNotificationIcon(iconValue);
   const isIconUrl = isNotificationIconUrl(iconValue);
@@ -155,9 +159,9 @@ export function NotificationCard({
           }
         >
           {mdiIcon ? (
-            <MdiIcon path={mdiIcon.path} size={0.8} />
+            <Icon path={mdiIcon.path} size={0.8} />
           ) : (
-            <Icon className="size-5" />
+            <NotificationIcon className="size-3" />
           )}
         </div>
       )}
@@ -206,7 +210,7 @@ export function NotificationCard({
                     isArtwork && "h-10 px-4 text-sm",
                   )}
                 >
-                  {isDownload ? <Download className="size-3.5" /> : label}
+                  {isDownload ? <Icon path={mdiArrowDown} size={0.8} /> : label}
                 </Button>
               );
             })}

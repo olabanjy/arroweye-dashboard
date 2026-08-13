@@ -4,8 +4,7 @@ import DashboardLayoutClient from "./dashboard-layout-client";
 const BRAND_TITLE = "Arroweye Pro | AI-Powered Insights for African Creators";
 const BRAND_DESCRIPTION =
   "Track expenses, generate reports and leverage key insights to boost your ROI.";
-const OG_IMAGE =
-  "https://res.cloudinary.com/dyueswnzk/image/upload/v1767505937/90.001_a7q3o7.png";
+const OG_IMAGE = "https://studio.arroweye.pro/banner.png";
 
 export const metadata: Metadata = {
   description: BRAND_DESCRIPTION,

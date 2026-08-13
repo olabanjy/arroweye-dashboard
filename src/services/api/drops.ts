@@ -1,5 +1,5 @@
 import apiRequest from "@/Server/Api";
-import type { AppDropZonePage, Business } from "@/types/api";
+import type { AppDropZonePage, Business, DropZone } from "@/types/api";
 import { DropzonePayload } from "@/types/dropzone";
 import ls from "localstorage-slim";
 
@@ -39,6 +39,21 @@ export const getDropZones = async ({
   });
 
   return response;
+};
+
+export const getProjectDropZone = async (
+  projectId: number | string,
+): Promise<DropZone | null> => {
+  try {
+    return await apiRequest<DropZone>({
+      method: "GET",
+      url: `/api/v1/projects/${projectId}/dropzone/`,
+      requireToken: true,
+      silent: true,
+    });
+  } catch {
+    return null;
+  }
 };
 
 export const deleteDropZones = async (id: number): Promise<void> => {
