@@ -258,7 +258,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
             </div>
 
             <MomentCardRewards
-              MomentsTitle="REWIND"
+              MomentsTitle="INSIGHTS"
               giftingPin={content?.pin}
               giftings={giftingsReportUrls}
               csvData={{ ...socialMediaData, ...smactionData }}
@@ -302,7 +302,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
 
             <div className="  border-b pb-[20px] ">
               <ColumnChart
-                title="DSP"
+                title="STREAMING AND DISCOVERY"
                 valuePlaceholder="TOP DSPs"
                 value={dspData?.total_count ?? 0}
                 chartData={chartDataForBar}
@@ -331,7 +331,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
               csvData={{ ...dspData, ...dspPerformanceData }}
               downloadButtonText="Download Data"
               downloadIcon={true}
-              MomentsTitle="DSP"
+              MomentsTitle="PLAYLISTS"
               assetsButton="Download Assets"
               links={[
                 "https://www.google.com",
@@ -390,6 +390,7 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
         contentId={content?.id}
         handleDownloadData={handleDownloadData}
         notifications={content?.notifications}
+        media={content?.media}
       />
     </div>
   );

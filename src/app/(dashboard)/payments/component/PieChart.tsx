@@ -237,7 +237,7 @@ const CampaignPieChart = <
           )}
         </div>
 
-        <p className="text-xs uppercase text-muted-foreground">
+        <p className="pt-1 text-xs uppercase text-muted-foreground">
           {valuePlaceHolder}
         </p>
 

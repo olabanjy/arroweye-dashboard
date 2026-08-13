@@ -9,6 +9,8 @@ import {
   mdiHistory,
   mdiLoading,
   mdiMicrosoftExcel,
+  mdiOpenInNew,
+  mdiPostOutline,
   mdiReload,
   mdiSend,
 } from "@mdi/js";
@@ -37,17 +39,33 @@ import {
   type NotificationByType,
 } from "@/types/notifications";
 
-type DockPanel = "updates" | "drops" | "schedule" | "send" | "export";
+type DockPanel =
+  | "updates"
+  | "drops"
+  | "publications"
+  | "schedule"
+  | "send"
+  | "export";
+
+interface PublicationMedia {
+  id: number;
+  type: "Editorial";
+  publication?: string | null;
+  channel?: string | null;
+  editorial_link?: string | null;
+}
 
 interface BottomDockProps {
   contentId?: number | string;
   handleDownloadData?: () => void;
   notifications?: unknown;
+  media?: unknown;
 }
 
 const panelTitle: Record<DockPanel, string> = {
   updates: "Updates",
   drops: "Drops",
+  publications: "Publications",
   schedule: "Campaign schedule",
   send: "Send report",
   export: "Export report",
@@ -57,6 +75,7 @@ export function BottomDock({
   contentId,
   handleDownloadData,
   notifications,
+  media,
 }: BottomDockProps) {
   const router = useRouter();
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -108,6 +127,23 @@ export function BottomDock({
         ? notifications.filter(isApiNotification)
         : [],
     [notifications],
+  );
+
+  const publications = useMemo<PublicationMedia[]>(
+    () =>
+      Array.isArray(media)
+        ? media.filter((item): item is PublicationMedia =>
+            Boolean(
+              item &&
+              typeof item === "object" &&
+              "id" in item &&
+              typeof item.id === "number" &&
+              "type" in item &&
+              item.type === "Editorial",
+            ),
+          )
+        : [],
+    [media],
   );
 
   const selectPanel = (panel: DockPanel) => {
@@ -179,6 +215,11 @@ export function BottomDock({
       label: "Drops",
       icon: <DropsIcon className="size-full" />,
     },
+    {
+      id: "publications",
+      label: "Publications",
+      icon: <Icon path={mdiPostOutline} size={1} />,
+    },
     // {
     //   id: "schedule",
     //   label: "Open campaign schedule",
@@ -204,7 +245,7 @@ export function BottomDock({
           <div
             ref={toolbarRef}
             aria-label="Campaign report actions"
-            className="flex h-[50px] w-[calc(100vw-2rem)] max-w-[260px] items-center justify-between rounded-sm border border-zinc-200/90 bg-white/95 px-3 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95 shaodow-sm"
+            className="flex h-[50px] w-[calc(100vw-2rem)] max-w-[310px] items-center justify-between rounded-sm border border-zinc-200/90 bg-white/95 px-3 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95 shaodow-sm"
             role="toolbar"
           >
             {dockItems.map((item) => {
@@ -256,7 +297,9 @@ export function BottomDock({
           }
         }}
         className={`w-[calc(100vw-2rem)] gap-0 overflow-hidden border-0 bg-white p-0 text-sm ring-1 ring-zinc-950/10 dark:bg-zinc-950 dark:ring-white/10 ${
-          activePanel === "drops" || activePanel === "updates"
+          activePanel === "drops" ||
+          activePanel === "updates" ||
+          activePanel === "publications"
             ? "max-w-85"
             : "max-w-[310px]"
         }`}
@@ -336,6 +379,57 @@ export function BottomDock({
               </Button>
             </div>
           </div>
+        )}
+
+        {activePanel === "publications" && (
+          <ScrollArea className="h-[min(46vh,360px)] min-h-48 [&_[data-slot=scroll-area-viewport]>div]:block! [&_[data-slot=scroll-area-viewport]>div]:w-full! [&_[data-slot=scroll-area-viewport]>div]:min-w-0!">
+            {publications.length > 0 ? (
+              <div className="w-full min-w-0 divide-y divide-neutral-100 dark:divide-zinc-800">
+                {publications.map((publication) => {
+                  const name =
+                    publication.publication?.trim() || "Untitled publication";
+                  const channel = publication.channel?.trim();
+                  const link = publication.editorial_link?.trim();
+
+                  return (
+                    <article
+                      key={publication.id}
+                      className="flex w-full min-w-0 items-start gap-3 bg-white px-5 py-4 dark:bg-zinc-950"
+                    >
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300">
+                        <Icon path={mdiPostOutline} size={1} />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-zinc-950 dark:text-zinc-100">
+                          {name}
+                        </p>
+                        {channel && (
+                          <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
+                            {channel}
+                          </p>
+                        )}
+                        {link && (
+                          <a
+                            href={link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-zinc-950 underline-offset-4 hover:underline dark:text-zinc-100"
+                          >
+                            View publication
+                            <MdiIcon className="size-3.5" path={mdiOpenInNew} />
+                          </a>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="p-5 text-center text-sm text-zinc-500 dark:text-zinc-400">
+                No publications available.
+              </p>
+            )}
+          </ScrollArea>
         )}
 
         {activePanel === "schedule" && (

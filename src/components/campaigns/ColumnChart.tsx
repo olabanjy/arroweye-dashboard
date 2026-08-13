@@ -289,7 +289,23 @@ const ColumnChart = <TFilters extends ChartFilterState = ChartFilterState>({
               />
               <ChartTooltip
                 cursor={false}
-                content={<ChartTooltipContent labelKey="name" />}
+                content={
+                  <ChartTooltipContent
+                    hideLabel
+                    formatter={(hoveredValue, _dataKey, item) => (
+                      <div className="flex min-w-28 items-center justify-between gap-5">
+                        <span className="text-muted-foreground">
+                          {item.payload?.name}
+                        </span>
+                        <span className="font-mono font-medium text-foreground tabular-nums">
+                          {typeof hoveredValue === "number"
+                            ? hoveredValue.toLocaleString()
+                            : String(hoveredValue)}
+                        </span>
+                      </div>
+                    )}
+                  />
+                }
               />
               <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                 {visibleData.map((entry, index) => (
