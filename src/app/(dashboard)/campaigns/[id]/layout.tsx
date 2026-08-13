@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import type { ReactNode } from "react";
 
+const BRAND_DESCRIPTION =
+  "Track expenses, generate reports and leverage key insights to boost your ROI.";
+const OG_IMAGE =
+  "https://res.cloudinary.com/dih0krdcj/image/upload/v1711013704/Arroweye%20Pro/gaw6s34qtctayapeeaf2.png";
+
 interface LayoutProps {
   children: ReactNode;
   params: Promise<{ id: string }>;
@@ -48,26 +53,42 @@ export async function generateMetadata({
     /\/$/,
     "",
   );
+  let campaignTitle: string | null = null;
 
-  if (!token || !apiBaseUrl) {
-    return { title: "Campaign - Arroweye" };
+  if (token && apiBaseUrl) {
+    const projectTitle = await getCampaignTitle(
+      `${apiBaseUrl}/api/v1/projects/${id}/`,
+      token,
+    );
+    campaignTitle =
+      projectTitle ||
+      (await getCampaignTitle(
+        `${apiBaseUrl}/api/v1/campaigns/${id}/dashboard/`,
+        token,
+      ));
   }
 
-  const projectTitle = await getCampaignTitle(
-    `${apiBaseUrl}/api/v1/projects/${id}/`,
-    token,
-  );
-  const campaignTitle =
-    projectTitle ||
-    (await getCampaignTitle(
-      `${apiBaseUrl}/api/v1/campaigns/${id}/dashboard/`,
-      token,
-    ));
+  const title = campaignTitle
+    ? `${campaignTitle} - Arroweye`
+    : "Campaign - Arroweye";
+  const url = `https://studio.arroweye.pro/campaigns/${id}`;
 
   return {
-    title: campaignTitle
-      ? `${campaignTitle} - Arroweye`
-      : "Campaign - Arroweye",
+    title,
+    description: BRAND_DESCRIPTION,
+    openGraph: {
+      type: "website",
+      url,
+      title,
+      description: BRAND_DESCRIPTION,
+      images: [{ url: OG_IMAGE }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: BRAND_DESCRIPTION,
+      images: [OG_IMAGE],
+    },
   };
 }
 
