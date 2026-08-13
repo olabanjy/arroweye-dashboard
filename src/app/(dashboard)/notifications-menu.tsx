@@ -58,7 +58,9 @@ const NotificationsMenu = ({
     isError: dropZonesError,
     refetch: refetchDropZones,
   } = useQuery({
-    queryKey: ["notification-dropzones", activeProjectId ?? "all"],
+    queryKey: activeProjectId
+      ? ["project-dropzones", String(activeProjectId)]
+      : ["notification-dropzones", "all"],
     queryFn: async () => {
       if (activeProjectId) {
         const dropZone = await getProjectDropZone(activeProjectId);

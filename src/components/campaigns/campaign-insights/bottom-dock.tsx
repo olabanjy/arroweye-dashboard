@@ -33,7 +33,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getDropZones, sendProjectEmail } from "@/services";
+import { getProjectDropZone, sendProjectEmail } from "@/services";
 import {
   isApiNotification,
   type NotificationByType,
@@ -86,20 +86,23 @@ export function BottomDock({
 
   const isDropsPanelOpen = popoverOpen && activePanel === "drops";
   const {
-    data: dropZonesData,
+    data: dropZones = [],
     isLoading: dropZonesLoading,
     isError: dropZonesError,
     refetch: refetchDropZones,
   } = useQuery({
-    queryKey: ["dropzones", 1, "", "", "", "", "", ""],
-    queryFn: () => getDropZones({ page: 1 }),
-    enabled: isDropsPanelOpen,
+    queryKey: ["project-dropzones", String(contentId)],
+    queryFn: async () => {
+      const dropZone = await getProjectDropZone(contentId!);
+      return dropZone ? [dropZone] : [];
+    },
+    enabled: isDropsPanelOpen && Boolean(contentId),
     staleTime: 60_000,
   });
 
   const dropNotifications = useMemo<NotificationByType<"Assets">[]>(
     () =>
-      (dropZonesData?.results ?? []).map((drop) => {
+      dropZones.map((drop) => {
         const uploader =
           [drop.first_name, drop.last_name].filter(Boolean).join(" ") ||
           drop.user?.user_profile?.fullname ||
@@ -118,7 +121,7 @@ export function BottomDock({
           read: true,
         };
       }),
-    [dropZonesData],
+    [dropZones],
   );
 
   const updateNotifications = useMemo(
