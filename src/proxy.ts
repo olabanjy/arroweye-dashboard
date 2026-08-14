@@ -4,6 +4,13 @@ import type { NextRequest } from "next/server";
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("auth_token")?.value;
+  const isPublicSpinsRoute =
+    pathname === "/spins" || pathname.startsWith("/spins/");
+
+  // The Spins chart and individual spin-location shares are public.
+  if (isPublicSpinsRoute) {
+    return NextResponse.next();
+  }
 
   // If trying to access the login page and we have a token, redirect to dashboard
   if (pathname === "/login") {
