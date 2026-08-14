@@ -11,6 +11,7 @@ import {
   mdiMicrosoftExcel,
   mdiOpenInNew,
   mdiPostOutline,
+  mdiPlus,
   mdiReload,
   mdiSend,
 } from "@mdi/js";
@@ -20,6 +21,7 @@ import { useRouter } from "next/navigation";
 
 import { NotificationList } from "@/app/(dashboard)/campaigns/notifications/NotificationList";
 import { NotificationCard } from "@/app/(dashboard)/campaigns/notifications/NotificationCard";
+import { DropzoneUploadDialog } from "@/app/(dashboard)/campaigns/notifications/dropzone-upload-dialog";
 import { DropsIcon } from "@/app/(dashboard)/sidebar";
 import { Button } from "@/components/ui/button";
 import {
@@ -83,6 +85,7 @@ export function BottomDock({
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [dropzoneDialogOpen, setDropzoneDialogOpen] = useState(false);
 
   const isDropsPanelOpen = popoverOpen && activePanel === "drops";
   const {
@@ -242,6 +245,7 @@ export function BottomDock({
   ];
 
   return (
+    <>
     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
       <div className="fixed inset-x-0 bottom-4 z-30 flex justify-center lg:left-32">
         <PopoverAnchor asChild>
@@ -373,13 +377,30 @@ export function BottomDock({
             </ScrollArea>
 
             <div className="shrink-0 border-t border-neutral-100 px-4 py-3 dark:border-zinc-800">
-              <Button
-                type="button"
-                className="h-9 w-full rounded-md bg-zinc-950 text-white hover:bg-orange-500 dark:bg-zinc-100 dark:text-zinc-950"
-                onClick={() => router.push("/drops")}
-              >
-                View All Assets
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  className="h-9 flex-1 rounded-[6px] bg-zinc-950 text-white hover:bg-orange-500 dark:bg-zinc-100 dark:text-zinc-950"
+                  onClick={() => router.push("/drops")}
+                >
+                  View All Assets
+                </Button>
+                {contentId && (
+                  <Button
+                    type="button"
+                    size="icon"
+                    aria-label="Upload drop"
+                    title="Upload drop"
+                    className="size-9 shrink-0 rounded-[6px] bg-zinc-950 text-white hover:bg-orange-500 dark:bg-zinc-100 dark:text-zinc-950"
+                    onClick={() => {
+                      setPopoverOpen(false);
+                      setDropzoneDialogOpen(true);
+                    }}
+                  >
+                    <MdiIcon path={mdiPlus} size={0.8} />
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -412,15 +433,20 @@ export function BottomDock({
                           </p>
                         )}
                         {link && (
-                          <a
-                            href={link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-zinc-950 underline-offset-4 hover:underline dark:text-zinc-100"
+                          <Button
+                            asChild
+                            aria-label="View publication"
+                            className="mt-2 h-8 shrink-0 rounded-full border-0 bg-neutral-950 px-4 text-xs font-semibold text-white shadow-none transition-colors hover:bg-neutral-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200"
                           >
-                            Publication
-                            <MdiIcon className="size-3.5" path={mdiOpenInNew} />
-                          </a>
+                            <a
+                              href={link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              View
+                              <MdiIcon className="size-3.5" path={mdiOpenInNew} />
+                            </a>
+                          </Button>
                         )}
                       </div>
                     </article>
@@ -510,6 +536,16 @@ export function BottomDock({
           </div>
         )}
       </PopoverContent>
-    </Popover>
+      </Popover>
+
+      {contentId && (
+        <DropzoneUploadDialog
+          open={dropzoneDialogOpen}
+          projectId={contentId}
+          onOpenChange={setDropzoneDialogOpen}
+          onUploaded={() => void refetchDropZones()}
+        />
+      )}
+    </>
   );
 }

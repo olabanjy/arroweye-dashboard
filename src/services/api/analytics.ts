@@ -484,7 +484,7 @@ export const getSpinsNotificationPublic = async (
   spinId: string | string[] | undefined,
 ): Promise<any | null> => {
   try {
-    let url = `/api/v1/spins/public-spin/${spinId}`;
+    let url = `/api/v1/spins/public-spin/${spinId}/`;
 
     const response = await apiRequest({
       method: "GET",

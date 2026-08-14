@@ -1,7 +1,4 @@
-import type {
-  components,
-  operations,
-} from "@/types/generated/arroweye-api";
+import type { components, operations } from "@/types/generated/arroweye-api";
 
 /**
  * Stable names for generated OpenAPI schemas.

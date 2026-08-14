@@ -1,9 +1,44 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import { Grip, X, ArrowUp, Info, XCircle } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import {
+  ArrowUp,
+  ArrowUpDown,
+  CalendarDays,
+  Grip,
+  Info,
+  XCircle,
+} from "lucide-react";
+import type { DateRange } from "react-day-picker";
 import { getSpinsAnalytics } from "@/services";
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -28,52 +63,55 @@ interface SortConfig {
 
 type VideoLanguage = "english" | "pidgin";
 
+const parseDateParam = (value: string | null): Date | undefined => {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined;
+
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return undefined;
+  }
+
+  return date;
+};
+
 const SpinsTableComponent: React.FC = () => {
-  const [menuOpen, setMenuOpen] = useState<boolean>(false);
-  const [helpOpen, setHelpOpen] = useState<boolean>(false);
   const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
   const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
-  const [dateRange, setDateRange] = useState<string>("");
+  const [dateRange, setDateRange] = useState<DateRange>();
+  const [datesReady, setDatesReady] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: null,
     direction: "asc",
   });
   const [tableData, setTableData] = useState<ChartData[]>([]);
   const [videoLang, setVideoLang] = useState<VideoLanguage>("english");
-  const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
-  const tableRef = useRef<HTMLTableElement>(null);
-
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const dateInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (dateInputRef.current) {
+    const params = new URLSearchParams(window.location.search);
+    const startFromUrl = parseDateParam(params.get("start_date"));
+    const endFromUrl = parseDateParam(params.get("end_date"));
+
+    if (startFromUrl && endFromUrl && startFromUrl <= endFromUrl) {
+      setDateRange({ from: startFromUrl, to: endFromUrl });
+    } else {
       const end = new Date();
       const start = new Date();
       start.setDate(start.getDate() - 7);
-
-      flatpickr(dateInputRef.current, {
-        mode: "range",
-        dateFormat: "M d, Y",
-        defaultDate: [start, end], // Set default dates
-        onChange: (selectedDates) => {
-          if (selectedDates.length === 2) {
-            setStartDate(selectedDates[0]);
-            setEndDate(selectedDates[1]);
-          }
-        },
-        onClose: (selectedDates) => {
-          if (selectedDates.length === 2) {
-            setDateRange(formatDateRange());
-          }
-        },
-      });
+      setDateRange({ from: start, to: end });
     }
+
+    setDatesReady(true);
   }, []);
 
-  const formatDateRange = (): string => {
-    if (!startDate || !endDate) return dateRange;
+  const formatDateRange = (range?: DateRange): string => {
+    if (!range?.from || !range.to) return "Select date range";
 
     const fmt = (d: Date): string =>
       d.toLocaleDateString("en-US", {
@@ -82,8 +120,12 @@ const SpinsTableComponent: React.FC = () => {
         year: "numeric",
       });
 
-    return `${fmt(startDate)} - ${fmt(endDate)}`;
+    return `${fmt(range.from)} - ${fmt(range.to)}`;
   };
+
+  const startDate = dateRange?.from;
+  const endDate = dateRange?.to;
+  const formattedDateRange = formatDateRange(dateRange);
 
   // Function to map API data to ChartData format
   const mapApiDataToChartData = (apiData: any[]): ChartData[] => {
@@ -117,6 +159,8 @@ const SpinsTableComponent: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!datesReady || !startDate || !endDate) return;
+
     const startDateStr = startDate ? formatDateForAPI(startDate) : undefined;
     const endDateStr = endDate ? formatDateForAPI(endDate) : undefined;
 
@@ -134,7 +178,25 @@ const SpinsTableComponent: React.FC = () => {
       .catch((err) => {
         console.error("Error fetching analytics data:", err);
       });
-  }, [startDate, endDate]);
+  }, [datesReady, startDate, endDate]);
+
+  const handleDateRangeSelect = (range: DateRange | undefined) => {
+    setDateRange(range);
+
+    if (!range?.from || !range.to) return;
+
+    const params = new URLSearchParams(window.location.search);
+    params.set("start_date", formatDateForAPI(range.from));
+    params.set("end_date", formatDateForAPI(range.to));
+
+    const query = params.toString();
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`,
+    );
+    setCalendarOpen(false);
+  };
   // Initial sample data
   const initialData: ChartData[] = [
     {
@@ -283,7 +345,7 @@ const SpinsTableComponent: React.FC = () => {
   const getMovementPill = (growth: number): React.ReactElement => {
     if (!growth) {
       return (
-        <span className="px-3 py-1.5 rounded-full text-xs font-black bg-gray-100 text-gray-600">
+        <span className="bg-muted text-muted-foreground rounded-full px-3 py-1.5 text-xs font-black">
           •
         </span>
       );
@@ -306,7 +368,7 @@ const SpinsTableComponent: React.FC = () => {
     }
 
     return (
-      <span className="px-3 py-1.5 rounded-full text-xs font-black bg-gray-100 text-gray-600">
+      <span className="bg-muted text-muted-foreground rounded-full px-3 py-1.5 text-xs font-black">
         —
       </span>
     );
@@ -316,8 +378,8 @@ const SpinsTableComponent: React.FC = () => {
     const styles: Record<string, string> = {
       NEW: "bg-sky-500 text-white",
       HOT: "bg-orange-500 text-white",
-      BREAKING: "bg-gray-900 text-white",
-      "": "bg-gray-100 text-gray-600",
+      BREAKING: "bg-foreground text-background",
+      "": "bg-muted text-muted-foreground",
     };
 
     return (
@@ -364,7 +426,7 @@ const SpinsTableComponent: React.FC = () => {
     ]);
 
     const csvContent = [
-      [dateRange],
+      [formattedDateRange],
       headers,
       ...rows,
       [
@@ -394,7 +456,7 @@ const SpinsTableComponent: React.FC = () => {
     // Add date range
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
-    doc.text(dateRange, 14, 28);
+    doc.text(formattedDateRange, 14, 28);
 
     // Prepare table data
     const headers = [
@@ -539,7 +601,7 @@ const SpinsTableComponent: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-background text-foreground min-h-screen">
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b">
         <div className="flex items-center gap-4">
@@ -550,220 +612,193 @@ const SpinsTableComponent: React.FC = () => {
           />
         </div>
 
-        <input
-          ref={dateInputRef}
-          type="text"
-          placeholder="Select date range"
-          className="w-60 text-center px-4 py-3 border rounded-[1rem] text-sm max-w-xs outline-none focus:border-blue-500 cursor-pointer"
-          readOnly
-        />
-
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="text-gray-600 hover:text-black transition-colors"
-        >
-          {menuOpen ? <X size={24} /> : <Grip size={24} />}
-        </button>
-      </div>
-
-      {/* Menu Grid */}
-      {menuOpen && (
-        <div className="absolute right-4 top-16 bg-white border rounded-[1rem] shadow-lg p-6 z-50">
-          <div className="grid grid-cols-3 gap-12 mb-6">
-            {menuItems.map((item: MenuItem) => (
-              <div
-                key={item.name}
-                className="text-center cursor-pointer hover:opacity-70 transition-opacity"
-                onClick={() => window.open(item.url, "_blank")}
-              >
-                <img
-                  src={item.img}
-                  alt={item.name}
-                  className="w-12 h-12 mx-auto mb-2"
-                />
-                <span className="text-sm text-gray-600 font-semibold">
-                  {item.name}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Ad Section */}
-          <div className="flex items-center border rounded-lg p-5 bg-white mt-10">
-            <img
-              src="https://res.cloudinary.com/dyueswnzk/image/upload/v1758701617/r3o4deralgc2jl1y1xag_ynrxbj.webp"
-              alt="Ad"
-              className="w-16 h-[120px] rounded mr-5"
+        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              className="h-11 w-64 justify-start rounded-2xl px-4 text-left text-sm font-normal"
+            >
+              <CalendarDays className="text-muted-foreground mr-2 size-4" />
+              <span className="truncate">{formattedDateRange}</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            align="center"
+            sideOffset={8}
+            className="w-auto max-w-[calc(100vw-2rem)] overflow-auto p-0"
+          >
+            <Calendar
+              mode="range"
+              selected={dateRange}
+              onSelect={handleDateRangeSelect}
+              defaultMonth={dateRange?.from}
+              numberOfMonths={2}
+              disabled={{ after: new Date() }}
             />
-            <div className="flex-1">
-              <div className="text-[10px] font-semibold text-gray-400 mb-2">
-                ADS BY <span className="underline">VIVO</span>
-              </div>
-              <div className="text-sm mb-3 max-w-[200px]">
-                Stay in tune with the continent that makes the world dance
-              </div>
-              <div className="flex gap-2">
-                <button
-                  className="px-3 py-1 bg-black text-white text-sm rounded"
-                  onClick={() =>
-                    window.open("https://butta.cocoa.house/", "_blank")
-                  }
-                >
-                  Subscribe
-                </button>
-                <button
-                  className="px-3 py-1 border border-black text-sm rounded"
-                  onClick={() =>
-                    window.open(
-                      "https://open.spotify.com/playlist/3CVugIVKRAsTMQn0JeaP65?si=q_g3HBORS7GFNUdIC1BMDA&pi=qbbp4pmmSOCgF&nd=1&dlsi=d383ce1fced64d36",
-                      "_blank",
-                    )
-                  }
-                >
-                  Listen
-                </button>
+          </PopoverContent>
+        </Popover>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-lg"
+              aria-label="Open Arroweye tools"
+              className="text-muted-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground rounded-full active:scale-[0.97]"
+            >
+              <Grip className="size-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            sideOffset={10}
+            collisionPadding={16}
+            className="w-[360px] max-w-[calc(100vw-2rem)] rounded-2xl p-5"
+          >
+            <div className="grid grid-cols-3 gap-x-4 gap-y-5">
+              {menuItems.map((item: MenuItem) => (
+                <DropdownMenuItem key={item.name} asChild>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="focus:bg-muted group flex cursor-pointer flex-col items-center rounded-xl p-2 text-center"
+                  >
+                    <span className="bg-muted/50 group-hover:bg-muted flex size-12 items-center justify-center rounded-xl transition-colors duration-150">
+                      <img
+                        src={item.img}
+                        alt=""
+                        className="size-9 object-contain"
+                      />
+                    </span>
+                    <span className="text-muted-foreground mt-1.5 text-xs font-semibold">
+                      {item.name}
+                    </span>
+                  </a>
+                </DropdownMenuItem>
+              ))}
+            </div>
+
+            <div className="bg-card mt-5 flex items-center rounded-xl border p-4">
+              <img
+                src="https://res.cloudinary.com/dyueswnzk/image/upload/v1758701617/r3o4deralgc2jl1y1xag_ynrxbj.webp"
+                alt="Vivo"
+                className="mr-4 h-24 w-14 rounded-md object-cover"
+              />
+              <div className="min-w-0 flex-1">
+                <div className="text-muted-foreground mb-1 text-[10px] font-semibold">
+                  ADS BY <span className="underline">VIVO</span>
+                </div>
+                <p className="text-sm leading-5">
+                  Stay in tune with the continent that makes the world dance
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <Button asChild size="sm">
+                    <a
+                      href="https://butta.cocoa.house/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Subscribe
+                    </a>
+                  </Button>
+                  <Button asChild size="sm" variant="outline">
+                    <a
+                      href="https://open.spotify.com/playlist/3CVugIVKRAsTMQn0JeaP65?si=q_g3HBORS7GFNUdIC1BMDA&pi=qbbp4pmmSOCgF&nd=1&dlsi=d383ce1fced64d36"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Listen
+                    </a>
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       {/* Main Table */}
-      <div className="p-6 overflow-x-auto">
-        <table ref={tableRef} className="mt-5 w-full border-collapse border">
-          <thead>
-            <tr className="bg-gray-50">
-              {tableHeaders.map((header, index) => (
-                <th
-                  key={header.label}
-                  onClick={() => handleSort(header.key)}
-                  onMouseEnter={() => setHoveredColumn(index)}
-                  onMouseLeave={() => setHoveredColumn(null)}
-                  className={`px-8 py-6 text-xs font-bold text-center border-b cursor-pointer hover:text-orange-600 transition-colors uppercase relative ${hoveredColumn === index && "border border-orange-600 border-b-0"}`}
-                >
-                  {hoveredColumn === index && (
-                    <div className="z-50 mt-2 w-full absolute -top-8 left-1/2 transform -translate-x-1/2 bg-orange-600 text-white py-1 rounded-t text-xs font-bold whitespace-nowrap">
-                      SORTING BY
+      <div className="p-6">
+        <div className="mt-5 overflow-hidden rounded-xl border">
+          <Table className="min-w-[1100px]">
+            <TableHeader className="bg-muted/50">
+              <TableRow className="hover:bg-muted/50">
+                {tableHeaders.map((header) => (
+                  <TableHead
+                    key={header.label}
+                    className="h-14 px-4 text-center"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => handleSort(header.key)}
+                      className="mx-auto inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-bold tracking-wide uppercase outline-none transition-colors hover:text-orange-600 focus-visible:ring-2 focus-visible:ring-orange-500/30 active:scale-[0.97]"
+                    >
+                      {header.label}
+                      {sortConfig.column === header.key ? (
+                        <ArrowUp
+                          aria-hidden="true"
+                          className={`size-3.5 transition-transform duration-150 ${
+                            sortConfig.direction === "desc" ? "rotate-180" : ""
+                          }`}
+                        />
+                      ) : (
+                        <ArrowUpDown
+                          aria-hidden="true"
+                          className="text-muted-foreground size-3.5"
+                        />
+                      )}
+                    </button>
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tableData.map((row: ChartData, idx: number) => (
+                <TableRow key={`${row.song}-${row.artist}-${idx}`}>
+                  <TableCell className="h-18 px-4 text-center text-sm">
+                    {row.position}
+                  </TableCell>
+                  <TableCell className="h-18 px-4 text-center text-sm">
+                    <div className="font-bold">{row.song.toUpperCase()}</div>
+                    <div className="text-muted-foreground mt-1 text-xs">
+                      {row.artist.toUpperCase()}
                     </div>
-                  )}
-                  {header.label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {tableData.map((row: ChartData, idx: number) => (
-              <tr
-                key={idx}
-                className={`border-b ${idx < 5 ? "shadow-sm" : ""}`}
-              >
-                <td
-                  className={`px-6 py-6 text-center text-sm transition-all ${
-                    hoveredColumn === 0
-                      ? "bg-orange-50 border-l border-r border-orange-600"
-                      : ""
-                  } ${idx === 0 && hoveredColumn === 0 ? "border-t-0" : ""} ${idx === tableData.length - 1 && hoveredColumn === 0 ? "border-b-2 border-orange-600" : ""}`}
-                >
-                  {row.position}
-                </td>
-                <td
-                  className={`px-6 py-6 text-center text-sm transition-all ${
-                    hoveredColumn === 1
-                      ? "bg-orange-50 border-l border-r border-orange-600"
-                      : ""
-                  } ${idx === 0 && hoveredColumn === 1 ? "border-t-0" : ""} ${idx === tableData.length - 1 && hoveredColumn === 1 ? "border-b-2 border-orange-600" : ""}`}
-                >
-                  <div className="font-bold">{row.song.toUpperCase()}</div>
-                  <div className="text-gray-500 text-xs mt-1">
-                    {row.artist.toUpperCase()}
-                  </div>
-                </td>
-                <td
-                  className={`px-6 py-6 text-center text-sm transition-all ${
-                    hoveredColumn === 2
-                      ? "bg-orange-50 border-l border-r border-orange-600"
-                      : ""
-                  } ${idx === 0 && hoveredColumn === 2 ? "border-t-0" : ""} ${idx === tableData.length - 1 && hoveredColumn === 2 ? "border-b-2 border-orange-600" : ""}`}
-                  style={{
-                    background:
-                      hoveredColumn === 2
-                        ? "rgb(255 247 237)"
-                        : getSpinIntensity(row.spins),
-                  }}
-                >
-                  {row.spins}
-                </td>
-                <td
-                  className={`px-6 py-6 text-center text-sm transition-all ${
-                    hoveredColumn === 3
-                      ? "bg-orange-50 border-l border-r border-orange-600"
-                      : ""
-                  } ${idx === 0 && hoveredColumn === 3 ? "border-t-0" : ""} ${idx === tableData.length - 1 && hoveredColumn === 3 ? "border-b-2 border-orange-600" : ""}`}
-                >
-                  {row.lastWeek || "—"}
-                </td>
-                <td
-                  className={`px-6 py-6 text-center text-sm transition-all ${
-                    hoveredColumn === 4
-                      ? "bg-orange-50 border-l border-r border-orange-600"
-                      : ""
-                  } ${idx === 0 && hoveredColumn === 4 ? "border-t-0" : ""} ${idx === tableData.length - 1 && hoveredColumn === 4 ? "border-b-2 border-orange-600" : ""}`}
-                >
-                  {row.peak || "—"}
-                </td>
-                <td
-                  className={`px-6 py-6 text-center text-sm transition-all ${
-                    hoveredColumn === 5
-                      ? "bg-orange-50 border-l border-r border-orange-600"
-                      : ""
-                  } ${idx === 0 && hoveredColumn === 5 ? "border-t-0" : ""} ${idx === tableData.length - 1 && hoveredColumn === 5 ? "border-b-2 border-orange-600" : ""}`}
-                >
-                  {row.weeks || "—"}
-                </td>
-                <td
-                  className={`px-6 py-6 text-center text-sm transition-all ${
-                    hoveredColumn === 6
-                      ? "bg-orange-50 border-l border-r border-orange-600"
-                      : ""
-                  } ${idx === 0 && hoveredColumn === 6 ? "border-t-0" : ""} ${idx === tableData.length - 1 && hoveredColumn === 6 ? "border-b-2 border-orange-600" : ""}`}
-                >
-                  {getMovementPill(row.growth)}
-                </td>
-                <td
-                  className={`px-6 py-6 text-center text-sm transition-all ${
-                    hoveredColumn === 7
-                      ? "bg-orange-50 border-l border-r border-orange-600"
-                      : ""
-                  } ${idx === 0 && hoveredColumn === 7 ? "border-t-0" : ""} ${idx === tableData.length - 1 && hoveredColumn === 7 ? "border-b-2 border-orange-600" : ""}`}
-                >
-                  {getStatusPill(row.status)}
-                </td>
-                <td
-                  className={`px-6 py-6 text-center text-sm transition-all ${
-                    hoveredColumn === 8
-                      ? "bg-orange-50 border-l border-r border-orange-600"
-                      : ""
-                  } ${idx === 0 && hoveredColumn === 8 ? "border-t-0" : ""} ${idx === tableData.length - 1 && hoveredColumn === 8 ? "border-b-2 border-orange-600" : ""}`}
-                >
-                  <a href="#" className="hover:underline">
+                  </TableCell>
+                  <TableCell
+                    className="h-18 px-4 text-center text-sm font-semibold"
+                    style={{ background: getSpinIntensity(row.spins) }}
+                  >
+                    {row.spins}
+                  </TableCell>
+                  <TableCell className="h-18 px-4 text-center text-sm">
+                    {row.lastWeek || "—"}
+                  </TableCell>
+                  <TableCell className="h-18 px-4 text-center text-sm">
+                    {row.peak || "—"}
+                  </TableCell>
+                  <TableCell className="h-18 px-4 text-center text-sm">
+                    {row.weeks || "—"}
+                  </TableCell>
+                  <TableCell className="h-18 px-4 text-center text-sm">
+                    {getMovementPill(row.growth)}
+                  </TableCell>
+                  <TableCell className="h-18 px-4 text-center text-sm">
+                    {getStatusPill(row.status)}
+                  </TableCell>
+                  <TableCell className="h-18 px-4 text-center text-sm">
                     {row.location.toUpperCase() || "—"}
-                  </a>
-                </td>
-                <td
-                  className={`px-6 py-6 text-center text-sm transition-all ${
-                    hoveredColumn === 9
-                      ? "bg-orange-50 border-l border-r border-orange-600"
-                      : ""
-                  } ${idx === 0 && hoveredColumn === 9 ? "border-t-0" : ""} ${idx === tableData.length - 1 && hoveredColumn === 9 ? "border-b-2 border-orange-600" : ""}`}
-                >
-                  <a href="#" className="hover:underline">
+                  </TableCell>
+                  <TableCell className="h-18 px-4 text-center text-sm">
                     {row.dj.toUpperCase() || "—"}
-                  </a>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       {/* Export Button */}
@@ -778,13 +813,13 @@ const SpinsTableComponent: React.FC = () => {
       {exportModalOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40"
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
             onClick={() => setExportModalOpen(false)}
           />
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-8 z-50 w-[550px]">
+          <div className="bg-background text-foreground fixed top-1/2 left-1/2 z-50 w-[min(550px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-lg border p-8 shadow-xl">
             <button
               onClick={() => setExportModalOpen(false)}
-              className="float-right text-gray-600 hover:text-black"
+              className="text-muted-foreground hover:text-foreground float-right"
             >
               <XCircle size={24} />
             </button>
@@ -809,260 +844,250 @@ const SpinsTableComponent: React.FC = () => {
         </>
       )}
 
-      <button
-        onClick={() => setHelpOpen(true)}
-        className="fixed bottom-8 left-5 w-12 h-12 bg-black text-white rounded-full shadow-lg hover:bg-gray-800 transition-colors flex items-center justify-center"
-      >
-        <Info size={20} />
-      </button>
-
-      {/* Help Modal */}
-      {helpOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 flex items-center justify-center"
-            onClick={() => setHelpOpen(false)}
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button
+            type="button"
+            size="icon-lg"
+            aria-label="Open data guide"
+            className="bg-foreground text-background hover:bg-foreground/80 fixed bottom-8 left-5 z-30 size-12 rounded-full shadow-lg active:scale-[0.97]"
           >
-            <div
-              className="bg-white rounded-lg p-10 w-3/5 max-h-[520px] overflow-y-auto"
-              onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setHelpOpen(false)}
-                className="float-right text-gray-600 hover:text-black"
-              >
-                <XCircle size={24} />
-              </button>
-
-              <h3 className="text-2xl font-bold border-b pb-4 mt-6">
-                Data Guide
-              </h3>
-
-              <div className="mt-6 space-y-4 leading-relaxed">
-                <div>
-                  <strong>Spins</strong>
-                  <p className="mt-2 opacity-90">
-                    The total number of verified plays a song receives from
-                    tracked DJs during the selected chart period. Spins are
-                    aggregated across{" "}
-                    <a
-                      target="new"
-                      className="underline"
-                      href="https://arroweye.pro/product/spins"
-                    >
-                      Arroweye® Pro Spins
-                    </a>{" "}
-                    and all monitored sources, forming the primary basis for
-                    chart rankings.
-                  </p>
-                </div>
-
-                <div className="flex gap-2 mt-4">
-                  <button
-                    onClick={() => setVideoLang("english")}
-                    className={`px-4 py-2 rounded-xl font-bold ${videoLang === "english" ? "bg-black text-white" : "bg-white border"}`}
+            <Info className="size-5" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-h-[min(82vh,760px)] grid-rows-[auto_minmax(0,1fr)] gap-0 overflow-hidden p-0 sm:max-w-4xl">
+          <DialogHeader className="border-b px-6 py-5 pr-12">
+            <DialogTitle className="text-xl font-bold">Data Guide</DialogTitle>
+            <DialogDescription>
+              Understand how spins, rankings, growth, and chart indicators are
+              calculated.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="overflow-y-auto px-6 pb-6">
+            <div className="mt-6 space-y-4 leading-relaxed">
+              <div>
+                <strong>Spins</strong>
+                <p className="mt-2 opacity-90">
+                  The total number of verified plays a song receives from
+                  tracked DJs during the selected chart period. Spins are
+                  aggregated across{" "}
+                  <a
+                    target="new"
+                    className="underline"
+                    href="https://arroweye.pro/product/spins"
                   >
-                    English
-                  </button>
-                  <button
-                    onClick={() => setVideoLang("pidgin")}
-                    className={`px-4 py-2 rounded-xl font-bold ${videoLang === "pidgin" ? "bg-black text-white" : "bg-white border"}`}
-                  >
-                    Pidgin
-                  </button>
-                </div>
+                    Arroweye® Pro Spins
+                  </a>{" "}
+                  and all monitored sources, forming the primary basis for chart
+                  rankings.
+                </p>
+              </div>
 
-                <div className="border rounded-2xl overflow-hidden mt-4 flex justify-center">
-                  <div
-                    className={
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={() => setVideoLang("english")}
+                  className={`rounded-xl px-4 py-2 font-bold ${videoLang === "english" ? "bg-foreground text-background" : "bg-background border"}`}
+                >
+                  English
+                </button>
+                <button
+                  onClick={() => setVideoLang("pidgin")}
+                  className={`rounded-xl px-4 py-2 font-bold ${videoLang === "pidgin" ? "bg-foreground text-background" : "bg-background border"}`}
+                >
+                  Pidgin
+                </button>
+              </div>
+
+              <div className="border rounded-2xl overflow-hidden mt-4 flex justify-center">
+                <div
+                  className={
+                    videoLang === "english"
+                      ? "aspect-video w-full"
+                      : "aspect-[9/16] max-h-[576px]"
+                  }
+                >
+                  <iframe
+                    src={
                       videoLang === "english"
-                        ? "aspect-video w-full"
-                        : "aspect-[9/16] max-h-[576px]"
+                        ? "https://www.youtube.com/embed/bfeT5Yo2890"
+                        : "https://www.youtube.com/embed/rg1C6qYKHyE"
                     }
-                  >
-                    <iframe
-                      src={
-                        videoLang === "english"
-                          ? "https://www.youtube.com/embed/bfeT5Yo2890"
-                          : "https://www.youtube.com/embed/rg1C6qYKHyE"
-                      }
-                      title={
-                        videoLang === "english"
-                          ? "Arroweye Pro® Spins"
-                          : "Arroweye Pro® Spins (Pidgin)"
-                      }
-                      className="w-full h-full"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      referrerPolicy="strict-origin-when-cross-origin"
-                      allowFullScreen
-                    />
-                  </div>
+                    title={
+                      videoLang === "english"
+                        ? "Arroweye Pro® Spins"
+                        : "Arroweye Pro® Spins (Pidgin)"
+                    }
+                    className="w-full h-full"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
                 </div>
+              </div>
 
-                <div>
-                  <strong>Ranking</strong>
-                  <p className="mt-2 mb-5 opacity-90">
-                    Charts reflect activity within a weekly reporting period
-                    unless otherwise specified. Rankings are determined using a
-                    combination of total spins, week-over-week movement, and
-                    sustained chart presence, rather than spins alone.
-                    Interactive sorting allows alternate views of the data but
-                    does not affect official chart positions.
-                  </p>
-                  <strong>LW (Last Week)</strong>
-                  <p className="mt-2 mb-5 opacity-90">
-                    Indicates the song's position on the previous chart. A dash
-                    (—) means the track did not appear on the chart during the
-                    prior period.
-                  </p>
-                  <strong>WOC (Weeks on Chart)</strong>
-                  <p className="mt-2 mb-5 opacity-90">
-                    The total number of weeks a song has appeared on the chart,
-                    including the current week. This metric reflects longevity
-                    and sustained audience or DJ support.
-                  </p>
-                  <strong>Growth</strong>
-                  <p className="mt-2 opacity-90">
-                    Shows the change in chart position compared to the previous
-                    period.
-                  </p>
-                  <div className="mt-3 p-3 border rounded-xl flex flex-wrap gap-4">
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1.5 rounded-full text-xs font-black bg-green-100 text-green-600">
-                        ▲7
-                      </span>
-                      <span className="opacity-85">Up</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1.5 rounded-full text-xs font-black bg-gray-100 text-gray-600">
-                        —
-                      </span>
-                      <span className="opacity-85">No change</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1.5 rounded-full text-xs font-black bg-red-100 text-red-600">
-                        ▼3
-                      </span>
-                      <span className="opacity-85">Down</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1.5 rounded-full text-xs font-black bg-gray-100 text-gray-600">
-                        •
-                      </span>
-                      <span className="opacity-85">New entry</span>
-                    </div>
+              <div>
+                <strong>Ranking</strong>
+                <p className="mt-2 mb-5 opacity-90">
+                  Charts reflect activity within a weekly reporting period
+                  unless otherwise specified. Rankings are determined using a
+                  combination of total spins, week-over-week movement, and
+                  sustained chart presence, rather than spins alone. Interactive
+                  sorting allows alternate views of the data but does not affect
+                  official chart positions.
+                </p>
+                <strong>LW (Last Week)</strong>
+                <p className="mt-2 mb-5 opacity-90">
+                  Indicates the song's position on the previous chart. A dash
+                  (—) means the track did not appear on the chart during the
+                  prior period.
+                </p>
+                <strong>WOC (Weeks on Chart)</strong>
+                <p className="mt-2 mb-5 opacity-90">
+                  The total number of weeks a song has appeared on the chart,
+                  including the current week. This metric reflects longevity and
+                  sustained audience or DJ support.
+                </p>
+                <strong>Growth</strong>
+                <p className="mt-2 opacity-90">
+                  Shows the change in chart position compared to the previous
+                  period.
+                </p>
+                <div className="mt-3 p-3 border rounded-xl flex flex-wrap gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1.5 rounded-full text-xs font-black bg-green-100 text-green-600">
+                      ▲7
+                    </span>
+                    <span className="opacity-85">Up</span>
                   </div>
-                </div>
-
-                <div>
-                  <strong>Status</strong>
-                  <p className="mt-2 opacity-90">
-                    Editorial indicators that highlight notable chart activity.
-                  </p>
-                  <div className="mt-3 p-3 border rounded-xl flex flex-wrap gap-4">
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1.5 rounded-full text-xs font-black bg-sky-500 text-white">
-                        NEW
-                      </span>
-                      <span className="opacity-85">First appearance</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1.5 rounded-full text-xs font-black bg-gray-900 text-white">
-                        BREAKING
-                      </span>
-                      <span className="opacity-85">Big jump / Top 5 entry</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1.5 rounded-full text-xs font-black bg-orange-500 text-white">
-                        HOT
-                      </span>
-                      <span className="opacity-85">High spins / momentum</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1.5 rounded-full text-xs font-black">
-                        -
-                      </span>
-                      <span className="opacity-85">Stable</span>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <span className="bg-muted text-muted-foreground rounded-full px-3 py-1.5 text-xs font-black">
+                      —
+                    </span>
+                    <span className="opacity-85">No change</span>
                   </div>
-                </div>
-
-                <div className="border rounded-xl p-3">
-                  <strong>Example Scenarios</strong>
-                  <div className="mt-4 flex gap-2">
-                    <div className="w-14 flex justify-center px-3 py-1.5 rounded-full text-xs font-black bg-gray-100 text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1.5 rounded-full text-xs font-black bg-red-100 text-red-600">
+                      ▼3
+                    </span>
+                    <span className="opacity-85">Down</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="bg-muted text-muted-foreground rounded-full px-3 py-1.5 text-xs font-black">
                       •
-                    </div>
+                    </span>
+                    <span className="opacity-85">New entry</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <strong>Status</strong>
+                <p className="mt-2 opacity-90">
+                  Editorial indicators that highlight notable chart activity.
+                </p>
+                <div className="mt-3 p-3 border rounded-xl flex flex-wrap gap-4">
+                  <div className="flex items-center gap-2">
                     <span className="px-3 py-1.5 rounded-full text-xs font-black bg-sky-500 text-white">
                       NEW
                     </span>
-                    <p>Debut entry on the chart</p>
+                    <span className="opacity-85">First appearance</span>
                   </div>
-                  <div className="mt-3 flex gap-2">
-                    <div className="w-14 flex justify-center px-3 py-1.5 rounded-full text-xs font-black bg-green-100 text-green-600">
-                      ▲6
-                    </div>{" "}
-                    <span className="px-3 py-1.5 rounded-full text-xs font-black bg-gray-900 text-white">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-foreground text-background rounded-full px-3 py-1.5 text-xs font-black">
                       BREAKING
                     </span>
-                    <p>Fast riser / major jump</p>
+                    <span className="opacity-85">Big jump / Top 5 entry</span>
                   </div>
-                  <div className="mt-3 flex gap-2">
-                    <div className="w-14 flex justify-center px-3 py-1.5 rounded-full text-xs font-black bg-green-100 text-green-600">
-                      ▲2
-                    </div>
+                  <div className="flex items-center gap-2">
                     <span className="px-3 py-1.5 rounded-full text-xs font-black bg-orange-500 text-white">
                       HOT
                     </span>
-                    <p>Strong momentum & spins</p>
+                    <span className="opacity-85">High spins / momentum</span>
                   </div>
-                  <div className="mt-3 flex gap-2">
-                    <div className="w-14 flex justify-center px-3 py-1.5 rounded-full text-xs font-black bg-red-100 text-red-600">
-                      ▼4
-                    </div>{" "}
+                  <div className="flex items-center gap-2">
                     <span className="px-3 py-1.5 rounded-full text-xs font-black">
                       -
                     </span>
-                    <p>Decline without breakout activity</p>
+                    <span className="opacity-85">Stable</span>
                   </div>
-                </div>
-                <div>
-                  {" "}
-                  <strong>Top Location</strong>
-                  <p className="mt-2 mb-4 opacity-90">
-                    The city or market where the song recorded its highest
-                    concentration of verified spins during the chart period.
-                  </p>
-                  <strong>Top DJ</strong>
-                  <p className="mt-2 opacity-90">
-                    The DJ or broadcaster who played the song most frequently
-                    within the selected period, based on tracked and verified
-                    data sources.
-                  </p>
                 </div>
               </div>
 
-              <div className="mt-8 border-t pt-6">
-                <p className="font-bold text-lg">Need Assistance?</p>
-                <p className="mt-4 opacity-90 leading-relaxed">
-                  Drop us a message at{" "}
-                  <a href="mailto:hi@arroweye.pro" className="underline">
-                    hi@arroweye.pro
-                  </a>
-                  . We are always working to make this tool better for you.
+              <div className="border rounded-xl p-3">
+                <strong>Example Scenarios</strong>
+                <div className="mt-4 flex gap-2">
+                  <div className="bg-muted text-muted-foreground flex w-14 justify-center rounded-full px-3 py-1.5 text-xs font-black">
+                    •
+                  </div>
+                  <span className="px-3 py-1.5 rounded-full text-xs font-black bg-sky-500 text-white">
+                    NEW
+                  </span>
+                  <p>Debut entry on the chart</p>
+                </div>
+                <div className="mt-3 flex gap-2">
+                  <div className="w-14 flex justify-center px-3 py-1.5 rounded-full text-xs font-black bg-green-100 text-green-600">
+                    ▲6
+                  </div>{" "}
+                  <span className="bg-foreground text-background rounded-full px-3 py-1.5 text-xs font-black">
+                    BREAKING
+                  </span>
+                  <p>Fast riser / major jump</p>
+                </div>
+                <div className="mt-3 flex gap-2">
+                  <div className="w-14 flex justify-center px-3 py-1.5 rounded-full text-xs font-black bg-green-100 text-green-600">
+                    ▲2
+                  </div>
+                  <span className="px-3 py-1.5 rounded-full text-xs font-black bg-orange-500 text-white">
+                    HOT
+                  </span>
+                  <p>Strong momentum & spins</p>
+                </div>
+                <div className="mt-3 flex gap-2">
+                  <div className="w-14 flex justify-center px-3 py-1.5 rounded-full text-xs font-black bg-red-100 text-red-600">
+                    ▼4
+                  </div>{" "}
+                  <span className="px-3 py-1.5 rounded-full text-xs font-black">
+                    -
+                  </span>
+                  <p>Decline without breakout activity</p>
+                </div>
+              </div>
+              <div>
+                {" "}
+                <strong>Top Location</strong>
+                <p className="mt-2 mb-4 opacity-90">
+                  The city or market where the song recorded its highest
+                  concentration of verified spins during the chart period.
+                </p>
+                <strong>Top DJ</strong>
+                <p className="mt-2 opacity-90">
+                  The DJ or broadcaster who played the song most frequently
+                  within the selected period, based on tracked and verified data
+                  sources.
                 </p>
               </div>
             </div>
+
+            <div className="mt-8 border-t pt-6">
+              <p className="font-bold text-lg">Need Assistance?</p>
+              <p className="mt-4 opacity-90 leading-relaxed">
+                Drop us a message at{" "}
+                <a href="mailto:hi@arroweye.pro" className="underline">
+                  hi@arroweye.pro
+                </a>
+                . We are always working to make this tool better for you.
+              </p>
+            </div>
           </div>
-        </>
-      )}
+        </DialogContent>
+      </Dialog>
 
       {/* Back to Top Button */}
       {showBackToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 w-12 h-12 bg-orange-600 text-white rounded-full shadow-lg hover:bg-black transition-colors flex items-center justify-center"
+          className="fixed right-8 bottom-8 flex h-12 w-12 items-center justify-center rounded-full bg-orange-600 text-white shadow-lg transition-colors hover:bg-foreground hover:text-background"
         >
           <ArrowUp size={20} />
         </button>
