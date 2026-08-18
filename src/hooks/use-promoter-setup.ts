@@ -105,7 +105,6 @@ export const usePromoterSetup = () => {
   }, []);
 
   const handleCreateCampaignDraft = useCallback(async () => {
-    const createDraftToast = toast.loading("Creating Campaign...");
     setLoadingCampaignCreation(true);
 
     try {
@@ -116,67 +115,42 @@ export const usePromoterSetup = () => {
         song_artist: campaignSongDetails?.artist,
         song_artwork: campaignSongDetails?.artwork,
         target_audience_reach: totalAudienceReach,
-        start_date: startDate,
+        start_date: startDate ? startDate.split("T")[0] : "",
         mode: "aggregator",
       });
 
       if (!result) {
-        toast.update(createDraftToast, {
-          render: "Campaign Creation Failed, kindly try again",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
+        toast.update("Campaign Creation Failed, kindly try again");
         setLoadingCampaignCreation(false);
         return;
       }
       setDraftId(result?.id ?? null);
-      toast.update(createDraftToast, {
-        render:
-          "Campaign Created Successfully, feel free to edit selection before Launch",
-        type: "info",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toast.update(
+        "Campaign Created Successfully, feel free to edit selection before Launch",
+      );
       setEditBeforeLaunchModal(true);
       setLoadingCampaignCreation(false);
     } catch (err) {
       console.error("Error submitting form:", err);
-      toast.update(createDraftToast, {
-        render: "Campaign Created Failed, kindly try again",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      setLoadingCampaignCreation(false);
+      toast.update("Campaign Created Failed, kindly try again");
     }
   }, [campaignSongDetails, startDate, totalAudienceReach]);
 
   const handleLaunchCampaign = useCallback(async () => {
-    const createToast = toast.loading("Creating Campaign...");
-
     const fallbackDraft: any = ls.get("LastCampaignDraft", { decrypt: true });
     const campaignId = draftId ?? fallbackDraft?.id;
 
     if (!campaignId) {
-      toast.update(createToast, {
-        render: "No campaign draft found. Please create the campaign first.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toast.update(
+        "No campaign draft found. Please create the campaign first.",
+      );
       setLoadingCampaignCreation(false);
       return;
     }
 
     try {
       await launchCampaignFully(campaignId, campaignPayload);
-      toast.update(createToast, {
-        render: "Campaign Launched Successfully",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toast.update("Campaign Launched Successfully");
       setLoadingCampaignCreation(false);
       setEditBeforeLaunchModal(false);
       setTimeout(() => {
@@ -184,12 +158,7 @@ export const usePromoterSetup = () => {
       }, 3000);
     } catch (err) {
       console.error("Error submitting form:", err);
-      toast.update(createToast, {
-        render: "Campaign Launch Failed, kindly try again",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toast.update("Campaign Launch Failed, kindly try again");
       setLoadingCampaignCreation(false);
     }
   }, [draftId, campaignPayload, router]);
