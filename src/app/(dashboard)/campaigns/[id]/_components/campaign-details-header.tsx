@@ -139,7 +139,7 @@ export function CampaignDetailsHeader({
               {content?.vendor?.organization_name || content?.campaign?.mode}
             </span>
             <span className="border border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/50 px-3 py-1 text-zinc-500 dark:text-zinc-400">
-              {content?.artist_name}
+              {content?.artist_name || content?.campaign?.song_artist}
             </span>
           </div>
         )}
@@ -200,7 +200,7 @@ export function CampaignDetailsHeader({
                     : "mt-3 text-[45px] font-[700]",
                 )}
               >
-                {content?.title || content?.song_title}
+                {content?.title || content?.campaign?.song_title}
               </p>
             )}
           </div>
