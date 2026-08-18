@@ -1,6 +1,22 @@
 "use client";
 
-import React from "react";
+import React, { useState, useMemo } from "react";
+import Icon from "@mdi/react";
+import {
+  mdiCalendarOutline,
+  mdiCheckCircle,
+  mdiAlertCircle,
+  mdiDiscAlert,
+  mdiMapMarkerRadiusOutline,
+  mdiMapMarkerOutline,
+  mdiTrashCanOutline,
+  mdiMagnify,
+  mdiFlash,
+  mdiReload,
+  mdiCart,
+  mdiMusic,
+} from "@mdi/js";
+import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,21 +28,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Progress } from "@/components/ui/progress";
-import { ClusterGrid } from "@/components/campaigns/Clustergrid";
-import DJCard from "@/components/campaigns/Djcard";
 import {
-  BadgeCheck,
-  LoaderCircle,
-  RefreshCcw,
-  ShoppingCart,
-  X,
-  Zap,
-} from "lucide-react";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { ClusterGrid } from "@/components/campaigns/Clustergrid";
+import DJCard, { DJCardSkeleton } from "@/components/campaigns/dj-card";
 import AutomateClusterModal from "@/components/campaigns/AutomateClusterModal";
 import Link from "next/link";
 import { useCustomSetup } from "../../../../../hooks/use-custom-setup";
 import { CampaignStats } from "../../_components/campaign-stats";
+import { cn } from "@/lib/utils";
 
 const CustomCampaign = () => {
   const {
@@ -45,7 +61,6 @@ const CustomCampaign = () => {
     isrc,
     setIsrc,
     validationError,
-    isIsrcValid,
     isIsrcValidating,
     totalDJs,
     totalTokens,
@@ -68,91 +83,124 @@ const CustomCampaign = () => {
     hasCreatedDraft,
   } = useCustomSetup();
 
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+
+  const hasSelectedDistricts = Object.keys(selectedDistricts).length > 0;
+  const isReadyToCreate =
+    !loadingCampaignCreation &&
+    hasSelectedDistricts &&
+    Boolean(startDate) &&
+    Boolean(campaignSongDetails?.artist) &&
+    reachValue > 0;
+
+  const parsedStartDate = useMemo(() => {
+    if (!startDate) return undefined;
+    const d = new Date(startDate + "T00:00:00");
+    return isNaN(d.getTime()) ? undefined : d;
+  }, [startDate]);
+
   return (
     <>
       <div className="h-max py-7 bg-transparent text-gray-950 dark:text-foreground">
-        <div className="flex justify-center items-center gap-2 mb-7">
-          <Link href="/campaigns/setup">
-            <p className="text-[#A3A3A3] dark:text-muted-foreground">
-              Set Budget
-            </p>
+        {/* Stepper Navigation */}
+        <div className="flex justify-center items-center gap-3 mb-7 text-sm font-medium">
+          <Link
+            href="/campaigns/setup"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Set Budget
           </Link>
-          <div className="h-[1px] w-8 bg-[#A3A3A3] dark:bg-border" />
-          <p>Launch Campaign</p>
+          <div className="h-px w-8 bg-border" />
+          <span className="text-foreground font-semibold">Launch Campaign</span>
         </div>
 
-        <Card className="mx-5 rounded-lg border-0 bg-transparent py-0 shadow-none">
-          <CardContent className="px-5 py-8 lg:px-14">
-            <div className="grid grid-cols-1 gap-[20px] items-center">
+        <Card className="mx-4 sm:mx-6 rounded-xl border-0 bg-transparent py-0 shadow-none">
+          <CardContent className="px-2 sm:px-6 lg:px-10 py-6 space-y-8">
+            {/* Song ISRC Input & Preview */}
+            <div className="space-y-3">
               <div className="relative">
                 <Input
                   value={isrc}
-                  className="border-[#9D9A9A] dark:bg-transparent"
+                  className="h-12 text-sm border-border bg-card dark:bg-card/50 pl-4 pr-10"
                   type="text"
-                  placeholder="ISRC / UPC"
+                  placeholder="Enter ISRC or UPC (e.g. USRC17607839)"
                   onChange={(e) => setIsrc(e.target.value)}
                 />
-                {(loadingCampaignSong || isIsrcValidating) && (
-                  <span className="italic absolute top-14 text-sm mt-2 truncate w-full block">
-                    {isIsrcValidating
-                      ? "Validating code..."
-                      : "Loading Song...."}
-                  </span>
+                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center">
+                  {loadingCampaignSong || isIsrcValidating ? (
+                    <div className="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                  ) : (
+                    <Icon path={mdiMusic} size={0.7} className="text-muted-foreground" />
+                  )}
+                </div>
+              </div>
+
+              {/* Status and Feedback Messages */}
+              {(loadingCampaignSong || isIsrcValidating) && (
+                <p className="text-xs italic text-muted-foreground">
+                  {isIsrcValidating ? "Validating code..." : "Loading song details..."}
+                </p>
+              )}
+
+              {!loadingCampaignSong && !isIsrcValidating && validationError && (
+                <div className="flex items-center gap-1.5 text-xs font-medium text-destructive">
+                  <Icon path={mdiAlertCircle} size={0.65} />
+                  <span>{validationError}</span>
+                </div>
+              )}
+
+              {!loadingCampaignSong &&
+                !isIsrcValidating &&
+                !validationError &&
+                campaignSongDetails?.error && (
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-destructive">
+                    <Icon path={mdiAlertCircle} size={0.65} />
+                    <span>{campaignSongDetails?.error}</span>
+                  </div>
                 )}
-                {!loadingCampaignSong &&
-                  !isIsrcValidating &&
-                  validationError && (
-                    <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
-                      {validationError}
-                    </p>
-                  )}
-                {!loadingCampaignSong &&
-                  !isIsrcValidating &&
-                  !validationError &&
-                  campaignSongDetails?.error && (
-                    <p className="absolute top-14 text-sm mt-2 text-red-500 truncate w-full">
-                      {campaignSongDetails?.error}
-                    </p>
-                  )}
-                {!loadingCampaignSong &&
-                  !isIsrcValidating &&
-                  !validationError &&
-                  campaignSongDetails?.artist &&
-                  campaignSongDetails?.title && (
-                    <div
-                      title={`${campaignSongDetails?.artist} - ${campaignSongDetails?.title}`}
-                      className="absolute flex flex-row gap-2 items-center top-14 text-sm mt-2 text-green-500 w-full overflow-hidden cursor-default"
-                    >
-                      <BadgeCheck height={14} width={14} className="shrink-0" />
-                      <p className="truncate">
-                        {campaignSongDetails?.artist} -{" "}
-                        {campaignSongDetails?.title}
-                      </p>
-                    </div>
-                  )}
-              </div>
-            </div>
-            <div className="sticky top-0 z-30 mt-8 bg-background py-px">
-              <div className="mt-10">
-                <CampaignStats
-                  availableTokens={walletDetails?.available_balance || 0}
-                  allocatedTokens={totalTokens}
-                  selectedDjs={totalDJs}
-                />
-              </div>
+
+              {!loadingCampaignSong &&
+                !isIsrcValidating &&
+                !validationError &&
+                campaignSongDetails?.artist &&
+                campaignSongDetails?.title && (
+                  <div
+                    title={`${campaignSongDetails?.artist} - ${campaignSongDetails?.title}`}
+                    className="flex items-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-2.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium"
+                  >
+                    <Icon path={mdiCheckCircle} size={0.7} className="shrink-0" />
+                    <span className="truncate">
+                      <strong>{campaignSongDetails?.artist}</strong> — {campaignSongDetails?.title}
+                    </span>
+                  </div>
+                )}
             </div>
 
-            <div className="pt-8">
+            {/* Campaign Stats Sticky Header */}
+            <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm py-2">
+              <CampaignStats
+                availableTokens={walletDetails?.available_balance || 0}
+                allocatedTokens={totalTokens}
+                selectedDjs={totalDJs}
+              />
+            </div>
+
+            {/* Clusters Selector Grid */}
+            <div className="pt-2">
               <ClusterGrid
                 clusters={clusters}
-                activeDistricts={activeDistrictIds} // ← pass the Set
+                activeDistricts={activeDistrictIds}
                 onDistrictClick={handleDistrictClick}
               />
             </div>
 
-            <div className="my-4">
+            {/* DJ Search Input */}
+            <div className="relative">
+              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                <Icon path={mdiMagnify} size={0.8} className="text-muted-foreground" />
+              </div>
               <Input
-                className="border-[#9D9A9A] dark:bg-transparent"
+                className="h-11 pl-10 border-border bg-card dark:bg-card/50"
                 type="search"
                 placeholder={activePlaceholder}
                 value={search}
@@ -165,166 +213,221 @@ const CustomCampaign = () => {
               />
             </div>
 
-            <div className="flex flex-col gap-5">
-              {Object.entries(selectedDistricts).map(
-                ([districtIdStr, entry]) => {
-                  const districtId = Number(districtIdStr);
-                  return (
-                    <div key={districtId}>
-                      {/* District label */}
-                      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 dark:text-muted-foreground">
-                        {entry.name}
-                      </h3>
+            {/* District DJ Selection Lists */}
+            <div className="space-y-8">
+              {Object.entries(selectedDistricts).map(([districtIdStr, entry]) => {
+                const districtId = Number(districtIdStr);
+                return (
+                  <div key={districtId} className="space-y-4 rounded-xl bg-muted/20 border border-border/50 p-4 sm:p-5">
+                    {/* District Header */}
+                    <div className="flex items-center justify-between gap-3 pb-2 border-b border-border/60">
+                      <div className="flex items-center gap-2">
+                        <Icon path={mdiMapMarkerOutline} size={0.75} className="text-primary shrink-0" />
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-foreground">
+                          {entry.name}
+                        </h3>
+                        <Badge variant="secondary" className="text-[11px] font-semibold">
+                          {entry.djs.length} {entry.djs.length === 1 ? "DJ" : "DJs"}
+                        </Badge>
+                      </div>
 
-                      {entry.loading ? (
-                        <div className="flex items-center justify-center py-10">
-                          <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin" />
-                        </div>
-                      ) : entry.djs.length > 0 ? (
-                        entry.djs.map((dj) => {
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDistrictClick(0, districtId, entry.name)}
+                        className="h-8 text-xs text-muted-foreground hover:text-destructive gap-1.5"
+                      >
+                        <Icon path={mdiTrashCanOutline} size={0.65} />
+                        <span className="hidden sm:inline">Remove District</span>
+                      </Button>
+                    </div>
+
+                    {/* District DJ Cards Grid or Skeleton Loading */}
+                    {entry.loading ? (
+                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                        <DJCardSkeleton />
+                        <DJCardSkeleton />
+                      </div>
+                    ) : entry.djs.length > 0 ? (
+                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                        {entry.djs.map((dj) => {
                           const spinKey = `${districtId}-${dj.id}`;
 
                           return (
-                            <div key={spinKey} className="relative mb-5">
-                              <DJCard
-                                id={dj.id}
-                                name={dj.name}
-                                location={dj.location}
-                                topLocations={dj.topLocations}
-                                campaignsCompleted={dj.campaignsCompleted}
-                                audienceReach={dj.audienceReach}
-                                rating={dj.rating}
-                                tokensPerSpin={dj.tokensPerSpin}
-                                spins={djSpins[spinKey as any] || 0}
-                                onSpinsChange={(value) =>
-                                  setDjSpins((prev) => ({
-                                    ...prev,
-                                    [spinKey]: value,
-                                  }))
-                                }
-                              />
-
-                              <Button
-                                type="button"
-                                size="icon"
-                                variant="ghost"
-                                onClick={() => removeDj(districtId, dj.id)}
-                                className="absolute right-3 top-1 text-muted-foreground hover:text-destructive sm:top-3"
-                                aria-label="Remove DJ"
-                              >
-                                <X />
-                              </Button>
-                            </div>
+                            <DJCard
+                              key={spinKey}
+                              id={dj.id}
+                              name={dj.name}
+                              location={dj.location}
+                              topLocations={dj.topLocations}
+                              campaignsCompleted={dj.campaignsCompleted}
+                              audienceReach={dj.audienceReach}
+                              rating={dj.rating}
+                              tokensPerSpin={dj.tokensPerSpin}
+                              spins={djSpins[spinKey as any] || 0}
+                              onSpinsChange={(value) =>
+                                setDjSpins((prev) => ({
+                                  ...prev,
+                                  [spinKey]: value,
+                                }))
+                              }
+                              onRemove={() => removeDj(districtId, dj.id)}
+                            />
                           );
-                        })
-                      ) : (
-                        <p className="text-center py-5 text-gray-500 dark:text-muted-foreground">
-                          No DJs found
+                        })}
+                      </div>
+                    ) : (
+                      <div className="text-center py-10 rounded-xl border border-dashed border-border bg-card/30">
+                        <div className="flex justify-center mb-2">
+                          <Icon path={mdiDiscAlert} size={1.6} className="text-muted-foreground/40" />
+                        </div>
+                        <p className="text-sm font-semibold text-foreground">
+                          No DJs found in {entry.name}
                         </p>
-                      )}
-                    </div>
-                  );
-                },
-              )}
+                        <p className="text-xs text-muted-foreground mt-1 max-w-xs mx-auto">
+                          Try searching with a different name or select another district.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
 
-              {Object.keys(selectedDistricts).length === 0 && (
-                <p className="text-center py-5 text-gray-600 dark:text-muted-foreground">
-                  No Districts Selected
-                </p>
+              {!hasSelectedDistricts && (
+                <div className="text-center py-14 rounded-xl border border-dashed border-border bg-card/40">
+                  <div className="flex justify-center mb-3">
+                    <Icon path={mdiMapMarkerRadiusOutline} size={1.8} className="text-muted-foreground/40" />
+                  </div>
+                  <h4 className="text-base font-semibold text-foreground">
+                    No Districts Selected
+                  </h4>
+                  <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1">
+                    Click on any district pill in the clusters section above to load available DJs for your campaign.
+                  </p>
+                </div>
               )}
             </div>
 
-            <div className="mt-10 flex flex-col gap-2">
-              <p>Audience Reach</p>
-              <Progress value={reachPercentage} aria-label="Audience reach" />
+            {/* Audience Reach Bar */}
+            <div className="rounded-xl border border-border bg-card p-5 space-y-3">
+              <div className="flex items-center justify-between text-xs font-semibold">
+                <span className="uppercase tracking-wider text-muted-foreground">
+                  Estimated Audience Reach
+                </span>
+                <span className="text-foreground font-mono font-bold">
+                  {reachPercentage.toFixed(1)}% of goal
+                </span>
+              </div>
+              <Progress value={reachPercentage} aria-label="Audience reach" className="h-2.5" />
               {totalAudienceReach && (
-                <p className="text-right">
-                  {reachValue.toLocaleString()} of{" "}
-                  {totalAudienceReach?.toLocaleString()}
-                </p>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>Target: {Number(totalAudienceReach).toLocaleString()} reach</span>
+                  <span className="font-semibold text-foreground">
+                    {reachValue.toLocaleString()} reached
+                  </span>
+                </div>
               )}
             </div>
 
-            <div className="w-full px-4 py-6 md:px-6 md:py-5 rounded-xl">
+            {/* Action Bar */}
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
               <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
                 {/* Actions (Automate + Start Over) */}
-                <div className="flex gap-3 order-1 md:order-1">
+                <div className="flex gap-2.5 order-1">
                   <Button
                     type="button"
-                    className="h-11 flex-1 md:flex-none"
+                    variant="outline"
+                    className="h-11 flex-1 md:flex-none gap-2 border-border"
                     disabled={true}
                     onClick={() => setShowAutomateModal(true)}
                   >
-                    <Zap />
+                    <Icon path={mdiFlash} size={0.75} className="text-purple-500" />
                     Automate
                   </Button>
 
                   <Button
                     type="button"
                     variant="secondary"
-                    className="h-11 flex-1 md:flex-none"
+                    className="h-11 flex-1 md:flex-none gap-2"
                     onClick={startOver}
                   >
-                    <RefreshCcw />
+                    <Icon path={mdiReload} size={0.75} />
                     Start Over
                   </Button>
                 </div>
 
-                {/* Date Input */}
-                <div className="flex flex-col order-2 md:order-2 w-full md:w-auto">
-                  <label className="text-xs font-semibold tracking-wide text-gray-600 mb-1 md:mb-2 dark:text-muted-foreground">
-                    START DATE
+                {/* Date Picker using Popover + Calendar */}
+                <div className="flex flex-col order-2 w-full md:w-auto space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                    <Icon path={mdiCalendarOutline} size={0.65} />
+                    Start Date
                   </label>
-                  <Input
-                    type="datetime-local"
-                    name="startDate"
-                    value={startDate}
-                    placeholder="01/01/2034"
-                    className="w-full md:w-[260px] dark:bg-transparent"
-                    onChange={(e) => setStartDate(e.target.value.split("T")[0])}
-                  />
+                  <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className={cn(
+                          "w-full md:w-[240px] h-11 justify-start text-left font-normal border-border bg-card dark:bg-card/50",
+                          !startDate && "text-muted-foreground"
+                        )}
+                      >
+                        <Icon path={mdiCalendarOutline} size={0.75} className="mr-2 text-muted-foreground" />
+                        {parsedStartDate ? (
+                          format(parsedStartDate, "PPP")
+                        ) : (
+                          <span>Pick a start date</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={parsedStartDate}
+                        onSelect={(date) => {
+                          if (date) {
+                            setStartDate(format(date, "yyyy-MM-dd"));
+                          } else {
+                            setStartDate("");
+                          }
+                          setDatePopoverOpen(false);
+                        }}
+                        disabled={(date) =>
+                          date < new Date(new Date().setHours(0, 0, 0, 0))
+                        }
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
 
                 {/* Launch CTA */}
                 <Button
                   type="button"
-                  className="order-3 h-11 w-full md:w-auto"
-                  disabled={
-                    loadingCampaignCreation ||
-                    Object.keys(selectedDistricts).length === 0 ||
-                    !startDate ||
-                    !campaignSongDetails?.artist ||
-                    !reachValue
-                  }
+                  className="order-3 h-11 w-full md:w-auto px-6 font-semibold"
+                  disabled={!isReadyToCreate}
                   onClick={handleCreateCampaignDraft}
                 >
                   {loadingCampaignCreation && (
-                    <LoaderCircle className="animate-spin" />
+                    <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-2" />
                   )}
-                  {loadingCampaignCreation === true
-                    ? "Loading..."
-                    : "Create Campaign"}
+                  {loadingCampaignCreation ? "Creating Campaign..." : "Create Campaign"}
                 </Button>
               </div>
             </div>
 
-            {Object.keys(selectedDistricts).length !== 0 && hasCreatedDraft && (
-              <div className="flex justify-end">
+            {/* Review Floating Action Button */}
+            {hasSelectedDistricts && hasCreatedDraft && (
+              <div className="flex justify-end pt-4">
                 <Button
                   type="button"
                   size="icon-lg"
-                  className="mt-10 size-20 rounded-full bg-[#CAFF00] text-black hover:bg-[#b6e600]"
-                  disabled={
-                    !campaignSongDetails?.artist ||
-                    Object.keys(selectedDistricts).length === 0
-                  }
-                  onClick={() => {
-                    if (Object.keys(selectedDistricts).length !== 0)
-                      setEditBeforeLaunchModal(true);
-                  }}
+                  className="size-16 rounded-full bg-primary text-primary-foreground shadow-lg hover:opacity-90 transition-all hover:scale-105"
+                  disabled={!campaignSongDetails?.artist || !hasSelectedDistricts}
+                  onClick={() => setEditBeforeLaunchModal(true)}
                 >
-                  <ShoppingCart className="size-7" />
-                  <span className="sr-only">Review campaign</span>
+                  <Icon path={mdiCart} size={1} />
+                  <span className="sr-only">Review & Launch Campaign</span>
                 </Button>
               </div>
             )}
@@ -340,39 +443,39 @@ const CustomCampaign = () => {
         />
       )}
 
+      {/* Review & Launch Dialog */}
       <Dialog
         open={editBeforeLaunchModal}
         onOpenChange={setEditBeforeLaunchModal}
       >
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Your Selection</DialogTitle>
+            <DialogTitle>Review Campaign Selection</DialogTitle>
             <DialogDescription>
-              Review the DJs and token allocation before launching this
-              campaign.
+              Review your selected DJs and token allocations before launching.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex flex-col gap-5">
+
+          <div className="space-y-6 my-2">
             {Object.entries(selectedDistricts).map(([districtIdStr, entry]) => {
               const districtId = Number(districtIdStr);
               return (
-                <div key={districtId}>
-                  {/* District label */}
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 dark:text-muted-foreground">
-                    {entry.name}
-                  </h3>
+                <div key={districtId} className="space-y-3">
+                  <div className="flex items-center gap-2 pb-1 border-b border-border">
+                    <Icon path={mdiMapMarkerOutline} size={0.7} className="text-primary" />
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      {entry.name}
+                    </h4>
+                  </div>
 
-                  {entry.loading ? (
-                    <div className="flex items-center justify-center py-10">
-                      <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin" />
-                    </div>
-                  ) : entry.djs.length > 0 ? (
-                    entry.djs.map((dj) => {
-                      const spinKey = `${districtId}-${dj.id}`;
+                  {entry.djs.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {entry.djs.map((dj) => {
+                        const spinKey = `${districtId}-${dj.id}`;
 
-                      return (
-                        <div key={spinKey} className="relative mb-5">
+                        return (
                           <DJCard
+                            key={spinKey}
                             id={dj.id}
                             name={dj.name}
                             location={dj.location}
@@ -390,20 +493,20 @@ const CustomCampaign = () => {
                             }
                             isOnModal={true}
                           />
-                        </div>
-                      );
-                    })
+                        );
+                      })}
+                    </div>
                   ) : (
-                    <p className="text-center py-5 text-gray-500 dark:text-muted-foreground">
-                      No DJs found
+                    <p className="text-center py-4 text-xs text-muted-foreground">
+                      No DJs selected
                     </p>
                   )}
                 </div>
               );
             })}
 
-            {Object.keys(selectedDistricts).length === 0 && (
-              <p className="text-center py-5 text-gray-600 dark:text-muted-foreground">
+            {!hasSelectedDistricts && (
+              <p className="text-center py-6 text-xs text-muted-foreground">
                 No Districts Selected
               </p>
             )}
@@ -416,24 +519,22 @@ const CustomCampaign = () => {
             compact
           />
 
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               type="button"
-              className="h-10 w-full sm:w-auto"
+              className="h-10 w-full sm:w-auto font-semibold"
               disabled={
                 loadingCampaignCreation ||
-                Object.keys(selectedDistricts).length === 0 ||
+                !hasSelectedDistricts ||
                 !startDate ||
                 !campaignSongDetails?.artist
               }
               onClick={handleLaunchCampaign}
             >
               {loadingCampaignCreation && (
-                <LoaderCircle className="animate-spin" />
+                <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-2" />
               )}
-              {loadingCampaignCreation === true
-                ? "Loading..."
-                : "Launch Campaign"}
+              {loadingCampaignCreation ? "Launching..." : "Launch Campaign"}
             </Button>
           </DialogFooter>
         </DialogContent>

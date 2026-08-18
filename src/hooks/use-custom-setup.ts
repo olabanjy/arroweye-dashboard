@@ -12,7 +12,7 @@ import {
   getCampaignSongISRC,
 } from "@/services";
 import { useIsrcUpcValidator } from "./use-isrc-upc-validator";
-import { DJCardProps } from "@/components/campaigns/Djcard";
+import { DJCardProps } from "@/components/campaigns/dj-card";
 import { toast } from "sonner";
 
 export interface DistrictEntry {
@@ -387,7 +387,7 @@ export const useCustomSetup = () => {
   );
 
   const handleCreateCampaignDraft = useCallback(async () => {
-    const createDraftToast = toast.loading("Creating Campaign...");
+   
     setLoadingCampaignCreation(true);
 
     try {
@@ -398,7 +398,7 @@ export const useCustomSetup = () => {
         song_artist: campaignSongDetails?.artist,
         song_artwork: campaignSongDetails?.artwork,
         target_audience_reach: Number(totalAudienceReach) || 0,
-        start_date: startDate,
+        start_date: startDate ? startDate.split("T")[0] : "",
         mode: "custom",
       });
 
@@ -422,8 +422,6 @@ export const useCustomSetup = () => {
   }, [campaignSongDetails, startDate, totalAudienceReach]);
 
   const handleLaunchCampaign = useCallback(async () => {
-    const createToast = toast.loading("Launching Campaign...");
-
     const fallbackDraft: any = ls.get("LastCampaignDraft", { decrypt: true });
     const campaignId = draftId ?? fallbackDraft?.id;
 
