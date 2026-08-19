@@ -335,6 +335,10 @@ const CampaignsSidebarContent = () => {
   const displayName =
     userProfile?.fullname || user?.email || userProfile?.role || "Account";
   const userInitials = getInitials(displayName);
+  const isCollapsed = state === "collapsed";
+  const isSetupActive =
+    pathname === "/campaigns/setup" ||
+    pathname?.startsWith("/campaigns/setup/");
 
   const isActive = (path: string) => {
     return pathname === path || pathname?.startsWith(`${path}/`);
@@ -360,14 +364,28 @@ const CampaignsSidebarContent = () => {
 
             <SidebarGroupContent className="flex flex-1">
               <SidebarMenu className="h-full gap-[23px]">
+                {isAdvertiser && isCollapsed && (
+                  <NavItem
+                    href="/campaigns/setup"
+                    label="Create Campaign"
+                    tooltip="Create Campaign"
+                    active={isSetupActive}
+                    icon={<MdAddCircleOutline size={SIDEBAR_ICON_SIZE} />}
+                  />
+                )}
+
                 <NavItem
                   href="/campaigns"
                   label="Campaigns"
-                  active={isActive("/campaigns")}
+                  active={
+                    isAdvertiser && isCollapsed
+                      ? isActive("/campaigns") && !isSetupActive
+                      : isActive("/campaigns")
+                  }
                   icon={<Icon path={mdiFormatListBulletedType} size={0.75} />}
                 />
 
-                {isActive("/campaigns") && isAdvertiser && (
+                {isActive("/campaigns") && isAdvertiser && !isCollapsed && (
                   <SidebarMenuSub>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
