@@ -2,15 +2,18 @@
 
 import { createContext, ReactNode, useContext, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import ls from "localstorage-slim";
+import {
+  clearAuthSession,
+  clearAuthTokenCookie,
+  getAuthSession,
+  setAuthSession,
+  setAuthTokenCookie,
+} from "@/lib/auth-storage";
 import type {
   AuthenticatedUser,
   AuthSession,
   UserProfile,
 } from "@/types/api";
-
-if (typeof window !== "undefined" && window?.localStorage)
-  ls.config.storage = localStorage;
 
 interface AuthContextType {
   user: AuthenticatedUser | null;
@@ -40,45 +43,43 @@ export const AuthSessionProvider = ({
 
   const { data, isLoading } = useQuery<AuthSession | null>({
     queryKey: ["auth", "session"],
-    queryFn: async () =>
-      ls.get("Profile", { decrypt: true }) as AuthSession | null,
+    queryFn: async () => getAuthSession(),
     staleTime: Infinity,
     gcTime: Infinity,
   });
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = ls.get("Profile", { decrypt: true }) as AuthSession | null;
-      const token = stored?.token || stored?.access || null;
-      if (token) {
-        const isProd = window.location.protocol === "https:";
-        document.cookie = `auth_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax${isProd ? "; Secure" : ""}`;
-      }
+    if (isLoading) return;
+
+    const token = data?.access || data?.token || null;
+    if (token) {
+      setAuthTokenCookie(token);
+    } else {
+      // The proxy only sees the cookie. Remove an orphaned cookie when browser
+      // storage no longer contains a session, otherwise /login redirects back
+      // to /campaigns forever without making an API request.
+      clearAuthTokenCookie();
     }
-  }, []);
+  }, [data, isLoading]);
 
   const login = (authData: AuthSession) => {
-    const token = authData?.token || authData?.access || null;
+    const token = authData?.access || authData?.token || null;
     if (token && typeof window !== "undefined") {
-      const isProd = window.location.protocol === "https:";
-      document.cookie = `auth_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax${isProd ? "; Secure" : ""}`;
+      setAuthTokenCookie(token);
     }
-    ls.set("Profile", authData, { encrypt: true });
+    setAuthSession(authData);
     queryClient.setQueryData(["auth", "session"], authData);
     navigate("/campaigns");
   };
 
   const logout = () => {
-    if (typeof window !== "undefined") {
-      document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    }
-    ls.remove("Profile");
+    clearAuthSession();
     queryClient.setQueryData(["auth", "session"], null);
     navigate("/login");
   };
 
   const user = data?.user || null;
-  const token = data?.token || data?.access || null;
+  const token = data?.access || data?.token || null;
   const userProfile = user?.user_profile || null;
   const isAdvertiser = user?.user_type === "Advertiser";
   const isAuthenticated = !!token;

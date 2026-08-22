@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface LayoutProps {
   children: ReactNode;
   withBorder?: boolean;
+  requireAuth?: boolean;
 }
 
 const DashboardContentSkeleton = () => (
@@ -40,9 +41,10 @@ const DashboardContentSkeleton = () => (
 const DashboardLayoutClient: FC<LayoutProps> = ({
   children,
   withBorder = true,
+  requireAuth = true,
 }) => {
   const pathname = usePathname();
-  const { isAuthenticated, isLoading } = useProtectedRoute();
+  const { isAuthenticated, isLoading } = useProtectedRoute(requireAuth);
 
   if (isLoading) {
     return (

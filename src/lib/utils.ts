@@ -4,6 +4,7 @@ import { twMerge } from "tailwind-merge";
 import ls from "localstorage-slim";
 import { toast, Id as ToastId } from "react-toastify";
 import axios from "axios";
+import { clearAuthSession } from "./auth-storage";
 
 export const setLS = (key: string, value: unknown) => {
   return ls.set(key, value, { encrypt: true });
@@ -98,8 +99,8 @@ export const extractErrorMessage = (errorData: any): string => {
 
 export const redirectToLogin = () => {
   if (typeof window !== "undefined") {
-    clearLS();
-    window.location.href = "/login";
+    clearAuthSession();
+    window.location.replace("/login");
   }
 };
 

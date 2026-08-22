@@ -1,4 +1,3 @@
-import ls from "localstorage-slim";
 import axios, {
   AxiosRequestConfig,
   AxiosResponse,
@@ -6,8 +5,28 @@ import axios, {
   AxiosHeaders,
 } from "axios";
 import { Id as ToastId } from "react-toastify";
-import { handleApiError } from "../lib/utils";
+import { handleApiError, redirectToLogin } from "../lib/utils";
+import {
+  getAuthSession,
+  setAuthSession,
+  setAuthTokenCookie,
+} from "@/lib/auth-storage";
 import type { AuthSession } from "@/types/api";
+
+interface AuthenticatedRequestConfig extends AxiosRequestConfig {
+  _requiresAuth?: boolean;
+  _retry?: boolean;
+}
+
+interface InternalAuthenticatedRequestConfig
+  extends InternalAxiosRequestConfig {
+  _requiresAuth?: boolean;
+  _retry?: boolean;
+}
+
+interface RefreshResponse {
+  access: string;
+}
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN as string,
@@ -17,40 +36,96 @@ const axiosInstance = axios.create({
   },
 });
 
+const refreshClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN as string,
+  timeout: 120000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+let refreshPromise: Promise<string> | null = null;
+
 console.log("Base URL:", process.env.NEXT_PUBLIC_APP_SERVER_DOMAIN);
 
-// REMOVE THE FIRST INTERCEPTOR - KEEP ONLY THIS ONE
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    if (!config.headers["skipAuth"]) {
-      const content = ls.get("Profile", {
-        decrypt: true,
-      }) as AuthSession | null;
-      const token = content?.access;
+    const authenticatedConfig = config as InternalAuthenticatedRequestConfig;
+
+    if (authenticatedConfig._requiresAuth) {
+      const content = getAuthSession();
+      const token = content?.access || content?.token;
 
       if (token) {
-        config.headers = new AxiosHeaders(config.headers);
-        config.headers.set("Authorization", `Bearer ${token}`);
+        authenticatedConfig.headers = new AxiosHeaders(
+          authenticatedConfig.headers,
+        );
+        authenticatedConfig.headers.set("Authorization", `Bearer ${token}`);
       }
     }
 
-    delete config.headers["skipAuth"];
-
-    return config;
+    return authenticatedConfig;
   },
   (error) => {
     return Promise.reject(error);
   },
 );
 
+const refreshAccessToken = (session: AuthSession): Promise<string> => {
+  if (!session.refresh) {
+    return Promise.reject(new Error("No refresh token is available."));
+  }
+
+  if (!refreshPromise) {
+    refreshPromise = refreshClient
+      .post<RefreshResponse>("/refresh/", { refresh: session.refresh })
+      .then(({ data }) => {
+        if (!data.access) {
+          throw new Error("The refresh endpoint did not return an access token.");
+        }
+
+        setAuthSession({ ...session, access: data.access });
+        setAuthTokenCookie(data.access);
+        return data.access;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+
+  return refreshPromise;
+};
+
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
   },
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      console.dir(error, { depth: 100 });
+  async (error) => {
+    const request = error.config as
+      | InternalAuthenticatedRequestConfig
+      | undefined;
+
+    if (
+      error.response?.status === 401 &&
+      request?._requiresAuth &&
+      !request._retry
+    ) {
+      request._retry = true;
+      const session = getAuthSession();
+
+      if (session?.refresh) {
+        try {
+          const accessToken = await refreshAccessToken(session);
+          request.headers = new AxiosHeaders(request.headers);
+          request.headers.set("Authorization", `Bearer ${accessToken}`);
+          return axiosInstance(request);
+        } catch (refreshError) {
+          redirectToLogin();
+          return Promise.reject(refreshError);
+        }
+      }
     }
+
     return Promise.reject(error);
   },
 );
@@ -81,17 +156,14 @@ const apiRequest = async <T>({
   try {
     const requestHeaders = { ...axiosInstance.defaults.headers, ...headers };
 
-    if (!requireToken) {
-      requestHeaders["skipAuth"] = "true";
-    }
-
     const response: AxiosResponse<T> = await axiosInstance({
       method,
       url,
       data,
       params,
       headers: requestHeaders,
-    } as AxiosRequestConfig);
+      _requiresAuth: requireToken,
+    } as AuthenticatedRequestConfig);
 
     return response.data;
   } catch (error) {
