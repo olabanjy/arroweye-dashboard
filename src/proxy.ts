@@ -6,9 +6,11 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value;
   const isPublicSpinsRoute =
     pathname === "/spins" || pathname.startsWith("/spins/");
+  const isPublicSetupRoute = pathname === "/campaigns/setup";
 
-  // The Spins chart and individual spin-location shares are public.
-  if (isPublicSpinsRoute) {
+  // The Spins shares and campaign setup landing page are public.
+  // Setup sub-routes remain protected because they create or fund campaigns.
+  if (isPublicSpinsRoute || isPublicSetupRoute) {
     return NextResponse.next();
   }
 

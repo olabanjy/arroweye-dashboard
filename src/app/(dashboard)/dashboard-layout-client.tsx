@@ -8,10 +8,13 @@ import { usePathname } from "next/navigation";
 import { useProtectedRoute } from "./hooks/use-protected-route";
 import ScrollToTopButton from "@/components/scroll-to-top-button";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
+import Link from "next/link";
 
 interface LayoutProps {
   children: ReactNode;
   withBorder?: boolean;
+  requireAuth?: boolean;
 }
 
 const DashboardContentSkeleton = () => (
@@ -37,34 +40,69 @@ const DashboardContentSkeleton = () => (
   </div>
 );
 
+function CreateSidebar() {
+  return (
+    <aside className="flex h-screen w-[72px] shrink-0 flex-col border-r border-[#dedede] bg-white sm:w-[108px]">
+      <Link
+        href="/campaigns"
+        aria-label="Back to campaigns"
+        className="flex h-[134px] shrink-0 items-center justify-center border-b border-[#dedede] outline-none transition-opacity duration-150 ease-out hover:opacity-65 focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-inset active:opacity-45"
+      >
+        <Image
+          src="/tools.svg"
+          alt="Market"
+          width={49}
+          height={28}
+          priority
+          className="h-auto w-[38px] sm:w-[49px]"
+        />
+      </Link>
+    </aside>
+  );
+}
+
 const DashboardLayoutClient: FC<LayoutProps> = ({
   children,
   withBorder = true,
+  requireAuth = true,
 }) => {
   const pathname = usePathname();
-  const { isAuthenticated, isLoading } = useProtectedRoute();
+  const isPublicSetupLanding = pathname === "/campaigns/setup";
+  const { isAuthenticated, isLoading } = useProtectedRoute(
+    requireAuth && !isPublicSetupLanding,
+  );
+  const isSetupLanding =
+    pathname === "/create" || pathname === "/campaigns/setup";
 
   if (isLoading) {
     return (
       <div className="flex h-screen overflow-hidden">
         <div className="z-50">
-          <Sidebar />
+          {isSetupLanding ? <CreateSidebar /> : <Sidebar />}
         </div>
         <div
           id="dashboard-scroll-container"
-          className="flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow"
+          className={`flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow ${isSetupLanding ? "bg-white" : ""}`}
         >
-          <TopNav />
+          {!isSetupLanding && <TopNav />}
           <main
-            className={`w-full max-w-6xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
-              pathname !== "/campaigns/spins-notifications" &&
-              pathname !== "/campaigns/setup/custom" &&
-              pathname !== "/campaigns/setup/promoter"
-                ? "mx-[20px]"
-                : ""
-            } border-none rounded-xl mt-5`}
+            className={
+              isSetupLanding
+                ? "min-h-full w-full"
+                : `w-full max-w-6xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
+                    pathname !== "/campaigns/spins-notifications" &&
+                    pathname !== "/campaigns/setup/custom" &&
+                    pathname !== "/campaigns/setup/promoter"
+                      ? "mx-[20px]"
+                      : ""
+                  } border-none rounded-xl mt-5`
+            }
           >
-            <DashboardContentSkeleton />
+            {isSetupLanding ? (
+              <div className="min-h-screen bg-white" />
+            ) : (
+              <DashboardContentSkeleton />
+            )}
           </main>
           <ToastContainer />
         </div>
@@ -80,21 +118,25 @@ const DashboardLayoutClient: FC<LayoutProps> = ({
   return (
     <div className="flex h-screen overflow-hidden">
       <div className=" z-50">
-        <Sidebar />
+        {isSetupLanding ? <CreateSidebar /> : <Sidebar />}
       </div>
       <div
         id="dashboard-scroll-container"
-        className="flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow"
+        className={`flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow ${isSetupLanding ? "bg-white" : ""}`}
       >
-        <TopNav />
+        {!isSetupLanding && <TopNav />}
         <main
-          className={`w-full max-w-6xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
-            pathname !== "/campaigns/spins-notifications" &&
-            pathname !== "/campaigns/setup/custom" &&
-            pathname !== "/campaigns/setup/promoter"
-              ? "mx-[20px]"
-              : ""
-          } border-none rounded-xl mt-5`}
+          className={
+            isSetupLanding
+              ? "min-h-full w-full"
+              : `w-full max-w-6xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
+                  pathname !== "/campaigns/spins-notifications" &&
+                  pathname !== "/campaigns/setup/custom" &&
+                  pathname !== "/campaigns/setup/promoter"
+                    ? "mx-[20px]"
+                    : ""
+                } border-none rounded-xl mt-5`
+          }
         >
           {children}
         </main>

@@ -88,7 +88,7 @@ const CustomCampaign = () => {
   const isSongVerified = Boolean(
     campaignSongDetails?.artist &&
     campaignSongDetails?.title &&
-    !campaignSongDetails?.error
+    !campaignSongDetails?.error,
   );
 
   const hasSelectedDistricts = Object.keys(selectedDistricts).length > 0;
@@ -111,7 +111,7 @@ const CustomCampaign = () => {
         {/* Stepper Navigation */}
         <div className="flex justify-center items-center gap-2 mb-7 text-sm">
           <Link
-            href="/campaigns/setup"
+            href="/campaigns/setup/budget?showModal=true"
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
             Set Budget
@@ -136,7 +136,11 @@ const CustomCampaign = () => {
                   {loadingCampaignSong || isIsrcValidating ? (
                     <div className="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                   ) : (
-                    <Icon path={mdiMusic} size={0.7} className="text-muted-foreground" />
+                    <Icon
+                      path={mdiMusic}
+                      size={0.7}
+                      className="text-muted-foreground"
+                    />
                   )}
                 </div>
               </div>
@@ -174,9 +178,14 @@ const CustomCampaign = () => {
                     title={`${campaignSongDetails?.artist} - ${campaignSongDetails?.title}`}
                     className="flex items-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-2.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium"
                   >
-                    <Icon path={mdiCheckCircle} size={0.7} className="shrink-0" />
+                    <Icon
+                      path={mdiCheckCircle}
+                      size={0.7}
+                      className="shrink-0"
+                    />
                     <span className="truncate">
-                      <strong>{campaignSongDetails?.artist}</strong> — {campaignSongDetails?.title}
+                      <strong>{campaignSongDetails?.artist}</strong> —{" "}
+                      {campaignSongDetails?.title}
                     </span>
                   </div>
                 )}
@@ -206,7 +215,11 @@ const CustomCampaign = () => {
                 {/* DJ Search Input */}
                 <div className="relative">
                   <div className="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-                    <Icon path={mdiMagnify} size={0.8} className="text-muted-foreground" />
+                    <Icon
+                      path={mdiMagnify}
+                      size={0.8}
+                      className="text-muted-foreground"
+                    />
                   </div>
                   <Input
                     className="h-11 pl-10 border-border bg-card dark:bg-card/50"
@@ -224,95 +237,122 @@ const CustomCampaign = () => {
 
                 {/* District DJ Selection Lists */}
                 <div className="space-y-8">
-                  {Object.entries(selectedDistricts).map(([districtIdStr, entry]) => {
-                    const districtId = Number(districtIdStr);
-                    return (
-                      <div key={districtId} className="space-y-4 rounded-xl bg-muted/20 border border-border/50 p-4 sm:p-5">
-                        {/* District Header */}
-                        <div className="flex items-center justify-between gap-3 pb-2 border-b border-border/60">
-                          <div className="flex items-center gap-2">
-                            <Icon path={mdiMapMarkerOutline} size={0.75} className="text-primary shrink-0" />
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground">
-                              {entry.name}
-                            </h3>
-                            <Badge variant="secondary" className="text-[11px] font-semibold">
-                              {entry.djs.length} {entry.djs.length === 1 ? "DJ" : "DJs"}
-                            </Badge>
-                          </div>
-
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDistrictClick(0, districtId, entry.name)}
-                            className="h-8 text-xs text-muted-foreground hover:text-destructive gap-1.5"
-                          >
-                            <Icon path={mdiTrashCanOutline} size={0.65} />
-                            <span className="hidden sm:inline">Remove District</span>
-                          </Button>
-                        </div>
-
-                        {/* District DJ Cards Grid or Skeleton Loading */}
-                        {entry.loading ? (
-                          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                            <DJCardSkeleton />
-                            <DJCardSkeleton />
-                          </div>
-                        ) : entry.djs.length > 0 ? (
-                          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                            {entry.djs.map((dj) => {
-                              const spinKey = `${districtId}-${dj.id}`;
-
-                              return (
-                                <DJCard
-                                  key={spinKey}
-                                  id={dj.id}
-                                  name={dj.name}
-                                  location={dj.location}
-                                  topLocations={dj.topLocations}
-                                  campaignsCompleted={dj.campaignsCompleted}
-                                  audienceReach={dj.audienceReach}
-                                  rating={dj.rating}
-                                  tokensPerSpin={dj.tokensPerSpin}
-                                  spins={djSpins[spinKey as any] || 0}
-                                  onSpinsChange={(value) =>
-                                    setDjSpins((prev) => ({
-                                      ...prev,
-                                      [spinKey]: value,
-                                    }))
-                                  }
-                                  onRemove={() => removeDj(districtId, dj.id)}
-                                />
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          <div className="text-center py-10 rounded-xl border border-dashed border-border bg-card/30">
-                            <div className="flex justify-center mb-2">
-                              <Icon path={mdiDiscAlert} size={1.6} className="text-muted-foreground/40" />
+                  {Object.entries(selectedDistricts).map(
+                    ([districtIdStr, entry]) => {
+                      const districtId = Number(districtIdStr);
+                      return (
+                        <div
+                          key={districtId}
+                          className="space-y-4 rounded-xl bg-muted/20 border border-border/50 p-4 sm:p-5"
+                        >
+                          {/* District Header */}
+                          <div className="flex items-center justify-between gap-3 pb-2 border-b border-border/60">
+                            <div className="flex items-center gap-2">
+                              <Icon
+                                path={mdiMapMarkerOutline}
+                                size={0.75}
+                                className="text-primary shrink-0"
+                              />
+                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground">
+                                {entry.name}
+                              </h3>
+                              <Badge
+                                variant="secondary"
+                                className="text-[11px] font-semibold"
+                              >
+                                {entry.djs.length}{" "}
+                                {entry.djs.length === 1 ? "DJ" : "DJs"}
+                              </Badge>
                             </div>
-                            <p className="text-sm font-semibold text-foreground">
-                              No DJs found in {entry.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1 max-w-xs mx-auto">
-                              Try searching with a different name or select another district.
-                            </p>
+
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                handleDistrictClick(0, districtId, entry.name)
+                              }
+                              className="h-8 text-xs text-muted-foreground hover:text-destructive gap-1.5"
+                            >
+                              <Icon path={mdiTrashCanOutline} size={0.65} />
+                              <span className="hidden sm:inline">
+                                Remove District
+                              </span>
+                            </Button>
                           </div>
-                        )}
-                      </div>
-                    );
-                  })}
+
+                          {/* District DJ Cards Grid or Skeleton Loading */}
+                          {entry.loading ? (
+                            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                              <DJCardSkeleton />
+                              <DJCardSkeleton />
+                            </div>
+                          ) : entry.djs.length > 0 ? (
+                            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                              {entry.djs.map((dj) => {
+                                const spinKey = `${districtId}-${dj.id}`;
+
+                                return (
+                                  <DJCard
+                                    key={spinKey}
+                                    id={dj.id}
+                                    name={dj.name}
+                                    location={dj.location}
+                                    topLocations={dj.topLocations}
+                                    campaignsCompleted={dj.campaignsCompleted}
+                                    audienceReach={dj.audienceReach}
+                                    rating={dj.rating}
+                                    tokensPerSpin={dj.tokensPerSpin}
+                                    spins={djSpins[spinKey as any] || 0}
+                                    onSpinsChange={(value) =>
+                                      setDjSpins((prev) => ({
+                                        ...prev,
+                                        [spinKey]: value,
+                                      }))
+                                    }
+                                    onRemove={() => removeDj(districtId, dj.id)}
+                                  />
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <div className="text-center py-10 rounded-xl border border-dashed border-border bg-card/30">
+                              <div className="flex justify-center mb-2">
+                                <Icon
+                                  path={mdiDiscAlert}
+                                  size={1.6}
+                                  className="text-muted-foreground/40"
+                                />
+                              </div>
+                              <p className="text-sm font-semibold text-foreground">
+                                No DJs found in {entry.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-1 max-w-xs mx-auto">
+                                Try searching with a different name or select
+                                another district.
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    },
+                  )}
 
                   {!hasSelectedDistricts && (
                     <div className="text-center py-14 rounded-xl border border-dashed border-border bg-card/40">
                       <div className="flex justify-center mb-3">
-                        <Icon path={mdiMapMarkerRadiusOutline} size={1.8} className="text-muted-foreground/40" />
+                        <Icon
+                          path={mdiMapMarkerRadiusOutline}
+                          size={1.8}
+                          className="text-muted-foreground/40"
+                        />
                       </div>
                       <h4 className="text-base font-semibold text-foreground">
                         No Districts Selected
                       </h4>
                       <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1">
-                        Click on any district pill in the clusters section above to load available DJs for your campaign.
+                        Click on any district pill in the clusters section above
+                        to load available DJs for your campaign.
                       </p>
                     </div>
                   )}
@@ -328,10 +368,17 @@ const CustomCampaign = () => {
                       {reachPercentage.toFixed(1)}% of goal
                     </span>
                   </div>
-                  <Progress value={reachPercentage} aria-label="Audience reach" className="h-2.5" />
+                  <Progress
+                    value={reachPercentage}
+                    aria-label="Audience reach"
+                    className="h-2.5"
+                  />
                   {totalAudienceReach && (
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>Target: {Number(totalAudienceReach).toLocaleString()} reach</span>
+                      <span>
+                        Target: {Number(totalAudienceReach).toLocaleString()}{" "}
+                        reach
+                      </span>
                       <span className="font-semibold text-foreground">
                         {reachValue.toLocaleString()} reached
                       </span>
@@ -351,7 +398,11 @@ const CustomCampaign = () => {
                         disabled={true}
                         onClick={() => setShowAutomateModal(true)}
                       >
-                        <Icon path={mdiFlash} size={0.75} className="text-purple-500" />
+                        <Icon
+                          path={mdiFlash}
+                          size={0.75}
+                          className="text-purple-500"
+                        />
                         Automate
                       </Button>
 
@@ -372,17 +423,24 @@ const CustomCampaign = () => {
                         <Icon path={mdiCalendarOutline} size={0.65} />
                         Start Date
                       </label>
-                      <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                      <Popover
+                        open={datePopoverOpen}
+                        onOpenChange={setDatePopoverOpen}
+                      >
                         <PopoverTrigger asChild>
                           <Button
                             type="button"
                             variant="outline"
                             className={cn(
                               "w-full md:w-[240px] h-11 justify-start text-left font-normal border-border bg-card dark:bg-card/50",
-                              !startDate && "text-muted-foreground"
+                              !startDate && "text-muted-foreground",
                             )}
                           >
-                            <Icon path={mdiCalendarOutline} size={0.75} className="mr-2 text-muted-foreground" />
+                            <Icon
+                              path={mdiCalendarOutline}
+                              size={0.75}
+                              className="mr-2 text-muted-foreground"
+                            />
                             {parsedStartDate ? (
                               format(parsedStartDate, "PPP")
                             ) : (
@@ -420,7 +478,9 @@ const CustomCampaign = () => {
                       {loadingCampaignCreation && (
                         <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-2" />
                       )}
-                      {loadingCampaignCreation ? "Creating Campaign..." : "Create Campaign"}
+                      {loadingCampaignCreation
+                        ? "Creating Campaign..."
+                        : "Create Campaign"}
                     </Button>
                   </div>
                 </div>
@@ -432,7 +492,9 @@ const CustomCampaign = () => {
                       type="button"
                       size="icon-lg"
                       className="size-16 rounded-full bg-primary text-primary-foreground shadow-lg hover:opacity-90 transition-all hover:scale-105"
-                      disabled={!campaignSongDetails?.artist || !hasSelectedDistricts}
+                      disabled={
+                        !campaignSongDetails?.artist || !hasSelectedDistricts
+                      }
                       onClick={() => setEditBeforeLaunchModal(true)}
                     >
                       <Icon path={mdiCart} size={1} />
@@ -473,7 +535,11 @@ const CustomCampaign = () => {
               return (
                 <div key={districtId} className="space-y-3">
                   <div className="flex items-center gap-2 pb-1 border-b border-border">
-                    <Icon path={mdiMapMarkerOutline} size={0.7} className="text-primary" />
+                    <Icon
+                      path={mdiMapMarkerOutline}
+                      size={0.7}
+                      className="text-primary"
+                    />
                     <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                       {entry.name}
                     </h4>

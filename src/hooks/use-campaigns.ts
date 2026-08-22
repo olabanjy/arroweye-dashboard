@@ -26,7 +26,6 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
 
   const [editMode, setEditMode] = useState(false);
 
-  const [copiedPin, setCopiedPin] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [isArchiving, setIsArchiving] = useState<number | null>(null);
 
@@ -81,12 +80,6 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
   const totalCount = campaignsData?.count ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
-  const handleCopyPin = useCallback((pin: string) => {
-    navigator.clipboard.writeText(pin);
-    setCopiedPin(pin);
-    setTimeout(() => setCopiedPin(null), 2000);
-  }, []);
-
   const handleArchiveSubmit = useCallback(
     async (projectId: number) => {
       try {
@@ -136,7 +129,6 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
     isLoading,
     isAdvertiser,
     userRole,
-    copiedPin,
     currentPage,
     totalPages,
     totalCount,
@@ -147,7 +139,6 @@ export const useCampaigns = ({ searchValue }: UseCampaignsProps) => {
     revenueFilter,
     setRevenueFilter,
     goToPage,
-    handleCopyPin,
     handleArchiveSubmit,
     editMode,
     setEditMode,

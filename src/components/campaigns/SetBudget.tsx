@@ -129,7 +129,7 @@ export default function SetBudget({
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    const callbackUrl = `${window.location.origin}/campaigns/setup?showModal=true`;
+    const callbackUrl = `${window.location.origin}/campaigns/setup/budget?showModal=true`;
     paymentInFlightRef.current = true;
     setIsInitiatingPayment(true);
 
@@ -171,7 +171,7 @@ export default function SetBudget({
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    router.push("/campaigns/setup?showModal=true");
+    router.push("/campaigns/setup/budget?showModal=true");
   };
 
   const handleSubmit = () => {
@@ -183,7 +183,6 @@ export default function SetBudget({
       }));
       // toast.error(termsError);
       return;
-      
     }
 
     return needsTopUp ? handleBuyToken() : handleContinue();

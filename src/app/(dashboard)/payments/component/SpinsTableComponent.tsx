@@ -391,12 +391,6 @@ const SpinsTableComponent: React.FC = () => {
     );
   };
 
-  const getSpinIntensity = (spins: number): string => {
-    const maxSpins = Math.max(...tableData.map((d) => d.spins));
-    const intensity = Math.max(0.08, spins / maxSpins);
-    return `rgba(230, 90, 40, ${0.08 + intensity * 0.22})`;
-  };
-
   const exportToCSV = (): void => {
     const headers = [
       "POSITION",
@@ -603,15 +597,7 @@ const SpinsTableComponent: React.FC = () => {
   return (
     <div className="bg-background text-foreground min-h-screen">
       {/* Header */}
-      <div className="flex justify-between items-center p-4 border-b">
-        <div className="flex items-center gap-4">
-          <img
-            src="https://res.cloudinary.com/dyueswnzk/image/upload/v1758701301/qkpawzztfn7c6osevfmm_1_4_x8h1iz_i2uebl.svg"
-            alt="Logo"
-            className="w-12 h-12"
-          />
-        </div>
-
+      <div className="flex justify-center items-center p-4">
         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -638,103 +624,26 @@ const SpinsTableComponent: React.FC = () => {
             />
           </PopoverContent>
         </Popover>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-lg"
-              aria-label="Open Arroweye tools"
-              className="text-muted-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground rounded-full active:scale-[0.97]"
-            >
-              <Grip className="size-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            sideOffset={10}
-            collisionPadding={16}
-            className="w-[360px] max-w-[calc(100vw-2rem)] rounded-2xl p-5"
-          >
-            <div className="grid grid-cols-3 gap-x-4 gap-y-5">
-              {menuItems.map((item: MenuItem) => (
-                <DropdownMenuItem key={item.name} asChild>
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="focus:bg-muted group flex cursor-pointer flex-col items-center rounded-xl p-2 text-center"
-                  >
-                    <span className="bg-muted/50 group-hover:bg-muted flex size-12 items-center justify-center rounded-xl transition-colors duration-150">
-                      <img
-                        src={item.img}
-                        alt=""
-                        className="size-9 object-contain"
-                      />
-                    </span>
-                    <span className="text-muted-foreground mt-1.5 text-xs font-semibold">
-                      {item.name}
-                    </span>
-                  </a>
-                </DropdownMenuItem>
-              ))}
-            </div>
-
-            <div className="bg-card mt-5 flex items-center rounded-xl border p-4">
-              <img
-                src="https://res.cloudinary.com/dyueswnzk/image/upload/v1758701617/r3o4deralgc2jl1y1xag_ynrxbj.webp"
-                alt="Vivo"
-                className="mr-4 h-24 w-14 rounded-md object-cover"
-              />
-              <div className="min-w-0 flex-1">
-                <div className="text-muted-foreground mb-1 text-[10px] font-semibold">
-                  ADS BY <span className="underline">VIVO</span>
-                </div>
-                <p className="text-sm leading-5">
-                  Stay in tune with the continent that makes the world dance
-                </p>
-                <div className="mt-3 flex gap-2">
-                  <Button asChild size="sm">
-                    <a
-                      href="https://butta.cocoa.house/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Subscribe
-                    </a>
-                  </Button>
-                  <Button asChild size="sm" variant="outline">
-                    <a
-                      href="https://open.spotify.com/playlist/3CVugIVKRAsTMQn0JeaP65?si=q_g3HBORS7GFNUdIC1BMDA&pi=qbbp4pmmSOCgF&nd=1&dlsi=d383ce1fced64d36"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Listen
-                    </a>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
       {/* Main Table */}
-      <div className="p-6">
-        <div className="mt-5 overflow-hidden rounded-xl border">
-          <Table className="min-w-[1100px]">
-            <TableHeader className="bg-muted/50">
-              <TableRow className="hover:bg-muted/50">
+      <div className="p-5">
+        <div className="overflow-x-auto">
+          <Table
+            className="min-w-[1100px] table-auto"
+            aria-label="DJ spins chart"
+          >
+            <TableHeader>
+              <TableRow className="rounded-2xl border-0 bg-[#31bc86] text-[16px] text-white hover:bg-[#31bc86]">
                 {tableHeaders.map((header) => (
                   <TableHead
                     key={header.label}
-                    className="h-14 px-4 text-center"
+                    className="h-auto px-4 py-[11px] text-center font-medium text-white"
                   >
                     <button
                       type="button"
                       onClick={() => handleSort(header.key)}
-                      className="mx-auto inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-bold tracking-wide uppercase outline-none transition-colors hover:text-orange-600 focus-visible:ring-2 focus-visible:ring-orange-500/30 active:scale-[0.97]"
+                      className="mx-auto inline-flex items-center gap-1.5 rounded-sm text-[16px] font-medium outline-none transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-white/70 active:scale-[0.98]"
                     >
                       {header.label}
                       {sortConfig.column === header.key ? (
@@ -747,7 +656,7 @@ const SpinsTableComponent: React.FC = () => {
                       ) : (
                         <ArrowUpDown
                           aria-hidden="true"
-                          className="text-muted-foreground size-3.5"
+                          className="size-3.5 text-white/75"
                         />
                       )}
                     </button>
@@ -757,41 +666,41 @@ const SpinsTableComponent: React.FC = () => {
             </TableHeader>
             <TableBody>
               {tableData.map((row: ChartData, idx: number) => (
-                <TableRow key={`${row.song}-${row.artist}-${idx}`}>
-                  <TableCell className="h-18 px-4 text-center text-sm">
+                <TableRow
+                  key={`${row.song}-${row.artist}-${idx}`}
+                  className="border-0 text-[16px] font-normal text-grey-900 hover:bg-transparent dark:text-foreground"
+                >
+                  <TableCell className="border-none bg-[#31bc86] px-4 py-1 text-center text-[16px] text-white">
                     {row.position}
                   </TableCell>
-                  <TableCell className="h-18 px-4 text-center text-sm">
-                    <div className="font-bold">{row.song.toUpperCase()}</div>
-                    <div className="text-muted-foreground mt-1 text-xs">
+                  <TableCell className="border border-grey-100 bg-[#f5f5f5] px-4 py-1 text-left text-[#212529] dark:border-border dark:bg-card dark:text-foreground">
+                    <div className="font-medium">{row.song.toUpperCase()}</div>
+                    <div className="mt-0.5 text-sm text-muted-foreground">
                       {row.artist.toUpperCase()}
                     </div>
                   </TableCell>
-                  <TableCell
-                    className="h-18 px-4 text-center text-sm font-semibold"
-                    style={{ background: getSpinIntensity(row.spins) }}
-                  >
+                  <TableCell className="border border-grey-100 bg-[#f5f5f5] px-4 py-1 text-center font-medium text-[#212529] dark:border-border dark:bg-card dark:text-foreground">
                     {row.spins}
                   </TableCell>
-                  <TableCell className="h-18 px-4 text-center text-sm">
+                  <TableCell className="border border-grey-100 bg-[#f5f5f5] px-4 py-1 text-center text-[#212529] dark:border-border dark:bg-card dark:text-foreground">
                     {row.lastWeek || "—"}
                   </TableCell>
-                  <TableCell className="h-18 px-4 text-center text-sm">
+                  <TableCell className="border border-grey-100 bg-[#f5f5f5] px-4 py-1 text-center text-[#212529] dark:border-border dark:bg-card dark:text-foreground">
                     {row.peak || "—"}
                   </TableCell>
-                  <TableCell className="h-18 px-4 text-center text-sm">
+                  <TableCell className="border border-grey-100 bg-[#f5f5f5] px-4 py-1 text-center text-[#212529] dark:border-border dark:bg-card dark:text-foreground">
                     {row.weeks || "—"}
                   </TableCell>
-                  <TableCell className="h-18 px-4 text-center text-sm">
+                  <TableCell className="border border-grey-100 bg-[#f5f5f5] px-4 py-1 text-center text-[#212529] dark:border-border dark:bg-card dark:text-foreground">
                     {getMovementPill(row.growth)}
                   </TableCell>
-                  <TableCell className="h-18 px-4 text-center text-sm">
+                  <TableCell className="border border-grey-100 bg-[#f5f5f5] px-4 py-1 text-center text-[#212529] dark:border-border dark:bg-card dark:text-foreground">
                     {getStatusPill(row.status)}
                   </TableCell>
-                  <TableCell className="h-18 px-4 text-center text-sm">
+                  <TableCell className="border border-grey-100 bg-[#f5f5f5] px-4 py-1 text-center text-[#212529] dark:border-border dark:bg-card dark:text-foreground">
                     {row.location.toUpperCase() || "—"}
                   </TableCell>
-                  <TableCell className="h-18 px-4 text-center text-sm">
+                  <TableCell className="border border-grey-100 bg-[#f5f5f5] px-4 py-1 text-center text-[#212529] dark:border-border dark:bg-card dark:text-foreground">
                     {row.dj.toUpperCase() || "—"}
                   </TableCell>
                 </TableRow>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import DashboardLayoutClient from "../(dashboard)/dashboard-layout-client";
 import SpinsTableComponent from "../(dashboard)/payments/component/SpinsTableComponent";
 
 export const metadata: Metadata = {
@@ -7,9 +8,11 @@ export const metadata: Metadata = {
 
 const SpinsChart = () => {
   return (
-    <div className="bg-background text-foreground min-h-screen">
-      <SpinsTableComponent />
-    </div>
+    <DashboardLayoutClient requireAuth={false}>
+      <div className="min-h-screen bg-background text-foreground">
+        <SpinsTableComponent />
+      </div>
+    </DashboardLayoutClient>
   );
 };
 
