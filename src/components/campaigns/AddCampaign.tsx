@@ -9,7 +9,7 @@ const AddCampaign = () => {
     <div className="fixed inset-0 z-10 lg:z-50 flex items-center justify-center bg-black bg-opacity-80">
       <div
         className="absolute top-10 right-5 lg:right-20 cursor-pointer"
-        onClick={() => router.push("/campaigns/setup")}
+        onClick={() => router.push("/campaigns/setup/budget")}
       >
         <X className="text-white lg:w-10 lg:h-10" />
       </div>

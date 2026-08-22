@@ -433,7 +433,7 @@ const CampaignsSidebarContent = () => {
 
                 {!isAdvertiser && (
                   <NavItem
-                    href="https://spins.arroweye.pro/"
+                    href="/create"
                     label="Market"
                     active={false}
                     icon={

@@ -139,6 +139,9 @@ const ProjectDetails = () => {
   const originalTitle = content?.title || "";
   const campaignTitle =
     content?.title || content?.song_title || content?.campaign?.song_title;
+  const isSubvendorAgent =
+    userLoggedInProfile?.business_type === "SubVendor" &&
+    userLoggedInProfile?.role === "Agent";
 
   React.useEffect(() => {
     if (campaignTitle) {
@@ -220,7 +223,15 @@ const ProjectDetails = () => {
           )}
 
           {isAdvertiser && <CampaignInsightAdvertiser content={content} />}
-          {/* <DropsList isAdvertiser={isAdvertiser} content={content} /> */}
+          {isSubvendorAgent && (
+            <div className="mb-[100px]">
+              <DropsList
+                isAdvertiser={isAdvertiser}
+                content={content}
+                onAssetsChanged={refreshContent}
+              />
+            </div>
+          )}
 
           <MemberInfoDialog
             selectedUser={selectedUser}

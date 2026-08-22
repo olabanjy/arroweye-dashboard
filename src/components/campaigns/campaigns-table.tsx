@@ -29,7 +29,6 @@ const PROJECT_HEADERS: TableHeader[] = [
   { content: "Label", align: "left" },
   { content: "Artist", align: "left" },
   { content: "Start Date", align: "left" },
-  { content: "Pin", align: "center" },
 ];
 
 const ADVERTISER_HEADERS: TableHeader[] = [
@@ -88,7 +87,6 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
     isLoading,
     isAdvertiser,
     userRole,
-    copiedPin,
     currentPage,
     totalPages,
     isArchiving,
@@ -98,7 +96,6 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
     revenueFilter,
     setRevenueFilter,
     goToPage,
-    handleCopyPin,
     handleArchiveSubmit,
     editMode,
     setEditMode,
@@ -128,14 +125,6 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
             item?.subvendor?.organization_name,
             item?.artist_name,
             item?.created?.slice(0, 10) || "2025-01-13",
-            <button
-              type="button"
-              className="w-[150px] cursor-pointer whitespace-nowrap rounded border border-gray-200 dark:border-border bg-white dark:bg-muted p-2 text-center font-medium text-black dark:text-foreground md:w-full"
-              key={`project-pin-${item.id ?? index}`}
-              onClick={() => handleCopyPin(String(item?.pin ?? ""))}
-            >
-              {copiedPin === String(item?.pin) ? "Copied!" : "Copy PIN"}
-            </button>,
             ...(isManager
               ? [
                   <Link
@@ -175,9 +164,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           ],
         })) ?? [],
     [
-      copiedPin,
       filteredContent,
-      handleCopyPin,
       isArchiving,
       isManager,
       setEditMode,

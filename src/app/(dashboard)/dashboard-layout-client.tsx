@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { useProtectedRoute } from "./hooks/use-protected-route";
 import ScrollToTopButton from "@/components/scroll-to-top-button";
 import { Skeleton } from "@/components/ui/skeleton";
+import CreateSidebar from "./create/create-sidebar";
 
 interface LayoutProps {
   children: ReactNode;
@@ -45,28 +46,38 @@ const DashboardLayoutClient: FC<LayoutProps> = ({
 }) => {
   const pathname = usePathname();
   const { isAuthenticated, isLoading } = useProtectedRoute(requireAuth);
+  const isSetupLanding =
+    pathname === "/create" || pathname === "/campaigns/setup";
 
   if (isLoading) {
     return (
       <div className="flex h-screen overflow-hidden">
         <div className="z-50">
-          <Sidebar />
+          {isSetupLanding ? <CreateSidebar /> : <Sidebar />}
         </div>
         <div
           id="dashboard-scroll-container"
-          className="flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow"
+          className={`flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow ${isSetupLanding ? "bg-white" : ""}`}
         >
-          <TopNav />
+          {!isSetupLanding && <TopNav />}
           <main
-            className={`w-full max-w-6xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
-              pathname !== "/campaigns/spins-notifications" &&
-              pathname !== "/campaigns/setup/custom" &&
-              pathname !== "/campaigns/setup/promoter"
-                ? "mx-[20px]"
-                : ""
-            } border-none rounded-xl mt-5`}
+            className={
+              isSetupLanding
+                ? "min-h-full w-full"
+                : `w-full max-w-6xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
+                    pathname !== "/campaigns/spins-notifications" &&
+                    pathname !== "/campaigns/setup/custom" &&
+                    pathname !== "/campaigns/setup/promoter"
+                      ? "mx-[20px]"
+                      : ""
+                  } border-none rounded-xl mt-5`
+            }
           >
-            <DashboardContentSkeleton />
+            {isSetupLanding ? (
+              <div className="min-h-screen bg-white" />
+            ) : (
+              <DashboardContentSkeleton />
+            )}
           </main>
           <ToastContainer />
         </div>
@@ -82,21 +93,25 @@ const DashboardLayoutClient: FC<LayoutProps> = ({
   return (
     <div className="flex h-screen overflow-hidden">
       <div className=" z-50">
-        <Sidebar />
+        {isSetupLanding ? <CreateSidebar /> : <Sidebar />}
       </div>
       <div
         id="dashboard-scroll-container"
-        className="flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow"
+        className={`flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow ${isSetupLanding ? "bg-white" : ""}`}
       >
-        <TopNav />
+        {!isSetupLanding && <TopNav />}
         <main
-          className={`w-full max-w-6xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
-            pathname !== "/campaigns/spins-notifications" &&
-            pathname !== "/campaigns/setup/custom" &&
-            pathname !== "/campaigns/setup/promoter"
-              ? "mx-[20px]"
-              : ""
-          } border-none rounded-xl mt-5`}
+          className={
+            isSetupLanding
+              ? "min-h-full w-full"
+              : `w-full max-w-6xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
+                  pathname !== "/campaigns/spins-notifications" &&
+                  pathname !== "/campaigns/setup/custom" &&
+                  pathname !== "/campaigns/setup/promoter"
+                    ? "mx-[20px]"
+                    : ""
+                } border-none rounded-xl mt-5`
+          }
         >
           {children}
         </main>

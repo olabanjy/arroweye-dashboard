@@ -2,23 +2,31 @@
 import React, { useEffect, useState } from "react";
 import { ContentItem } from "@/types/contents";
 import { NotificationCard } from "@/app/(dashboard)/campaigns/notifications/NotificationCard";
+import { DropzoneUploadDialog } from "@/app/(dashboard)/campaigns/notifications/dropzone-upload-dialog";
 import {
   isApiNotification,
   type NotificationByType,
 } from "@/types/notifications";
 import { useParams } from "next/navigation";
+import { UploadCloud } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface DropsListProps {
   isAdvertiser: boolean | null;
   content?: ContentItem | null;
+  onAssetsChanged?: () => void | Promise<void>;
 }
 
 type MainTab = "updates" | "drops";
 
-const DropsList: React.FC<DropsListProps> = ({ isAdvertiser, content }) => {
-  const [isUnlocked, setIsUnlocked] = useState(false);
+const DropsList: React.FC<DropsListProps> = ({
+  isAdvertiser,
+  content,
+  onAssetsChanged,
+}) => {
   const [dropzoneData, setDropzoneData] = useState<ContentItem | null>(null);
   const [activeMainTab, setActiveMainTab] = useState<MainTab>("drops");
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
 
   const params = useParams<{ id: string }>();
   const id = params?.id;
@@ -28,13 +36,11 @@ const DropsList: React.FC<DropsListProps> = ({ isAdvertiser, content }) => {
   };
 
   useEffect(() => {
-    if (content && !dropzoneData) {
-      setDropzoneData(content);
-    }
-  }, [content, dropzoneData]);
+    setDropzoneData(content ?? null);
+  }, [content]);
 
   useEffect(() => {
-    setDropzoneData(null);
+    setUploadDialogOpen(false);
   }, [id]);
 
   const renderContent = () => {
@@ -113,7 +119,7 @@ const DropsList: React.FC<DropsListProps> = ({ isAdvertiser, content }) => {
               }`}
               onClick={() => handleMainTabClick("drops")}
             >
-              Drops
+              Assets
             </p>
           </div>
         </div>
@@ -123,19 +129,36 @@ const DropsList: React.FC<DropsListProps> = ({ isAdvertiser, content }) => {
       </div>
 
       {/* Right Panel */}
-      {/* <div className="max-h-[800px] h-full overflow-y-auto scrollbar-hide border rounded-[8px] border-[#f4f0f0] p-[20px] hover:bg-green-500 hover:bg-opacity-5 hover:border hover:border-green-500">
-        {!isUnlocked ? (
-          <DropZoneInput
-            pin={pin}
-            setIsUnlocked={setIsUnlocked}
-            onUnlock={() => {
-              console.log("Unlocked!");
-            }}
-          />
-        ) : (
-          <DropForm setDropzoneData={setDropzoneData} />
-        )}
-      </div> */}
+      {isAdvertiser === false && (
+        <div className="flex min-h-52 flex-col items-center justify-center rounded-[8px] border border-dashed border-green-500/60 bg-green-500/5 p-6 text-center">
+          <span className="flex size-12 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300">
+            <UploadCloud className="size-6" />
+          </span>
+          <p className="mt-4 text-[18px] font-medium">Drop em!</p>
+          <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+            Add a Google Drive, Dropbox, WeTransfer, OneDrive, or pCloud link to
+            this campaign.
+          </p>
+          <Button
+            type="button"
+            className="mt-5 rounded-full bg-zinc-950 px-5 text-white hover:bg-orange-500 dark:bg-zinc-100 dark:text-zinc-950"
+            onClick={() => setUploadDialogOpen(true)}
+          >
+            Upload asset
+          </Button>
+        </div>
+      )}
+
+      {id && (
+        <DropzoneUploadDialog
+          open={uploadDialogOpen}
+          projectId={id}
+          onOpenChange={setUploadDialogOpen}
+          onUploaded={() => {
+            void onAssetsChanged?.();
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -57,7 +57,7 @@ const PromoterCampaign = () => {
     <>
       <div className="bg-[#F6F6F6] py-7 text-gray-950 dark:bg-background dark:text-foreground">
         <div className="flex justify-center items-center gap-2 mb-7">
-          <Link href="/campaigns/setup">
+          <Link href="/campaigns/setup/budget?showModal=true">
             <p className="text-[#A3A3A3] dark:text-muted-foreground">
               Set Budget
             </p>
