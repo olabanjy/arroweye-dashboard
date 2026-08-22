@@ -433,7 +433,7 @@ const CampaignsSidebarContent = () => {
 
                 {!isAdvertiser && (
                   <NavItem
-                    href="/create"
+                    href="/campaigns/setup"
                     label="Market"
                     active={false}
                     icon={
