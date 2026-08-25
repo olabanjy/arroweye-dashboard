@@ -83,7 +83,7 @@ export const useCustomSetup = () => {
   }, [clustersData]);
 
   // 2. Fetch Wallet via React Query
-  const { data: walletDetails } = useQuery({
+  const { data: walletDetails, refetch: refetchWallet } = useQuery({
     queryKey: ["wallet"],
     queryFn: getCampaignWallet,
   });
@@ -471,6 +471,7 @@ export const useCustomSetup = () => {
     campaignSongDetails,
     clusters,
     walletDetails,
+    refetchWallet,
     selectedClusterId,
     setSelectedClusterId,
     search,

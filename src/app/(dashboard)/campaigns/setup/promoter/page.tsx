@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,10 +13,29 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PromotionGrid } from "@/components/campaigns/PromotionGrid";
-import { BadgeCheck, LoaderCircle, RefreshCcw } from "lucide-react";
+import {
+  BadgeCheck,
+  CalendarDays,
+  LoaderCircle,
+  RefreshCcw,
+} from "lucide-react";
 import Link from "next/link";
+import { format } from "date-fns";
 import { usePromoterSetup } from "../../../../../hooks/use-promoter-setup";
 import { CampaignStats } from "../../_components/campaign-stats";
+import { useAuth } from "@/context/auth-session";
+import {
+  CampaignEmailField,
+  isValidCampaignEmail,
+} from "@/components/campaigns/campaign-email-field";
+import { InsufficientTokensDialog } from "@/components/campaigns/insufficient-tokens-dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 const PromoterCampaign = () => {
   const {
@@ -38,6 +57,7 @@ const PromoterCampaign = () => {
     campaignPayload,
     promotersData,
     walletDetails,
+    refetchWallet,
     isrc,
     setIsrc,
     validationError,
@@ -53,28 +73,65 @@ const PromoterCampaign = () => {
     handleSearch,
   } = usePromoterSetup();
 
+  const { user, userProfile } = useAuth();
+  const [email, setEmail] = useState("");
+  const [topUpDialogOpen, setTopUpDialogOpen] = useState(false);
+  const [checkedWalletBalance, setCheckedWalletBalance] = useState(0);
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+
+  useEffect(() => {
+    const accountEmail = user?.email || userProfile?.staff_email;
+    if (accountEmail) setEmail((currentEmail) => currentEmail || accountEmail);
+  }, [user?.email, userProfile?.staff_email]);
+
+  const isEmailValid = isValidCampaignEmail(email);
+  const parsedStartDate = startDate
+    ? new Date(`${startDate}T00:00:00`)
+    : undefined;
+
+  const handleCreateCampaign = async () => {
+    const walletResult = await refetchWallet();
+    const availableTokens =
+      Number(
+        walletResult.data?.available_balance ??
+          walletDetails?.available_balance,
+      ) || 0;
+
+    setCheckedWalletBalance(availableTokens);
+
+    if (totalTokens > availableTokens) {
+      setTopUpDialogOpen(true);
+      return;
+    }
+
+    await handleCreateCampaignDraft();
+  };
+
   return (
     <>
-      <div className="bg-[#F6F6F6] py-7 text-gray-950 dark:bg-background dark:text-foreground">
+      <div className="py-7 text-gray-950 dark:text-foreground">
         <div className="flex justify-center items-center gap-2 mb-7">
-          <Link href="/campaigns/setup/budget?showModal=true">
+          <Link href="/campaigns/setup/launch">
             <p className="text-[#A3A3A3] dark:text-muted-foreground">
-              Set Budget
+              Campaign Type
             </p>
           </Link>
           <div className="h-[1px] w-8 bg-[#A3A3A3] dark:bg-border" />
           <p>Launch Campaign</p>
         </div>
 
-        <Card className="mx-5 rounded-lg py-0 shadow-none">
+        <Card className="mx-5 border-none py-0 shadow-none">
           <CardContent className="px-5 py-8 lg:px-14">
-            <div className="grid grid-cols-1 gap-[20px] items-center">
+            <CampaignEmailField email={email} onChange={setEmail} />
+
+            <div className="mt-6 grid grid-cols-1 items-center gap-[20px]">
               <div className="relative">
                 <Input
                   value={isrc}
                   className="border-[#9D9A9A]"
                   type="text"
                   placeholder="ISRC / UPC"
+                  disabled={!isEmailValid}
                   onChange={(e) => setIsrc(e.target.value)}
                 />
                 {(loadingCampaignSong || isIsrcValidating) && (
@@ -174,21 +231,49 @@ const PromoterCampaign = () => {
                     </Button>
                   </div>
 
-                  {/* Date Input */}
-                  <div className="flex flex-col order-2 md:order-2 w-full md:w-auto">
-                    <label className="text-xs font-semibold tracking-wide text-gray-600 mb-1 md:mb-2 dark:text-muted-foreground">
-                      START DATE
+                  {/* Date Picker using Popover + Calendar */}
+                  <div className="order-2 flex w-full flex-col space-y-1.5 md:w-auto">
+                    <label className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                      <CalendarDays className="size-3.5" />
+                      Start Date
                     </label>
-                    <Input
-                      type="datetime-local"
-                      name="startDate"
-                      value={startDate}
-                      placeholder="01/01/2034"
-                      className="w-full md:w-[260px]"
-                      onChange={(e) =>
-                        setStartDate(e.target.value.split("T")[0])
-                      }
-                    />
+                    <Popover
+                      open={datePopoverOpen}
+                      onOpenChange={setDatePopoverOpen}
+                    >
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={cn(
+                            "h-11 w-full justify-start border-border bg-card text-left font-normal md:w-[240px] dark:bg-card/50",
+                            !startDate && "text-muted-foreground",
+                          )}
+                        >
+                          <CalendarDays className="mr-2 size-4 text-muted-foreground" />
+                          {parsedStartDate ? (
+                            format(parsedStartDate, "PPP")
+                          ) : (
+                            <span>Pick a start date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={parsedStartDate}
+                          onSelect={(date) => {
+                            setStartDate(
+                              date ? format(date, "yyyy-MM-dd") : "",
+                            );
+                            setDatePopoverOpen(false);
+                          }}
+                          disabled={(date) =>
+                            date < new Date(new Date().setHours(0, 0, 0, 0))
+                          }
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
 
                   {/* Launch CTA */}
@@ -197,11 +282,12 @@ const PromoterCampaign = () => {
                     className="order-3 h-11 w-full md:w-auto"
                     disabled={
                       loadingCampaignCreation ||
+                      !isEmailValid ||
                       !startDate ||
                       !campaignSongDetails?.artist ||
                       !totalAudienceReach
                     }
-                    onClick={handleCreateCampaignDraft}
+                    onClick={handleCreateCampaign}
                   >
                     {loadingCampaignCreation && (
                       <LoaderCircle className="animate-spin" />
@@ -273,6 +359,13 @@ const PromoterCampaign = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <InsufficientTokensDialog
+        open={topUpDialogOpen}
+        onOpenChange={setTopUpDialogOpen}
+        availableTokens={checkedWalletBalance}
+        requiredTokens={totalTokens}
+      />
     </>
   );
 };

@@ -39,10 +39,18 @@ const Table: React.FC<TableProps> = ({
   const columnCount = Math.max(headers.length, 1);
 
   return (
-    <div className={cn("overflow-x-auto", className)}>
-      <table className="w-full table-auto" aria-label={ariaLabel}>
+    <div
+      className={cn(
+        "overflow-x-auto rounded-[8px] border border-border bg-card",
+        className,
+      )}
+    >
+      <table
+        className="w-full table-auto text-foreground"
+        aria-label={ariaLabel}
+      >
         <thead>
-          <tr className="rounded-2xl bg-[#31bc86] text-[16px] text-white">
+          <tr className="rounded-2xl bg-[#31bc86] text-center text-[16px] text-white dark:bg-[#17954c]">
             {headers.map((header, index) => (
               <th
                 key={index}
@@ -64,7 +72,7 @@ const Table: React.FC<TableProps> = ({
             <tr>
               <td
                 colSpan={columnCount}
-                className="border border-grey-100 dark:border-border px-4 py-[11px] text-center text-grey-400 dark:text-muted-foreground"
+                className="border border-border px-4 py-[11px] text-center text-muted-foreground"
               >
                 {emptyState}
               </td>
@@ -74,7 +82,7 @@ const Table: React.FC<TableProps> = ({
               <tr
                 key={row.id ?? rowIndex}
                 className={cn(
-                  "text-[16px] font-normal text-grey-900 dark:text-foreground",
+                  "bg-card text-center text-[16px] font-normal text-foreground hover:bg-muted/70",
                   row.className,
                 )}
               >
@@ -82,10 +90,10 @@ const Table: React.FC<TableProps> = ({
                   <td
                     key={cellIndex}
                     className={cn(
-                      "border border-grey-100 dark:border-border px-4 py-[4px]",
+                      "border border-border px-4 py-[12px]",
                       highlightFirstCell && cellIndex === 0
-                        ? "border-none bg-[#31bc86] text-white"
-                        : "bg-[#f5f5f5] dark:bg-card text-[#212529] dark:text-foreground",
+                        ? "border-none bg-[#2ea879] text-white dark:bg-[#17954c]"
+                        : "border-none bg-muted/60 text-foreground",
                       getAlignmentClass(headers[cellIndex]?.align),
                     )}
                   >

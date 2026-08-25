@@ -46,7 +46,7 @@ export const usePromoterSetup = () => {
   }, [search]);
 
   // 2. Fetch Wallet via React Query
-  const { data: walletDetails } = useQuery({
+  const { data: walletDetails, refetch: refetchWallet } = useQuery({
     queryKey: ["wallet"],
     queryFn: getCampaignWallet,
   });
@@ -184,6 +184,7 @@ export const usePromoterSetup = () => {
     draftId,
     promotersData,
     walletDetails,
+    refetchWallet,
     isrc,
     setIsrc,
     validationError,

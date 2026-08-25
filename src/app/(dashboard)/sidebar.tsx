@@ -142,6 +142,42 @@ const SidebarLogo = () => {
   );
 };
 
+const MarketSidebarLogo = () => {
+  const { state, toggleSidebar } = useSidebar();
+  const isCollapsed = state === "collapsed";
+
+  return (
+    <button
+      type="button"
+      onClick={toggleSidebar}
+      aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+      className="group flex h-[146px] w-full items-start justify-center border-b border-sidebar-border pt-12 outline-none transition-all"
+    >
+      <span className="relative inline-flex h-[50px] items-center justify-center">
+        <span className="block transition-opacity group-hover:opacity-0">
+          <Image
+            src="/tools.svg"
+            alt="Market"
+            width={49}
+            height={28}
+            priority
+            className={cn(
+              "h-auto transition-[width] dark:invert",
+              isCollapsed ? "w-[38px]" : "w-[49px]",
+            )}
+          />
+        </span>
+
+        <span className="absolute inset-0 flex items-center justify-center text-[#17954c] opacity-0 transition-opacity group-hover:opacity-100">
+          <svg width={28} height={28} viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6,2H18A2,2 0 0,1 20,4V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2M6,8V16H10V8H6Z" />
+          </svg>
+        </span>
+      </span>
+    </button>
+  );
+};
+
 export const DropsIcon = ({
   className,
   size = 18,
@@ -339,6 +375,7 @@ const CampaignsSidebarContent = () => {
   const isSetupActive =
     pathname === "/campaigns/setup" ||
     pathname?.startsWith("/campaigns/setup/");
+  const isMarketLanding = pathname === "/campaigns/setup";
 
   const isActive = (path: string) => {
     return pathname === path || pathname?.startsWith(`${path}/`);
@@ -353,7 +390,7 @@ const CampaignsSidebarContent = () => {
         className="z-40 border-sidebar-border bg-sidebar text-sidebar-foreground"
       >
         <SidebarHeader className="p-0">
-          <SidebarLogo />
+          {isMarketLanding ? <MarketSidebarLogo /> : <SidebarLogo />}
         </SidebarHeader>
 
         <SidebarContent>
@@ -364,7 +401,7 @@ const CampaignsSidebarContent = () => {
 
             <SidebarGroupContent className="flex flex-1">
               <SidebarMenu className="h-full gap-[23px]">
-                {isAdvertiser && isCollapsed && (
+                {isAdvertiser && isCollapsed && !isMarketLanding && (
                   <NavItem
                     href="/campaigns/setup"
                     label="Create Campaign"
@@ -378,33 +415,38 @@ const CampaignsSidebarContent = () => {
                   href="/campaigns"
                   label="Campaigns"
                   active={
-                    isAdvertiser && isCollapsed
-                      ? isActive("/campaigns") && !isSetupActive
-                      : isActive("/campaigns")
+                    isMarketLanding
+                      ? false
+                      : isAdvertiser && isCollapsed
+                        ? isActive("/campaigns") && !isSetupActive
+                        : isActive("/campaigns")
                   }
                   icon={<Icon path={mdiFormatListBulletedType} size={0.75} />}
                 />
 
-                {isActive("/campaigns") && isAdvertiser && !isCollapsed && (
-                  <SidebarMenuSub>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive("/campaigns/setup")}
-                      >
-                        <Link href="/campaigns/setup">
-                          <MdAddCircleOutline
-                            size={SIDEBAR_SUB_ICON_SIZE}
-                            className="text-sidebar-foreground/70 size-[16px]!"
-                          />
-                          <span>Setup Campaign</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  </SidebarMenuSub>
-                )}
+                {isActive("/campaigns") &&
+                  isAdvertiser &&
+                  !isCollapsed &&
+                  !isMarketLanding && (
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          asChild
+                          isActive={isActive("/campaigns/setup")}
+                        >
+                          <Link href="/campaigns/setup">
+                            <MdAddCircleOutline
+                              size={SIDEBAR_SUB_ICON_SIZE}
+                              className="text-sidebar-foreground/70 size-[16px]!"
+                            />
+                            <span>Setup Campaign</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  )}
 
-                {!isAdvertiser && (
+                {!isAdvertiser && !isMarketLanding && (
                   <NavItem
                     href="/drops"
                     label="Drops"
@@ -431,11 +473,11 @@ const CampaignsSidebarContent = () => {
                   />
                 )}
 
-                {!isAdvertiser && (
+                {!isAdvertiser && !isMarketLanding && (
                   <NavItem
                     href="/campaigns/setup"
                     label="Market"
-                    active={false}
+                    active={isMarketLanding}
                     icon={
                       <Image
                         src="/tools.svg"

@@ -72,17 +72,20 @@ const DashboardLayoutClient: FC<LayoutProps> = ({
     requireAuth && !isPublicSetupLanding,
   );
   const isSetupLanding =
-    pathname === "/create" || pathname === "/campaigns/setup";
+    pathname === "/create" ||
+    pathname === "/campaigns/setup" ||
+    pathname === "/campaigns/setup/launch";
+  const useLogoOnlySidebar = pathname === "/create";
 
   if (isLoading) {
     return (
       <div className="flex h-screen overflow-hidden">
         <div className="z-50">
-          {isSetupLanding ? <CreateSidebar /> : <Sidebar />}
+          {useLogoOnlySidebar ? <CreateSidebar /> : <Sidebar />}
         </div>
         <div
           id="dashboard-scroll-container"
-          className={`flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow ${isSetupLanding ? "bg-white" : ""}`}
+          className={`flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow ${isSetupLanding ? "bg-background" : ""}`}
         >
           {!isSetupLanding && <TopNav />}
           <main
@@ -99,7 +102,7 @@ const DashboardLayoutClient: FC<LayoutProps> = ({
             }
           >
             {isSetupLanding ? (
-              <div className="min-h-screen bg-white" />
+              <div className="min-h-screen bg-background" />
             ) : (
               <DashboardContentSkeleton />
             )}
@@ -118,11 +121,11 @@ const DashboardLayoutClient: FC<LayoutProps> = ({
   return (
     <div className="flex h-screen overflow-hidden">
       <div className=" z-50">
-        {isSetupLanding ? <CreateSidebar /> : <Sidebar />}
+        {useLogoOnlySidebar ? <CreateSidebar /> : <Sidebar />}
       </div>
       <div
         id="dashboard-scroll-container"
-        className={`flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow ${isSetupLanding ? "bg-white" : ""}`}
+        className={`flex-1 flex flex-col overflow-y-scroll scrollbar-hide flex-grow ${isSetupLanding ? "bg-background" : ""}`}
       >
         {!isSetupLanding && <TopNav />}
         <main

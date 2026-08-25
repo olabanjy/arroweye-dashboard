@@ -163,13 +163,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
               : []),
           ],
         })) ?? [],
-    [
-      filteredContent,
-      isArchiving,
-      isManager,
-      setEditMode,
-      setIsArchiving,
-    ],
+    [filteredContent, isArchiving, isManager, setEditMode, setIsArchiving],
   );
 
   const advertiserRows = useMemo<TableRow[]>(
@@ -240,7 +234,7 @@ const Campaigns: React.FC<ProjectsProps> = ({ filterVisible, searchValue }) => {
           </Button>
         </div>
       )}
-      <div className="mt-5">
+      <div>
         {!isAdvertiser && (
           <Table
             aria-label="Campaign projects"

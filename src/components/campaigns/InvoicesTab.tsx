@@ -20,7 +20,7 @@ const InvoicesTab: React.FC = () => {
   return (
     <div className="lg:p-5 ">
       <div className=" ">
-        <div className="grid md:flex items-center gap-[20px] md:gap-10">
+        <div className="mb-4 grid items-center gap-[20px] md:flex md:gap-10">
           <div className="flex gap-5 items-center  ">
             <button
               className={`pb-2.5 text-[18px] transition-all duration-300 ${
@@ -59,7 +59,7 @@ const InvoicesTab: React.FC = () => {
                 type="button"
                 size="icon-lg"
                 aria-label={filter ? "Hide filters" : "Show filters"}
-                className="size-10 shrink-0 mt-2 self-center rounded-full"
+                className="size-10 shrink-0 self-center rounded-full"
                 onClick={() => setFilter(!filter)}
               >
                 <IoFilter />
