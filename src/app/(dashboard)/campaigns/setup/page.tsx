@@ -3,23 +3,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
 
 import { useAuth } from "@/context/auth-session";
 import { getCampaignWallet } from "@/services";
+import SecurityFraudSection from "./security-fraud-section";
 
 const featureCards = [
   {
-    title: "Connect with trusted DJs",
+    step: 1,
+    title: "Discover DJs",
     image: "/setup-dj.webp",
-    showAddIcon: true,
   },
   {
-    title: "Track every verified play",
+    step: 2,
+    title: "Build your campaign",
     image: "/setup-track.webp",
   },
   {
-    title: "Optimize in real time",
+    step: 3,
+    title: "Fund and launch",
     image: "/setup-optimize.webp",
   },
 ];
@@ -49,7 +51,7 @@ export default function CreateContent() {
 
   return (
     <div className="flex min-h-full items-center justify-center bg-white px-4 py-10 text-black sm:px-8">
-      <div className="mx-auto w-full max-w-[620px]">
+      <div className="mx-auto w-full max-w-5xl">
         <header className="text-center">
           <h1 className="text-[25px] font-semibold leading-tight tracking-[-0.025em] sm:text-[27px]">
             Good Morning{isAuthenticated ? `, ${firstName}` : ""}!
@@ -94,25 +96,19 @@ export default function CreateContent() {
             {featureCards.map((card) => (
               <article
                 key={card.title}
-                className="group relative h-[126px] overflow-hidden rounded-[4px] bg-[#d7d7d7]"
+                className="group relative aspect-video overflow-hidden rounded-[4px] bg-[#d7d7d7]"
               >
                 <Image
                   src={card.image}
                   alt=""
                   fill
-                  sizes="(max-width: 639px) 100vw, 198px"
+                  sizes="(max-width: 639px) 100vw, (max-width: 1023px) 33vw, 320px"
                   className="object-cover transition-transform duration-200 ease-out group-hover:scale-[1.025]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-black/5" />
-                {card.showAddIcon && (
-                  <span className="absolute right-3 top-4 flex size-[22px] items-center justify-center rounded-full bg-white text-black shadow-sm">
-                    <Plus
-                      aria-hidden="true"
-                      className="size-3.5"
-                      strokeWidth={2}
-                    />
-                  </span>
-                )}
+                <span className="absolute right-3 top-4 flex size-[22px] items-center justify-center rounded-full bg-white text-[11px] font-semibold text-black shadow-sm">
+                  {card.step}
+                </span>
                 <h3 className="absolute inset-x-[10px] bottom-[10px] text-[12px] font-semibold leading-tight text-white">
                   {card.title}
                 </h3>
@@ -139,6 +135,8 @@ export default function CreateContent() {
             </article>
           ))}
         </section>
+
+        <SecurityFraudSection />
 
         <section
           className="mt-[35px] text-center"

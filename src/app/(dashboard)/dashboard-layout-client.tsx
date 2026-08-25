@@ -73,12 +73,13 @@ const DashboardLayoutClient: FC<LayoutProps> = ({
   );
   const isSetupLanding =
     pathname === "/create" || pathname === "/campaigns/setup";
+  const useLogoOnlySidebar = pathname === "/create";
 
   if (isLoading) {
     return (
       <div className="flex h-screen overflow-hidden">
         <div className="z-50">
-          {isSetupLanding ? <CreateSidebar /> : <Sidebar />}
+          {useLogoOnlySidebar ? <CreateSidebar /> : <Sidebar />}
         </div>
         <div
           id="dashboard-scroll-container"
@@ -118,7 +119,7 @@ const DashboardLayoutClient: FC<LayoutProps> = ({
   return (
     <div className="flex h-screen overflow-hidden">
       <div className=" z-50">
-        {isSetupLanding ? <CreateSidebar /> : <Sidebar />}
+        {useLogoOnlySidebar ? <CreateSidebar /> : <Sidebar />}
       </div>
       <div
         id="dashboard-scroll-container"
