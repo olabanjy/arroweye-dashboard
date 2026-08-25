@@ -153,17 +153,27 @@ const MarketSidebarLogo = () => {
       aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       className="group flex h-[146px] w-full items-start justify-center border-b border-sidebar-border pt-12 outline-none transition-all"
     >
-      <Image
-        src="/tools.svg"
-        alt="Market"
-        width={49}
-        height={28}
-        priority
-        className={cn(
-          "h-auto transition-[width,opacity] group-hover:opacity-65 dark:invert",
-          isCollapsed ? "w-[38px]" : "w-[49px]",
-        )}
-      />
+      <span className="relative inline-flex h-[50px] items-center justify-center">
+        <span className="block transition-opacity group-hover:opacity-0">
+          <Image
+            src="/tools.svg"
+            alt="Market"
+            width={49}
+            height={28}
+            priority
+            className={cn(
+              "h-auto transition-[width] dark:invert",
+              isCollapsed ? "w-[38px]" : "w-[49px]",
+            )}
+          />
+        </span>
+
+        <span className="absolute inset-0 flex items-center justify-center text-[#17954c] opacity-0 transition-opacity group-hover:opacity-100">
+          <svg width={28} height={28} viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6,2H18A2,2 0 0,1 20,4V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2M6,8V16H10V8H6Z" />
+          </svg>
+        </span>
+      </span>
     </button>
   );
 };

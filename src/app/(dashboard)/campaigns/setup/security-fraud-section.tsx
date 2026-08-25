@@ -176,14 +176,14 @@ const OfflineFlowLine = ({
   active: boolean;
   tone?: "blue" | "green";
 }) => (
-  <span className="relative h-11 w-0.5 shrink-0 overflow-hidden bg-[#d9d9d9] sm:h-0.5 sm:min-w-6 sm:flex-1">
+  <span className="relative h-11 w-0.5 shrink-0 overflow-hidden rounded-full bg-border dark:bg-white/20 sm:h-0.5 sm:min-w-6 sm:flex-1">
     <span
       className={`absolute left-1/2 -translate-x-1/2 transition-[top] ease-linear motion-reduce:transition-none sm:hidden ${
         active ? "top-full duration-500" : "-top-5 duration-0"
       } ${
         tone === "green"
-          ? "size-3.5 rounded-full bg-[#05b894]"
-          : "h-5 w-1 rounded-full bg-gradient-to-b from-transparent via-[#4285f4] to-transparent"
+          ? "size-3.5 rounded-full bg-[#05b894] shadow-[0_0_12px_rgba(5,184,148,0.75)]"
+          : "h-5 w-1 rounded-full bg-gradient-to-b from-transparent via-[#4285f4] to-transparent shadow-[0_0_10px_rgba(66,133,244,0.65)]"
       }`}
     />
     <span
@@ -191,8 +191,8 @@ const OfflineFlowLine = ({
         active ? "left-full duration-500" : "-left-8 duration-0"
       } ${
         tone === "green"
-          ? "top-1/2 size-3.5 -translate-y-1/2 rounded-full bg-[#05b894]"
-          : "inset-y-[-1px] w-8 rounded-full bg-gradient-to-r from-transparent via-[#4285f4] to-transparent"
+          ? "top-1/2 size-3.5 -translate-y-1/2 rounded-full bg-[#05b894] shadow-[0_0_12px_rgba(5,184,148,0.75)]"
+          : "inset-y-[-1px] w-8 rounded-full bg-gradient-to-r from-transparent via-[#4285f4] to-transparent shadow-[0_0_10px_rgba(66,133,244,0.65)]"
       }`}
     />
   </span>
@@ -211,7 +211,11 @@ const OfflineFlowCube = ({
   const isGreen = tone === "green";
 
   return (
-    <span className="relative block size-[62px] shrink-0">
+    <span
+      className={`relative block size-[62px] shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transform-none motion-reduce:transition-none ${
+        active ? "scale-[1.03]" : "scale-100"
+      }`}
+    >
       <span
         className={`absolute inset-0 z-10 grid place-items-center border transition-colors duration-300 ${
           isVerified
@@ -219,8 +223,8 @@ const OfflineFlowCube = ({
               ? "border-[#048f73] bg-[#05b894] text-white"
               : "border-[#2563eb] bg-[#4285f4] text-white"
             : active
-              ? "border-[#bdbdbd] bg-[#efefef] text-[#888888]"
-              : "border-[#bdbdbd] bg-[#e8e8e8] text-[#888888]"
+              ? "border-border bg-muted text-muted-foreground dark:border-zinc-400/60 dark:bg-zinc-700 dark:text-zinc-200"
+              : "border-border bg-muted text-muted-foreground dark:border-zinc-400/60 dark:bg-zinc-700 dark:text-zinc-300"
         }`}
       >
         {final ? (
@@ -246,8 +250,8 @@ const OfflineFlowCube = ({
               ? "border-[#048f73] bg-[#05b894]"
               : "border-[#3d7ceb] bg-[#63a0ff]"
             : active
-              ? "border-[#cfcfcf] bg-[#fafafa]"
-              : "border-[#cfcfcf] bg-[#f5f5f5]"
+              ? "border-border bg-background dark:border-zinc-400/60 dark:bg-zinc-500"
+              : "border-border bg-background dark:border-zinc-400/60 dark:bg-zinc-500"
         }`}
       />
       <span
@@ -257,8 +261,8 @@ const OfflineFlowCube = ({
               ? "border-[#048f73] bg-[#05b894]"
               : "border-[#255bb6] bg-[#2f69cb]"
             : active
-              ? "border-[#bdbdbd] bg-[#dddddd]"
-              : "border-[#bdbdbd] bg-[#d4d4d4]"
+              ? "border-border bg-muted dark:border-zinc-400/60 dark:bg-zinc-800"
+              : "border-border bg-muted dark:border-zinc-400/60 dark:bg-zinc-800"
         }`}
       />
     </span>
@@ -333,7 +337,7 @@ const SecurityDialogVisual = ({
                 className={`size-9 transition-colors sm:size-14 ${
                   isSelected
                     ? "animate-in fill-[#f31285] text-[#f31285] zoom-in-50 duration-300"
-                    : "fill-[#e5e5e5] text-[#e5e5e5]"
+                    : "fill-muted text-muted"
                 }`}
                 aria-hidden="true"
               />
@@ -352,7 +356,9 @@ const SecurityDialogVisual = ({
       >
         <MapPin
           className={`size-10 shrink-0 transition-[color,transform] duration-300 sm:size-[60px] ${
-            stage >= 5 ? "scale-105 text-[#05b894]" : "text-[#d5d5d5]"
+            stage >= 5
+              ? "scale-105 text-[#05b894]"
+              : "text-muted-foreground/50 dark:text-zinc-400"
           }`}
         />
         <OfflineFlowLine active={stage === 1} tone="green" />
@@ -368,17 +374,19 @@ const SecurityDialogVisual = ({
       className="mx-auto mt-6 mb-10 flex w-full max-w-[680px] flex-col items-center gap-4 px-1 sm:flex-row sm:gap-7"
       aria-hidden="true"
     >
-      <WifiOff className="size-10 shrink-0 text-[#d5d5d5] sm:size-[60px]" />
+      <WifiOff className="size-10 shrink-0 text-muted-foreground/50 dark:text-zinc-400 sm:size-[60px]" />
       <OfflineFlowLine active={stage === 1} />
       <OfflineFlowCube active={stage >= 2} />
       <OfflineFlowLine active={stage === 3} />
       <span
         className={`relative shrink-0 transition-[color,transform] duration-300 ${
-          stage >= 4 ? "scale-105 text-[#4285f4]" : "text-[#d5d5d5]"
+          stage >= 4
+            ? "scale-105 text-[#4285f4]"
+            : "text-muted-foreground/50 dark:text-zinc-400"
         }`}
       >
         <Wifi className="size-10 sm:size-[60px]" />
-        <ArrowUpDown className="absolute -right-2 -bottom-1 size-5 fill-white sm:size-6" />
+        <ArrowUpDown className="absolute -right-2 -bottom-1 size-5 fill-background sm:size-6" />
       </span>
       <OfflineFlowLine active={stage === 5} />
       <OfflineFlowCube final active={stage >= 6} />
@@ -400,13 +408,13 @@ const SecurityFeatureDialog = ({
       showCloseButton={false}
       overlayClassName="bg-black/45 backdrop-blur-[2px]"
       aria-describedby="security-feature-dialog-description"
-      className="max-h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] max-w-[850px] gap-0 overflow-y-auto bg-white px-6 py-9 text-black shadow-[0_20px_60px_rgba(0,0,0,0.25)] ring-0 sm:max-w-[850px] sm:px-10 sm:py-10"
+      className="max-h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] max-w-[850px] gap-0 overflow-y-auto bg-popover px-6 py-9 text-popover-foreground shadow-[0_20px_60px_rgba(0,0,0,0.25)] ring-0 sm:max-w-[850px] sm:px-10 sm:py-10"
     >
       <DialogClose asChild>
         <button
           type="button"
           aria-label={`Close ${feature.title} details`}
-          className="absolute top-6 right-6 grid size-10 place-items-center rounded-[10px] text-black transition-colors hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+          className="absolute top-6 right-6 grid size-10 place-items-center rounded-[10px] text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           <X className="size-6" aria-hidden="true" />
         </button>
@@ -426,7 +434,7 @@ const SecurityFeatureDialog = ({
         {feature.dialogDescription}
       </DialogDescription>
 
-      <ul className="mt-8 space-y-2 text-[15px] leading-tight text-[#333333] sm:text-[17px]">
+      <ul className="mt-8 space-y-2 text-[15px] leading-tight text-foreground sm:text-[17px]">
         {feature.dialogBenefits.map((benefit) => (
           <li key={benefit} className="flex items-start gap-4">
             <CheckCircle2
@@ -468,11 +476,11 @@ export default function SecurityFraudSection() {
 
   return (
     <section
-      className="mt-14 bg-white text-left"
+      className="mt-14 bg-background text-left text-foreground"
       aria-labelledby="security-fraud-title"
     >
       <div className="grid gap-7 lg:grid-cols-2 lg:items-center">
-        <div className="relative min-h-[400px] overflow-hidden rounded-[8px] bg-[#ececec]">
+        <div className="relative min-h-[400px] overflow-hidden rounded-[8px] bg-muted">
           <Image
             key={activeFeature.image}
             src={activeFeature.image}
@@ -486,7 +494,7 @@ export default function SecurityFraudSection() {
             type="button"
             onClick={() => setIsFeatureDialogOpen(true)}
             aria-label={`Open ${activeFeature.title} details`}
-            className="absolute bottom-4 left-4 grid size-[60px] place-items-center rounded-full bg-white shadow-[0_8px_20px_rgba(0,0,0,0.18)] outline-none focus-visible:ring-2 focus-visible:ring-[#2f80ed] focus-visible:ring-offset-2"
+            className="absolute bottom-4 left-4 grid size-[60px] place-items-center rounded-full bg-background shadow-[0_8px_20px_rgba(0,0,0,0.18)] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <span className="absolute inset-0 animate-ping rounded-full border border-white/70" />
             <span className="absolute inset-0 animate-ping rounded-full border border-white/70 [animation-delay:800ms]" />
@@ -506,7 +514,7 @@ export default function SecurityFraudSection() {
             Security and fraud detection
           </p>
 
-          <div className="overflow-hidden rounded-[8px] border border-[#cccccc]">
+          <div className="overflow-hidden rounded-[8px] border border-border">
             {securityFeatures.map((feature, index) => {
               const isActive = activeIndex === index;
               const FeatureIcon = feature.icon;
@@ -514,23 +522,23 @@ export default function SecurityFraudSection() {
               return (
                 <article
                   key={feature.title}
-                  className="border-b border-[#dddddd] last:border-b-0"
+                  className="border-b border-border last:border-b-0"
                 >
                   <button
                     type="button"
-                    className="flex w-full items-center gap-2.5 bg-white px-5 py-[15px] text-left transition-colors hover:bg-[#f9f9f9] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-black"
+                    className="flex w-full items-center gap-2.5 bg-card px-5 py-[15px] text-left transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
                     aria-expanded={isActive}
                     aria-controls={`security-feature-${index}`}
                     onClick={() => setActiveIndex(index)}
                   >
-                    <span className="flex size-[30px] shrink-0 items-center justify-center rounded-full bg-black text-[12px] font-bold text-white">
+                    <span className="flex size-[30px] shrink-0 items-center justify-center rounded-full bg-primary text-[12px] font-bold text-primary-foreground">
                       {index + 1}
                     </span>
-                    <span className="min-w-0 flex-1 text-[14px] font-semibold text-black">
+                    <span className="min-w-0 flex-1 text-[14px] font-semibold text-card-foreground">
                       {feature.title}
                     </span>
                     <ChevronDown
-                      className={`size-4 shrink-0 text-black transition-transform duration-300 ${
+                      className={`size-4 shrink-0 text-card-foreground transition-transform duration-300 ${
                         isActive ? "rotate-180" : ""
                       }`}
                       aria-hidden="true"
@@ -539,7 +547,7 @@ export default function SecurityFraudSection() {
 
                   <div
                     id={`security-feature-${index}`}
-                    className={`grid bg-[#fafafa] transition-[grid-template-rows] duration-300 ease-out ${
+                    className={`grid bg-muted/40 transition-[grid-template-rows] duration-300 ease-out ${
                       isActive ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
                     }`}
                   >
@@ -556,7 +564,7 @@ export default function SecurityFraudSection() {
                             Verified protection
                           </span>
                         </div>
-                        <p className="text-[13px] leading-[1.6] text-[#333333]">
+                        <p className="text-[13px] leading-[1.6] text-foreground">
                           {feature.description}
                         </p>
 
@@ -570,7 +578,7 @@ export default function SecurityFraudSection() {
                                 href={link.href}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-[13px] text-[#0076df] underline-offset-4 hover:text-[#088bff] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0076df]"
+                                className="inline-flex items-center gap-1 text-[13px] text-primary underline-offset-4 hover:text-primary/80 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                               >
                                 {link.label}
                                 <LinkIcon

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Icon from "@mdi/react";
 import {
   mdiCalendarOutline,
@@ -43,6 +43,12 @@ import Link from "next/link";
 import { useCustomSetup } from "../../../../../hooks/use-custom-setup";
 import { CampaignStats } from "../../_components/campaign-stats";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/auth-session";
+import {
+  CampaignEmailField,
+  isValidCampaignEmail,
+} from "@/components/campaigns/campaign-email-field";
+import { InsufficientTokensDialog } from "@/components/campaigns/insufficient-tokens-dialog";
 
 const CustomCampaign = () => {
   const {
@@ -52,6 +58,7 @@ const CustomCampaign = () => {
     campaignSongDetails,
     clusters,
     walletDetails,
+    refetchWallet,
     selectedClusterId,
     search,
     setSearch,
@@ -83,7 +90,18 @@ const CustomCampaign = () => {
     hasCreatedDraft,
   } = useCustomSetup();
 
+  const { user, userProfile } = useAuth();
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [topUpDialogOpen, setTopUpDialogOpen] = useState(false);
+  const [checkedWalletBalance, setCheckedWalletBalance] = useState(0);
+
+  useEffect(() => {
+    const accountEmail = user?.email || userProfile?.staff_email;
+    if (accountEmail) setEmail((currentEmail) => currentEmail || accountEmail);
+  }, [user?.email, userProfile?.staff_email]);
+
+  const isEmailValid = isValidCampaignEmail(email);
 
   const isSongVerified = Boolean(
     campaignSongDetails?.artist &&
@@ -105,16 +123,34 @@ const CustomCampaign = () => {
     return isNaN(d.getTime()) ? undefined : d;
   }, [startDate]);
 
+  const handleCreateCampaign = async () => {
+    const walletResult = await refetchWallet();
+    const availableTokens =
+      Number(
+        walletResult.data?.available_balance ??
+          walletDetails?.available_balance,
+      ) || 0;
+
+    setCheckedWalletBalance(availableTokens);
+
+    if (totalTokens > availableTokens) {
+      setTopUpDialogOpen(true);
+      return;
+    }
+
+    await handleCreateCampaignDraft();
+  };
+
   return (
     <>
       <div className="h-max py-7 bg-transparent text-gray-950 dark:text-foreground">
         {/* Stepper Navigation */}
         <div className="flex justify-center items-center gap-2 mb-7 text-sm">
           <Link
-            href="/campaigns/setup/budget?showModal=true"
+            href="/campaigns/setup/launch"
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
-            Set Budget
+            Campaign Type
           </Link>
           <div className="h-px w-8 bg-border" />
           <span className="text-foreground font-semibold">Launch Campaign</span>
@@ -122,6 +158,8 @@ const CustomCampaign = () => {
 
         <Card className="mx-4 sm:mx-6 rounded-xl border-0 bg-transparent py-0 shadow-none">
           <CardContent className="px-2 sm:px-6 lg:px-10 py-6 space-y-8">
+            <CampaignEmailField email={email} onChange={setEmail} />
+
             {/* Song ISRC Input & Preview */}
             <div className="space-y-3">
               <div className="relative">
@@ -130,6 +168,7 @@ const CustomCampaign = () => {
                   className="h-12 text-sm border-border bg-card dark:bg-card/50 pl-4 pr-10"
                   type="text"
                   placeholder="ISRC / UPC"
+                  disabled={!isEmailValid}
                   onChange={(e) => setIsrc(e.target.value)}
                 />
                 <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center">
@@ -473,7 +512,7 @@ const CustomCampaign = () => {
                       type="button"
                       className="order-3 h-11 w-full md:w-auto px-6 font-semibold"
                       disabled={!isReadyToCreate}
-                      onClick={handleCreateCampaignDraft}
+                      onClick={handleCreateCampaign}
                     >
                       {loadingCampaignCreation && (
                         <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-2" />
@@ -616,6 +655,13 @@ const CustomCampaign = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <InsufficientTokensDialog
+        open={topUpDialogOpen}
+        onOpenChange={setTopUpDialogOpen}
+        availableTokens={checkedWalletBalance}
+        requiredTokens={totalTokens}
+      />
     </>
   );
 };
