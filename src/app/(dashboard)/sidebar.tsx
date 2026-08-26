@@ -401,7 +401,7 @@ const CampaignsSidebarContent = () => {
 
             <SidebarGroupContent className="flex flex-1">
               <SidebarMenu className="h-full gap-[23px]">
-                {isAdvertiser && isCollapsed && !isMarketLanding && (
+                {isAdvertiser && isCollapsed && (
                   <NavItem
                     href="/campaigns/setup"
                     label="Create Campaign"
@@ -415,38 +415,33 @@ const CampaignsSidebarContent = () => {
                   href="/campaigns"
                   label="Campaigns"
                   active={
-                    isMarketLanding
-                      ? false
-                      : isAdvertiser && isCollapsed
-                        ? isActive("/campaigns") && !isSetupActive
-                        : isActive("/campaigns")
+                    isAdvertiser && isCollapsed
+                      ? isActive("/campaigns") && !isSetupActive
+                      : isActive("/campaigns")
                   }
                   icon={<Icon path={mdiFormatListBulletedType} size={0.75} />}
                 />
 
-                {isActive("/campaigns") &&
-                  isAdvertiser &&
-                  !isCollapsed &&
-                  !isMarketLanding && (
-                    <SidebarMenuSub>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          asChild
-                          isActive={isActive("/campaigns/setup")}
-                        >
-                          <Link href="/campaigns/setup">
-                            <MdAddCircleOutline
-                              size={SIDEBAR_SUB_ICON_SIZE}
-                              className="text-sidebar-foreground/70 size-[16px]!"
-                            />
-                            <span>Setup Campaign</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  )}
+                {isActive("/campaigns") && isAdvertiser && !isCollapsed && (
+                  <SidebarMenuSub>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton
+                        asChild
+                        isActive={isActive("/campaigns/setup")}
+                      >
+                        <Link href="/campaigns/setup">
+                          <MdAddCircleOutline
+                            size={SIDEBAR_SUB_ICON_SIZE}
+                            className="text-sidebar-foreground/70 size-[16px]!"
+                          />
+                          <span>Setup Campaign</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                )}
 
-                {!isAdvertiser && !isMarketLanding && (
+                {!isAdvertiser && (
                   <NavItem
                     href="/drops"
                     label="Drops"

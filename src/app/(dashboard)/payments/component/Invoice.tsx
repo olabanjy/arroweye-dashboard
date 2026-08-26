@@ -276,7 +276,11 @@ const Invoice = ({ amountFilter, statusFilter, searchText }: any) => {
                   {item.status}
                 </div>
               ),
-              className: `border-none text-center text-black dark:text-white ${item.status === "Unpaid" ? "bg-destructive" : "bg-emerald-100 dark:bg-emerald-500/20"}`,
+              className: `border-none text-center ${
+                item.status === "Unpaid"
+                  ? "bg-destructive text-white"
+                  : "bg-emerald-100 text-black dark:bg-emerald-500/20 dark:text-white"
+              }`,
             },
             {
               content: (
