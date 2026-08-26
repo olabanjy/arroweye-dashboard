@@ -2,23 +2,23 @@
 
 import Image from "next/image";
 import Icon from "@mdi/react";
-import { mdiHeart, mdiHomeMapMarker, mdiWifiOff } from "@mdi/js";
 import {
-  ArrowDownCircle,
-  ArrowUpDown,
-  Check,
-  CheckCircle2,
-  ChevronDown,
-  Download,
-  ExternalLink,
-  Heart,
-  MapPin,
-  Music2,
-  Wifi,
-  WifiOff,
-  X,
-  type LucideIcon,
-} from "lucide-react";
+  mdiArrowDownCircleOutline,
+  mdiArrowUpDown,
+  mdiCheck,
+  mdiCheckCircleOutline,
+  mdiChevronDown,
+  mdiClose,
+  mdiDownload,
+  mdiHeart,
+  mdiHeartOutline,
+  mdiHomeMapMarker,
+  mdiMapMarkerOutline,
+  mdiMusicNote,
+  mdiOpenInNew,
+  mdiWifi,
+  mdiWifiOff,
+} from "@mdi/js";
 import { useEffect, useState } from "react";
 import {
   Dialog,
@@ -31,7 +31,7 @@ import {
 type SecurityLink = {
   label: string;
   href: string;
-  icon: LucideIcon;
+  iconPath: string;
 };
 
 type SecurityFeature = {
@@ -40,7 +40,7 @@ type SecurityFeature = {
   image: string;
   accentClassName: string;
   linkClassName: string;
-  icon: LucideIcon;
+  iconPath: string;
   sideIconPath: string;
   links: SecurityLink[];
   dialogTitle: string;
@@ -60,13 +60,13 @@ const securityFeatures: SecurityFeature[] = [
     accentClassName: "text-[#2f80ed]",
     linkClassName:
       "text-[#0076df] hover:text-[#088bff] focus-visible:outline-[#0076df]",
-    icon: WifiOff,
+    iconPath: mdiWifiOff,
     sideIconPath: mdiWifiOff,
     links: [
       {
         label: "Marketplace",
         href: "https://arroweye.shop/",
-        icon: ExternalLink,
+        iconPath: mdiOpenInNew,
       },
     ],
     dialogTitle: "Poor connectivity shouldn't cost you campaign data.",
@@ -82,12 +82,12 @@ const securityFeatures: SecurityFeature[] = [
       {
         label: "Download for iPhone",
         href: "https://apps.apple.com/us/app/spins-pro/id6756712903",
-        icon: ArrowDownCircle,
+        iconPath: mdiArrowDownCircleOutline,
       },
       {
         label: "Download for Android",
         href: "https://play.google.com/store/apps/details?id=com.arroweye.spins",
-        icon: ArrowDownCircle,
+        iconPath: mdiArrowDownCircleOutline,
       },
     ],
     dialogVisual: "offline",
@@ -101,18 +101,18 @@ const securityFeatures: SecurityFeature[] = [
     accentClassName: "text-[#00b894]",
     linkClassName:
       "text-[#048f73] hover:text-[#00b894] focus-visible:outline-[#048f73]",
-    icon: MapPin,
+    iconPath: mdiMapMarkerOutline,
     sideIconPath: mdiHomeMapMarker,
     links: [
       {
         label: "Download for iPhone",
         href: "https://apps.apple.com/us/app/spins-pro/id6756712903",
-        icon: Download,
+        iconPath: mdiDownload,
       },
       {
         label: "Download for Android",
         href: "https://play.google.com/store/apps/details?id=com.arroweye.spins",
-        icon: Download,
+        iconPath: mdiDownload,
       },
     ],
     dialogTitle: "Every play, exactly where it happened.",
@@ -127,7 +127,7 @@ const securityFeatures: SecurityFeature[] = [
       {
         label: "Marketplace",
         href: "https://arroweye.shop/",
-        icon: ExternalLink,
+        iconPath: mdiOpenInNew,
       },
     ],
     dialogVisual: "geolocation",
@@ -141,13 +141,13 @@ const securityFeatures: SecurityFeature[] = [
     accentClassName: "text-[#f31285]",
     linkClassName:
       "text-[#f31285] hover:text-[#ff2a8a] focus-visible:outline-[#f31285]",
-    icon: Heart,
+    iconPath: mdiHeart,
     sideIconPath: mdiHeart,
     links: [
       {
         label: "Marketplace",
         href: "https://arroweye.shop/",
-        icon: ExternalLink,
+        iconPath: mdiOpenInNew,
       },
     ],
     dialogTitle: "Every campaign leaves a reputation.",
@@ -162,7 +162,7 @@ const securityFeatures: SecurityFeature[] = [
       {
         label: "Marketplace",
         href: "https://arroweye.shop/",
-        icon: ExternalLink,
+        iconPath: mdiOpenInNew,
       },
     ],
     dialogVisual: "ratings",
@@ -228,14 +228,16 @@ const OfflineFlowCube = ({
         }`}
       >
         {final ? (
-          <Check
+          <Icon
+            path={mdiCheck}
             className={`size-5 transition-[opacity,transform] duration-300 ${
               active ? "scale-100 opacity-100" : "scale-70 opacity-0"
             }`}
             aria-hidden="true"
           />
         ) : (
-          <Music2
+          <Icon
+            path={mdiMusicNote}
             className={`size-5 transition-[opacity,transform] duration-300 ${
               active ? "scale-100 opacity-100" : "scale-70 opacity-0"
             }`}
@@ -333,11 +335,12 @@ const SecurityDialogVisual = ({
               onClick={() => setRating(value)}
               className="rounded-full p-1 outline-none transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:ring-[#f31285] focus-visible:ring-offset-2"
             >
-              <Heart
+              <Icon
+                path={isSelected ? mdiHeart : mdiHeartOutline}
                 className={`size-9 transition-colors sm:size-14 ${
                   isSelected
-                    ? "animate-in fill-[#f31285] text-[#f31285] zoom-in-50 duration-300"
-                    : "fill-muted text-muted"
+                    ? "animate-in text-[#f31285] zoom-in-50 duration-300"
+                    : "text-muted"
                 }`}
                 aria-hidden="true"
               />
@@ -354,7 +357,8 @@ const SecurityDialogVisual = ({
         className="mx-auto mt-6 mb-10 flex w-full max-w-[620px] flex-col items-center gap-4 px-1 sm:flex-row sm:gap-9"
         aria-hidden="true"
       >
-        <MapPin
+        <Icon
+          path={mdiMapMarkerOutline}
           className={`size-10 shrink-0 transition-[color,transform] duration-300 sm:size-[60px] ${
             stage >= 5
               ? "scale-105 text-[#05b894]"
@@ -374,7 +378,10 @@ const SecurityDialogVisual = ({
       className="mx-auto mt-6 mb-10 flex w-full max-w-[680px] flex-col items-center gap-4 px-1 sm:flex-row sm:gap-7"
       aria-hidden="true"
     >
-      <WifiOff className="size-10 shrink-0 text-muted-foreground/50 dark:text-zinc-400 sm:size-[60px]" />
+      <Icon
+        path={mdiWifiOff}
+        className="size-10 shrink-0 text-muted-foreground/50 dark:text-zinc-400 sm:size-[60px]"
+      />
       <OfflineFlowLine active={stage === 1} />
       <OfflineFlowCube active={stage >= 2} />
       <OfflineFlowLine active={stage === 3} />
@@ -385,8 +392,11 @@ const SecurityDialogVisual = ({
             : "text-muted-foreground/50 dark:text-zinc-400"
         }`}
       >
-        <Wifi className="size-10 sm:size-[60px]" />
-        <ArrowUpDown className="absolute -right-2 -bottom-1 size-5 fill-background sm:size-6" />
+        <Icon path={mdiWifi} className="size-10 sm:size-[60px]" />
+        <Icon
+          path={mdiArrowUpDown}
+          className="absolute -right-2 -bottom-1 size-5 text-background sm:size-6"
+        />
       </span>
       <OfflineFlowLine active={stage === 5} />
       <OfflineFlowCube final active={stage >= 6} />
@@ -416,7 +426,7 @@ const SecurityFeatureDialog = ({
           aria-label={`Close ${feature.title} details`}
           className="absolute top-6 right-6 grid size-10 place-items-center rounded-[10px] text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
-          <X className="size-6" aria-hidden="true" />
+          <Icon path={mdiClose} className="size-6" aria-hidden="true" />
         </button>
       </DialogClose>
 
@@ -437,9 +447,9 @@ const SecurityFeatureDialog = ({
       <ul className="mt-8 space-y-2 text-[15px] leading-tight text-foreground sm:text-[17px]">
         {feature.dialogBenefits.map((benefit) => (
           <li key={benefit} className="flex items-start gap-4">
-            <CheckCircle2
+            <Icon
+              path={mdiCheckCircleOutline}
               className="mt-0.5 size-[22px] shrink-0"
-              strokeWidth={2}
               aria-hidden="true"
             />
             <span>{benefit}</span>
@@ -449,8 +459,6 @@ const SecurityFeatureDialog = ({
 
       <div className="mt-9 flex flex-col items-start gap-4 text-[17px]">
         {feature.dialogLinks.map((link) => {
-          const LinkIcon = link.icon;
-
           return (
             <a
               key={link.label}
@@ -460,7 +468,11 @@ const SecurityFeatureDialog = ({
               className={`inline-flex items-center gap-2 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 ${feature.linkClassName}`}
             >
               {link.label}
-              <LinkIcon className="size-5" aria-hidden="true" />
+              <Icon
+                path={link.iconPath}
+                className="size-5"
+                aria-hidden="true"
+              />
             </a>
           );
         })}
@@ -476,7 +488,7 @@ export default function SecurityFraudSection() {
 
   return (
     <section
-      className="mt-14 bg-background text-left text-foreground"
+      className="bg-background text-left text-foreground"
       aria-labelledby="security-fraud-title"
     >
       <div className="grid gap-7 lg:grid-cols-2 lg:items-center">
@@ -506,18 +518,10 @@ export default function SecurityFraudSection() {
           </button>
         </div>
 
-        <div className="min-w-0">
-          <p
-            id="security-fraud-title"
-            className="mb-4 text-[12px] font-semibold tracking-[0.12em] text-[#2f80ed] uppercase"
-          >
-            Security and fraud detection
-          </p>
-
+        <div className="min-w-0 mb-auto">
           <div className="overflow-hidden rounded-[8px] border border-border">
             {securityFeatures.map((feature, index) => {
               const isActive = activeIndex === index;
-              const FeatureIcon = feature.icon;
 
               return (
                 <article
@@ -537,7 +541,8 @@ export default function SecurityFraudSection() {
                     <span className="min-w-0 flex-1 text-[14px] font-semibold text-card-foreground">
                       {feature.title}
                     </span>
-                    <ChevronDown
+                    <Icon
+                      path={mdiChevronDown}
                       className={`size-4 shrink-0 text-card-foreground transition-transform duration-300 ${
                         isActive ? "rotate-180" : ""
                       }`}
@@ -554,7 +559,8 @@ export default function SecurityFraudSection() {
                     <div className="overflow-hidden">
                       <div className="px-5 py-[15px]">
                         <div className="mb-3 flex items-center gap-2 lg:hidden">
-                          <FeatureIcon
+                          <Icon
+                            path={feature.iconPath}
                             className={`size-4 ${feature.accentClassName}`}
                             aria-hidden="true"
                           />
@@ -570,8 +576,6 @@ export default function SecurityFraudSection() {
 
                         <div className="mt-6 mb-2 flex flex-wrap gap-x-4 gap-y-2">
                           {feature.links.map((link) => {
-                            const LinkIcon = link.icon;
-
                             return (
                               <a
                                 key={link.label}
@@ -581,7 +585,8 @@ export default function SecurityFraudSection() {
                                 className="inline-flex items-center gap-1 text-[13px] text-primary underline-offset-4 hover:text-primary/80 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                               >
                                 {link.label}
-                                <LinkIcon
+                                <Icon
+                                  path={link.iconPath}
                                   className="size-3.5"
                                   aria-hidden="true"
                                 />
