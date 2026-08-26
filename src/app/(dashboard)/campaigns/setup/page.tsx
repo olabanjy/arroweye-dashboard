@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { useAuth } from "@/context/auth-session";
 import { getCampaignWallet } from "@/services";
@@ -40,6 +41,7 @@ const getFirstName = (name?: string, email?: string) => {
 };
 
 export default function CreateContent() {
+  const [isSecurityExpanded, setIsSecurityExpanded] = useState(false);
   const { isAuthenticated, user, userProfile } = useAuth();
   const { data: walletData, isLoading: isWalletLoading } = useQuery({
     queryKey: ["wallet"],
@@ -51,16 +53,26 @@ export default function CreateContent() {
   const tokenBalance = Number(walletData?.available_balance) || 0;
   const formattedBalance = new Intl.NumberFormat("en-NG").format(tokenBalance);
 
-  const scrollToSecuritySection = () => {
-    document.getElementById("security-fraud")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
+  useEffect(() => {
+    if (!isSecurityExpanded) return;
+
+    const scrollTimer = window.setTimeout(() => {
+      const scrollContainer = document.getElementById(
+        "dashboard-scroll-container",
+      );
+
+      scrollContainer?.scrollTo({
+        top: scrollContainer.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 500);
+
+    return () => window.clearTimeout(scrollTimer);
+  }, [isSecurityExpanded]);
 
   return (
     <div className="bg-background text-foreground">
-      <section className="flex min-h-dvh px-4 py-10 sm:h-dvh sm:px-8">
+      <section className="flex h-dvh px-4 py-10 sm:px-8">
         <div className="mx-auto flex w-full max-w-5xl flex-col">
           <div className="my-auto w-full">
             <header className="text-center">
@@ -148,40 +160,71 @@ export default function CreateContent() {
             </section>
           </div>
 
-          <button
-            type="button"
-            onClick={scrollToSecuritySection}
-            aria-controls="security-fraud"
-            className="mx-auto mt-8 flex shrink-0 flex-col items-center gap-1 rounded-md px-4 py-2 text-[12px] font-semibold tracking-[0.12em] text-[#2f80ed] uppercase outline-none transition-colors hover:text-[#1769d2] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
+          <div className="mx-auto mt-8 flex shrink-0 flex-col items-center gap-1 px-4 py-2 text-[12px] font-semibold tracking-[0.12em] text-[#2f80ed] uppercase">
             <span>Security and fraud detection</span>
-            <ChevronDown className="size-5" aria-hidden="true" />
-          </button>
+            {!isSecurityExpanded && (
+              <button
+                type="button"
+                onClick={() => setIsSecurityExpanded(true)}
+                aria-label="Show Security and fraud detection"
+                aria-controls="security-fraud"
+                aria-expanded="false"
+                className="grid size-8 place-items-center rounded-md outline-none transition-colors hover:text-[#1769d2] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <ChevronDown className="size-5" aria-hidden="true" />
+              </button>
+            )}
+          </div>
         </div>
       </section>
 
-      <div id="security-fraud" className="scroll-mt-0 px-4 pb-10 sm:px-8">
-        <div className="mx-auto w-full max-w-5xl pt-14">
-          <SecurityFraudSection />
+      <div
+        id="security-fraud"
+        aria-hidden={!isSecurityExpanded}
+        inert={!isSecurityExpanded}
+        className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out ${
+          isSecurityExpanded
+            ? "grid-rows-[1fr] opacity-100"
+            : "pointer-events-none grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="px-4 pb-10 sm:px-8">
+            <div className="mx-auto w-full max-w-5xl pt-14">
+              <SecurityFraudSection />
 
-          <section
-            className="mt-[35px] text-center"
-            aria-label="Trusted partners"
-          >
-            <p className="text-[11px] font-medium text-muted-foreground uppercase">
-              Trusted by artistes and labels globally
-            </p>
-            <div
-              className="mt-[36px] flex items-center justify-center gap-[20px] text-muted"
-              aria-hidden="true"
-            >
-              <span className="h-0 w-0 border-x-[20px] border-b-[35px] border-x-transparent border-b-current" />
-              <span className="h-[35px] w-[84px] bg-current" />
-              <span className="size-[39px] rounded-full bg-current" />
+              <button
+                type="button"
+                onClick={() => setIsSecurityExpanded(false)}
+                aria-label="Hide Security and fraud detection"
+                aria-controls="security-fraud"
+                aria-expanded="true"
+                className="mx-auto mt-10 grid size-10 place-items-center rounded-md text-[#2f80ed] outline-none transition-colors hover:text-[#1769d2] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <ChevronDown className="size-5 rotate-180" aria-hidden="true" />
+              </button>
             </div>
-          </section>
+          </div>
         </div>
       </div>
+      <section
+        className={`pb-[35px] text-center transition-[margin] duration-500 ease-in-out ${
+          isSecurityExpanded ? "mt-[35px]" : "mt-2"
+        }`}
+        aria-label="Trusted partners"
+      >
+        <p className="text-[11px] font-medium text-muted-foreground uppercase">
+          Trusted by artistes and labels globally
+        </p>
+        <div
+          className="mt-[36px] flex items-center justify-center gap-[20px] text-muted"
+          aria-hidden="true"
+        >
+          <span className="h-0 w-0 border-x-[20px] border-b-[35px] border-x-transparent border-b-current" />
+          <span className="h-[35px] w-[84px] bg-current" />
+          <span className="size-[39px] rounded-full bg-current" />
+        </div>
+      </section>
     </div>
   );
 }
