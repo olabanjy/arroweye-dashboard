@@ -167,7 +167,6 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
             <div className="  border-b pb-[20px]">
               <DoughnutChart
                 title="AIRPLAY"
-                valuePlaceholder="TOP CHANNELS"
                 value={airPlayData?.total_count ?? 0}
                 selectOptions={selectOptionsAirPlay}
                 selectOptionsBottom={selectOptionsAudience}
@@ -235,7 +234,6 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
             <div className="  border-b pb-[20px] ">
               <PieChart
                 title="SOCIAL MEDIA"
-                valuePlaceHolder="TOP PLATFORMS"
                 value={socialMediaData?.total_count ?? 0}
                 chartData={chartDataForPie}
                 isLoading={isSocialMediaDataLoading}
@@ -303,7 +301,6 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
             <div className="  border-b pb-[20px] ">
               <ColumnChart
                 title="DISCOVERY AND STREAMING"
-                valuePlaceholder="TOP DSPs"
                 value={dspData?.total_count ?? 0}
                 chartData={chartDataForBar}
                 isLoading={isDspDataLoading}
