@@ -1,6 +1,10 @@
 import apiRequest from "@/Server/Api";
 import { handleApiError } from "@/lib/utils";
-import type { CreateBusinessInput } from "@/types/api";
+import type {
+  CreateBusinessInput,
+  CreateInvoiceInput,
+  CreateServiceInput,
+} from "@/types/api";
 import { ContentItem } from "@/types/contents";
 import axios from "axios";
 import ls from "localstorage-slim";
@@ -74,7 +78,9 @@ export const CreateMedia = async (
   }
 };
 
-export const CreateService = async (payload: unknown): Promise<void> => {
+export const CreateService = async (
+  payload: CreateServiceInput,
+): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
       ApiRequestResponse<ApiResponse>
@@ -92,7 +98,9 @@ export const CreateService = async (payload: unknown): Promise<void> => {
   }
 };
 
-export const CreateInvoice = async (payload: unknown): Promise<void> => {
+export const CreateInvoice = async (
+  payload: CreateInvoiceInput,
+): Promise<void> => {
   try {
     const { data: response } = await apiRequest<
       ApiRequestResponse<ApiResponse>

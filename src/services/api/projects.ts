@@ -8,6 +8,7 @@ import type {
   ProjectListItem,
   ProjectWatcherAction,
   UpdateProjectInput,
+  CampaignOptionItem,
 } from "@/types/api";
 import { ContentItem } from "@/types/contents";
 import ls from "localstorage-slim";
@@ -87,6 +88,19 @@ export const getProjects = async (): Promise<ProjectListItem[]> => {
   const response = await apiRequest<ProjectListItem[]>({
     method: "GET",
     url: `/api/v1/projects/`,
+    requireToken: true,
+  });
+
+  return response;
+};
+
+export const getCampaignOptions = async (): Promise<CampaignOptionItem[]> => {
+  const response = await apiRequest<CampaignOptionItem[]>({
+    method: "GET",
+    url: `/api/v1/projects/`,
+    params: {
+      fields: "id,title,code,pin",
+    },
     requireToken: true,
   });
 

@@ -15,14 +15,32 @@ export type CampaignDraftResponse = CampaignDraft & {
   id?: number;
 };
 export type CreateBusinessInput = components["schemas"]["CreateBusiness"];
-export type CreateEventInput = components["schemas"]["CreateEvent"];
-export type Event = components["schemas"]["Event"];
+export type EventStatus = "confirmed" | "tentative" | "cancelled";
+/** description/status are returned at runtime but not yet in the documented schema. */
+type EventDetailFields = {
+  description?: string | null;
+  status?: EventStatus;
+};
+export type CreateEventInput = components["schemas"]["CreateEvent"] &
+  EventDetailFields;
+export type CreateInvoiceInput = components["schemas"]["CreateInvoice"] & {
+  isrc?: string;
+};
+export type CreateServiceInput = Omit<components["schemas"]["Service"], "id">;
+export type Event = components["schemas"]["Event"] & EventDetailFields;
 export type Project = components["schemas"]["Project"];
 export type ProjectListItem = components["schemas"]["ProjectList"];
 export type RescheduleEventInput = components["schemas"]["RescheduleEvent"];
 export type UpdateProjectInput = components["schemas"]["PatchedProject"] & {
   isrc?: string | null;
 };
+
+export interface CampaignOptionItem {
+  id: number;
+  title: string;
+  code?: string;
+  pin?: string;
+}
 
 export type CampaignPage =
   operations["api_v1_campaigns_list"]["responses"][200]["content"]["application/json"];

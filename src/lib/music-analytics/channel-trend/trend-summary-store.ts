@@ -6,8 +6,11 @@ import { getConfig } from "@/lib/storage/r2";
 
 import type { TrendRange } from "./trend-range";
 
+// Bumped when the prompt changes, so older summaries are rewritten.
+const STORE_VERSION = 2;
+
 export interface StoredTrendSummary {
-  version: 1;
+  version: typeof STORE_VERSION;
   /** Inputs the summary was written from; a change means it is stale. */
   signature: string;
   summary: string;
@@ -35,7 +38,7 @@ export const readTrendSummary = async (
     const stored = JSON.parse(
       await Body.transformToString(),
     ) as StoredTrendSummary;
-    return stored.version === 1 ? stored : null;
+    return stored.version === STORE_VERSION ? stored : null;
   } catch (error) {
     if (isMissingObject(error)) return null;
     throw error;
@@ -45,14 +48,14 @@ export const readTrendSummary = async (
 export const writeTrendSummary = async (
   campaignId: string,
   range: TrendRange,
-  summary: StoredTrendSummary,
+  summary: Omit<StoredTrendSummary, "version">,
 ) => {
   const { client, bucket } = getConfig();
   await client.send(
     new PutObjectCommand({
       Bucket: bucket,
       Key: keyFor(campaignId, range),
-      Body: JSON.stringify(summary),
+      Body: JSON.stringify({ version: STORE_VERSION, ...summary }),
       ContentType: "application/json",
     }),
   );

@@ -345,6 +345,9 @@ const CampaignInsights: React.FC<InsightChartProps> = ({
       performanceReach: insightStats?.performanceReach ?? {},
       spinCount: Number(content?.spin_count ?? 0),
       topRadio: stations[0]?.name,
+      topRadioStations: stations
+        .slice(0, 5)
+        .map(({ name, country, plays }) => ({ name, country, plays })),
       audienceGrowth:
         audienceGrowth?.available && audienceGrowth.totalGrowth !== null
           ? {

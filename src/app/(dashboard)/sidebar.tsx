@@ -22,6 +22,7 @@ import {
   mdiFormatListBulletedType,
   mdiCog,
   mdiRadio,
+  mdiRadioTower,
 } from "@mdi/js";
 
 import {
@@ -457,7 +458,7 @@ const CampaignsSidebarContent = () => {
                     href="/radio-monitor"
                     label="Radio Monitor"
                     active={isActive("/radio-monitor")}
-                    icon={<Icon path={mdiRadio} size={0.85} />}
+                    icon={<Icon path={mdiRadioTower} size={0.85} />}
                   />
                 )}
 

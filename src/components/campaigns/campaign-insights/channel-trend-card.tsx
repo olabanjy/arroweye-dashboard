@@ -102,7 +102,7 @@ function TrendSummary({
 
   return (
     <div className="mt-4 rounded-lg border bg-muted/40 px-[14px] py-[12px]">
-      <p className="text-[10px] font-[900] uppercase tracking-[.1rem] text-chart-1">
+      <p className="text-[10px] font-[900] uppercase tracking-[.1rem] text-[#7a42e8]">
         &#10022; AI summary
       </p>
       <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">

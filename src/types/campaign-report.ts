@@ -27,6 +27,12 @@ export interface CampaignReportPlaylist {
   addedAt?: string;
 }
 
+export interface CampaignReportRadioStation {
+  name: string;
+  country: string;
+  plays: number;
+}
+
 export interface CampaignReportAudienceGrowth {
   totalGrowth: number;
   topPlatform?: string;
@@ -48,6 +54,8 @@ export interface CampaignReportMetrics {
   performanceReach: CampaignReportStats;
   spinCount: number;
   topRadio?: string;
+  /** Same ranking as the Top Radio card on the campaign page. */
+  topRadioStations: CampaignReportRadioStation[];
   audienceGrowth?: CampaignReportAudienceGrowth;
   highlights: CampaignReportHighlight[];
   topCreators: CampaignReportCreator[];

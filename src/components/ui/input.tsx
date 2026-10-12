@@ -15,6 +15,20 @@ const Tooltip = ({ info }: { info: string }) => (
   </div>
 );
 
+// Radix modal scroll-lock cancels wheel/touch scroll at document level for nodes outside the dialog
+const DatePickerPopperContainer = ({
+  children,
+}: {
+  children?: React.ReactNode;
+}) => (
+  <div
+    onWheel={(e) => e.stopPropagation()}
+    onTouchMove={(e) => e.stopPropagation()}
+  >
+    {children}
+  </div>
+);
+
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   labelClassName?: string;
@@ -154,6 +168,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             timeFormat="HH:mm"
             timeIntervals={15}
             placeholderText={placeholder}
+            // Portal escapes overflow/transform clipping in dialogs; Radix modals set body pointer-events: none
+            portalId="datepicker-portal"
+            popperClassName="!z-[60] pointer-events-auto"
+            popperContainer={DatePickerPopperContainer}
           />
         ) : (
           <div className="relative">

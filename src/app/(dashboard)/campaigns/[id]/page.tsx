@@ -4,7 +4,6 @@ import React from "react";
 import { useParams } from "next/navigation";
 import { hasAccess } from "@/lib/utils";
 import NoNetwork from "@/components/no-network";
-import ScheduleProject from "@/components/campaigns/schedule/component/ScheduleProject";
 import CampaignInsightAdvertiser from "@/components/campaigns/CampaignInsightAdvertiser";
 import CampaignInsights from "@/components/campaigns/campaign-insights";
 import { InsightChartSkeleton } from "@/components/campaigns/InsightChartSkeleton";
@@ -211,11 +210,6 @@ const ProjectDetails = () => {
                 refreshContent={refreshContent}
                 onRequestEditModeChange={requestEditModeChange}
               />
-              {/* <ScheduleProject
-                filterIcon={false}
-                isDateClickEnabled={false}
-                isProjectPage={true}
-              /> */}
             </>
           )}
 

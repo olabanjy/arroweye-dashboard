@@ -9,12 +9,12 @@ import type { CampaignAiInsights } from "@/lib/email/campaign-report/types";
 import { asNumber, asString, total } from "@/lib/email/campaign-report/utils";
 import { sendZeptoMail } from "@/lib/email/zeptomail";
 import { getAuthorizedProject } from "@/lib/server/get-authorized-project";
-import { loadRadioMonitorSummary } from "@/lib/radio-monitor/load-radio-monitor-summary";
-import { generateRadioMonitorWording } from "@/lib/radio-monitor/radio-monitor-wording";
+import { loadRadioStationPlays } from "@/lib/radio-monitor/load-radio-station-plays";
 import { listRadioMonitors } from "@/lib/storage/r2";
 import { buildRadioMonitorLink } from "@/lib/storage/report-link";
 import type {
   CampaignReportCreator,
+  CampaignReportRadioStation,
   CampaignReportHighlight,
   CampaignReportHighlightId,
   CampaignReportMetrics,
@@ -31,6 +31,7 @@ const MAX_STAT_ENTRIES = 50;
 const MAX_METRIC_VALUE = Number.MAX_SAFE_INTEGER;
 const MAX_REPORT_CREATORS = 5;
 const MAX_REPORT_PLAYLISTS = 6;
+const MAX_REPORT_RADIO_STATIONS = 5;
 const HIGHLIGHT_IDS = new Set<CampaignReportHighlightId>([
   "videoCreations",
   "shazam",
@@ -91,6 +92,16 @@ const sanitizePlaylists = (value: unknown): CampaignReportPlaylist[] =>
     }))
     .filter((playlist) => playlist.name);
 
+const sanitizeRadioStations = (value: unknown): CampaignReportRadioStation[] =>
+  (Array.isArray(value) ? value : [])
+    .slice(0, MAX_REPORT_RADIO_STATIONS)
+    .map((station) => ({
+      name: sanitizeText(station?.name, 120),
+      country: sanitizeText(station?.country, 60),
+      plays: sanitizeCount(station?.plays),
+    }))
+    .filter((station) => station.name);
+
 const sanitizeMetrics = (
   metrics: CampaignReportMetrics,
 ): CampaignReportMetrics => {
@@ -148,6 +159,7 @@ const sanitizeMetrics = (
       typeof metrics?.topRadio === "string"
         ? metrics.topRadio.trim().slice(0, 120)
         : undefined,
+    topRadioStations: sanitizeRadioStations(metrics?.topRadioStations),
     audienceGrowth: (() => {
       const totalGrowth = Number(metrics?.audienceGrowth?.totalGrowth);
       if (!Number.isFinite(totalGrowth)) return undefined;
@@ -295,33 +307,18 @@ const getAppBaseUrl = async () => {
   return `${protocol}://${host}`;
 };
 
-// The report is shared across campaigns, so it is only attached when this
-// campaign's song is on the chart.
-const getRadioMonitorAttachment = async (project: UnknownRecord) => {
+// The upload is shared across campaigns, so it is only linked when this song is on a chart.
+const getRadioMonitorLink = async (project: UnknownRecord) => {
   const files = await listRadioMonitors();
   if (files.length === 0) return undefined;
 
-  const summary = await loadRadioMonitorSummary(files, {
+  const plays = await loadRadioStationPlays(files, {
     title: asString(project.song_title || project.title),
     artist: asString(project.artist_name || project.song_artist),
   });
-  if (!summary) return undefined;
+  if (plays.length === 0) return undefined;
 
-  const wording = await generateRadioMonitorWording(summary).catch(
-    (error: unknown) => {
-      console.error(
-        "Radio monitor wording failed:",
-        error instanceof Error ? error.message : "Unknown error",
-      );
-      return undefined;
-    },
-  );
-
-  return {
-    downloadLink: buildRadioMonitorLink(await getAppBaseUrl()),
-    summary,
-    wording,
-  };
+  return buildRadioMonitorLink(await getAppBaseUrl());
 };
 
 export async function sendCampaignReport(
@@ -358,9 +355,9 @@ export async function sendCampaignReport(
         return undefined;
       },
     );
-    const radioMonitor = await getRadioMonitorAttachment(project).catch(
+    const radioMonitorLink = await getRadioMonitorLink(project).catch(
       (error: unknown) => {
-        console.error("Radio monitor attachment failed:", error);
+        console.error("Radio monitor link failed:", error);
         return undefined;
       },
     );
@@ -370,7 +367,7 @@ export async function sendCampaignReport(
       campaignId,
       generatedAt,
       aiInsights,
-      radioMonitor,
+      radioMonitorLink,
     });
 
     await sendZeptoMail({

@@ -7,6 +7,7 @@ import {
   getBusiness,
   getEvents,
   getProjectsEvents,
+  getCampaignOptions,
   RescheduleEvent,
 } from "@/services";
 import { useAuth } from "@/context/auth-context";
@@ -14,7 +15,10 @@ import { DateClickArg } from "@fullcalendar/interaction";
 import type { Event } from "@/types/api";
 import { toast } from "sonner";
 
-interface FormErrors {
+export const EVENT_DESCRIPTION_MAX_LENGTH = 500;
+export const RESCHEDULE_REASON_MAX_LENGTH = 500;
+
+export interface FormErrors {
   title?: string;
   vendor_id?: string;
   subvendor_id?: string;
@@ -23,6 +27,8 @@ interface FormErrors {
   end_dte?: string;
   code?: string;
   project?: string;
+  description?: string;
+  reason?: string;
 }
 
 interface UseScheduleProps {
@@ -58,6 +64,9 @@ export const useSchedule = ({
     end_dte: "",
     code: "",
     project: "",
+    description: "",
+    status: "confirmed",
+    reason: "",
   });
 
   const [formErrors, setFormErrors] = useState<FormErrors>({
@@ -90,8 +99,28 @@ export const useSchedule = ({
       label: business.organization_name,
     }));
 
+  const { data: campaignOptionsData = [] } = useQuery({
+    queryKey: ["campaigns", "options"],
+    queryFn: getCampaignOptions,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const campaignOptions = (
+    Array.isArray(campaignOptionsData) ? campaignOptionsData : []
+  )
+    .filter((campaign: any) => Boolean(campaign?.pin || campaign?.code))
+    .map((campaign: any) => ({
+      value: campaign.pin || campaign.code,
+      label: campaign.title,
+      id: campaign.id,
+      pin: campaign.pin,
+      code: campaign.code,
+    }));
+
   // Fetch events based on schedule page vs project page
-  const { data: eventItem = [], isLoading: isEventsLoading } = useQuery<Event[]>({
+  const { data: eventItem = [], isLoading: isEventsLoading } = useQuery<
+    Event[]
+  >({
     queryKey: ["events", isSchedulePage ? "all" : projectId || "project"],
     queryFn: () => {
       if (isSchedulePage) {
@@ -311,6 +340,9 @@ export const useSchedule = ({
       end_dte: "",
       code: "",
       project: "",
+      description: "",
+      status: "confirmed",
+      reason: "",
     });
   };
 
@@ -356,10 +388,29 @@ export const useSchedule = ({
   };
 
   const handleSelectChange = ({ name, value }: any) => {
-    setFormData((prevData: any) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData: any) => {
+      const nextData = {
+        ...prevData,
+        [name]: value,
+      };
+
+      if (name === "code") {
+        const matched = campaignOptions.find(
+          (opt: any) =>
+            String(opt.value) === String(value) ||
+            String(opt.pin) === String(value) ||
+            String(opt.code) === String(value),
+        );
+        if (matched) {
+          nextData.code = matched.pin || matched.code || value;
+          if (matched.id) {
+            nextData.project = matched.id;
+          }
+        }
+      }
+
+      return nextData;
+    });
   };
 
   const handleFormSubmit = async (e: any) => {
@@ -374,6 +425,7 @@ export const useSchedule = ({
       end_dte: "",
       code: "",
       project: "",
+      description: "",
     };
 
     if (!formData.title.trim()) {
@@ -397,7 +449,11 @@ export const useSchedule = ({
     }
 
     if (!formData.code) {
-      newErrors.code = "Product Code is required.";
+      newErrors.code = "Campaign is required.";
+    }
+
+    if (formData.description?.length > EVENT_DESCRIPTION_MAX_LENGTH) {
+      newErrors.description = `Description must be ${EVENT_DESCRIPTION_MAX_LENGTH} characters or fewer.`;
     }
 
     if (!formData.end_dte) {
@@ -423,6 +479,7 @@ export const useSchedule = ({
             : null,
           start_dte: formatDateToString(formData.start_dte),
           end_dte: formatDateToString(formData.end_dte),
+          description: formData.description?.trim() || null,
         };
 
         await createEventMutation.mutateAsync(updatedFormData);
@@ -436,10 +493,23 @@ export const useSchedule = ({
   const rescheduleEvent = async () => {
     const newErrors = {
       code: "",
+      start_dte: "",
+      end_dte: "",
     };
 
     if (!formData.code) {
-      newErrors.code = "Product Code is required.";
+      newErrors.code =
+        "This event has no campaign code, so it can't be rescheduled.";
+    }
+
+    if (!formData.start_dte) {
+      newErrors.start_dte = "Start Date is required.";
+    }
+
+    if (!formData.end_dte) {
+      newErrors.end_dte = "End Date is required.";
+    } else {
+      newErrors.end_dte = validateDates(formData.start_dte, formData.end_dte);
     }
 
     setFormErrors(newErrors);
@@ -448,14 +518,15 @@ export const useSchedule = ({
     if (!hasErrors) {
       const payload = {
         event_id: formData.id,
-        start_dte: formData.start_dte,
-        end_dte: formData.end_dte,
+        start_dte: formatDateToString(formData.start_dte),
+        end_dte: formatDateToString(formData.end_dte),
         code: formData.code,
+        ...(formData.reason?.trim() && { reason: formData.reason.trim() }),
       };
 
       try {
         await rescheduleEventMutation.mutateAsync(payload);
-        setIsModalVisible(false);
+        handleCloseModal();
       } catch (err) {
         console.error("Error rescheduling event:", err);
       }
@@ -475,6 +546,8 @@ export const useSchedule = ({
     location: item.location,
     project: item.project,
     code: item.code,
+    description: item.description,
+    status: item.status,
   }));
 
   return {
@@ -502,6 +575,7 @@ export const useSchedule = ({
     setPinError,
     vendorOptions,
     subvendorOptions,
+    campaignOptions,
     events,
     isLoading: isEventsLoading,
     exportICS,

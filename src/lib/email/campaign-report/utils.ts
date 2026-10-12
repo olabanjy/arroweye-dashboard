@@ -102,18 +102,34 @@ export const topEntry = (stats: CampaignReportStats) => statEntries(stats)[0];
 export const hasStats = (stats: CampaignReportStats) =>
   total(stats) > 0 || Object.keys(stats).some((key) => key !== "total_count");
 
-export const detailRow = (label: string, value: unknown) => {
+export const detailRow = (label: string, value: unknown, primary = false) => {
   const text = asString(value).trim();
   if (!text) return "";
 
-  return `<tr><td style="padding:5px 0;color:#666;font-weight:700;width:140px;">${escapeHtml(label)}</td><td style="padding:5px 0;color:#666;">${escapeHtml(text)}</td></tr>`;
+  const labelStyle = primary
+    ? "padding:6px 0;color:#555;font-weight:800;width:140px;"
+    : "padding:5px 0;color:#666;font-weight:700;width:140px;";
+  return `<tr><td style="${labelStyle}">${escapeHtml(label)}</td><td style="padding:6px 0;color:#555;">${escapeHtml(text)}</td></tr>`;
 };
 
 export const sectionHeading = (icon: string, title: string, iconSize = 35) =>
-  `<div style="font-size:18px;font-weight:900;color:#222;line-height:${iconSize}px;"><img style="width:${iconSize}px;height:${iconSize}px;object-fit:contain;vertical-align:middle;" src="${icon}" alt=""> ${escapeHtml(title)}</div>`;
+  `<div style="font-size:18px;font-weight:900;color:#222;line-height:30px;"><img style="width:${iconSize}px;height:${iconSize}px;object-fit:contain;vertical-align:middle;" src="${icon}" alt=""> ${escapeHtml(title)}</div>`;
+
+export const sectionTitle = (title: string, letterSpacing = "1.25px") =>
+  `<div style="font-size:11px;letter-spacing:${letterSpacing};font-weight:900;text-transform:uppercase;color:#777;margin-bottom:10px;">${escapeHtml(title)}</div>`;
 
 export const sectionLabel = (title: string, description: string) =>
-  `<div style="font-size:11px;letter-spacing:1.2px;font-weight:900;text-transform:uppercase;color:#777;margin-bottom:4px;">${escapeHtml(title)}</div><div style="font-size:12px;color:#888;line-height:1.45;margin-bottom:12px;">${escapeHtml(description)}</div>`;
+  `${sectionTitle(title)}<div style="font-size:12px;color:#888;line-height:1.45;margin-bottom:12px;">${escapeHtml(description)}</div>`;
 
-export const viewAll = (projectLink: string) =>
-  `<div style="text-align:right;margin-top:20px;"><a href="${projectLink}" style="display:inline-block;font-size:14px;font-weight:700;color:#147aff;border:1px solid #147aff;padding:8px 20px;text-decoration:none;border-radius:20px;">View all</a></div>`;
+export const infoNote = (content: string, margin = "10px 0 0") =>
+  `<p style="font-size:12px;color:#777;margin:${margin};line-height:1.5;"><strong>&#9432;</strong> ${content}</p>`;
+
+/** Grey rounded box that wraps the list sections (milestones, schedule, drops...). */
+export const listBox = (content: string) =>
+  `<div style="margin-top:12px;background:#fafafa;padding:16px;border-radius:10px;border:1px solid #e7e7e7;">${content}</div>`;
+
+export const listItemStyle = (isLast: boolean) =>
+  `padding:16px 0;${isLast ? "" : "border-bottom:1px solid #e9e9e9;"}`;
+
+export const viewAll = (projectLink: string, marginTop = 20) =>
+  `<div style="text-align:right;margin-top:${marginTop}px;"><a href="${projectLink}" style="display:inline-block;font-size:13px;font-weight:800;color:#147aff;border:1px solid #147aff;padding:8px 18px;text-decoration:none;border-radius:999px;">View all</a></div>`;

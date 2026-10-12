@@ -442,7 +442,7 @@ export function BottomDock({
                             <Button
                               asChild
                               aria-label="View publication"
-                              className="mt-2 h-8 shrink-0 rounded-full border-0 bg-neutral-950 px-4 text-xs font-semibold text-white shadow-none transition-colors hover:bg-neutral-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200"
+                              className="mt-2 shrink-0 rounded-full border-0 bg-neutral-950 px-4 text-xs font-semibold text-white shadow-none transition-colors hover:bg-neutral-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200"
                             >
                               <a
                                 href={link}
@@ -450,10 +450,6 @@ export function BottomDock({
                                 rel="noopener noreferrer"
                               >
                                 View
-                                <MdiIcon
-                                  className="size-3.5"
-                                  path={mdiOpenInNew}
-                                />
                               </a>
                             </Button>
                           )}

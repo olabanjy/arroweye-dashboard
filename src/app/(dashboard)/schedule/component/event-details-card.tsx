@@ -1,0 +1,192 @@
+"use client";
+
+import React from "react";
+import type { LucideIcon } from "lucide-react";
+import {
+  ArrowUpRight,
+  CalendarDays,
+  Clock,
+  FileText,
+  MapPin,
+  Share2,
+  Trash2,
+  X,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type { EventDialogState } from "../hooks/use-event-dialog";
+import { formatTimeRange } from "../utils/event-date-time";
+import { getEventStatusOption } from "../utils/event-status";
+import EventHeader from "./event-header";
+
+export interface EventDetailsActions {
+  canDelete: boolean;
+  onDelete: () => void;
+  onShare: () => void;
+  onViewProject: () => void;
+}
+
+interface EventDetailsCardProps extends EventDetailsActions {
+  dialog: EventDialogState;
+  formData: Record<string, any>;
+  onClose: () => void;
+}
+
+const DetailRow = ({
+  icon: Icon,
+  iconSlot,
+  tileClassName,
+  label,
+  children,
+}: {
+  icon?: LucideIcon;
+  iconSlot?: React.ReactNode;
+  tileClassName?: string;
+  label: string;
+  children: React.ReactNode;
+}) => (
+  <div className="flex items-center gap-4 border-b border-zinc-100 py-3 last:border-b-0 dark:border-zinc-800">
+    <div
+      className={cn(
+        "flex size-10 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300",
+        tileClassName,
+      )}
+    >
+      {Icon ? <Icon className="size-[18px]" /> : iconSlot}
+    </div>
+    <div className="min-w-0 flex-1">
+      <p className="text-[12px] text-zinc-500 dark:text-zinc-400">{label}</p>
+      <div className="mt-0.5 break-words text-[14px] text-zinc-950 dark:text-zinc-100">
+        {children}
+      </div>
+    </div>
+  </div>
+);
+
+const HeaderAction = ({
+  label,
+  icon: Icon,
+  onClick,
+  className,
+}: {
+  label: string;
+  icon: LucideIcon;
+  onClick: () => void;
+  className?: string;
+}) => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <button
+        type="button"
+        onClick={onClick}
+        className={cn(
+          "flex size-8 items-center justify-center rounded-full bg-white/70 text-zinc-600 hover:bg-white dark:bg-zinc-900/60 dark:text-zinc-300 dark:hover:bg-zinc-900",
+          className,
+        )}
+      >
+        <Icon className="size-4" />
+        <span className="sr-only">{label}</span>
+      </button>
+    </TooltipTrigger>
+    <TooltipContent>{label}</TooltipContent>
+  </Tooltip>
+);
+
+const EventDetailsCard = ({
+  dialog,
+  formData,
+  onClose,
+  canDelete,
+  onDelete,
+  onShare,
+  onViewProject,
+}: EventDetailsCardProps) => {
+  const status = getEventStatusOption(formData.status);
+  const timeLabel = formatTimeRange(formData.start_dte, formData.end_dte);
+
+  return (
+    <div className="space-y-2">
+      <EventHeader
+        title={formData.title}
+        description={formData.description}
+        calendarEventId={formData.calendarEventId}
+        isDialogTitle
+        actions={
+          <>
+            <HeaderAction label="Share" icon={Share2} onClick={onShare} />
+            <HeaderAction
+              label="View project"
+              icon={ArrowUpRight}
+              onClick={onViewProject}
+            />
+            {canDelete && (
+              <HeaderAction
+                label="Delete event"
+                icon={Trash2}
+                onClick={onDelete}
+                className="hover:text-red-600"
+              />
+            )}
+            <HeaderAction label="Close" icon={X} onClick={onClose} />
+          </>
+        }
+      />
+
+      <div className="px-1">
+        <DetailRow icon={CalendarDays} label="Date">
+          {dialog.dateLabel || "—"}
+        </DetailRow>
+        <DetailRow icon={Clock} label="Time">
+          {timeLabel || "—"}
+        </DetailRow>
+
+        {formData.location && (
+          <DetailRow icon={MapPin} label="Location">
+            {formData.location}
+          </DetailRow>
+        )}
+        {formData.description && (
+          <DetailRow icon={FileText} label="Description">
+            <span className="whitespace-pre-line">{formData.description}</span>
+          </DetailRow>
+        )}
+        {status && (
+          <DetailRow
+            label="Status"
+            tileClassName={status.tileClassName}
+            iconSlot={
+              <span
+                className={cn("size-3.5 rounded-full", status.dotClassName)}
+              />
+            }
+          >
+            <span
+              className={cn(
+                "inline-flex rounded-md px-2.5 py-0.5 text-[13px] font-medium",
+                status.pillClassName,
+              )}
+            >
+              {status.label}
+            </span>
+          </DetailRow>
+        )}
+      </div>
+
+      <Button
+        type="button"
+        variant="ghost"
+        className="h-10 w-full rounded-xl bg-zinc-100 text-[14px] font-medium text-zinc-900 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-100"
+        onClick={dialog.startReschedule}
+      >
+        Reschedule
+      </Button>
+    </div>
+  );
+};
+
+export default EventDetailsCard;
