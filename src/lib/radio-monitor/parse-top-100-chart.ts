@@ -14,6 +14,8 @@ export interface Top100Row {
 }
 
 export interface Top100Chart {
+  /** ISO country code printed before the station, e.g. "NG". */
+  countryCode: string;
   station: string;
   chart: string;
   period: string;
@@ -138,6 +140,7 @@ const parseRow = (
 export const parseTop100Chart = async (
   data: Uint8Array,
 ): Promise<Top100Chart> => {
+  let countryCode = "";
   let station = "";
   let chart = "";
   let period = "";
@@ -155,6 +158,7 @@ export const parseTop100Chart = async (
         chart ||= left;
         period ||= right;
       } else {
+        countryCode ||= left;
         station ||= right;
       }
     } else if (header) {
@@ -169,5 +173,5 @@ export const parseTop100Chart = async (
     );
   }
 
-  return { station, chart, period, rows };
+  return { countryCode, station, chart, period, rows };
 };

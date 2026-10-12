@@ -20,7 +20,7 @@ import {
   getService,
 } from "@/services";
 import { ContentItem } from "@/types/contents";
-import type { Business } from "@/types/api";
+import type { Business, CreateInvoiceInput } from "@/types/api";
 import { hasAccess, hasAccessExceptVendorManager } from "@/lib/utils";
 
 // The shared Input/SelectInput still carry legacy hard-coded colours, including
@@ -243,7 +243,7 @@ const CreateInvoiceForm = () => {
 
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
     if (!hasErrors) {
-      CreateService(formData)
+      CreateService({ name: formData.name, cost: Number(formData.cost) })
         .then(() => {
           hideDialog();
           getService().then((fetchedContent) => {
@@ -370,14 +370,13 @@ const CreateInvoiceForm = () => {
     });
 
     if (!hasErrors) {
-      const updatedFormData = {
+      const updatedFormData: CreateInvoiceInput = {
         ...projectFormData,
-        vendor_id: projectFormData.vendor_id
-          ? parseInt(projectFormData.vendor_id.toString())
-          : null,
+        vendor_id: Number(projectFormData.vendor_id),
         subvendor_id: projectFormData.subvendor_id
-          ? parseInt(projectFormData.subvendor_id.toString())
-          : null,
+          ? Number(projectFormData.subvendor_id)
+          : undefined,
+        currency: String(projectFormData.currency),
         isrc: normalizeIsrc(projectFormData.isrc),
         // cost: customCost,
       };

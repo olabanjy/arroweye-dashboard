@@ -48,3 +48,5 @@ pnpm-workspace.yaml
 /docs
 
 /src/product-copy
+/templates
+

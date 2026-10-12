@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cachedRequest } from "./cached-request";
+
 const API_BASE_URL = "https://api.songstats.com/enterprise/v1";
 
 export class SongstatsError extends Error {
@@ -42,43 +44,7 @@ interface SongstatsErrorBody {
   error?: string;
 }
 
-/**
- * Songstats data refreshes at most daily and every call counts against the
- * plan, so responses are held in memory and shared by every viewer of a
- * campaign. The API key never appears in the key, only the path and query.
- */
-const DEFAULT_TTL_MS = 6 * 60 * 60 * 1000;
-const MAX_CACHE_ENTRIES = 500;
-
-const responseCache = new Map<string, { value: unknown; expiresAt: number }>();
-
-const readCache = <T>(key: string): T | undefined => {
-  const hit = responseCache.get(key);
-  if (!hit) return undefined;
-
-  if (hit.expiresAt <= Date.now()) {
-    responseCache.delete(key);
-    return undefined;
-  }
-
-  // Refresh insertion order so the oldest untouched entry is evicted first.
-  responseCache.delete(key);
-  responseCache.set(key, hit);
-  return hit.value as T;
-};
-
-const writeCache = (key: string, value: unknown, ttlMs: number) => {
-  if (responseCache.size >= MAX_CACHE_ENTRIES) {
-    const oldest = responseCache.keys().next().value;
-    if (oldest) responseCache.delete(oldest);
-  }
-  responseCache.set(key, { value, expiresAt: Date.now() + ttlMs });
-};
-
-// Concurrent identical calls share one promise so each is billed once.
-const inFlight = new Map<string, Promise<unknown>>();
-
-const requestUncached = async <T>(key: string, ttlMs: number) => {
+const fetchFromSongstats = async <T>(path: string) => {
   const apiKey = getApiKey();
   if (!apiKey) {
     throw new SongstatsError(
@@ -88,7 +54,7 @@ const requestUncached = async <T>(key: string, ttlMs: number) => {
     );
   }
 
-  const response = await fetch(`${API_BASE_URL}${key}`, {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
     headers: { apikey: apiKey, accept: "application/json" },
     cache: "no-store",
   });
@@ -114,32 +80,22 @@ const requestUncached = async <T>(key: string, ttlMs: number) => {
     );
   }
 
-  writeCache(key, payload, ttlMs);
   return payload;
 };
 
-export const songstatsRequest = async <T>(
+export const songstatsRequest = <T>(
   path: string,
   params?: SongstatsParams,
   options: { ttlMs?: number; skipCache?: boolean } = {},
 ) => {
-  const { ttlMs = DEFAULT_TTL_MS, skipCache = false } = options;
-  const key = buildPath(path, params);
-
-  if (!skipCache) {
-    const cached = readCache<T & SongstatsErrorBody>(key);
-    if (cached) return cached;
-
-    const pending = inFlight.get(key);
-    if (pending) return (await pending) as T & SongstatsErrorBody;
-  }
-
-  const request = requestUncached<T>(key, ttlMs).finally(() => {
-    inFlight.delete(key);
+  // The API key never appears in the cache key, only the path and query.
+  const fullPath = buildPath(path, params);
+  return cachedRequest({
+    provider: "songstats",
+    path: fullPath,
+    fetcher: () => fetchFromSongstats<T>(fullPath),
+    ...options,
   });
-  inFlight.set(key, request);
-
-  return request;
 };
 
 /** Songstats resolves tracks by ISRC directly, dashes and case ignored. */

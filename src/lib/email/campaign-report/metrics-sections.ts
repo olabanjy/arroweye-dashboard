@@ -6,7 +6,9 @@ import {
   escapeHtml,
   firstPopulatedArray,
   formatNumber,
+  infoNote,
   sectionHeading,
+  sectionTitle,
 } from "./utils";
 
 const COLORS = {
@@ -31,19 +33,20 @@ const renderMetricGrid = (cards: MetricCard[]) => {
           }
 
           const value = card.changePercent;
-          const arrow = value > 0 ? "⇡" : value < 0 ? "&#8595;" : "&#8594;";
-          const color = value > 0 ? "#0aaa3f" : value < 0 ? "#dc2626" : "#777";
+          const arrow =
+            value > 0 ? "&#8673;" : value < 0 ? "&#8675;" : "&#8594;";
+          const color = value > 0 ? "#07a83b" : value < 0 ? "#d11a2a" : "#777";
           const formatted = new Intl.NumberFormat("en", {
             maximumFractionDigits: 1,
           }).format(Math.abs(value));
 
-          return `<div style="font-size:13px;font-weight:800;color:${color};margin:-1px 0 7px;">${arrow} ${formatted}%</div>`;
+          return `<div style="font-size:12px;color:${color};font-weight:700;margin-bottom:5px;">${arrow} ${formatted}%</div>`;
         })();
         const detail = card.detailValue
           ? `<div style="font-size:11px;color:#777;">${escapeHtml(card.detailLabel)} &middot; <strong style="font-weight:800;color:#444;">${escapeHtml(card.detailValue)}</strong></div>`
           : "";
 
-        return `<td width="33%" style="padding:16px 14px;background:#f7f7f7;border:1px solid #e7e7e7;border-radius:8px;vertical-align:top;"><div style="font-size:10px;letter-spacing:1px;font-weight:900;text-transform:uppercase;color:#666;">${escapeHtml(card.label)}</div><div style="font-size:22px;line-height:1;font-weight:900;margin:8px 0 6px;color:#222;">${escapeHtml(card.valuePrefix)}${formatNumber(card.value)}</div>${change}${detail}</td>`;
+        return `<td width="33%" style="padding:15px 14px;background:#fafafa;border:1px solid #e7e7e7;border-radius:10px;vertical-align:top;"><div style="font-size:10px;letter-spacing:1px;font-weight:900;text-transform:uppercase;color:#666;">${escapeHtml(card.label)}</div><div style="font-size:22px;line-height:1;font-weight:900;margin:8px 0 6px;color:#222;">${escapeHtml(card.valuePrefix)}${formatNumber(card.value)}</div>${change}${detail}</td>`;
       })
       .join("");
     const fillers = Array.from(
@@ -54,7 +57,7 @@ const renderMetricGrid = (cards: MetricCard[]) => {
     return `<tr>${cells}${fillers}</tr>`;
   }).join("");
 
-  return `<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;border-spacing:6px;text-align:left;">${rows}</table>`;
+  return `<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;border-spacing:5px;text-align:left;">${rows}</table>`;
 };
 
 export const renderCampaignSnapshot = (cards: MetricCard[]) => {
@@ -67,7 +70,7 @@ export const renderCampaignSnapshot = (cards: MetricCard[]) => {
     ? " Percentage changes show the change over the last 28 days."
     : "";
 
-  return `<div style="margin-top:26px;"><div style="font-size:11px;letter-spacing:1.2px;font-weight:900;text-transform:uppercase;color:#777;margin-bottom:10px;">Campaign snapshot</div>${renderMetricGrid(cards)}<p style="font-size:12px;color:#777;margin:10px 0 0;line-height:1.5;"><strong>&#9432;</strong> Metrics show current campaign performance across selected sources.${changeNote}</p></div>`;
+  return `<div style="margin-top:26px;">${sectionTitle("Campaign Snapshot", "1.2px")}${renderMetricGrid(cards)}${infoNote(`Metrics show current campaign performance across selected sources.${changeNote}`)}</div>`;
 };
 
 const renderTrendRow = (
@@ -75,7 +78,8 @@ const renderTrendRow = (
   value: number,
   largestValue: number,
   color: string,
-  last = false,
+  index: number,
+  last: boolean,
 ) => {
   const width =
     value > 0
@@ -85,7 +89,9 @@ const renderTrendRow = (
         )
       : 0;
 
-  return `<tr><td style="font-size:10px;font-weight:900;text-transform:uppercase;color:#777;width:72px;padding:6px 7px 5px 0;">${escapeHtml(label)}</td><td style="height:6px;padding:0 1px;${last ? "" : "border-bottom:1px solid #f0f0f0;"}"><span style="display:block;height:6px;background:${color};border-radius:4px;width:${width}%;"></span></td></tr>`;
+  const labelPadding = `${index === 0 ? "0" : "6px"} 7px ${last ? "0" : "5px"} 0`;
+
+  return `<tr><td style="font-size:10px;font-weight:900;text-transform:uppercase;color:#777;width:72px;padding:${labelPadding};">${escapeHtml(label)}</td><td style="height:6px;padding:0 1px;${last ? "" : "border-bottom:1px solid #f0f0f0;"}"><span style="display:block;height:6px;background:${color};border-radius:4px;width:${width}%;"></span></td></tr>`;
 };
 
 export const renderCampaignTrend = (
@@ -113,11 +119,33 @@ export const renderCampaignTrend = (
     )
     .join("");
   const summary = aiSummary.trim()
-    ? `<tr><td style="padding:0 14px 14px;"><div style="background:#fafafa;border:1px solid #e7e7e7;border-radius:8px;padding:13px 14px;margin-top:12px;"><div style="font-size:10px;letter-spacing:1px;font-weight:900;text-transform:uppercase;color:#7a42e8;margin-bottom:6px;">&#10022; AI summary</div><div style="font-size:13px;line-height:1.45;color:#555;margin-bottom:10px;">${escapeHtml(aiSummary)}</div><table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;">${summaryRows}</table></div></td></tr>`
+    ? `<tr><td style="padding:0 14px 14px;"><div style="background:#fafafa;border:1px solid #e7e7e7;border-radius:10px;padding:14px 15px;margin-top:12px;"><div style="font-size:10px;letter-spacing:1px;font-weight:900;text-transform:uppercase;color:#6f42c1;margin-bottom:7px;">&#10022; AI Summary</div><div style="font-size:13px;line-height:1.45;color:#555;margin-bottom:10px;">${escapeHtml(aiSummary)}</div><table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;">${summaryRows}</table></div></td></tr>`
     : "";
 
-  return `<div style="margin-top:26px;"><div style="font-size:11px;letter-spacing:1.2px;font-weight:900;text-transform:uppercase;color:#777;margin-bottom:10px;">CAMPAIGN TREND</div><table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;background:#fff;border:1px solid #e7e7e7;border-radius:8px;"><tr><td style="padding:14px 14px 8px;"><table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;">${entries.map(({ label, value, color }, index) => renderTrendRow(label, value, largestValue, color, index === entries.length - 1)).join("")}</table></td></tr>${summary}</table></div>`;
+  return `<div style="margin-top:26px;">${sectionTitle("Campaign Trend", "1.2px")}<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;background:#fff;border:1px solid #e7e7e7;border-radius:10px;"><tr><td style="padding:14px 14px 8px;"><table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;">${entries.map(({ label, value, color }, index) => renderTrendRow(label, value, largestValue, color, index, index === entries.length - 1)).join("")}</table></td></tr>${summary}</table></div>`;
 };
+
+interface DjCard {
+  label: string;
+  value: string;
+  detail?: string;
+  detailColor?: string;
+}
+
+const renderDjCards = (cards: DjCard[]) => {
+  const cells = cards
+    .map(
+      ({ label, value, detail, detailColor }) =>
+        `<td width="33%" style="padding:15px;background:#f7f7f7;border:1px solid #e7e7e7;border-radius:8px;vertical-align:top;"><div style="font-size:10px;letter-spacing:1px;font-weight:900;text-transform:uppercase;color:#666;">${escapeHtml(label)}</div><div style="font-size:22px;line-height:1;font-weight:900;margin:8px 0 6px;color:#222;">${escapeHtml(value)}</div>${detail ? `<div style="font-size:11px;color:${detailColor ?? "#777"};font-weight:900;margin-top:4px;">${escapeHtml(detail)}</div>` : ""}</td>`,
+    )
+    .join("");
+  const fillers = '<td width="33%"></td>'.repeat(3 - cards.length);
+
+  return `<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;border-spacing:6px;margin-top:14px;"><tr>${cells}${fillers}</tr></table>`;
+};
+
+const spinsLabel = (count: number) =>
+  count > 0 ? `${formatNumber(count)} spins` : undefined;
 
 export const renderDjInsights = (project: UnknownRecord, spinCount: number) => {
   const insights = asRecord(project.dj_insights || project.spin_insights);
@@ -133,27 +161,26 @@ export const renderDjInsights = (project: UnknownRecord, spinCount: number) => {
   ).trim();
   if (spinCount <= 0 && !topDjName && !topLocationName) return "";
 
-  const cards: MetricCard[] = [];
+  const cards: DjCard[] = [];
 
   if (spinCount > 0) {
-    cards.push({ label: "Spins", value: spinCount });
+    cards.push({ label: "Spins", value: formatNumber(spinCount) });
   }
   if (topDjName) {
     cards.push({
       label: "Top DJ",
-      value: asNumber(topDj.spin_count),
-      detailLabel: "DJ",
-      detailValue: topDjName,
+      value: topDjName,
+      detail: spinsLabel(asNumber(topDj.spin_count)),
+      detailColor: "#068cff",
     });
   }
   if (topLocationName) {
     cards.push({
-      label: "Top location",
-      value: asNumber(topLocation.spin_count),
-      detailLabel: "Location",
-      detailValue: topLocationName,
+      label: "Top Location",
+      value: topLocationName,
+      detail: spinsLabel(asNumber(topLocation.spin_count)),
     });
   }
 
-  return `<div style="margin-top:24px;">${sectionHeading("https://res.cloudinary.com/dyueswnzk/image/upload/v1773505122/spins-mail_lvzhxe.png", "DJ Insights")}<div style="margin-top:8px;">${renderMetricGrid(cards)}</div><p style="font-size:12px;color:#777;margin:10px 0 0;line-height:1.5;"><strong>&#9432;</strong> DJ insights summarize recorded activity associated with this campaign. Data is collected and verified through <a href="https://arroweye.pro/product/spins" target="_blank" style="color:#777;text-decoration:underline;">Spins Pro</a>.</p></div>`;
+  return `<div style="margin-top:24px;">${sectionHeading("https://res.cloudinary.com/dyueswnzk/image/upload/v1773505122/spins-mail_lvzhxe.png", "DJ Insights")}${renderDjCards(cards)}${infoNote('DJ insights summarize recorded activity associated with this campaign. Data is collected and verified through <a href="https://arroweye.pro/product/spins" target="_blank" style="color:#777;text-decoration:underline;">Spins Pro</a>.')}</div>`;
 };

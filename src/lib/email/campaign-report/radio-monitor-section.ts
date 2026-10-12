@@ -1,122 +1,84 @@
-import type { RadioMonitorSummary } from "@/lib/radio-monitor/radio-monitor-summary";
+import type { CampaignReportRadioStation } from "@/types/campaign-report";
 
-import { escapeHtml, formatNumber, safeUrl, sectionLabel } from "./utils";
+import {
+  escapeHtml,
+  formatNumber,
+  infoNote,
+  safeUrl,
+  sectionTitle,
+} from "./utils";
 
-interface SentenceFormat {
-  strong: (value: string) => string;
-  plain: (value: string) => string;
-}
+// Gold, silver, bronze for the top three; plain grey after that.
+const RANK_BADGES = [
+  { background: "#f6d365", border: "#e5b83d" },
+  { background: "#eeeeee", border: "#d8d8d8" },
+  { background: "#dda06f", border: "#c98956" },
+];
+const DEFAULT_BADGE = { background: "#f7f7f7", border: "#e5e5e5" };
 
-// "an" before numbers spoken with a vowel sound: 8, 11, 18, 80-89, 800...
-const formatChange = (changePercent: number) => {
-  const value = Math.abs(changePercent);
-  const whole = Math.floor(value);
-  const article =
-    String(whole).startsWith("8") || whole === 11 || whole === 18 ? "an" : "a";
-  return `${article} ${value.toLocaleString("en", { maximumFractionDigits: 1 })}% ${changePercent < 0 ? "decrease" : "increase"}`;
-};
+const headerCell = (label: string, style: string) =>
+  `<td ${style}font-size:9px;font-weight:900;color:#999;text-transform:uppercase;">${label}</td>`;
 
-const describeTrend = (changePercent: number | null) => {
-  if (changePercent === null) return "The song charted";
-  if (changePercent > 0) return "Radio plays grew";
-  if (changePercent < 0) return "Radio plays eased";
-  return "Radio plays held steady";
-};
-
-/**
- * Swaps the model's placeholders for figures read from the uploaded file, so
- * the model chooses the words and never the numbers.
- */
-const fillWording = (
-  wording: string,
-  summary: RadioMonitorSummary,
-  { strong, plain }: SentenceFormat,
+const renderStationRow = (
+  station: CampaignReportRadioStation,
+  index: number,
+  showCountry: boolean,
 ) => {
-  const values: Record<string, string> = {
-    plays: strong(formatNumber(summary.plays)),
-    change:
-      summary.changePercent === null
-        ? ""
-        : strong(formatChange(summary.changePercent)),
-    rank: strong(`#${summary.position}`),
-    chart: plain(summary.chart),
-    impressions: summary.impressions
-      ? strong(formatNumber(summary.impressions))
-      : "",
-  };
-
-  return wording
-    .split(/\{([A-Za-z]+)\}/)
-    .map((part, index) =>
-      index % 2 === 1 ? (values[part] ?? "") : plain(part),
-    )
-    .join("");
-};
-
-/** The fixed fallback used when no validated model wording is available. */
-export const describeRadioMonitor = (
-  summary: RadioMonitorSummary,
-  { strong, plain }: SentenceFormat,
-) => {
-  const change =
-    summary.changePercent === null
-      ? ""
-      : summary.changePercent === 0
-        ? plain(", unchanged from the previous reporting period")
-        : `${plain(" and ")}${strong(formatChange(summary.changePercent))}${plain(" versus the previous reporting period")}`;
-  const impressions = summary.impressions
-    ? `${plain(", reaching an estimated ")}${strong(formatNumber(summary.impressions))}${plain(" impressions")}`
+  const badge = RANK_BADGES[index] ?? DEFAULT_BADGE;
+  const cell = "padding:11px 8px 11px 0;border-top:1px solid #e9e9e9;";
+  const numberCell = "padding:11px 0 11px 8px;border-top:1px solid #e9e9e9;";
+  const country = showCountry
+    ? `<td style="${numberCell}text-align:right;font-size:13px;font-weight:800;color:#777;white-space:normal;overflow-wrap:anywhere;word-break:break-word;" class="radio-country-cell">${escapeHtml(station.country)}</td>`
     : "";
 
-  return [
-    plain(
-      `${describeTrend(summary.changePercent)} during ${summary.period}, with `,
+  return `<tr><td style="${cell}vertical-align:middle;"><div style="width:28px;height:28px;line-height:28px;text-align:center;background:${badge.background};border:1px solid ${badge.border};border-radius:50%;font-size:11px;font-weight:900;color:#222;box-sizing:border-box;">${index + 1}</div></td><td style="${cell}font-size:13px;font-weight:800;color:#222;" class="radio-station-cell">${escapeHtml(station.name)}</td><td style="${numberCell}text-align:right;font-size:13px;font-weight:900;color:#222;">${formatNumber(station.plays)}</td>${country}</tr>`;
+};
+
+const renderStationsTable = (stations: CampaignReportRadioStation[]) => {
+  const showCountry = stations.some(({ country }) => country.trim());
+  const header = [
+    headerCell("#", 'width="32" style="padding:0 8px 10px 0;'),
+    headerCell("Station", 'style="padding:0 8px 10px 0;'),
+    headerCell(
+      "Plays",
+      'width="65" style="padding:0 0 10px 8px;text-align:right;',
     ),
-    strong(formatNumber(summary.plays)),
-    plain(" plays"),
-    change,
-    plain(". The song ranked "),
-    strong(`#${summary.position}`),
-    plain(` on the ${summary.chart}`),
-    impressions,
-    plain("."),
+    showCountry
+      ? headerCell(
+          "Country",
+          'width="115" style="padding:0 0 10px 8px;text-align:right;white-space:normal;',
+        )
+      : "",
   ].join("");
+  const rows = stations
+    .map((station, index) => renderStationRow(station, index, showCountry))
+    .join("");
+  const countryNote = showCountry
+    ? `<div style="font-size:12px;color:#777;margin-top:10px;">&#9432; Country identifies the country where each monitored radio station is based, helping show the geographic market associated with the station.</div>`
+    : "";
+
+  return `<div style="margin-top:14px;background:#fff;border:1px solid #e7e7e7;border-radius:8px;padding:16px;"><div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:900;color:#777;margin-bottom:10px;">Top Radio Stations</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;table-layout:fixed;"><tr>${header}</tr>${rows}</table>${countryNote}</div>`;
 };
 
-const htmlFormat: SentenceFormat = {
-  strong: (value) =>
-    `<strong style="color:#111;font-weight:800;">${escapeHtml(value)}</strong>`,
-  plain: escapeHtml,
-};
-
-export const textFormat: SentenceFormat = {
-  strong: (value) => value,
-  plain: (value) => value,
-};
-
-export const writeRadioMonitorSummary = (
-  summary: RadioMonitorSummary,
-  wording: string | undefined,
-  format: SentenceFormat,
-) =>
-  wording
-    ? fillWording(wording, summary, format)
-    : describeRadioMonitor(summary, format);
-
-const renderSummary = (
-  summary: RadioMonitorSummary,
-  wording: string | undefined,
-) =>
-  `<div style="background-color:#fff;padding:16px 18px;border-radius:10px;border:1px solid #e5e5e5;"><div style="font-size:11px;letter-spacing:1px;font-weight:900;text-transform:uppercase;color:#7a42e8;margin-bottom:8px;">&#10022; ${wording ? "AI summary" : "Summary"}</div><div style="font-size:14px;color:#444;line-height:1.55;">${writeRadioMonitorSummary(summary, wording, htmlFormat)}</div></div>`;
-
-// Only campaigns whose song is on the shared chart get this section.
+// The download link is only passed in when the song is on an uploaded radio monitor chart.
 export const renderRadioMonitor = (
-  downloadLink: string | undefined,
-  summary: RadioMonitorSummary | undefined,
-  wording?: string,
+  stations: CampaignReportRadioStation[],
+  downloadLink?: string,
 ) => {
   const link = safeUrl(downloadLink);
-  if (!link || !summary) return "";
+  if (stations.length === 0 && !link) return "";
 
-  return `<div style="margin-top:24px;">${sectionLabel("Radio Monitor", "Weekly radio performance covering plays and rankings across monitored stations.")}${renderSummary(summary, wording)}<div style="text-align:right;margin-top:14px;"><a href="${link}" style="display:inline-block;font-size:14px;font-weight:700;color:#fff;background-color:#111;padding:10px 24px;text-decoration:none;border-radius:22px;">Download</a></div><p style="font-size:12px;color:#777;margin:10px 0 0;line-height:1.5;"><strong>&#9432;</strong> This download link expires in 30 days.</p></div>`;
+  const download = link
+    ? `<div style="margin-top:12px;text-align:right;"><a href="${link}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;font-size:13px;font-weight:800;padding:9px 15px;border-radius:999px;">Download</a></div>${infoNote("This download link expires in 30 days.")}`
+    : "";
+
+  return `<div style="margin-top:28px;border-top:1px solid #e5e5e5;padding-top:22px;">${sectionTitle("Radio Monitor")}<div style="font-size:13px;color:#666;margin-top:4px;">Weekly radio performance covering plays and rankings across monitored stations.</div>${stations.length ? renderStationsTable(stations) : ""}${download}</div>`;
 };
+
+export const describeRadioStations = (stations: CampaignReportRadioStation[]) =>
+  stations
+    .map(
+      ({ name, plays, country }, index) =>
+        `${index + 1}. ${name}${country ? ` (${country})` : ""}: ${formatNumber(plays)} plays`,
+    )
+    .join("\n");

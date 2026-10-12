@@ -1,4 +1,3 @@
-import type { RadioMonitorSummary } from "@/lib/radio-monitor/radio-monitor-summary";
 import type { CampaignReportMetrics } from "@/types/campaign-report";
 
 export type UnknownRecord = Record<string, unknown>;
@@ -19,12 +18,8 @@ export interface CampaignReportTemplateInput {
   campaignId: string;
   generatedAt: Date;
   aiInsights?: CampaignAiInsights;
-  radioMonitor?: {
-    downloadLink: string;
-    summary: RadioMonitorSummary;
-    /** Validated model wording with placeholders; absent means the template. */
-    wording?: string;
-  };
+  /** Present only when the song is on an uploaded radio monitor chart. */
+  radioMonitorLink?: string;
 }
 
 export interface MetricCard {

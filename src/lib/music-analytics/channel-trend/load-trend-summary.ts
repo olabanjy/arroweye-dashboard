@@ -80,15 +80,23 @@ export const loadTrendSummary = async (
   const signals = deriveTrendSignals(filterTrendByRange(points, range));
   if (signals.every(({ activity }) => activity === "none")) return null;
 
-  const signature = JSON.stringify({ isrc: window.isrc, range, signals });
+  const song = {
+    title: String(project.song_title || project.title || "").trim(),
+    artist: String(project.artist_name || project.song_artist || "").trim(),
+  };
+  const signature = JSON.stringify({
+    isrc: window.isrc,
+    range,
+    signals,
+    song,
+  });
   const cached = await readCached(campaignId, range);
   if (cached?.signature === signature) return cached.summary;
 
-  const summary = await generateTrendSummary(signals, range);
+  const summary = await generateTrendSummary(signals, range, song);
   if (!summary) return null;
 
   await writeTrendSummary(campaignId, range, {
-    version: 1,
     signature,
     summary,
   }).catch((error: unknown) => {

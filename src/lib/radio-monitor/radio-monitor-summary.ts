@@ -1,14 +1,11 @@
 import type { Top100Chart, Top100Row } from "./parse-top-100-chart";
 
-export interface RadioMonitorSummary {
-  /** e.g. "Cool FM 96.9 (Lagos) Top 100". */
-  chart: string;
-  period: string;
-  position: number;
+export interface RadioStationPlay {
+  /** e.g. "Cool FM 96.9 (Lagos)". */
+  station: string;
+  /** Empty when the export has no country code. */
+  countryCode: string;
   plays: number;
-  /** Plays against the chart's "Prev" column; null when the song is new. */
-  changePercent: number | null;
-  impressions: number | null;
 }
 
 const normalize = (value: string) =>
@@ -69,23 +66,17 @@ export const findCampaignRow = (
     .sort((a, b) => a.position - b.position)[0];
 };
 
-export const summarizeRadioMonitor = (
+export const findStationPlay = (
   chart: Top100Chart,
   songTitle: string,
   songArtist: string,
-): RadioMonitorSummary | undefined => {
+): RadioStationPlay | undefined => {
   const row = findCampaignRow(chart, songTitle, songArtist);
   if (!row) return undefined;
 
   return {
-    chart: `${chart.station} ${chart.chart}`,
-    period: chart.period,
-    position: row.position,
+    station: chart.station,
+    countryCode: chart.countryCode,
     plays: row.plays,
-    changePercent:
-      row.previousPlays && row.previousPlays > 0
-        ? ((row.plays - row.previousPlays) / row.previousPlays) * 100
-        : null,
-    impressions: row.impressions,
   };
 };
