@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useLayoutEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { flushSync } from "react-dom";
 import { MdAddCircleOutline } from "react-icons/md";
 import type { AppUser } from "@/types/api";
@@ -58,6 +59,12 @@ export function CampaignDetailsHeader({
     "Manager",
     // "Supervisor",
   ]);
+  const artistName = content?.artist_name || content?.campaign?.song_artist;
+  // Artist data is resolved from the linked song, so there is nothing to show without one.
+  const canViewArtistAnalytics =
+    Boolean(
+      artistName && content?.id && (content?.isrc || content?.song_isrc),
+    ) && hasAccess(userLoggedInProfile, ["Manager", "Supervisor"]);
   const canAddMember = hasAccess(userLoggedInProfile, ["Manager"]);
   const stickySentinelRef = useRef<HTMLDivElement>(null);
   const stickyHeaderRef = useRef<HTMLDivElement>(null);
@@ -138,9 +145,19 @@ export function CampaignDetailsHeader({
             <span className="text-zinc-600 dark:text-zinc-400">
               {content?.vendor?.organization_name || content?.campaign?.mode}
             </span>
-            <span className="border border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/50 px-3 py-1 text-zinc-500 dark:text-zinc-400">
-              {content?.artist_name || content?.campaign?.song_artist}
-            </span>
+            {canViewArtistAnalytics ? (
+              <Link
+                href={`/campaigns/${content.id}/artist`}
+                title="View artist analytics"
+                className="border border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/50 px-3 py-1 text-zinc-500 dark:text-zinc-400 transition-colors hover:border-green-500 hover:text-foreground"
+              >
+                {artistName}
+              </Link>
+            ) : (
+              <span className="border border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/50 px-3 py-1 text-zinc-500 dark:text-zinc-400">
+                {artistName}
+              </span>
+            )}
           </div>
         )}
 
