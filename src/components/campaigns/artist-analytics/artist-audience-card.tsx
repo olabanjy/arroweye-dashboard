@@ -80,13 +80,6 @@ export function ArtistAudienceCard({
         getRowKey={(row) => row.code}
         showRank
         loading={loading}
-        footer={
-          countries.length > 0 ? (
-            <p className="font-SansFlex text-[12px] text-muted-foreground">
-              Totals of the top listener cities in each country.
-            </p>
-          ) : undefined
-        }
       />
     </div>
   );

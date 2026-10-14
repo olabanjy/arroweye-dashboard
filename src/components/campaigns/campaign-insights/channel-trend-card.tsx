@@ -90,7 +90,7 @@ function TooltipRow({
   );
 }
 
-function TrendSummary({
+export function TrendSummary({
   summary,
   loading,
 }: {

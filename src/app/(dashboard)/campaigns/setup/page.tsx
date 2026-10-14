@@ -86,7 +86,7 @@ export default function CreateContent() {
           isSecurityExpanded ? "pt-10 pb-2" : "py-10"
         }`}
       >
-        <div className="mx-auto flex w-full max-w-5xl flex-col">
+        <div className="mx-auto flex w-full max-w-7xl flex-col">
           <div className="my-auto w-full">
             <header className="text-center">
               <h1 className="text-[25px] font-semibold leading-tight tracking-[-0.025em] sm:text-[27px]">
@@ -217,7 +217,7 @@ export default function CreateContent() {
       >
         <div className="overflow-hidden">
           <div className="px-4 pb-10 sm:px-8">
-            <div className="mx-auto w-full max-w-5xl pt-4 sm:pt-6">
+            <div className="mx-auto w-full max-w-7xl pt-4 sm:pt-6">
               <SecurityFraudSection />
 
               <button

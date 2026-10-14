@@ -31,6 +31,7 @@ const EventDialog = ({
   formErrors,
   vendorOptions,
   subvendorOptions,
+  campaignOptions,
   onFormChange,
   onSelectChange,
   onSubmit,
@@ -82,6 +83,7 @@ const EventDialog = ({
             formErrors={formErrors}
             vendorOptions={vendorOptions}
             subvendorOptions={subvendorOptions}
+            campaignOptions={campaignOptions}
             onCancel={close}
             onFormChange={onFormChange}
             onSelectChange={onSelectChange}

@@ -21,23 +21,14 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChartInfoTooltip } from "../chart-info-tooltip";
+import { TrendSummary } from "../campaign-insights/channel-trend-card";
 import { compactNumber, formatDay } from "./format";
+import { PLATFORM_COLORS } from "./platform-brand";
 import {
   toFollowerGrowth,
   type FollowerPoint,
   type FollowerRange,
 } from "./hooks/use-artist-follower-history";
-
-const PLATFORM_COLORS: Record<string, string> = {
-  spotify: "#1db954",
-  instagram: "#e1306c",
-  tiktok: "#00b2c2",
-  youtube: "#ff0000",
-  facebook: "#1877f2",
-  twitter: "#71717a",
-  deezer: "#a238ff",
-  soundcloud: "#ff7700",
-};
 
 const RANGE_OPTIONS: { value: FollowerRange; label: string }[] = [
   { value: 30, label: "Last 30 days" },
@@ -50,6 +41,8 @@ interface FollowerGrowthCardProps {
   points: FollowerPoint[];
   range: FollowerRange;
   onRangeChange: (range: FollowerRange) => void;
+  summary?: string | null;
+  summaryLoading?: boolean;
   loading?: boolean;
   hasError?: boolean;
 }
@@ -59,6 +52,8 @@ export function FollowerGrowthCard({
   points,
   range,
   onRangeChange,
+  summary = null,
+  summaryLoading = false,
   loading = false,
   hasError = false,
 }: FollowerGrowthCardProps) {
@@ -87,7 +82,7 @@ export function FollowerGrowthCard({
           <CardTitle className="!text-[12px] font-[400] tracking-[.1rem]">
             FOLLOWER GROWTH
           </CardTitle>
-          <ChartInfoTooltip content="Followers gained on each platform since the start of the selected period. Hover a day to see the total follower count." />
+          <ChartInfoTooltip content="Followers gained on each platform since the start of the selected period. Hover a day to see the total follower count; the cards above show the change for the period." />
         </div>
         <Select
           value={String(range)}
@@ -175,7 +170,7 @@ export function FollowerGrowthCard({
                   <ChartTooltipContent
                     labelFormatter={(value) => formatDay(String(value))}
                     indicator="dot"
-                    formatter={(value, name, item) => (
+                    formatter={(_, name, item) => (
                       <div className="flex flex-1 items-center justify-between gap-5 leading-none">
                         <span className="text-muted-foreground">
                           {chartConfig[String(name)]?.label ?? name}
@@ -184,10 +179,6 @@ export function FollowerGrowthCard({
                           {Number(
                             item.payload?.[`${String(name)}Raw`] ?? 0,
                           ).toLocaleString()}
-                          <span className="ml-1 text-muted-foreground">
-                            ({Number(value) >= 0 ? "+" : ""}
-                            {compactNumber.format(Number(value))})
-                          </span>
                         </span>
                       </div>
                     )}
@@ -211,6 +202,9 @@ export function FollowerGrowthCard({
               <ChartLegend content={<ChartLegendContent />} />
             </AreaChart>
           </ChartContainer>
+        )}
+        {!loading && !hasError && chartData.length > 0 && (
+          <TrendSummary summary={summary} loading={summaryLoading} />
         )}
       </CardContent>
     </Card>

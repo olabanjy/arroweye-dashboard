@@ -8,15 +8,13 @@ import {
   type ArtistQuery,
 } from "./fetch-artist-analytics";
 
-export type FollowerRange = 30 | 90 | 365;
+import type {
+  FollowerHistory,
+  FollowerPoint,
+  FollowerRange,
+} from "@/lib/music-analytics/artist/follower-growth";
 
-export type FollowerPoint = { date: string } & Record<string, number | string>;
-
-interface FollowerHistory {
-  days: FollowerRange;
-  platforms: { code: string; label: string }[];
-  points: FollowerPoint[];
-}
+export type { FollowerPoint, FollowerRange };
 
 export function useArtistFollowerHistory(
   query: ArtistQuery,

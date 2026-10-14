@@ -8,6 +8,7 @@ import ArtistAnalytics from "@/components/campaigns/artist-analytics";
 import NoNetwork from "@/components/no-network";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCampaignDetail } from "@/hooks/use-campaign-detail";
+import { useCampaignExports } from "@/hooks/use-campaign-exports";
 import { hasAccess } from "@/lib/utils";
 
 const readIsrc = (content: any) =>
@@ -45,6 +46,7 @@ const ArtistAnalyticsPage = () => {
     hasNetworkError,
     refreshContent,
   } = useCampaignDetail(id);
+  const { handleExportCSV } = useCampaignExports(content);
 
   const artistName = content?.artist_name || content?.campaign?.song_artist;
   const campaignTitle =
@@ -92,6 +94,12 @@ const ArtistAnalyticsPage = () => {
         campaignTitle={campaignTitle}
         artistName={artistName}
         isrc={isrc}
+        dockProps={{
+          contentId: content?.id,
+          handleDownloadData: handleExportCSV,
+          notifications: content?.notifications,
+          media: content?.media,
+        }}
       />
     </div>
   );
