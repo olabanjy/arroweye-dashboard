@@ -78,6 +78,7 @@ const Schedule: React.FC<ScheduleProps> = ({
     setPinError,
     vendorOptions,
     subvendorOptions,
+    campaignOptions,
     events,
     exportICS,
     handleDelete,
@@ -175,6 +176,7 @@ const Schedule: React.FC<ScheduleProps> = ({
         formErrors={formErrors}
         vendorOptions={vendorOptions}
         subvendorOptions={subvendorOptions}
+        campaignOptions={campaignOptions}
         onFormChange={handleFormChange}
         onSelectChange={handleSelectChange}
         onSubmit={handleFormSubmit}

@@ -18,7 +18,7 @@ const COLORS = {
   streaming: "#13bf7a",
 };
 
-const renderMetricGrid = (cards: MetricCard[]) => {
+export const renderMetricGrid = (cards: MetricCard[]) => {
   const rows = Array.from({ length: Math.ceil(cards.length / 3) }, (_, row) => {
     const rowCards = cards.slice(row * 3, row * 3 + 3);
     const cells = rowCards

@@ -1,13 +1,59 @@
 "use client";
 
+import { ArrowDown, ArrowUp } from "lucide-react";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { PlatformGrowth } from "@/lib/music-analytics/artist/follower-growth";
+import { cn } from "@/lib/utils";
 import { compactNumber } from "./format";
 import type { ArtistPlatformStats } from "./hooks/use-artist-profile";
+import { PLATFORM_COLORS, PLATFORM_ICONS } from "./platform-brand";
 
 interface ArtistStatsGridProps {
   platforms: ArtistPlatformStats[];
+  growth?: Record<string, PlatformGrowth>;
+  growthDays: number;
+  growthLoading?: boolean;
   loading?: boolean;
+}
+
+const percentFormat = new Intl.NumberFormat("en", {
+  maximumFractionDigits: 1,
+});
+
+/** Followers gained over the chart's selected period. */
+function GrowthDelta({
+  growth,
+  days,
+}: {
+  growth: PlatformGrowth;
+  days: number;
+}) {
+  const isUp = growth.gained > 0;
+  const isDown = growth.gained < 0;
+  const Arrow = isDown ? ArrowDown : ArrowUp;
+  const sign = isUp ? "+" : "";
+
+  return (
+    <p
+      className={cn(
+        "flex items-center gap-1 text-xs font-medium tabular-nums",
+        isUp && "text-green-600 dark:text-green-500",
+        isDown && "text-red-500",
+        !isUp && !isDown && "text-muted-foreground",
+      )}
+      title={`${sign}${growth.gained.toLocaleString()} in the last ${days} days`}
+    >
+      {(isUp || isDown) && <Arrow className="size-3" />}
+      {sign}
+      {compactNumber.format(growth.gained)}
+      {growth.percent !== null && (
+        <span>({percentFormat.format(Math.abs(growth.percent))}%)</span>
+      )}
+      <span className="font-normal text-muted-foreground">· {days}d</span>
+    </p>
+  );
 }
 
 // On these networks views count videos made with the artist's music, not
@@ -37,6 +83,9 @@ const followerLabel = (platform: ArtistPlatformStats) => {
 
 export function ArtistStatsGrid({
   platforms,
+  growth = {},
+  growthDays,
+  growthLoading = false,
   loading = false,
 }: ArtistStatsGridProps) {
   if (loading) {
@@ -61,15 +110,25 @@ export function ArtistStatsGrid({
     <div className="grid grid-cols-2 gap-[10px] md:grid-cols-4">
       {platforms.map((platform) => {
         const secondary = readSecondary(platform);
+        const Icon = PLATFORM_ICONS[platform.code];
         return (
           <Card
             key={platform.code}
             className="gap-0 rounded-[8px] p-[20px] shadow-none font-SansFlex bg-transparent hover:bg-green-500/5 hover:border-green-500"
           >
             <CardContent className="space-y-3 p-0">
-              <p className="!text-[12px] font-[400] uppercase tracking-[.1rem] text-[#7a8081]">
-                {platform.label}
-              </p>
+              <div className="flex items-start justify-between gap-2">
+                <p className="!text-[12px] font-[400] uppercase tracking-[.1rem] text-[#7a8081]">
+                  {platform.label}
+                </p>
+                {Icon && (
+                  <Icon
+                    aria-hidden="true"
+                    className="size-5 shrink-0"
+                    style={{ color: PLATFORM_COLORS[platform.code] }}
+                  />
+                )}
+              </div>
               <div>
                 <p
                   className="text-2xl font-semibold text-foreground tabular-nums"
@@ -83,6 +142,16 @@ export function ArtistStatsGrid({
                   {followerLabel(platform)}
                 </p>
               </div>
+              {growthLoading && platform.followers !== null ? (
+                <Skeleton className="h-4 w-24" />
+              ) : (
+                growth[platform.code] && (
+                  <GrowthDelta
+                    growth={growth[platform.code]}
+                    days={growthDays}
+                  />
+                )
+              )}
               {secondary && (
                 <p
                   className="text-xs text-muted-foreground"

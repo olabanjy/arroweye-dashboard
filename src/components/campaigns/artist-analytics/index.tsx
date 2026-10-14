@@ -5,13 +5,19 @@ import { ArtistProfileHeader } from "./artist-profile-header";
 import { ArtistStatsGrid } from "./artist-stats-grid";
 import { ArtistTopTracksCard } from "./artist-top-tracks-card";
 import { FollowerGrowthCard } from "./follower-growth-card";
+import {
+  BottomDock,
+  type BottomDockProps,
+} from "../campaign-insights/bottom-dock";
 import { useArtistAnalytics } from "./hooks/use-artist-analytics";
+import { useArtistReportSend } from "./hooks/use-artist-report-send";
 
 interface ArtistAnalyticsProps {
   campaignId: string;
   campaignTitle?: string;
   artistName?: string;
   isrc?: string;
+  dockProps: Omit<BottomDockProps, "onSendReport" | "reportMetrics">;
 }
 
 const cardClassName =
@@ -22,8 +28,13 @@ export default function ArtistAnalytics({
   campaignTitle,
   artistName,
   isrc,
+  dockProps,
 }: ArtistAnalyticsProps) {
-  const analytics = useArtistAnalytics({ isrc, artist: artistName });
+  const analytics = useArtistAnalytics(campaignId, {
+    isrc,
+    artist: artistName,
+  });
+  const sendReport = useArtistReportSend(campaignId, analytics.followerRange);
 
   return (
     <div className="space-y-[20px]">
@@ -43,6 +54,9 @@ export default function ArtistAnalytics({
         <>
           <ArtistStatsGrid
             platforms={analytics.profile?.platforms ?? []}
+            growth={analytics.followerGrowth}
+            growthDays={analytics.followerRange}
+            growthLoading={analytics.isFollowerHistoryLoading}
             loading={analytics.isProfileLoading}
           />
 
@@ -51,6 +65,8 @@ export default function ArtistAnalytics({
             points={analytics.followerPoints}
             range={analytics.followerRange}
             onRangeChange={analytics.setFollowerRange}
+            summary={analytics.artistSummary}
+            summaryLoading={analytics.isArtistSummaryLoading}
             loading={analytics.isFollowerHistoryLoading}
             hasError={analytics.hasFollowerHistoryError}
           />
@@ -72,6 +88,11 @@ export default function ArtistAnalytics({
           </div>
         </>
       )}
+
+      <BottomDock
+        {...dockProps}
+        onSendReport={analytics.profileError ? undefined : sendReport}
+      />
     </div>
   );
 }

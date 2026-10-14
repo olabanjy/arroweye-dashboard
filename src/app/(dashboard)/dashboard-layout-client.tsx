@@ -92,7 +92,7 @@ const DashboardLayoutClient: FC<LayoutProps> = ({
             className={
               isSetupLanding
                 ? "min-h-full w-full"
-                : `w-full max-w-6xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
+                : `w-full max-w-7xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
                     pathname !== "/campaigns/spins-notifications" &&
                     pathname !== "/campaigns/setup/custom" &&
                     pathname !== "/campaigns/setup/promoter"
@@ -132,7 +132,7 @@ const DashboardLayoutClient: FC<LayoutProps> = ({
           className={
             isSetupLanding
               ? "min-h-full w-full"
-              : `w-full max-w-6xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
+              : `w-full max-w-7xl mx-auto ${withBorder ? "border border-gray-100" : ""} ${
                   pathname !== "/campaigns/spins-notifications" &&
                   pathname !== "/campaigns/setup/custom" &&
                   pathname !== "/campaigns/setup/promoter"

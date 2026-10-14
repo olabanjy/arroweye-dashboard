@@ -30,7 +30,9 @@ import {
   inputSlotClassName,
   triggerClassName,
 } from "./event-fields";
-import { FieldSelect, fieldClassName, type SelectOption } from "./field-select";
+import { FieldSelect, type SelectOption } from "./field-select";
+import CampaignCombobox from "./campaign-combobox";
+import type { CampaignOption } from "../hooks/use-campaign-combobox";
 
 type FormChangeEvent = { target: { name: string; value: string } };
 
@@ -40,6 +42,7 @@ export interface EventFormProps {
   formErrors: FormErrors;
   vendorOptions: SelectOption[];
   subvendorOptions: SelectOption[];
+  campaignOptions: CampaignOption[];
   onCancel: () => void;
   onFormChange: (e: FormChangeEvent) => void;
   onSelectChange: (change: { name: string; value: string }) => void;
@@ -52,6 +55,7 @@ const EventForm = ({
   formErrors,
   vendorOptions,
   subvendorOptions,
+  campaignOptions,
   onCancel,
   onFormChange,
   onSelectChange,
@@ -205,13 +209,11 @@ const EventForm = ({
         {dialog.isDropOpen && (
           <div className="grid gap-4 pb-1 pt-2 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <Input
-                name="code"
+              <CampaignCombobox
+                options={campaignOptions}
                 value={formData.code}
-                onChange={onFormChange}
-                placeholder="Campaign code"
+                onChange={(value) => onSelectChange({ name: "code", value })}
                 error={formErrors.code}
-                className={fieldClassName}
               />
             </div>
             <FieldSelect

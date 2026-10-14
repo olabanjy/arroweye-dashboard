@@ -37,7 +37,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getProjectDropZone } from "@/services";
-import type { CampaignReportMetrics } from "@/types/campaign-report";
+import type {
+  CampaignReportMetrics,
+  SendCampaignReportResult,
+} from "@/types/campaign-report";
 import {
   isApiNotification,
   type NotificationByType,
@@ -59,13 +62,15 @@ interface PublicationMedia {
   editorial_link?: string | null;
 }
 
-interface BottomDockProps {
+export interface BottomDockProps {
   contentId?: number | string;
   handleDownloadData?: () => void;
   notifications?: unknown;
   media?: unknown;
   reportMetrics?: CampaignReportMetrics;
   reportLoading?: boolean;
+  /** Replaces the campaign report send, for pages with their own report. */
+  onSendReport?: (recipient: string) => Promise<SendCampaignReportResult>;
 }
 
 const panelTitle: Record<DockPanel, string> = {
@@ -84,6 +89,7 @@ export function BottomDock({
   media,
   reportMetrics,
   reportLoading = false,
+  onSendReport,
 }: BottomDockProps) {
   const router = useRouter();
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -170,17 +176,21 @@ export function BottomDock({
 
   const closePopover = () => setPopoverOpen(false);
 
+  const canSendReport = Boolean(onSendReport || reportMetrics);
+
   const handleSendEmail = async () => {
-    if (!contentId || !email || !reportMetrics || reportLoading) return;
+    if (!contentId || !email || !canSendReport || reportLoading) return;
 
     setIsSending(true);
 
     try {
-      const result = await sendCampaignReport({
-        campaignId: String(contentId),
-        recipient: email,
-        metrics: reportMetrics,
-      });
+      const result = onSendReport
+        ? await onSendReport(email)
+        : await sendCampaignReport({
+            campaignId: String(contentId),
+            recipient: email,
+            metrics: reportMetrics!,
+          });
 
       if (result.success) {
         setEmail("");
@@ -255,6 +265,11 @@ export function BottomDock({
     },
   ];
 
+  // Sending needs report figures or a page-specific sender.
+  const visibleDockItems = dockItems.filter(
+    (item) => item.id !== "send" || canSendReport,
+  );
+
   return (
     <>
       <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
@@ -266,7 +281,7 @@ export function BottomDock({
               className="flex h-[50px] w-[calc(100vw-2rem)] max-w-[310px] items-center justify-between rounded-sm border border-zinc-200/90 bg-white/95 px-3 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95 shaodow-sm"
               role="toolbar"
             >
-              {dockItems.map((item) => {
+              {visibleDockItems.map((item) => {
                 const isActive = popoverOpen && activePanel === item.id;
 
                 return (
@@ -501,7 +516,7 @@ export function BottomDock({
                       event.key === "Enter" &&
                       !isSending &&
                       !reportLoading &&
-                      reportMetrics
+                      canSendReport
                     ) {
                       void handleSendEmail();
                     }
@@ -514,7 +529,7 @@ export function BottomDock({
                   className="absolute right-1 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground outline-none transition-[background-color,transform] duration-150 hover:bg-primary/80 active:scale-[0.95] focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-50"
                   onClick={() => void handleSendEmail()}
                   disabled={
-                    isSending || reportLoading || !email || !reportMetrics
+                    isSending || reportLoading || !email || !canSendReport
                   }
                 >
                   {isSending ? (
