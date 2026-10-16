@@ -147,8 +147,12 @@ export const useDrops = () => {
     deleteMutation.mutate(id);
   };
 
+  const refreshDrops = () =>
+    queryClient.invalidateQueries({ queryKey: ["dropzones"] });
+
   return {
     content,
+    refreshDrops,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,

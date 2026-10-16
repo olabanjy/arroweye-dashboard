@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ChevronDown, MapPin, Paperclip } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { DialogTitle } from "@/components/ui/dialog";
@@ -32,6 +32,11 @@ import {
 } from "./event-fields";
 import { FieldSelect, type SelectOption } from "./field-select";
 import CampaignCombobox from "./campaign-combobox";
+import {
+  AddAttachmentButton,
+  AttachmentList,
+  formatFileSize,
+} from "./event-attachments";
 import type { CampaignOption } from "../hooks/use-campaign-combobox";
 
 type FormChangeEvent = { target: { name: string; value: string } };
@@ -47,7 +52,14 @@ export interface EventFormProps {
   onFormChange: (e: FormChangeEvent) => void;
   onSelectChange: (change: { name: string; value: string }) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  isSubmitting: boolean;
+  mode?: "create" | "edit";
+  pendingAttachments?: File[];
+  onPendingAttachmentsChange?: (files: File[]) => void;
 }
+
+const fileKey = (file: File) =>
+  `${file.name}-${file.size}-${file.lastModified}`;
 
 const EventForm = ({
   dialog,
@@ -60,7 +72,12 @@ const EventForm = ({
   onFormChange,
   onSelectChange,
   onSubmit,
+  isSubmitting,
+  mode = "create",
+  pendingAttachments = [],
+  onPendingAttachmentsChange,
 }: EventFormProps) => {
+  const isEdit = mode === "edit";
   const clearField = (name: string) =>
     onFormChange({ target: { name, value: "" } });
 
@@ -76,13 +93,14 @@ const EventForm = ({
           Cancel
         </Button>
         <DialogTitle className="text-[16px] font-semibold">
-          New Event
+          {isEdit ? "Edit Event" : "New Event"}
         </DialogTitle>
         <Button
           type="submit"
+          disabled={isSubmitting}
           className="h-8 justify-self-end rounded-lg bg-[#5300d7] px-4 text-[14px] text-white hover:bg-[#4700b8]"
         >
-          Save
+          {isSubmitting ? "Saving…" : "Save"}
         </Button>
       </div>
 
@@ -106,21 +124,23 @@ const EventForm = ({
         </div>
       </div>
 
-      <EventDateTimeFields
-        dateLabel={dialog.dateLabel}
-        selectedDate={dialog.selectedDate}
-        isDatePickerOpen={dialog.isDatePickerOpen}
-        onDatePickerOpenChange={dialog.setIsDatePickerOpen}
-        onDateSelect={dialog.handleDateSelect}
-        startTime={dialog.startTime}
-        endTime={dialog.endTime}
-        startTimeOptions={dialog.startTimeOptions}
-        endTimeOptions={dialog.endTimeOptions}
-        onStartTimeChange={dialog.handleStartTimeChange}
-        onEndTimeChange={dialog.handleEndTimeChange}
-        dateError={formErrors.start_dte}
-        endError={formErrors.end_dte}
-      />
+      {!isEdit && (
+        <EventDateTimeFields
+          dateLabel={dialog.dateLabel}
+          selectedDate={dialog.selectedDate}
+          isDatePickerOpen={dialog.isDatePickerOpen}
+          onDatePickerOpenChange={dialog.setIsDatePickerOpen}
+          onDateSelect={dialog.handleDateSelect}
+          startTime={dialog.startTime}
+          endTime={dialog.endTime}
+          startTimeOptions={dialog.startTimeOptions}
+          endTimeOptions={dialog.endTimeOptions}
+          onStartTimeChange={dialog.handleStartTimeChange}
+          onEndTimeChange={dialog.handleEndTimeChange}
+          dateError={formErrors.start_dte}
+          endError={formErrors.end_dte}
+        />
+      )}
 
       <div>
         <FieldLabel htmlFor="event-location">Location</FieldLabel>
@@ -154,7 +174,7 @@ const EventForm = ({
       <CountedTextarea
         id="event-description"
         name="description"
-        label="Description (optional)"
+        label="Description"
         value={formData.description}
         maxLength={EVENT_DESCRIPTION_MAX_LENGTH}
         placeholder="Add details for attendees"
@@ -189,25 +209,10 @@ const EventForm = ({
         </Select>
       </div>
 
-      <div className="border-t border-zinc-200 pt-2 dark:border-zinc-700">
-        <button
-          type="button"
-          onClick={dialog.toggleDrop}
-          aria-expanded={dialog.isDropOpen}
-          className="flex w-full items-center gap-3 py-2 text-left text-[14px]"
-        >
-          <Paperclip className={iconClassName} />
-          <span className="flex-1">Add drop</span>
-          <ChevronDown
-            className={cn(
-              "size-4 text-zinc-500 transition-transform duration-200",
-              dialog.isDropOpen && "rotate-180",
-            )}
-          />
-        </button>
-
-        {dialog.isDropOpen && (
-          <div className="grid gap-4 pb-1 pt-2 sm:grid-cols-2">
+      {!isEdit && (
+        <div className="border-t border-zinc-200 pt-3.5 dark:border-zinc-700">
+          <FieldLabel>Campaign &amp; vendor</FieldLabel>
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <CampaignCombobox
                 options={campaignOptions}
@@ -233,8 +238,37 @@ const EventForm = ({
               error={formErrors.subvendor_id}
             />
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {!isEdit && onPendingAttachmentsChange && (
+        <div className="border-t border-zinc-200 pt-3.5 dark:border-zinc-700">
+          <FieldLabel>Attachments (optional)</FieldLabel>
+          <div className="space-y-2">
+            <AttachmentList
+              items={pendingAttachments.map((file) => ({
+                key: fileKey(file),
+                name: file.name,
+                meta: formatFileSize(file.size),
+              }))}
+              onRemove={(key) =>
+                onPendingAttachmentsChange(
+                  pendingAttachments.filter((file) => fileKey(file) !== key),
+                )
+              }
+            />
+            <AddAttachmentButton
+              onFiles={(files) => {
+                const existing = new Set(pendingAttachments.map(fileKey));
+                onPendingAttachmentsChange([
+                  ...pendingAttachments,
+                  ...files.filter((file) => !existing.has(fileKey(file))),
+                ]);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </form>
   );
 };

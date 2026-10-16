@@ -86,6 +86,13 @@ export const useScheduleCalendar = ({
     new Date(formData.start_dte) >= new Date(new Date().setHours(0, 0, 0, 0)),
   );
 
+  const eventCampaign = schedule.campaignOptions.find(
+    (option) =>
+      (formData.project && String(option.id) === String(formData.project)) ||
+      (formData.code &&
+        (option.pin === formData.code || option.code === formData.code)),
+  );
+
   const requestDeleteEvent = () => {
     schedule.setScheduleIdToBeDeleted(formData);
     schedule.setDeleteDialog(true);
@@ -102,6 +109,7 @@ export const useScheduleCalendar = ({
   return {
     ...schedule,
     canDeleteEvent,
+    eventCampaignTitle: eventCampaign?.label,
     requestDeleteEvent,
     openEventProject,
     handleCalendarEventClick,
