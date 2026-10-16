@@ -3,16 +3,17 @@ import "server-only";
 import type { ArtistReport } from "@/lib/music-analytics/artist/load-artist-report";
 
 import {
-  renderAudienceSummary,
-  renderListenerLocations,
-  renderPlatformSnapshot,
+  renderArtistIdentity,
+  renderFollowerGrowth,
+  renderInsights,
+  renderListenerGeography,
+  renderPlatformAudience,
+  renderReportHeader,
   renderTopTracks,
 } from "./artist-report/sections";
 import {
   asString,
-  detailRow,
   escapeHtml,
-  formatDateTime,
   formatNumber,
   safeUrl,
 } from "./campaign-report/utils";
@@ -28,7 +29,6 @@ export function renderArtistReportEmail({
   project,
   report,
   campaignId,
-  generatedAt,
 }: ArtistReportTemplateInput) {
   const reportLink = safeUrl(
     `https://studio.arroweye.pro/campaigns/${campaignId}/artist`,
@@ -38,21 +38,17 @@ export function renderArtistReportEmail({
     asString(project.artist_name || project.song_artist) ||
     "Artist";
   const campaignName = asString(project.title || project.song_title);
-  const detailRows = [
-    detailRow("Artist", artistName, true),
-    detailRow("Genres", report.profile.artist.genres.slice(0, 4).join(", ")),
-    detailRow("Campaign", campaignName),
-    detailRow("Growth period", `Last ${report.days} days`),
-    detailRow("Generated", formatDateTime(generatedAt)),
-  ].join("");
   const sections = [
-    renderAudienceSummary(report.summary),
-    renderPlatformSnapshot(report),
-    renderTopTracks(report.topTracks),
-    renderListenerLocations(report.audience),
+    renderReportHeader(report.days),
+    renderArtistIdentity(artistName, report.profile.artist),
+    renderInsights(report),
+    renderPlatformAudience(report.profile.platforms),
+    renderFollowerGrowth(report),
+    renderTopTracks(report.topTracks, reportLink),
+    renderListenerGeography(report.audience),
   ].join("");
 
-  const html = `<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Artist Report | Arroweye Pro</title></head><body style="background-color:#f9f9f9;font-family:Avenir,Arial,sans-serif;margin:0;padding:0;-webkit-font-smoothing:antialiased;color:#333;"><div style="display:none;max-height:0;overflow:hidden;opacity:0;">Artist report for ${escapeHtml(artistName)}</div><div style="max-width:600px;margin:28px auto;padding:5px 1px 1px;background-color:#ff7400;background-image:linear-gradient(to right,#ff006d,#ff7f00,#ffff00,#00ff00,#147aff);box-shadow:0 8px 30px rgba(0,0,0,.045);text-align:left;"><div style="padding:22px 20px 40px 20px;background-color:#fff;"><div style="text-align:left;margin-top:14px;margin-bottom:28px;"><img src="https://res.cloudinary.com/dyueswnzk/image/upload/v1759783466/studio_2_hajzkn.png" alt="Arroweye" width="120"></div><div style="font-size:24px;line-height:1.15;font-weight:900;color:#222;">Artist Report</div><div style="background:#fafafa;padding:13px 15px;border-radius:10px;margin-top:16px;border:1px solid #e7e7e7;"><table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;font-size:14px;">${detailRows}</table></div>${sections}<div style="text-align:center;margin-top:35px;"><a href="${reportLink}" style="display:inline-block;font-size:13px;font-weight:900;color:#fff;background-color:#ff7400;padding:11px 24px;text-decoration:none;border-radius:999px;line-height:20px;">View Artist Dashboard</a></div><div style="text-align:center;margin-top:20px;padding:15px 0;"></div></div></div></body></html>`;
+  const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Artist Analytics Report | Arroweye</title></head><body style="background-color:#F6F7F8;font-family:Avenir,Arial,sans-serif;margin:0;padding:0;-webkit-font-smoothing:antialiased;color:#333;"><div style="display:none;max-height:0;overflow:hidden;opacity:0;">Artist analytics for ${escapeHtml(artistName)}</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background:#F6F7F8;"><tr><td align="center" style="padding:20px 8px;"><div style="max-width:600px;width:100%;margin:0 auto;padding:22px 20px 36px;background-color:#FFFFFF;border-radius:12px;text-align:left;border-top:5px solid;border-image:linear-gradient(to right,#ff006d,#ff7f00,#ffff00,#00ff00,#147aff);border-image-slice:1;border-color:#ff7400;border-left:1px solid #E7E8EA;border-right:1px solid #E7E8EA;border-bottom:1px solid #E7E8EA;box-shadow:0 8px 28px rgba(22,26,29,.05);box-sizing:border-box;">${sections}<div style="text-align:center;margin-top:29px;"><a href="${reportLink}" style="display:inline-block;font-size:13px;font-weight:900;color:#FFFFFF;background:#FF7400;padding:11px 24px;text-decoration:none;border-radius:999px;line-height:20px;">View Dashboard</a></div></div></td></tr></table></body></html>`;
 
   const text = [
     `${artistName} | Artist Report`,
