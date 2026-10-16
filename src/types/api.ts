@@ -28,6 +28,8 @@ export type CreateInvoiceInput = components["schemas"]["CreateInvoice"] & {
 };
 export type CreateServiceInput = Omit<components["schemas"]["Service"], "id">;
 export type Event = components["schemas"]["Event"] & EventDetailFields;
+export type UpdateEventInput = components["schemas"]["PatchedEvent"] &
+  EventDetailFields;
 export type Project = components["schemas"]["Project"];
 export type ProjectListItem = components["schemas"]["ProjectList"];
 export type RescheduleEventInput = components["schemas"]["RescheduleEvent"];

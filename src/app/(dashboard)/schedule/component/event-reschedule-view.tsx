@@ -26,6 +26,7 @@ interface EventRescheduleViewProps {
   onFormChange: (e: FormChangeEvent) => void;
   onClose: () => void;
   onReschedule: () => void;
+  isSubmitting: boolean;
 }
 
 const CurrentDetail = ({
@@ -55,6 +56,7 @@ const EventRescheduleView = ({
   onFormChange,
   onClose,
   onReschedule,
+  isSubmitting,
 }: EventRescheduleViewProps) => (
   <div className="space-y-3.5">
     <div className="grid grid-cols-[1fr_auto_1fr] items-center">
@@ -147,8 +149,9 @@ const EventRescheduleView = ({
         type="button"
         className="h-10 rounded-xl bg-[#5300d7] text-[14px] text-white hover:bg-[#4700b8]"
         onClick={onReschedule}
+        disabled={isSubmitting}
       >
-        Request Reschedule
+        {isSubmitting ? "Requesting…" : "Request Reschedule"}
       </Button>
     </div>
   </div>

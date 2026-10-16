@@ -36,7 +36,8 @@ import LibraryCard, { LibraryCardSkeleton } from "./component/library-card";
 import { DropsIcon } from "../sidebar";
 import NotificationsMenu from "../notifications-menu";
 import Icon from "@mdi/react";
-import { mdiArrowDown, mdiContentCopy, mdiMinus } from "@mdi/js";
+import { mdiArrowDown, mdiContentCopy, mdiMinus, mdiPlus } from "@mdi/js";
+import { DropzoneUploadDialog } from "../campaigns/notifications/dropzone-upload-dialog";
 
 type SelectOption = {
   label: string;
@@ -165,7 +166,9 @@ const AssetsLibrary = () => {
     handleUserClick,
     handleCopyLink,
     handleDelete,
+    refreshDrops,
   } = useDrops();
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const stickySentinelRef = useRef<HTMLDivElement>(null);
   const stickyHeaderRef = useRef<HTMLDivElement>(null);
@@ -267,9 +270,19 @@ const AssetsLibrary = () => {
               Asset Library
             </p>
           </div>
-          {isSticky && (
-            <NotificationsMenu triggerClassName="relative size-9 rounded-full text-foreground active:scale-[0.97] [&_svg]:size-[18px]!" />
-          )}
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <Button
+              type="button"
+              className="h-9 gap-1.5 rounded-full bg-black px-4 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+              onClick={() => setUploadDialogOpen(true)}
+            >
+              <Icon path={mdiPlus} className="size-4" />
+              New drop
+            </Button>
+            {isSticky && (
+              <NotificationsMenu triggerClassName="relative size-9 rounded-full text-foreground active:scale-[0.97] [&_svg]:size-[18px]!" />
+            )}
+          </div>
         </div>
         {!isSticky && (
           <>
@@ -595,6 +608,11 @@ const AssetsLibrary = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <DropzoneUploadDialog
+        open={uploadDialogOpen}
+        onOpenChange={setUploadDialogOpen}
+        onUploaded={() => void refreshDrops()}
+      />
     </>
   );
 };

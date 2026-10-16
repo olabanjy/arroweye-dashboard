@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { FormErrors } from "@/hooks/use-schedule";
 import {
   DEFAULT_END_TIME,
   DEFAULT_START_TIME,
@@ -22,7 +21,6 @@ interface UseEventDialogOptions {
   open: boolean;
   startDateTime?: string;
   endDateTime?: string;
-  formErrors: FormErrors;
   onFormChange: FormChangeHandler;
 }
 
@@ -30,10 +28,8 @@ export const useEventDialog = ({
   open,
   startDateTime,
   endDateTime,
-  formErrors,
   onFormChange,
 }: UseEventDialogOptions) => {
-  const [isDropExpanded, setIsDropExpanded] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isRescheduling, setIsRescheduling] = useState(false);
   const [originalSchedule, setOriginalSchedule] = useState({
@@ -44,7 +40,6 @@ export const useEventDialog = ({
   // The dialog can also be closed programmatically (e.g. after saving), so reset on any close.
   useEffect(() => {
     if (open) return;
-    setIsDropExpanded(false);
     setIsDatePickerOpen(false);
     setIsRescheduling(false);
   }, [open]);
@@ -88,10 +83,6 @@ export const useEventDialog = ({
     setIsRescheduling(false);
   };
 
-  const hasDropError = Boolean(
-    formErrors.code || formErrors.vendor_id || formErrors.subvendor_id,
-  );
-
   return {
     selectedDate: parseDateKey(dateKey),
     dateLabel: formatDateLabel(dateKey),
@@ -101,8 +92,6 @@ export const useEventDialog = ({
     endTimeOptions: getTimeOptions(end.time),
     isDatePickerOpen,
     setIsDatePickerOpen,
-    isDropOpen: isDropExpanded || hasDropError,
-    toggleDrop: () => setIsDropExpanded((open) => !open),
     isRescheduling,
     originalDateLabel: formatDateLabel(
       splitDateTime(originalSchedule.start).date,

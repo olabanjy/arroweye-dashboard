@@ -2,12 +2,16 @@
 
 import React from "react";
 import type { LucideIcon } from "lucide-react";
+import { format, parseISO } from "date-fns";
 import {
   ArrowUpRight,
   CalendarDays,
   Clock,
   FileText,
   MapPin,
+  Megaphone,
+  Paperclip,
+  Pencil,
   Share2,
   Trash2,
   X,
@@ -22,11 +26,15 @@ import {
 import type { EventDialogState } from "../hooks/use-event-dialog";
 import { formatTimeRange } from "../utils/event-date-time";
 import { getEventStatusOption } from "../utils/event-status";
+import type { EventAttachmentsState } from "../hooks/use-event-attachments";
 import EventHeader from "./event-header";
+import { AddAttachmentButton, AttachmentList } from "./event-attachments";
 
 export interface EventDetailsActions {
+  campaignTitle?: string;
   canDelete: boolean;
   onDelete: () => void;
+  onEdit: () => void;
   onShare: () => void;
   onViewProject: () => void;
 }
@@ -35,6 +43,7 @@ interface EventDetailsCardProps extends EventDetailsActions {
   dialog: EventDialogState;
   formData: Record<string, any>;
   onClose: () => void;
+  attachments: EventAttachmentsState;
 }
 
 const DetailRow = ({
@@ -42,12 +51,14 @@ const DetailRow = ({
   iconSlot,
   tileClassName,
   label,
+  action,
   children,
 }: {
   icon?: LucideIcon;
   iconSlot?: React.ReactNode;
   tileClassName?: string;
   label: string;
+  action?: React.ReactNode;
   children: React.ReactNode;
 }) => (
   <div className="flex items-center gap-4 border-b border-zinc-100 py-3 last:border-b-0 dark:border-zinc-800">
@@ -65,6 +76,7 @@ const DetailRow = ({
         {children}
       </div>
     </div>
+    {action}
   </div>
 );
 
@@ -101,10 +113,13 @@ const EventDetailsCard = ({
   dialog,
   formData,
   onClose,
+  campaignTitle,
   canDelete,
   onDelete,
+  onEdit,
   onShare,
   onViewProject,
+  attachments,
 }: EventDetailsCardProps) => {
   const status = getEventStatusOption(formData.status);
   const timeLabel = formatTimeRange(formData.start_dte, formData.end_dte);
@@ -118,12 +133,8 @@ const EventDetailsCard = ({
         isDialogTitle
         actions={
           <>
+            <HeaderAction label="Edit event" icon={Pencil} onClick={onEdit} />
             <HeaderAction label="Share" icon={Share2} onClick={onShare} />
-            <HeaderAction
-              label="View project"
-              icon={ArrowUpRight}
-              onClick={onViewProject}
-            />
             {canDelete && (
               <HeaderAction
                 label="Delete event"
@@ -138,6 +149,22 @@ const EventDetailsCard = ({
       />
 
       <div className="px-1">
+        {campaignTitle && (
+          <DetailRow
+            icon={Megaphone}
+            label="Campaign"
+            action={
+              <HeaderAction
+                label="View campaign"
+                icon={ArrowUpRight}
+                onClick={onViewProject}
+                className="shrink-0 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+              />
+            }
+          >
+            <span className="font-medium">{campaignTitle}</span>
+          </DetailRow>
+        )}
         <DetailRow icon={CalendarDays} label="Date">
           {dialog.dateLabel || "—"}
         </DetailRow>
@@ -175,6 +202,32 @@ const EventDetailsCard = ({
             </span>
           </DetailRow>
         )}
+        <DetailRow icon={Paperclip} label="Attachments">
+          <div className="mt-1 space-y-2">
+            {attachments.isLoading ? (
+              <p className="text-[13px] text-zinc-500">Loading…</p>
+            ) : attachments.error ? (
+              <p className="text-[13px] text-red-500">{attachments.error}</p>
+            ) : (
+              <AttachmentList
+                items={attachments.attachments.map((file) => ({
+                  key: file.key,
+                  name: file.fileName,
+                  meta: format(parseISO(file.uploadedAt), "d MMM yyyy"),
+                }))}
+                removingKey={attachments.removingKey}
+                confirmRemove
+                onOpen={(key) => void attachments.download(key)}
+                onRemove={attachments.remove}
+              />
+            )}
+            <AddAttachmentButton
+              multiple={false}
+              isUploading={attachments.isUploading}
+              onFiles={([file]) => attachments.upload(file)}
+            />
+          </div>
+        </DetailRow>
       </div>
 
       <Button

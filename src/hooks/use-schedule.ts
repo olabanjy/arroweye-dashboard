@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   CreateEvent,
@@ -9,14 +9,88 @@ import {
   getProjectsEvents,
   getCampaignOptions,
   RescheduleEvent,
+  UpdateEvent,
 } from "@/services";
 import { useAuth } from "@/context/auth-context";
 import { DateClickArg } from "@fullcalendar/interaction";
 import type { Event } from "@/types/api";
 import { toast } from "sonner";
+import { uploadEventAttachment } from "@/app/(dashboard)/schedule/hooks/use-event-attachments";
 
 export const EVENT_DESCRIPTION_MAX_LENGTH = 500;
 export const RESCHEDULE_REASON_MAX_LENGTH = 500;
+
+const isSameInstant = (a?: string | null, b?: string | null) =>
+  Boolean(a && b && new Date(a).getTime() === new Date(b).getTime());
+
+// The create endpoint may not echo the new id, so fall back to the newest matching event.
+const resolveCreatedEventId = async (
+  created: unknown,
+  payload: { title: string; code: string; start_dte: string },
+) => {
+  const echoedId = Number((created as { id?: unknown } | null)?.id);
+  if (echoedId > 0) return echoedId;
+
+  const events = await getEvents();
+  const matches = events.filter(
+    (event) =>
+      event.title === payload.title &&
+      event.code === payload.code &&
+      isSameInstant(event.start_dte, payload.start_dte),
+  );
+  return matches.length ? Math.max(...matches.map((event) => event.id)) : null;
+};
+
+const uploadPendingAttachments = async (
+  created: unknown,
+  payload: { title: string; code: string; start_dte: string },
+  files: File[],
+) => {
+  if (!files.length) return;
+
+  const eventId = await resolveCreatedEventId(created, payload);
+  if (!eventId) {
+    toast.error(
+      "Event created, but its attachments couldn't be saved. Add them from the event details.",
+    );
+    return;
+  }
+
+  const results = await Promise.allSettled(
+    files.map((file) => uploadEventAttachment(eventId, file)),
+  );
+  results.forEach((result) => {
+    if (result.status === "rejected") {
+      console.error("Event attachment upload failed:", result.reason);
+      toast.error(
+        result.reason instanceof Error
+          ? result.reason.message
+          : "An attachment could not be uploaded.",
+      );
+    }
+  });
+};
+
+// Fields shared by create and edit; dates, campaign and vendors are create-only.
+const validateEventDetails = (formData: any) => {
+  const errors = { title: "", location: "", description: "" };
+
+  if (!formData.title?.trim()) {
+    errors.title = "Event Title is required.";
+  }
+
+  if (!formData.location) {
+    errors.location = "Location is required.";
+  }
+
+  if (!formData.description?.trim()) {
+    errors.description = "Description is required.";
+  } else if (formData.description.length > EVENT_DESCRIPTION_MAX_LENGTH) {
+    errors.description = `Description must be ${EVENT_DESCRIPTION_MAX_LENGTH} characters or fewer.`;
+  }
+
+  return errors;
+};
 
 export interface FormErrors {
   title?: string;
@@ -49,6 +123,9 @@ export const useSchedule = ({
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [viewOnly, setViewOnly] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editSnapshot, setEditSnapshot] = useState<any>(null);
+  const [pendingAttachments, setPendingAttachments] = useState<File[]>([]);
   const [filter, setisFilter] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [scheduleIdToBeDeleted, setScheduleIdToBeDeleted] = useState<any>("");
@@ -74,6 +151,19 @@ export const useSchedule = ({
     start_dte: "",
     end_dte: "",
   });
+
+  // Ref (not mutation state) so a second click in the same tick is still blocked
+  const submittingRef = useRef(false);
+
+  const runExclusive = async (task: () => Promise<void>) => {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+    try {
+      await task();
+    } finally {
+      submittingRef.current = false;
+    }
+  };
 
   const [projectPin, setProjectPin] = useState("");
   const [pinEntered, setPinEntered] = useState("");
@@ -143,6 +233,17 @@ export const useSchedule = ({
     },
     onError: (error: any) => {
       console.error("Error creating event:", error);
+    },
+  });
+
+  const updateEventMutation = useMutation({
+    mutationFn: UpdateEvent,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+      toast.success("Event Updated");
+    },
+    onError: (error: any) => {
+      console.error("Error updating event:", error);
     },
   });
 
@@ -329,6 +430,9 @@ export const useSchedule = ({
 
   const handleCloseModal = () => {
     setViewOnly(false);
+    setIsEditing(false);
+    setEditSnapshot(null);
+    setPendingAttachments([]);
     setIsModalVisible(false);
     setFormData({
       id: "",
@@ -428,9 +532,7 @@ export const useSchedule = ({
       description: "",
     };
 
-    if (!formData.title.trim()) {
-      newErrors.title = "Event Title is required.";
-    }
+    Object.assign(newErrors, validateEventDetails(formData));
 
     if (!formData.vendor_id) {
       newErrors.vendor_id = "Vendor is required.";
@@ -440,20 +542,12 @@ export const useSchedule = ({
       newErrors.subvendor_id = "Sub Vendor is required.";
     }
 
-    if (!formData.location) {
-      newErrors.location = "Location is required.";
-    }
-
     if (!formData.start_dte) {
       newErrors.start_dte = "Start Date is required.";
     }
 
     if (!formData.code) {
       newErrors.code = "Campaign is required.";
-    }
-
-    if (formData.description?.length > EVENT_DESCRIPTION_MAX_LENGTH) {
-      newErrors.description = `Description must be ${EVENT_DESCRIPTION_MAX_LENGTH} characters or fewer.`;
     }
 
     if (!formData.end_dte) {
@@ -470,24 +564,69 @@ export const useSchedule = ({
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
 
     if (!hasErrors) {
-      try {
-        const updatedFormData = {
-          ...formData,
-          vendor_id: formData.vendor_id ? parseInt(formData.vendor_id) : null,
-          subvendor_id: formData.subvendor_id
-            ? parseInt(formData.subvendor_id)
-            : null,
-          start_dte: formatDateToString(formData.start_dte),
-          end_dte: formatDateToString(formData.end_dte),
-          description: formData.description?.trim() || null,
-        };
+      await runExclusive(async () => {
+        try {
+          const updatedFormData = {
+            ...formData,
+            vendor_id: formData.vendor_id ? parseInt(formData.vendor_id) : null,
+            subvendor_id: formData.subvendor_id
+              ? parseInt(formData.subvendor_id)
+              : null,
+            start_dte: formatDateToString(formData.start_dte),
+            end_dte: formatDateToString(formData.end_dte),
+            description: formData.description.trim(),
+          };
 
-        await createEventMutation.mutateAsync(updatedFormData);
+          const created =
+            await createEventMutation.mutateAsync(updatedFormData);
+          await uploadPendingAttachments(
+            created,
+            updatedFormData,
+            pendingAttachments,
+          );
+          handleCloseModal();
+        } catch (error) {
+          console.error("Error submitting form:", error);
+        }
+      });
+    }
+  };
+
+  const startEdit = () => {
+    setEditSnapshot(formData);
+    setFormErrors({});
+    setIsEditing(true);
+  };
+
+  const cancelEdit = () => {
+    if (editSnapshot) setFormData(editSnapshot);
+    setFormErrors({});
+    setIsEditing(false);
+  };
+
+  const updateEvent = async (e: any) => {
+    e.preventDefault();
+
+    const newErrors = validateEventDetails(formData);
+    setFormErrors(newErrors);
+    if (Object.values(newErrors).some((error) => error !== "")) return;
+
+    await runExclusive(async () => {
+      try {
+        await updateEventMutation.mutateAsync({
+          id: Number(formData.id),
+          payload: {
+            title: formData.title.trim(),
+            location: formData.location,
+            description: formData.description.trim(),
+            status: formData.status,
+          },
+        });
         handleCloseModal();
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error("Error updating event:", error);
       }
-    }
+    });
   };
 
   const rescheduleEvent = async () => {
@@ -524,12 +663,14 @@ export const useSchedule = ({
         ...(formData.reason?.trim() && { reason: formData.reason.trim() }),
       };
 
-      try {
-        await rescheduleEventMutation.mutateAsync(payload);
-        handleCloseModal();
-      } catch (err) {
-        console.error("Error rescheduling event:", err);
-      }
+      await runExclusive(async () => {
+        try {
+          await rescheduleEventMutation.mutateAsync(payload);
+          handleCloseModal();
+        } catch (err) {
+          console.error("Error rescheduling event:", err);
+        }
+      });
     }
   };
 
@@ -578,6 +719,16 @@ export const useSchedule = ({
     campaignOptions,
     events,
     isLoading: isEventsLoading,
+    isSubmitting:
+      createEventMutation.isPending ||
+      rescheduleEventMutation.isPending ||
+      updateEventMutation.isPending,
+    isEditing,
+    startEdit,
+    cancelEdit,
+    updateEvent,
+    pendingAttachments,
+    setPendingAttachments,
     exportICS,
     handleDelete,
     handleDateClick,

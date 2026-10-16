@@ -88,7 +88,15 @@ const Schedule: React.FC<ScheduleProps> = ({
     handleSelectChange,
     handleFormSubmit,
     rescheduleEvent,
+    isSubmitting,
+    isEditing,
+    startEdit,
+    cancelEdit,
+    updateEvent,
+    pendingAttachments,
+    setPendingAttachments,
     canDeleteEvent,
+    eventCampaignTitle,
     requestDeleteEvent,
     openEventProject,
     handleCalendarEventClick,
@@ -180,7 +188,15 @@ const Schedule: React.FC<ScheduleProps> = ({
         onFormChange={handleFormChange}
         onSelectChange={handleSelectChange}
         onSubmit={handleFormSubmit}
+        isSubmitting={isSubmitting}
+        isEditing={isEditing}
+        onEdit={startEdit}
+        onCancelEdit={cancelEdit}
+        onUpdate={updateEvent}
+        pendingAttachments={pendingAttachments}
+        onPendingAttachmentsChange={setPendingAttachments}
         canDelete={canDeleteEvent}
+        campaignTitle={eventCampaignTitle}
         onDelete={requestDeleteEvent}
         onShare={exportICS}
         onViewProject={openEventProject}

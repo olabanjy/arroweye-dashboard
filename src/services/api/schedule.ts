@@ -4,6 +4,7 @@ import type {
   Event,
   RescheduleEventInput,
   RescheduleEventResponse,
+  UpdateEventInput,
 } from "@/types/api";
 import { ContentItem } from "@/types/contents";
 import ls from "localstorage-slim";
@@ -31,6 +32,23 @@ export const RescheduleEvent = async (
   const response = await apiRequest<RescheduleEventResponse>({
     method: "POST",
     url: `/api/v1/projects/schedule/events/reschedule/`,
+    data: payload,
+    requireToken: true,
+  });
+
+  return response;
+};
+
+export const UpdateEvent = async ({
+  id,
+  payload,
+}: {
+  id: number;
+  payload: UpdateEventInput;
+}): Promise<Event> => {
+  const response = await apiRequest<Event>({
+    method: "PATCH",
+    url: `/api/v1/projects/schedule/events/${id}/`,
     data: payload,
     requireToken: true,
   });

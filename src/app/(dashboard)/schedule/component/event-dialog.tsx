@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import type { FormErrors } from "@/hooks/use-schedule";
 import { useEventDialog } from "../hooks/use-event-dialog";
+import { useEventAttachments } from "../hooks/use-event-attachments";
 import EventDetailsCard, {
   type EventDetailsActions,
 } from "./event-details-card";
@@ -20,6 +21,10 @@ interface EventDialogProps
   open: boolean;
   onOpenChange: (open: boolean) => void;
   viewOnly: boolean;
+  isSubmitting: boolean;
+  isEditing: boolean;
+  onCancelEdit: () => void;
+  onUpdate: (e: React.FormEvent<HTMLFormElement>) => void;
   formErrors: FormErrors;
 }
 
@@ -27,6 +32,10 @@ const EventDialog = ({
   open,
   onOpenChange,
   viewOnly,
+  isSubmitting,
+  isEditing,
+  onCancelEdit,
+  onUpdate,
   formData,
   formErrors,
   vendorOptions,
@@ -36,15 +45,19 @@ const EventDialog = ({
   onSelectChange,
   onSubmit,
   onReschedule,
+  pendingAttachments,
+  onPendingAttachmentsChange,
   ...detailsActions
 }: EventDialogProps) => {
   const dialog = useEventDialog({
     open,
     startDateTime: formData.start_dte,
     endDateTime: formData.end_dte,
-    formErrors,
     onFormChange,
   });
+  const attachments = useEventAttachments(
+    open && viewOnly ? formData.id : undefined,
+  );
 
   const close = () => onOpenChange(false);
 
@@ -68,12 +81,29 @@ const EventDialog = ({
             onFormChange={onFormChange}
             onClose={close}
             onReschedule={onReschedule}
+            isSubmitting={isSubmitting}
+          />
+        ) : viewOnly && isEditing ? (
+          <EventForm
+            mode="edit"
+            dialog={dialog}
+            formData={formData}
+            formErrors={formErrors}
+            vendorOptions={vendorOptions}
+            subvendorOptions={subvendorOptions}
+            campaignOptions={campaignOptions}
+            onCancel={onCancelEdit}
+            onFormChange={onFormChange}
+            onSelectChange={onSelectChange}
+            onSubmit={onUpdate}
+            isSubmitting={isSubmitting}
           />
         ) : viewOnly ? (
           <EventDetailsCard
             dialog={dialog}
             formData={formData}
             onClose={close}
+            attachments={attachments}
             {...detailsActions}
           />
         ) : (
@@ -88,6 +118,9 @@ const EventDialog = ({
             onFormChange={onFormChange}
             onSelectChange={onSelectChange}
             onSubmit={onSubmit}
+            isSubmitting={isSubmitting}
+            pendingAttachments={pendingAttachments}
+            onPendingAttachmentsChange={onPendingAttachmentsChange}
           />
         )}
       </DialogContent>

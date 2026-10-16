@@ -1,6 +1,7 @@
 import "server-only";
 
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
@@ -50,7 +51,7 @@ const RADIO_MONITOR_FOLDER = "radio-monitor/shared/";
 const toFileName = (key: string) =>
   key.split("/").pop()?.replace(/^\d+-/, "") ?? key;
 
-const toSafeFileName = (fileName: string) => {
+const toSafeFileName = (fileName: string, fallback = "radio-monitor") => {
   const extension = fileName.split(".").pop()?.toLowerCase() ?? "";
   const base = fileName
     .slice(0, -(extension.length + 1))
@@ -58,7 +59,7 @@ const toSafeFileName = (fileName: string) => {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
-  return `${base || "radio-monitor"}.${extension}`;
+  return `${base || fallback}.${extension}`;
 };
 
 const getFormat = (fileName: string) =>
@@ -135,4 +136,94 @@ export const getRadioMonitorDownloadUrl = (file: StoredRadioMonitor) => {
     }),
     { expiresIn: DOWNLOAD_URL_TTL_SECONDS },
   );
+};
+
+const EVENT_ATTACHMENT_CONTENT_TYPES = {
+  pdf: "application/pdf",
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  webp: "image/webp",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  csv: "text/csv",
+  txt: "text/plain",
+} as const;
+type EventAttachmentFormat = keyof typeof EVENT_ATTACHMENT_CONTENT_TYPES;
+export const EVENT_ATTACHMENT_MAX_BYTES = 10 * 1024 * 1024;
+
+export interface StoredEventAttachment {
+  key: string;
+  fileName: string;
+  uploadedAt: string;
+}
+
+// Events have no attachment field in the API, so files live here keyed by event id.
+const eventAttachmentFolder = (eventId: number) =>
+  `event-attachments/${eventId}/`;
+
+export const isEventAttachmentFormat = (fileName: string) =>
+  Object.hasOwn(EVENT_ATTACHMENT_CONTENT_TYPES, getFormat(fileName));
+
+export const isEventAttachmentKey = (eventId: number, key: string) =>
+  key.startsWith(eventAttachmentFolder(eventId)) && !key.includes("..");
+
+export const createEventAttachmentUpload = async (
+  eventId: number,
+  fileName: string,
+) => {
+  const { client, bucket } = getConfig();
+  const contentType =
+    EVENT_ATTACHMENT_CONTENT_TYPES[getFormat(fileName) as EventAttachmentFormat];
+  const key = `${eventAttachmentFolder(eventId)}${Date.now()}-${toSafeFileName(fileName, "attachment")}`;
+  const uploadUrl = await getSignedUrl(
+    client,
+    new PutObjectCommand({ Bucket: bucket, Key: key, ContentType: contentType }),
+    { expiresIn: UPLOAD_URL_TTL_SECONDS },
+  );
+
+  return { uploadUrl, contentType };
+};
+
+/** Oldest first, so files keep the order they were added in. */
+export const listEventAttachments = async (
+  eventId: number,
+): Promise<StoredEventAttachment[]> => {
+  const { client, bucket } = getConfig();
+  const { Contents = [] } = await client.send(
+    new ListObjectsV2Command({
+      Bucket: bucket,
+      Prefix: eventAttachmentFolder(eventId),
+    }),
+  );
+
+  return Contents.filter((object) => object.Key)
+    .sort(
+      (a, b) =>
+        (a.LastModified?.getTime() ?? 0) - (b.LastModified?.getTime() ?? 0),
+    )
+    .map((object) => ({
+      key: object.Key!,
+      fileName: toFileName(object.Key!),
+      uploadedAt: (object.LastModified ?? new Date()).toISOString(),
+    }));
+};
+
+export const getEventAttachmentDownloadUrl = (key: string) => {
+  const { client, bucket } = getConfig();
+  return getSignedUrl(
+    client,
+    new GetObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      ResponseContentDisposition: `attachment; filename="${toFileName(key)}"`,
+    }),
+    { expiresIn: DOWNLOAD_URL_TTL_SECONDS },
+  );
+};
+
+export const deleteEventAttachment = async (key: string) => {
+  const { client, bucket } = getConfig();
+  await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
 };
