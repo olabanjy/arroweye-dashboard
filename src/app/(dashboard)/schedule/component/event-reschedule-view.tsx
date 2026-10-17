@@ -58,8 +58,8 @@ const EventRescheduleView = ({
   onReschedule,
   isSubmitting,
 }: EventRescheduleViewProps) => (
-  <div className="space-y-3.5">
-    <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+  <div className="flex min-h-0 flex-col gap-3.5">
+    <div className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center">
       <span />
       <DialogTitle className="text-[16px] font-semibold">
         Reschedule
@@ -80,63 +80,65 @@ const EventRescheduleView = ({
       calendarEventId={formData.calendarEventId}
     />
 
-    <div className="space-y-4 rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-800/50">
-      <div className="grid gap-4 sm:grid-cols-2 sm:divide-x sm:divide-zinc-200 dark:sm:divide-zinc-700">
-        <CurrentDetail
-          icon={CalendarDays}
-          label="Current date"
-          value={dialog.originalDateLabel}
-        />
-        <div className="sm:pl-4">
+    <div className="event-dialog-scroll -mx-1 min-h-0 flex-1 space-y-3.5 overflow-y-auto px-1">
+      <div className="space-y-4 rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-800/50">
+        <div className="grid gap-4 sm:grid-cols-2 sm:divide-x sm:divide-zinc-200 dark:sm:divide-zinc-700">
           <CurrentDetail
-            icon={Clock}
-            label="Current time"
-            value={dialog.originalTimeLabel}
+            icon={CalendarDays}
+            label="Current date"
+            value={dialog.originalDateLabel}
           />
+          <div className="sm:pl-4">
+            <CurrentDetail
+              icon={Clock}
+              label="Current time"
+              value={dialog.originalTimeLabel}
+            />
+          </div>
         </div>
+        {formData.location && (
+          <CurrentDetail
+            icon={MapPin}
+            label="Location"
+            value={formData.location}
+          />
+        )}
       </div>
-      {formData.location && (
-        <CurrentDetail
-          icon={MapPin}
-          label="Location"
-          value={formData.location}
-        />
-      )}
+
+      <div className="border-t border-zinc-200 dark:border-zinc-700" />
+
+      <EventDateTimeFields
+        fullWidthDate
+        dateLabel={dialog.dateLabel}
+        selectedDate={dialog.selectedDate}
+        isDatePickerOpen={dialog.isDatePickerOpen}
+        onDatePickerOpenChange={dialog.setIsDatePickerOpen}
+        onDateSelect={dialog.handleDateSelect}
+        startTime={dialog.startTime}
+        endTime={dialog.endTime}
+        startTimeOptions={dialog.startTimeOptions}
+        endTimeOptions={dialog.endTimeOptions}
+        onStartTimeChange={dialog.handleStartTimeChange}
+        onEndTimeChange={dialog.handleEndTimeChange}
+        dateError={formErrors.start_dte}
+        endError={formErrors.end_dte}
+      />
+
+      <CountedTextarea
+        id="event-reschedule-reason"
+        name="reason"
+        label="Reason (optional)"
+        value={formData.reason}
+        maxLength={RESCHEDULE_REASON_MAX_LENGTH}
+        placeholder="Add a reason..."
+        error={formErrors.reason}
+        onChange={onFormChange}
+      />
+
+      <FieldError message={formErrors.code} />
     </div>
 
-    <div className="border-t border-zinc-200 dark:border-zinc-700" />
-
-    <EventDateTimeFields
-      fullWidthDate
-      dateLabel={dialog.dateLabel}
-      selectedDate={dialog.selectedDate}
-      isDatePickerOpen={dialog.isDatePickerOpen}
-      onDatePickerOpenChange={dialog.setIsDatePickerOpen}
-      onDateSelect={dialog.handleDateSelect}
-      startTime={dialog.startTime}
-      endTime={dialog.endTime}
-      startTimeOptions={dialog.startTimeOptions}
-      endTimeOptions={dialog.endTimeOptions}
-      onStartTimeChange={dialog.handleStartTimeChange}
-      onEndTimeChange={dialog.handleEndTimeChange}
-      dateError={formErrors.start_dte}
-      endError={formErrors.end_dte}
-    />
-
-    <CountedTextarea
-      id="event-reschedule-reason"
-      name="reason"
-      label="Reason (optional)"
-      value={formData.reason}
-      maxLength={RESCHEDULE_REASON_MAX_LENGTH}
-      placeholder="Add a reason..."
-      error={formErrors.reason}
-      onChange={onFormChange}
-    />
-
-    <FieldError message={formErrors.code} />
-
-    <div className="grid grid-cols-2 gap-3 pt-1">
+    <div className="grid shrink-0 grid-cols-2 gap-3 pt-1">
       <Button
         type="button"
         variant="ghost"

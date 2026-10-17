@@ -17,8 +17,6 @@ export const dropTypes = [
 ];
 
 const emptyForm = {
-  firstName: "",
-  lastName: "",
   folderName: "",
   link: "",
   dropType: "",
@@ -84,17 +82,8 @@ export const useDropzoneUpload = ({
   );
 
   useEffect(() => {
-    if (!open) return;
-
-    const [firstName = "", ...lastNameParts] =
-      userProfile?.fullname?.trim().split(/\s+/) ?? [];
-
-    setFormData({
-      ...emptyForm,
-      firstName,
-      lastName: lastNameParts.join(" "),
-    });
-  }, [open, userProfile?.fullname]);
+    if (open) setFormData(emptyForm);
+  }, [open]);
 
   const setField = (name: keyof DropzoneUploadForm, value: string) =>
     setFormData((current) => ({ ...current, [name]: value }));
@@ -119,18 +108,24 @@ export const useDropzoneUpload = ({
     if (isUploading) return;
 
     const targetProjectId = resolveProjectId();
-    const payload = {
+    const fields = {
       folder_name: formData.folderName.trim(),
-      first_name: formData.firstName.trim(),
-      last_name: formData.lastName.trim(),
       link: formData.link.trim(),
       drop_type: formData.dropType,
     };
 
-    if (!targetProjectId || Object.values(payload).some((value) => !value)) {
+    if (!targetProjectId || Object.values(fields).some((value) => !value)) {
       toast.error("Please fill in all fields.");
       return;
     }
+
+    const [firstName = "", ...lastNameParts] =
+      userProfile?.fullname?.trim().split(/\s+/) ?? [];
+    const payload = {
+      ...fields,
+      first_name: firstName,
+      last_name: lastNameParts.join(" "),
+    };
 
     setIsUploading(true);
 

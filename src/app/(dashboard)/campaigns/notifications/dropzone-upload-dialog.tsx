@@ -93,31 +93,6 @@ export function DropzoneUploadDialog({
             </div>
           )}
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <FieldLabel htmlFor="drop-first-name">First name</FieldLabel>
-              <Input
-                id="drop-first-name"
-                placeholder="First name"
-                value={formData.firstName}
-                onChange={(event) => setField("firstName", event.target.value)}
-                disabled={isUploading}
-                className={eventFieldClassName}
-              />
-            </div>
-            <div>
-              <FieldLabel htmlFor="drop-last-name">Last name</FieldLabel>
-              <Input
-                id="drop-last-name"
-                placeholder="Last name"
-                value={formData.lastName}
-                onChange={(event) => setField("lastName", event.target.value)}
-                disabled={isUploading}
-                className={eventFieldClassName}
-              />
-            </div>
-          </div>
-
           <div>
             <FieldLabel htmlFor="drop-folder-name">Folder name</FieldLabel>
             <Input
@@ -164,7 +139,7 @@ export function DropzoneUploadDialog({
                 id="drop-type"
                 className={cn(triggerClassName, "justify-between")}
               >
-                <SelectValue placeholder="Detected from link" />
+                <SelectValue placeholder="Select drop type" />
               </SelectTrigger>
               <SelectContent>
                 {dropTypes.map((dropType) => (
