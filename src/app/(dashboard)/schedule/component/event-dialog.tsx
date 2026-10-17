@@ -63,7 +63,7 @@ const EventDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="event-dialog-scroll max-h-[min(85vh,720px)] w-[calc(100vw-2rem)] overflow-y-auto rounded-2xl border-zinc-200 bg-white p-5 text-zinc-950 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 sm:max-w-lg"
+        className="flex max-h-[min(80vh,500px)] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border-zinc-200 bg-white p-5 text-zinc-950 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 sm:max-w-lg"
       >
         <DialogDescription className="sr-only">
           {viewOnly

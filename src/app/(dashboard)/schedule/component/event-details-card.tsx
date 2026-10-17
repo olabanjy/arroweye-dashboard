@@ -126,7 +126,7 @@ const EventDetailsCard = ({
   const timeLabel = formatTimeRange(formData.start_dte, formData.end_dte);
 
   return (
-    <div className="space-y-2">
+    <div className="flex min-h-0 flex-col gap-2">
       <EventHeader
         title={formData.title}
         description={formData.description}
@@ -149,7 +149,7 @@ const EventDetailsCard = ({
         }
       />
 
-      <div className="px-1">
+      <div className="event-dialog-scroll min-h-0 flex-1 overflow-y-auto px-1">
         {campaignTitle && (
           <DetailRow
             icon={Megaphone}
@@ -243,7 +243,7 @@ const EventDetailsCard = ({
       <Button
         type="button"
         variant="ghost"
-        className="h-10 w-full rounded-xl bg-zinc-100 text-[14px] font-medium text-zinc-900 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-100"
+        className="h-10 w-full shrink-0 rounded-xl bg-zinc-100 text-[14px] font-medium text-zinc-900 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-100"
         onClick={dialog.startReschedule}
       >
         Reschedule

@@ -76,8 +76,8 @@ const EventForm = ({
     onFormChange({ target: { name, value: "" } });
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3.5">
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+    <form onSubmit={onSubmit} className="flex min-h-0 flex-col gap-3.5">
+      <div className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-3">
         <Button
           type="button"
           variant="ghost"
@@ -98,163 +98,169 @@ const EventForm = ({
         </Button>
       </div>
 
-      <div>
-        <FieldLabel htmlFor="event-title">Event name</FieldLabel>
-        <div className="relative">
-          <AutocompleteInput
-            name="title"
-            placeholder="Event name"
-            value={formData.title}
-            onChange={onFormChange}
-            error={formErrors.title}
-            className={cn(eventFieldClassName, "!pr-9")}
-          />
-          {formData.title && (
-            <ClearButton
-              label="event name"
-              onClear={() => clearField("title")}
+      <div className="event-dialog-scroll -mx-1 min-h-0 flex-1 space-y-3.5 overflow-y-auto px-1">
+        <div>
+          <FieldLabel htmlFor="event-title">Event name</FieldLabel>
+          <div className="relative">
+            <AutocompleteInput
+              name="title"
+              placeholder="Event name"
+              value={formData.title}
+              onChange={onFormChange}
+              error={formErrors.title}
+              className={cn(eventFieldClassName, "!pr-9")}
             />
-          )}
-        </div>
-      </div>
-
-      {!isEdit && (
-        <EventDateTimeFields
-          dateLabel={dialog.dateLabel}
-          selectedDate={dialog.selectedDate}
-          isDatePickerOpen={dialog.isDatePickerOpen}
-          onDatePickerOpenChange={dialog.setIsDatePickerOpen}
-          onDateSelect={dialog.handleDateSelect}
-          startTime={dialog.startTime}
-          endTime={dialog.endTime}
-          startTimeOptions={dialog.startTimeOptions}
-          endTimeOptions={dialog.endTimeOptions}
-          onStartTimeChange={dialog.handleStartTimeChange}
-          onEndTimeChange={dialog.handleEndTimeChange}
-          dateError={formErrors.start_dte}
-          endError={formErrors.end_dte}
-        />
-      )}
-
-      <div>
-        <FieldLabel htmlFor="event-location">Location</FieldLabel>
-        <div className="relative">
-          <span
-            className={cn(
-              inputSlotClassName,
-              "pointer-events-none left-3 z-10",
+            {formData.title && (
+              <ClearButton
+                label="event name"
+                onClear={() => clearField("title")}
+              />
             )}
-          >
-            <MapPin className={iconClassName} />
-          </span>
-          <Input
-            id="event-location"
-            name="location"
-            value={formData.location}
-            onChange={onFormChange}
-            placeholder="Venue, or link for virtual meetings"
-            error={formErrors.location}
-            className={cn(eventFieldClassName, "!pl-9 !pr-9")}
-          />
-          {formData.location && (
-            <ClearButton
-              label="location"
-              onClear={() => clearField("location")}
-            />
-          )}
+          </div>
         </div>
-      </div>
 
-      <CountedTextarea
-        id="event-description"
-        name="description"
-        label="Description"
-        value={formData.description}
-        maxLength={EVENT_DESCRIPTION_MAX_LENGTH}
-        placeholder="Add details for attendees"
-        error={formErrors.description}
-        onChange={onFormChange}
-      />
+        {!isEdit && (
+          <EventDateTimeFields
+            dateLabel={dialog.dateLabel}
+            selectedDate={dialog.selectedDate}
+            isDatePickerOpen={dialog.isDatePickerOpen}
+            onDatePickerOpenChange={dialog.setIsDatePickerOpen}
+            onDateSelect={dialog.handleDateSelect}
+            startTime={dialog.startTime}
+            endTime={dialog.endTime}
+            startTimeOptions={dialog.startTimeOptions}
+            endTimeOptions={dialog.endTimeOptions}
+            onStartTimeChange={dialog.handleStartTimeChange}
+            onEndTimeChange={dialog.handleEndTimeChange}
+            dateError={formErrors.start_dte}
+            endError={formErrors.end_dte}
+          />
+        )}
 
-      <div>
-        <FieldLabel htmlFor="event-status">Status</FieldLabel>
-        <Select
-          value={formData.status}
-          onValueChange={(value) => onSelectChange({ name: "status", value })}
-        >
-          <SelectTrigger
-            id="event-status"
-            className={cn(triggerClassName, "justify-between")}
+        <div>
+          <FieldLabel htmlFor="event-location">Location</FieldLabel>
+          <div className="relative">
+            <span
+              className={cn(
+                inputSlotClassName,
+                "pointer-events-none left-3 z-10",
+              )}
+            >
+              <MapPin className={iconClassName} />
+            </span>
+            <Input
+              id="event-location"
+              name="location"
+              value={formData.location}
+              onChange={onFormChange}
+              placeholder="Venue, or link for virtual meetings"
+              error={formErrors.location}
+              className={cn(eventFieldClassName, "!pl-9 !pr-9")}
+            />
+            {formData.location && (
+              <ClearButton
+                label="location"
+                onClear={() => clearField("location")}
+              />
+            )}
+          </div>
+        </div>
+
+        <CountedTextarea
+          id="event-description"
+          name="description"
+          label="Description"
+          value={formData.description}
+          maxLength={EVENT_DESCRIPTION_MAX_LENGTH}
+          placeholder="Add details for attendees"
+          error={formErrors.description}
+          onChange={onFormChange}
+        />
+
+        <div>
+          <FieldLabel htmlFor="event-status">Status</FieldLabel>
+          <Select
+            value={formData.status}
+            onValueChange={(value) => onSelectChange({ name: "status", value })}
           >
-            <SelectValue placeholder="Select status" />
-          </SelectTrigger>
-          <SelectContent>
-            {EVENT_STATUS_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                <span className="flex items-center gap-3">
-                  <span
-                    className={cn("size-3 rounded-full", option.dotClassName)}
-                  />
-                  {option.label}
-                </span>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+            <SelectTrigger
+              id="event-status"
+              className={cn(triggerClassName, "justify-between")}
+            >
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              {EVENT_STATUS_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  <span className="flex items-center gap-3">
+                    <span
+                      className={cn("size-3 rounded-full", option.dotClassName)}
+                    />
+                    {option.label}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-      {!isEdit && (
-        <div className="border-t border-zinc-200 pt-3.5 dark:border-zinc-700">
-          <FieldLabel>Campaign &amp; vendor</FieldLabel>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <CampaignCombobox
-                options={campaignOptions}
-                value={formData.code}
-                onChange={(value) => onSelectChange({ name: "code", value })}
-                error={formErrors.code}
+        {!isEdit && (
+          <div className="border-t border-zinc-200 pt-3.5 dark:border-zinc-700">
+            <FieldLabel>Campaign &amp; vendor</FieldLabel>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <CampaignCombobox
+                  options={campaignOptions}
+                  value={formData.code}
+                  onChange={(value) => onSelectChange({ name: "code", value })}
+                  error={formErrors.code}
+                />
+              </div>
+              <FieldSelect
+                value={formData.vendor_id}
+                onChange={(value) =>
+                  onSelectChange({ name: "vendor_id", value })
+                }
+                options={vendorOptions}
+                placeholder="Select Vendor"
+                error={formErrors.vendor_id}
+              />
+              <FieldSelect
+                value={formData.subvendor_id}
+                onChange={(value) =>
+                  onSelectChange({ name: "subvendor_id", value })
+                }
+                options={subvendorOptions}
+                placeholder="Select Subvendor"
+                error={formErrors.subvendor_id}
               />
             </div>
-            <FieldSelect
-              value={formData.vendor_id}
-              onChange={(value) => onSelectChange({ name: "vendor_id", value })}
-              options={vendorOptions}
-              placeholder="Select Vendor"
-              error={formErrors.vendor_id}
-            />
-            <FieldSelect
-              value={formData.subvendor_id}
-              onChange={(value) =>
-                onSelectChange({ name: "subvendor_id", value })
-              }
-              options={subvendorOptions}
-              placeholder="Select Subvendor"
-              error={formErrors.subvendor_id}
-            />
           </div>
-        </div>
-      )}
+        )}
 
-      {!isEdit && onPendingDropsChange && (
-        <div className="border-t border-zinc-200 pt-3.5 dark:border-zinc-700">
-          <FieldLabel>Attachments (optional)</FieldLabel>
-          <div className="space-y-2">
-            <LinkedDropList
-              drops={pendingDrops}
-              onRemove={(dropId) =>
-                onPendingDropsChange(
-                  pendingDrops.filter((drop) => drop.id !== dropId),
-                )
-              }
-            />
-            <DropCombobox
-              campaignId={formData.project}
-              linkedIds={pendingDrops.map((drop) => drop.id)}
-              onSelect={(drop) => onPendingDropsChange([...pendingDrops, drop])}
-            />
+        {!isEdit && onPendingDropsChange && (
+          <div className="border-t border-zinc-200 pt-3.5 dark:border-zinc-700">
+            <FieldLabel>Attachments (optional)</FieldLabel>
+            <div className="space-y-2">
+              <LinkedDropList
+                drops={pendingDrops}
+                onRemove={(dropId) =>
+                  onPendingDropsChange(
+                    pendingDrops.filter((drop) => drop.id !== dropId),
+                  )
+                }
+              />
+              <DropCombobox
+                campaignId={formData.project}
+                linkedIds={pendingDrops.map((drop) => drop.id)}
+                onSelect={(drop) =>
+                  onPendingDropsChange([...pendingDrops, drop])
+                }
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </form>
   );
 };
