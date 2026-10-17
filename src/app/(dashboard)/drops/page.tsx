@@ -271,14 +271,6 @@ const AssetsLibrary = () => {
             </p>
           </div>
           <div className="ml-auto flex shrink-0 items-center gap-2">
-            <Button
-              type="button"
-              className="h-9 gap-1.5 rounded-full bg-black px-4 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
-              onClick={() => setUploadDialogOpen(true)}
-            >
-              <Icon path={mdiPlus} className="size-4" />
-              New drop
-            </Button>
             {isSticky && (
               <NotificationsMenu triggerClassName="relative size-9 rounded-full text-foreground active:scale-[0.97] [&_svg]:size-[18px]!" />
             )}
@@ -305,6 +297,15 @@ const AssetsLibrary = () => {
                   onClick={() => setFilter(!filter)}
                 >
                   <IoFilter />
+                </Button>
+                <Button
+                  type="button"
+                  size="icon-lg"
+                  aria-label="New drop"
+                  className="size-10 shrink-0 mt-2 self-center rounded-full"
+                  onClick={() => setUploadDialogOpen(true)}
+                >
+                  <Icon path={mdiPlus} className="size-4" />
                 </Button>
               </div>
             </div>

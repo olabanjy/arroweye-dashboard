@@ -1,40 +1,55 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import CreateInvoiceForm from "./create-invoice-form";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/context/auth-session";
-import { cn, hasAccessExceptVendorManager } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import type { CreateInvoiceState } from "@/hooks/use-create-invoice";
 
-interface CreateInvoiceSectionProps {
+interface CreateInvoiceProps {
+  invoice: CreateInvoiceState;
   className?: string;
 }
 
-const CreateInvoiceSection = ({ className }: CreateInvoiceSectionProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const { userProfile } = useAuth();
+export const CreateInvoiceButton = ({
+  invoice,
+  className,
+}: CreateInvoiceProps) =>
+  invoice.canCreate ? (
+    <Button
+      type="button"
+      size="icon-lg"
+      aria-label={invoice.isOpen ? "Cancel invoice" : "Create invoice"}
+      aria-expanded={invoice.isOpen}
+      className={cn("size-10 shrink-0 self-center rounded-full", className)}
+      onClick={invoice.toggle}
+    >
+      <Plus
+        className={cn(
+          "transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none",
+          invoice.isOpen && "rotate-45",
+        )}
+      />
+    </Button>
+  ) : null;
 
-  if (!hasAccessExceptVendorManager(userProfile, [""])) {
-    return null;
-  }
-
-  return (
-    <div className={cn(className)}>
-      <Button
-        type="button"
-        size="lg"
-        aria-expanded={isOpen}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {isOpen ? <X /> : <Plus />}
-        {isOpen ? "Cancel" : "Create Invoice"}
-      </Button>
-
-      {isOpen && <CreateInvoiceForm />}
+// Animating grid rows between 0fr and 1fr lets the form expand to its natural height.
+const CreateInvoiceSection = ({ invoice, className }: CreateInvoiceProps) =>
+  invoice.canCreate && invoice.isRendered ? (
+    <div
+      className={cn(
+        "grid transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none",
+        invoice.isOpen
+          ? "grid-rows-[1fr] opacity-100 starting:grid-rows-[0fr] starting:opacity-0"
+          : "grid-rows-[0fr] opacity-0",
+        className,
+      )}
+    >
+      <div className="min-h-0 overflow-hidden">
+        <CreateInvoiceForm />
+      </div>
     </div>
-  );
-};
+  ) : null;
 
 export default CreateInvoiceSection;

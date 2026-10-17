@@ -32,12 +32,9 @@ import {
 } from "./event-fields";
 import { FieldSelect, type SelectOption } from "./field-select";
 import CampaignCombobox from "./campaign-combobox";
-import {
-  AddAttachmentButton,
-  AttachmentList,
-  formatFileSize,
-} from "./event-attachments";
+import { DropCombobox, LinkedDropList } from "./event-drops";
 import type { CampaignOption } from "../hooks/use-campaign-combobox";
+import type { EventDrop } from "@/types/event-drops";
 
 type FormChangeEvent = { target: { name: string; value: string } };
 
@@ -54,12 +51,9 @@ export interface EventFormProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   isSubmitting: boolean;
   mode?: "create" | "edit";
-  pendingAttachments?: File[];
-  onPendingAttachmentsChange?: (files: File[]) => void;
+  pendingDrops?: EventDrop[];
+  onPendingDropsChange?: (drops: EventDrop[]) => void;
 }
-
-const fileKey = (file: File) =>
-  `${file.name}-${file.size}-${file.lastModified}`;
 
 const EventForm = ({
   dialog,
@@ -74,8 +68,8 @@ const EventForm = ({
   onSubmit,
   isSubmitting,
   mode = "create",
-  pendingAttachments = [],
-  onPendingAttachmentsChange,
+  pendingDrops = [],
+  onPendingDropsChange,
 }: EventFormProps) => {
   const isEdit = mode === "edit";
   const clearField = (name: string) =>
@@ -241,30 +235,22 @@ const EventForm = ({
         </div>
       )}
 
-      {!isEdit && onPendingAttachmentsChange && (
+      {!isEdit && onPendingDropsChange && (
         <div className="border-t border-zinc-200 pt-3.5 dark:border-zinc-700">
           <FieldLabel>Attachments (optional)</FieldLabel>
           <div className="space-y-2">
-            <AttachmentList
-              items={pendingAttachments.map((file) => ({
-                key: fileKey(file),
-                name: file.name,
-                meta: formatFileSize(file.size),
-              }))}
-              onRemove={(key) =>
-                onPendingAttachmentsChange(
-                  pendingAttachments.filter((file) => fileKey(file) !== key),
+            <LinkedDropList
+              drops={pendingDrops}
+              onRemove={(dropId) =>
+                onPendingDropsChange(
+                  pendingDrops.filter((drop) => drop.id !== dropId),
                 )
               }
             />
-            <AddAttachmentButton
-              onFiles={(files) => {
-                const existing = new Set(pendingAttachments.map(fileKey));
-                onPendingAttachmentsChange([
-                  ...pendingAttachments,
-                  ...files.filter((file) => !existing.has(fileKey(file))),
-                ]);
-              }}
+            <DropCombobox
+              campaignId={formData.project}
+              linkedIds={pendingDrops.map((drop) => drop.id)}
+              onSelect={(drop) => onPendingDropsChange([...pendingDrops, drop])}
             />
           </div>
         </div>

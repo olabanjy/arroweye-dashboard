@@ -15,7 +15,8 @@ import { useAuth } from "@/context/auth-context";
 import { DateClickArg } from "@fullcalendar/interaction";
 import type { Event } from "@/types/api";
 import { toast } from "sonner";
-import { uploadEventAttachment } from "@/app/(dashboard)/schedule/hooks/use-event-attachments";
+import { linkEventDrops } from "@/app/(dashboard)/schedule/hooks/use-event-drops";
+import type { EventDrop } from "@/types/event-drops";
 
 export const EVENT_DESCRIPTION_MAX_LENGTH = 500;
 export const RESCHEDULE_REASON_MAX_LENGTH = 500;
@@ -41,34 +42,29 @@ const resolveCreatedEventId = async (
   return matches.length ? Math.max(...matches.map((event) => event.id)) : null;
 };
 
-const uploadPendingAttachments = async (
+const linkPendingDrops = async (
   created: unknown,
   payload: { title: string; code: string; start_dte: string },
-  files: File[],
+  drops: EventDrop[],
 ) => {
-  if (!files.length) return;
+  if (!drops.length) return;
 
   const eventId = await resolveCreatedEventId(created, payload);
   if (!eventId) {
     toast.error(
-      "Event created, but its attachments couldn't be saved. Add them from the event details.",
+      "Event created, but its attachments couldn't be added. Add them from the event details.",
     );
     return;
   }
 
-  const results = await Promise.allSettled(
-    files.map((file) => uploadEventAttachment(eventId, file)),
-  );
-  results.forEach((result) => {
-    if (result.status === "rejected") {
-      console.error("Event attachment upload failed:", result.reason);
-      toast.error(
-        result.reason instanceof Error
-          ? result.reason.message
-          : "An attachment could not be uploaded.",
-      );
-    }
-  });
+  try {
+    await linkEventDrops(eventId, drops);
+  } catch (error) {
+    console.error("Linking event drops failed:", error);
+    toast.error(
+      error instanceof Error ? error.message : "Attachments could not be added.",
+    );
+  }
 };
 
 // Fields shared by create and edit; dates, campaign and vendors are create-only.
@@ -125,7 +121,7 @@ export const useSchedule = ({
   const [viewOnly, setViewOnly] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editSnapshot, setEditSnapshot] = useState<any>(null);
-  const [pendingAttachments, setPendingAttachments] = useState<File[]>([]);
+  const [pendingDrops, setPendingDrops] = useState<EventDrop[]>([]);
   const [filter, setisFilter] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [scheduleIdToBeDeleted, setScheduleIdToBeDeleted] = useState<any>("");
@@ -432,7 +428,7 @@ export const useSchedule = ({
     setViewOnly(false);
     setIsEditing(false);
     setEditSnapshot(null);
-    setPendingAttachments([]);
+    setPendingDrops([]);
     setIsModalVisible(false);
     setFormData({
       id: "",
@@ -492,6 +488,9 @@ export const useSchedule = ({
   };
 
   const handleSelectChange = ({ name, value }: any) => {
+    // Picked attachments are scoped to the campaign, so a new campaign starts empty.
+    if (name === "code" && value !== formData.code) setPendingDrops([]);
+
     setFormData((prevData: any) => {
       const nextData = {
         ...prevData,
@@ -579,11 +578,7 @@ export const useSchedule = ({
 
           const created =
             await createEventMutation.mutateAsync(updatedFormData);
-          await uploadPendingAttachments(
-            created,
-            updatedFormData,
-            pendingAttachments,
-          );
+          await linkPendingDrops(created, updatedFormData, pendingDrops);
           handleCloseModal();
         } catch (error) {
           console.error("Error submitting form:", error);
@@ -727,8 +722,8 @@ export const useSchedule = ({
     startEdit,
     cancelEdit,
     updateEvent,
-    pendingAttachments,
-    setPendingAttachments,
+    pendingDrops,
+    setPendingDrops,
     exportICS,
     handleDelete,
     handleDateClick,

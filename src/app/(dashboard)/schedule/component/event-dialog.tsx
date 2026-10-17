@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import type { FormErrors } from "@/hooks/use-schedule";
 import { useEventDialog } from "../hooks/use-event-dialog";
-import { useEventAttachments } from "../hooks/use-event-attachments";
+import { useEventDrops } from "../hooks/use-event-drops";
 import EventDetailsCard, {
   type EventDetailsActions,
 } from "./event-details-card";
@@ -45,8 +45,8 @@ const EventDialog = ({
   onSelectChange,
   onSubmit,
   onReschedule,
-  pendingAttachments,
-  onPendingAttachmentsChange,
+  pendingDrops,
+  onPendingDropsChange,
   ...detailsActions
 }: EventDialogProps) => {
   const dialog = useEventDialog({
@@ -55,9 +55,7 @@ const EventDialog = ({
     endDateTime: formData.end_dte,
     onFormChange,
   });
-  const attachments = useEventAttachments(
-    open && viewOnly ? formData.id : undefined,
-  );
+  const linkedDrops = useEventDrops(open && viewOnly ? formData.id : undefined);
 
   const close = () => onOpenChange(false);
 
@@ -65,7 +63,7 @@ const EventDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="max-h-[90vh] w-[calc(100vw-2rem)] overflow-y-auto rounded-2xl border-zinc-200 bg-white p-5 text-zinc-950 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 sm:max-w-lg"
+        className="event-dialog-scroll max-h-[min(85vh,720px)] w-[calc(100vw-2rem)] overflow-y-auto rounded-2xl border-zinc-200 bg-white p-5 text-zinc-950 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 sm:max-w-lg"
       >
         <DialogDescription className="sr-only">
           {viewOnly
@@ -103,7 +101,7 @@ const EventDialog = ({
             dialog={dialog}
             formData={formData}
             onClose={close}
-            attachments={attachments}
+            linkedDrops={linkedDrops}
             {...detailsActions}
           />
         ) : (
@@ -119,8 +117,8 @@ const EventDialog = ({
             onSelectChange={onSelectChange}
             onSubmit={onSubmit}
             isSubmitting={isSubmitting}
-            pendingAttachments={pendingAttachments}
-            onPendingAttachmentsChange={onPendingAttachmentsChange}
+            pendingDrops={pendingDrops}
+            onPendingDropsChange={onPendingDropsChange}
           />
         )}
       </DialogContent>

@@ -93,8 +93,8 @@ const Schedule: React.FC<ScheduleProps> = ({
     startEdit,
     cancelEdit,
     updateEvent,
-    pendingAttachments,
-    setPendingAttachments,
+    pendingDrops,
+    setPendingDrops,
     canDeleteEvent,
     eventCampaignTitle,
     requestDeleteEvent,
@@ -193,8 +193,8 @@ const Schedule: React.FC<ScheduleProps> = ({
         onEdit={startEdit}
         onCancelEdit={cancelEdit}
         onUpdate={updateEvent}
-        pendingAttachments={pendingAttachments}
-        onPendingAttachmentsChange={setPendingAttachments}
+        pendingDrops={pendingDrops}
+        onPendingDropsChange={setPendingDrops}
         canDelete={canDeleteEvent}
         campaignTitle={eventCampaignTitle}
         onDelete={requestDeleteEvent}
