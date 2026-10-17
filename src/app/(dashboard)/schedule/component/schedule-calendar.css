@@ -286,7 +286,8 @@
   border-radius: 0.875rem !important;
   border: 1px solid #e4e4e7 !important;
   background-color: #ffffff !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
     0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
   padding: 0.5rem !important;
 }
@@ -330,4 +331,23 @@
 
 .dark .schedule-calendar .fc-list-event:hover td {
   background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Event dialog: slimmer scrollbar than the browser default */
+.event-dialog-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(150, 150, 150, 0.4) transparent;
+}
+
+.event-dialog-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.event-dialog-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(150, 150, 150, 0.4);
+  border-radius: 9999px;
+}
+
+.event-dialog-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }

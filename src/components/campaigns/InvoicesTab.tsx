@@ -5,8 +5,10 @@ import { IoFilter } from "react-icons/io5";
 import Archive from "./Archive";
 import Campaigns from "./campaigns-table";
 import { Button } from "../ui/button";
+import { CreateInvoiceButton } from "../invoices/create-invoice-section";
+import type { CreateInvoiceState } from "@/hooks/use-create-invoice";
 
-const InvoicesTab: React.FC = () => {
+const InvoicesTab = ({ invoice }: { invoice: CreateInvoiceState }) => {
   const [activeTab, setActiveTab] = useState<"Campaigns" | "Archive">(
     "Campaigns",
   );
@@ -64,6 +66,7 @@ const InvoicesTab: React.FC = () => {
               >
                 <IoFilter />
               </Button>
+              <CreateInvoiceButton invoice={invoice} />
             </div>
           </div>
         </div>

@@ -4,9 +4,11 @@ import { useState } from "react";
 import InvoicesTab from "@/components/campaigns/InvoicesTab";
 import Insight from "@/components/campaigns/Insight";
 import CreateInvoiceSection from "@/components/invoices/create-invoice-section";
+import { useCreateInvoice } from "@/hooks/use-create-invoice";
 
 export default function CampaignsPageClient() {
   const [activeTab, setActiveTab] = useState("manage");
+  const invoice = useCreateInvoice();
 
   return (
     <>
@@ -16,10 +18,10 @@ export default function CampaignsPageClient() {
         <div>
           {activeTab === "manage" && (
             <div className="">
-              <CreateInvoiceSection className="lg:px-5" />
+              <CreateInvoiceSection invoice={invoice} className="lg:px-5" />
 
               {/* render the invoices for campaigns created */}
-              <InvoicesTab />
+              <InvoicesTab invoice={invoice} />
             </div>
           )}
           {activeTab === "insights" && <Insight />}

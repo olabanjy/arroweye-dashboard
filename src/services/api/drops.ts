@@ -41,6 +41,31 @@ export const getDropZones = async ({
   return response;
 };
 
+const CAMPAIGN_DROPS_PAGE_SIZE = 100;
+const CAMPAIGN_DROPS_MAX_PAGES = 20;
+
+// The list endpoint has no campaign filter, so walk every page and match on `project`.
+export const getCampaignDropZones = async (
+  projectId: number | string,
+): Promise<DropZone[]> => {
+  const drops: DropZone[] = [];
+  for (let page = 1; page <= CAMPAIGN_DROPS_MAX_PAGES; page++) {
+    const response = await apiRequest<AppDropZonePage>({
+      method: "GET",
+      url: `/api/v1/projects/general/dropzone/`,
+      params: { page, page_size: CAMPAIGN_DROPS_PAGE_SIZE },
+      requireToken: true,
+    });
+    drops.push(
+      ...response.results.filter(
+        (drop) => String(drop.project) === String(projectId),
+      ),
+    );
+    if (!response.next) break;
+  }
+  return drops;
+};
+
 export const getProjectDropZone = async (
   projectId: number | string,
 ): Promise<DropZone | null> => {

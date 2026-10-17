@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import ls from "localstorage-slim";
 import { Input } from "@/components/ui/input";
 import { IoFilter } from "react-icons/io5";
-import { MdOutlineGroupAdd } from "react-icons/md";
 import Invoice from "./Invoice";
 import { SelectInput } from "@/components/ui/selectinput";
 import Users from "./Users";
@@ -21,8 +20,10 @@ import {
 
 import { TbBuildingBank } from "react-icons/tb";
 import CompanyDetailsForm from "@/components/campaigns/CompanyDetailsForm";
+import { CreateInvoiceButton } from "@/components/invoices/create-invoice-section";
+import type { CreateInvoiceState } from "@/hooks/use-create-invoice";
 
-const InvoicesTab = () => {
+const InvoicesTab = ({ invoice }: { invoice: CreateInvoiceState }) => {
   const [userLoggedInProfile, setUserLoggedInProfile] = useState<any>({});
   const [activeTab, setActiveTab] = useState("Invoice");
   const [filter, setFilter] = useState(false);
@@ -186,14 +187,7 @@ const InvoicesTab = () => {
                   <IoFilter />
                 </Button>
               )}
-              {userLoggedInProfile?.business_type === "Vendor" && (
-                <div
-                  className="cursor-pointer p-[16px] bg-[#ffdead] text-[#000000] rounded-full"
-                  onClick={showDialog}
-                >
-                  <MdOutlineGroupAdd />
-                </div>
-              )}
+              <CreateInvoiceButton invoice={invoice} />
             </div>
           </div>
         </div>

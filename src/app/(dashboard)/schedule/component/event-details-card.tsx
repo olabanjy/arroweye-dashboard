@@ -2,15 +2,15 @@
 
 import React from "react";
 import type { LucideIcon } from "lucide-react";
-import { format, parseISO } from "date-fns";
 import {
   ArrowUpRight,
   CalendarDays,
   Clock,
+  Copy,
   FileText,
+  Paperclip,
   MapPin,
   Megaphone,
-  Paperclip,
   Pencil,
   Share2,
   Trash2,
@@ -26,9 +26,10 @@ import {
 import type { EventDialogState } from "../hooks/use-event-dialog";
 import { formatTimeRange } from "../utils/event-date-time";
 import { getEventStatusOption } from "../utils/event-status";
-import type { EventAttachmentsState } from "../hooks/use-event-attachments";
+import type { EventDropsState } from "../hooks/use-event-drops";
+import { copyToClipboard } from "../utils/copy-to-clipboard";
 import EventHeader from "./event-header";
-import { AddAttachmentButton, AttachmentList } from "./event-attachments";
+import { DropCombobox, LinkedDropList } from "./event-drops";
 
 export interface EventDetailsActions {
   campaignTitle?: string;
@@ -43,7 +44,7 @@ interface EventDetailsCardProps extends EventDetailsActions {
   dialog: EventDialogState;
   formData: Record<string, any>;
   onClose: () => void;
-  attachments: EventAttachmentsState;
+  linkedDrops: EventDropsState;
 }
 
 const DetailRow = ({
@@ -97,7 +98,7 @@ const HeaderAction = ({
         type="button"
         onClick={onClick}
         className={cn(
-          "flex size-8 items-center justify-center rounded-full bg-white/70 text-zinc-600 hover:bg-white dark:bg-zinc-900/60 dark:text-zinc-300 dark:hover:bg-zinc-900",
+          "flex size-8 items-center justify-center rounded-full border border-black bg-white/70 text-zinc-600 dark:border-white hover:bg-white dark:bg-zinc-900/60 dark:text-zinc-300 dark:hover:bg-zinc-900",
           className,
         )}
       >
@@ -119,7 +120,7 @@ const EventDetailsCard = ({
   onEdit,
   onShare,
   onViewProject,
-  attachments,
+  linkedDrops,
 }: EventDetailsCardProps) => {
   const status = getEventStatusOption(formData.status);
   const timeLabel = formatTimeRange(formData.start_dte, formData.end_dte);
@@ -173,7 +174,18 @@ const EventDetailsCard = ({
         </DetailRow>
 
         {formData.location && (
-          <DetailRow icon={MapPin} label="Location">
+          <DetailRow
+            icon={MapPin}
+            label="Location"
+            action={
+              <HeaderAction
+                label="Copy location"
+                icon={Copy}
+                onClick={() => copyToClipboard(formData.location, "Location")}
+                className="shrink-0 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+              />
+            }
+          >
             {formData.location}
           </DetailRow>
         )}
@@ -204,28 +216,26 @@ const EventDetailsCard = ({
         )}
         <DetailRow icon={Paperclip} label="Attachments">
           <div className="mt-1 space-y-2">
-            {attachments.isLoading ? (
+            {linkedDrops.isLoading ? (
               <p className="text-[13px] text-zinc-500">Loading…</p>
-            ) : attachments.error ? (
-              <p className="text-[13px] text-red-500">{attachments.error}</p>
+            ) : linkedDrops.error ? (
+              <p className="text-[13px] text-red-500">{linkedDrops.error}</p>
             ) : (
-              <AttachmentList
-                items={attachments.attachments.map((file) => ({
-                  key: file.key,
-                  name: file.fileName,
-                  meta: format(parseISO(file.uploadedAt), "d MMM yyyy"),
-                }))}
-                removingKey={attachments.removingKey}
-                confirmRemove
-                onOpen={(key) => void attachments.download(key)}
-                onRemove={attachments.remove}
-              />
+              <>
+                <LinkedDropList
+                  drops={linkedDrops.drops}
+                  disabled={linkedDrops.isSaving}
+                  confirmRemove
+                  onRemove={linkedDrops.detach}
+                />
+                <DropCombobox
+                  campaignId={formData.project}
+                  linkedIds={linkedDrops.drops.map((drop) => drop.id)}
+                  isSaving={linkedDrops.isSaving}
+                  onSelect={linkedDrops.attach}
+                />
+              </>
             )}
-            <AddAttachmentButton
-              multiple={false}
-              isUploading={attachments.isUploading}
-              onFiles={([file]) => attachments.upload(file)}
-            />
           </div>
         </DetailRow>
       </div>

@@ -1,9 +1,9 @@
 import "server-only";
 
 import {
-  DeleteObjectCommand,
   GetObjectCommand,
   ListObjectsV2Command,
+  NoSuchKey,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
@@ -138,92 +138,42 @@ export const getRadioMonitorDownloadUrl = (file: StoredRadioMonitor) => {
   );
 };
 
-const EVENT_ATTACHMENT_CONTENT_TYPES = {
-  pdf: "application/pdf",
-  png: "image/png",
-  jpg: "image/jpeg",
-  jpeg: "image/jpeg",
-  webp: "image/webp",
-  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-  csv: "text/csv",
-  txt: "text/plain",
-} as const;
-type EventAttachmentFormat = keyof typeof EVENT_ATTACHMENT_CONTENT_TYPES;
-export const EVENT_ATTACHMENT_MAX_BYTES = 10 * 1024 * 1024;
-
-export interface StoredEventAttachment {
-  key: string;
-  fileName: string;
-  uploadedAt: string;
+export interface StoredEventDrop {
+  id: number;
+  name: string;
+  link: string | null;
+  type: string | null;
 }
 
-// Events have no attachment field in the API, so files live here keyed by event id.
-const eventAttachmentFolder = (eventId: number) =>
-  `event-attachments/${eventId}/`;
+// Events have no drops field in the API, so each event's linked drops live here.
+const eventDropsKey = (eventId: number) => `event-drops/${eventId}.json`;
 
-export const isEventAttachmentFormat = (fileName: string) =>
-  Object.hasOwn(EVENT_ATTACHMENT_CONTENT_TYPES, getFormat(fileName));
-
-export const isEventAttachmentKey = (eventId: number, key: string) =>
-  key.startsWith(eventAttachmentFolder(eventId)) && !key.includes("..");
-
-export const createEventAttachmentUpload = async (
+export const readEventDrops = async (
   eventId: number,
-  fileName: string,
+): Promise<StoredEventDrop[]> => {
+  const { client, bucket } = getConfig();
+  try {
+    const { Body } = await client.send(
+      new GetObjectCommand({ Bucket: bucket, Key: eventDropsKey(eventId) }),
+    );
+    return Body ? JSON.parse(await Body.transformToString()) : [];
+  } catch (error) {
+    if (error instanceof NoSuchKey) return [];
+    throw error;
+  }
+};
+
+export const writeEventDrops = async (
+  eventId: number,
+  drops: StoredEventDrop[],
 ) => {
   const { client, bucket } = getConfig();
-  const contentType =
-    EVENT_ATTACHMENT_CONTENT_TYPES[getFormat(fileName) as EventAttachmentFormat];
-  const key = `${eventAttachmentFolder(eventId)}${Date.now()}-${toSafeFileName(fileName, "attachment")}`;
-  const uploadUrl = await getSignedUrl(
-    client,
-    new PutObjectCommand({ Bucket: bucket, Key: key, ContentType: contentType }),
-    { expiresIn: UPLOAD_URL_TTL_SECONDS },
-  );
-
-  return { uploadUrl, contentType };
-};
-
-/** Oldest first, so files keep the order they were added in. */
-export const listEventAttachments = async (
-  eventId: number,
-): Promise<StoredEventAttachment[]> => {
-  const { client, bucket } = getConfig();
-  const { Contents = [] } = await client.send(
-    new ListObjectsV2Command({
+  await client.send(
+    new PutObjectCommand({
       Bucket: bucket,
-      Prefix: eventAttachmentFolder(eventId),
+      Key: eventDropsKey(eventId),
+      ContentType: "application/json",
+      Body: JSON.stringify(drops),
     }),
   );
-
-  return Contents.filter((object) => object.Key)
-    .sort(
-      (a, b) =>
-        (a.LastModified?.getTime() ?? 0) - (b.LastModified?.getTime() ?? 0),
-    )
-    .map((object) => ({
-      key: object.Key!,
-      fileName: toFileName(object.Key!),
-      uploadedAt: (object.LastModified ?? new Date()).toISOString(),
-    }));
-};
-
-export const getEventAttachmentDownloadUrl = (key: string) => {
-  const { client, bucket } = getConfig();
-  return getSignedUrl(
-    client,
-    new GetObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      ResponseContentDisposition: `attachment; filename="${toFileName(key)}"`,
-    }),
-    { expiresIn: DOWNLOAD_URL_TTL_SECONDS },
-  );
-};
-
-export const deleteEventAttachment = async (key: string) => {
-  const { client, bucket } = getConfig();
-  await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
 };
